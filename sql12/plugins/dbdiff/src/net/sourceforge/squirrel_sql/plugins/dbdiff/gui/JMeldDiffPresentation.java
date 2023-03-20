@@ -19,6 +19,10 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
+import java.awt.Font;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -26,10 +30,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.jmeld.settings.EditorSettings;
 import org.jmeld.settings.JMeldSettings;
 import org.jmeld.ui.JMeldPanel;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import java.awt.Font;
 
 /**
  * A DiffPresentation that uses components from the JMeld project to render a comparison of the content of two
@@ -46,11 +46,15 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 	@Override
 	public void executeDiff(String script1Filename, String script2Filename)
 	{
+		executeDiff(script1Filename, script2Filename, s_stringMgr.getString("JMeldDiffPresentation.table.diff"));
+	}
+	public void executeDiff(String script1Filename, String script2Filename, String diffDialogTitle)
+	{
 		final EditorSettings editorSettings = JMeldSettings.getInstance().getEditor();
 		editorSettings.setRightsideReadonly(true);
 		editorSettings.setLeftsideReadonly(true);
 
-		JDialog diffDialog = new JDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("JMeldDiffPresentation.table.diff") );
+		JDialog diffDialog = new JDialog(Main.getApplication().getMainFrame(), diffDialogTitle);
 
 		final JMeldPanel meldPanel = new NonExitingJMeldPanel(() -> close(diffDialog));
 		meldPanel.SHOW_TABBEDPANE_OPTION.disable();

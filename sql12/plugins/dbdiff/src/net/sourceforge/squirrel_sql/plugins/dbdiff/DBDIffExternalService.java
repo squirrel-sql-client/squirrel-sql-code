@@ -18,7 +18,7 @@ public class DBDIffExternalService
       _preferences = preferences;
    }
 
-   public void showDiff(Path leftFile, Path rightFile)
+   public void showDiff(Path leftFile, Path rightFile, String diffDialogTitle)
    {
       try
       {
@@ -28,7 +28,7 @@ public class DBDIffExternalService
          }
          else
          {
-            new JMeldDiffPresentation().executeDiff(leftFile.toFile().getAbsolutePath(), rightFile.toFile().getAbsolutePath());
+            new JMeldDiffPresentation().executeDiff(leftFile.toFile().getAbsolutePath(), rightFile.toFile().getAbsolutePath(), diffDialogTitle);
          }
       }
       catch (IOException e)

@@ -86,7 +86,7 @@ public class TableSelectionDiff
       String rightMarkdown = CopyAsMarkDown.createMarkdownForSelectedCells(diffTableProvider.getTable());
       Path rightMarkdownTempFile = TableSelectionDiffUtil.createRightTempFile(rightMarkdown);
 
-      DbDiffPluginAccessor.showDiff(leftMarkdownTempFile, rightMarkdownTempFile);
+      DbDiffPluginAccessor.showDiff(leftMarkdownTempFile, rightMarkdownTempFile, s_stringMgr.getString("TableSelectionDiff.dialog.title"));
    }
 
 }

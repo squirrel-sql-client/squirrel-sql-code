@@ -4,5 +4,5 @@ import java.nio.file.Path;
 
 public interface DBDiffPluginInterface
 {
-   void showDiff(Path leftFile, Path rightFile);
+   void showDiff(Path leftFile, Path rightFile, String diffDialogTitle);
 }

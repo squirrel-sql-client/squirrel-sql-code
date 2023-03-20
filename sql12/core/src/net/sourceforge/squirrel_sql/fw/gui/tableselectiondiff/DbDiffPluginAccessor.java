@@ -16,7 +16,7 @@ public class DbDiffPluginAccessor
       Main.getApplication().getMessageHandler().showErrorMessage(msg);
    }
 
-   public static void showDiff(Path leftMarkdown, Path rightMarkdown)
+   public static void showDiff(Path leftMarkdown, Path rightMarkdown, String diffDialogTitle)
    {
       DBDiffPluginInterface dbDiffIf = (DBDiffPluginInterface) Main.getApplication().getPluginManager().bindExternalPluginService("dbdiff", DBDiffPluginInterface.class);
 
@@ -25,6 +25,6 @@ public class DbDiffPluginAccessor
          writeDbDiffPluginMissingMessage();
       }
 
-      dbDiffIf.showDiff(leftMarkdown, rightMarkdown);
+      dbDiffIf.showDiff(leftMarkdown, rightMarkdown, diffDialogTitle);
    }
 }
