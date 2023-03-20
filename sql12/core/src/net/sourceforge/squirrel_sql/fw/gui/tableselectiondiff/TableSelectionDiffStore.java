@@ -1,23 +1,18 @@
 package net.sourceforge.squirrel_sql.fw.gui.tableselectiondiff;
 
+import java.nio.file.Path;
+
 public class TableSelectionDiffStore
 {
-   private String _markdown;
+   private Path _selectedMarkdownTempFile;
 
-   public void storeMarkdown(String markdown)
+   public void storeSelectedForCompareMarkdown(String selectedMarkDown)
    {
-      _markdown = markdown;
+      _selectedMarkdownTempFile = TableSelectionDiffUtil.createLeftTempFile(selectedMarkDown);
    }
 
-   public String retrieveAndClearMarkdown()
+   public Path getSelectedMarkdownTempFile()
    {
-      try
-      {
-         return _markdown;
-      }
-      finally
-      {
-         _markdown = null;
-      }
+      return _selectedMarkdownTempFile;
    }
 }

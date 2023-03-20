@@ -1,10 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.gui.ExternalToolSideBySideDiffPresentation;
@@ -21,16 +18,10 @@ public class DBDIffExternalService
       _preferences = preferences;
    }
 
-   public void showDiff(String leftMarkdown, String rightMarkdown)
+   public void showDiff(Path leftFile, Path rightFile)
    {
       try
       {
-         Path leftFile = Files.createTempFile("DBDIffExternalService-left-File", ".markdown.txt");
-         Files.write(leftFile, leftMarkdown.getBytes(StandardCharsets.UTF_8), StandardOpenOption.DELETE_ON_CLOSE);
-
-         Path rightFile = Files.createTempFile("DBDIffExternalService-right-File", ".markdown.txt");
-         Files.write(rightFile, rightMarkdown.getBytes(StandardCharsets.UTF_8), StandardOpenOption.DELETE_ON_CLOSE);
-
          if (_preferences.isUseExternalGraphicalDiffTool())
          {
             new ExternalToolSideBySideDiffPresentation().executeDiff(leftFile.toFile().getAbsolutePath(), rightFile.toFile().getAbsolutePath());

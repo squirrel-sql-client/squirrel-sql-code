@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Data compare:
+  UI-Tables offer a new right mouse menu "Compare selected cells".
+  Note that the function compares table cell selections. To compare complete tables use the Ctrl+a shortcut.
+  This feature includes improvements and bug fixes for the DBDiff Plugin.
+
 Table cell data popup improvements:
   Now offers a list of previous files to choose from.
   The file chooser opened by the "Browse" button was changed from an open to a save dialog.
