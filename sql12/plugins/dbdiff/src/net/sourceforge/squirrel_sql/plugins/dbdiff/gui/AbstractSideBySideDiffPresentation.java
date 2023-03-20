@@ -19,6 +19,11 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactoryImpl;
@@ -35,11 +40,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.IScriptFileManager;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Base class for all DiffPresentation implementations that display a comparison of the contents of two files
@@ -83,8 +83,7 @@ public abstract class AbstractSideBySideDiffPresentation extends AbstractDiffPre
 
 		final IDatabaseObjectInfo[] selectedDestObjects = sessionInfoProvider.getDestSelectedDatabaseObjects();
 		final ISession destSession = sessionInfoProvider.getDestSession();
-		final IDatabaseObjectInfo[] selectedSourceObjects =
-			sessionInfoProvider.getSourceSelectedDatabaseObjects();
+		final IDatabaseObjectInfo[] selectedSourceObjects = sessionInfoProvider.getSourceSelectedDatabaseObjects();
 
 		// Here we use the same dialect for both the source and destination object.
 		final HibernateDialect dialect = dialectFactory.getDialect(sourceSession.getMetaData());

@@ -26,9 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -38,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
@@ -49,13 +48,9 @@ import net.sourceforge.squirrel_sql.plugins.dbdiff.TableDiffExecutor;
  */
 public class TabularDiffPresentation extends AbstractDiffPresentation
 {
-
-	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(TabularDiffPresentation.class);
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(TabularDiffPresentation.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TabularDiffPresentation.class);
 
 	static interface i18n
 	{
@@ -73,31 +68,14 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 	 */
 	public void execute()
 	{
-		final Runnable runnable = new Runnable()
-		{
-			public void run()
-			{
-				try
-				{
-					_execute();
-				}
-				catch (final Exception e)
-				{
-					s_log.error("Unexpected exception encountered while executing diff: " + e.getMessage(), e);
-				}
-			}
-		};
-		execThread = new Thread(runnable);
-		execThread.setName("DBDiff Executor Thread");
-		execThread.start();
+		_execute();
 	}
 
 	/**
 	 * Performs the table diff operation.
 	 */
-	private void _execute() throws SQLException
+	private void _execute()
 	{
-		final boolean encounteredException = false;
 		final IDatabaseObjectInfo[] sourceObjs = sessionInfoProvider.getSourceSelectedDatabaseObjects();
 		final IDatabaseObjectInfo[] destObjs = sessionInfoProvider.getDestSelectedDatabaseObjects();
 
@@ -115,96 +93,80 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 		final Set<String> tableNames = getAllTableNames(tableMap1);
 		tableNames.addAll(getAllTableNames(tableMap2));
 
-		try
-		{
-			final TableDiffExecutor diff = new TableDiffExecutor(sourceMetaData, destMetaData);
+		final TableDiffExecutor diff = new TableDiffExecutor(sourceMetaData, destMetaData);
 
-			// Special case: when comparing two tables, ignore the names, letting the user specify any two
-			// tables.
-			if (sourceObjs.length == 1 && destObjs.length == 1)
+		// Special case: when comparing two tables, ignore the names, letting the user specify any two
+		// tables.
+		if( sourceObjs.length == 1 && destObjs.length == 1 )
+		{
+			diff.setTableInfos((ITableInfo) sourceObjs[0], (ITableInfo) destObjs[0]);
+			diff.execute();
+			colDifferences.addAll(diff.getColumnDifferences());
+		}
+		else
+		{
+			for( final String table : tableNames )
 			{
-				diff.setTableInfos((ITableInfo) sourceObjs[0], (ITableInfo) destObjs[0]);
-				diff.execute();
-				colDifferences.addAll(diff.getColumnDifferences());
-			}
-			else
-			{
-				for (final String table : tableNames)
+				if( tableMap1.containsKey(table) )
 				{
-					if (tableMap1.containsKey(table))
+					if( tableMap2.containsKey(table) )
 					{
-						if (tableMap2.containsKey(table))
+						final ITableInfo t1 = tableMap1.get(table);
+						final ITableInfo t2 = tableMap2.get(table);
+						diff.setTableInfos(t1, t2);
+						diff.execute();
+						final List<ColumnDifference> columnDiffs = diff.getColumnDifferences();
+						if( columnDiffs != null && columnDiffs.size() > 0 )
 						{
-							final ITableInfo t1 = tableMap1.get(table);
-							final ITableInfo t2 = tableMap2.get(table);
-							diff.setTableInfos(t1, t2);
-							diff.execute();
-							final List<ColumnDifference> columnDiffs = diff.getColumnDifferences();
-							if (columnDiffs != null && columnDiffs.size() > 0)
+							colDifferences.addAll(columnDiffs);
+							for( final ColumnDifference colDiff : columnDiffs )
 							{
-								colDifferences.addAll(columnDiffs);
-								for (final ColumnDifference colDiff : columnDiffs)
+								if( s_log.isDebugEnabled() )
 								{
-									if (s_log.isDebugEnabled()) {
-										s_log.debug(colDiff.toString());
-									}
+									s_log.debug(colDiff.toString());
 								}
 							}
-						}
-						else
-						{
-							// table exists in source db but not dest
-							if (s_log.isInfoEnabled()) {
-								s_log.info("Skipping Table ("+table+") that exists in database ("+sourceSession+
-									"), but not in the database ("+destSession+")");
-							}									
 						}
 					}
 					else
 					{
-						// table doesn't exist in source db
-						if (s_log.isInfoEnabled()) {
-							s_log.info("Skipping Table ("+table+") that exists in database ("+destSession+
-								"), but not in the database ("+sourceSession+")");
-						}						
+						// table exists in source db but not dest
+						if( s_log.isInfoEnabled() )
+						{
+							s_log.info("Skipping Table (" + table + ") that exists in database (" + sourceSession +
+										  "), but not in the database (" + destSession + ")");
+						}
+					}
+				}
+				else
+				{
+					// table doesn't exist in source db
+					if( s_log.isInfoEnabled() )
+					{
+						s_log.info("Skipping Table (" + table + ") that exists in database (" + destSession +
+									  "), but not in the database (" + sourceSession + ")");
 					}
 				}
 			}
-			final MainFrame frame = sourceSession.getApplication().getMainFrame();
-			if (colDifferences != null && colDifferences.size() > 0)
-			{
-				GUIUtils.processOnSwingEventThread(new Runnable()
-				{
-					public void run()
-					{
-						final ColumnDiffDialog dialog = new ColumnDiffDialog(frame, false);
-						dialog.setColumnDifferences(colDifferences);
-						dialog.setSession1Label(sourceSession.getAlias().getName());
-						dialog.setSession2Label(destSession.getAlias().getName());
-						dialog.setVisible(true);
-					}
-				});
-			}
-			else
-			{
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						JOptionPane.showMessageDialog(frame, i18n.NO_DIFFS_MESSAGE, "DBDiff",
-							JOptionPane.INFORMATION_MESSAGE);
-					}
-				});
-			}
 		}
-		catch (final SQLException e)
+		final MainFrame frame = sourceSession.getApplication().getMainFrame();
+		if( colDifferences != null && colDifferences.size() > 0 )
 		{
-			s_log.error("Encountered unexpected exception while executing " + "diff: " + e.getMessage(), e);
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					final ColumnDiffDialog dialog = new ColumnDiffDialog(frame, false);
+					dialog.setColumnDifferences(colDifferences);
+					dialog.setSession1Label(sourceSession.getAlias().getName());
+					dialog.setSession2Label(destSession.getAlias().getName());
+					dialog.setVisible(true);
+				}
+			});
 		}
-
-		if (encounteredException)
+		else
 		{
-			return;
+			JOptionPane.showMessageDialog(frame, i18n.NO_DIFFS_MESSAGE, "DBDiff", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
@@ -216,25 +178,31 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 	}
 
 	private Map<String, ITableInfo> getTableMap(ISQLDatabaseMetaData md, IDatabaseObjectInfo[] objs)
-		throws SQLException
 	{
-		final HashMap<String, ITableInfo> result = new HashMap<String, ITableInfo>();
-		if (objs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE)
+		try
 		{
-			for (final IDatabaseObjectInfo info : objs)
+			final HashMap<String, ITableInfo> result = new HashMap<>();
+			if (objs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE)
 			{
-				// TODO: allow the user to specify ignore case or preserve case.
-				result.put(info.getSimpleName().toUpperCase(), (ITableInfo) info);
+				for (final IDatabaseObjectInfo info : objs)
+				{
+					// TODO: allow the user to specify ignore case or preserve case.
+					result.put(info.getSimpleName().toUpperCase(), (ITableInfo) info);
+				}
 			}
+			else
+			{
+				// Assume objs[0] is a schema/catalog
+				final String catalog = objs[0].getCatalogName();
+				final String schema = objs[0].getSchemaName();
+				md.getTables(catalog, schema, null, new String[] { "TABLE" }, null);
+			}
+			return result;
 		}
-		else
+		catch(SQLException e)
 		{
-			// Assume objs[0] is a schema/catalog
-			final String catalog = objs[0].getCatalogName();
-			final String schema = objs[0].getSchemaName();
-			md.getTables(catalog, schema, null, new String[] { "TABLE" }, null);
+			throw Utilities.wrapRuntime(e);
 		}
-		return result;
 	}
 
 	/**

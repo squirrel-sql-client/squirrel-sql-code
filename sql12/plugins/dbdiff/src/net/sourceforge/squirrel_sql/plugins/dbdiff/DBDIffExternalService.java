@@ -1,14 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.gui.ExternalToolSideBySideDiffPresentation;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.gui.JMeldDiffPresentation;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.gui.ExternalToolSideBySideDiffPresentation;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.gui.JMeldDiffPresentation;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
 
 public class DBDIffExternalService
 {
@@ -25,10 +26,10 @@ public class DBDIffExternalService
       try
       {
          Path leftFile = Files.createTempFile("DBDIffExternalService-left-File", ".markdown.txt");
-         Files.write(leftFile, leftMarkdown.getBytes(StandardCharsets.UTF_8));
+         Files.write(leftFile, leftMarkdown.getBytes(StandardCharsets.UTF_8), StandardOpenOption.DELETE_ON_CLOSE);
 
          Path rightFile = Files.createTempFile("DBDIffExternalService-right-File", ".markdown.txt");
-         Files.write(rightFile, rightMarkdown.getBytes(StandardCharsets.UTF_8));
+         Files.write(rightFile, rightMarkdown.getBytes(StandardCharsets.UTF_8), StandardOpenOption.DELETE_ON_CLOSE);
 
          if (_preferences.isUseExternalGraphicalDiffTool())
          {
@@ -36,14 +37,7 @@ public class DBDIffExternalService
          }
          else
          {
-   //         if (_preferences.isUseTabularDiffPresenation())
-   //         {
-   //            result = new TabularDiffPresentation();
-   //         }
-   //         else
-            {
-               new JMeldDiffPresentation().executeDiff(leftFile.toFile().getAbsolutePath(), rightFile.toFile().getAbsolutePath());
-            }
+            new JMeldDiffPresentation().executeDiff(leftFile.toFile().getAbsolutePath(), rightFile.toFile().getAbsolutePath());
          }
       }
       catch (IOException e)

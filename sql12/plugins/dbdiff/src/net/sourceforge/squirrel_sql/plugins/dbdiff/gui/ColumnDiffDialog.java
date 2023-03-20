@@ -19,14 +19,13 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -41,13 +40,14 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
 
 /**
  * A dialog that displays column differences between two tables.
@@ -69,13 +69,15 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 		String MISSING_LABEL = s_stringMgr.getString("ColumnDiffDialog.missingLabel");
 	}
 
-	private javax.swing.JPanel jPanel1;
+	private javax.swing.JPanel columnDiffPanel;
 
 	private javax.swing.JPanel jPanel2;
 
 	private javax.swing.JScrollPane jScrollPane1;
 
-	private javax.swing.JTabbedPane jTabbedPane1;
+	// As the constraints tab was never implemented
+	//private javax.swing.JTabbedPane jTabbedPane1;
+	private JPanel jTabbedPane1;
 
 	private javax.swing.JTable diffTable;
 
@@ -211,9 +213,9 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 
 	private void initComponents()
 	{
-		jTabbedPane1 = new javax.swing.JTabbedPane();
-		jPanel1 = new javax.swing.JPanel();
-		jPanel1.setBackground(Color.lightGray);
+		jTabbedPane1 = new JPanel(new GridLayout(1,1));
+		columnDiffPanel = new javax.swing.JPanel();
+		columnDiffPanel.setBackground(Color.lightGray);
 		jScrollPane1 = new javax.swing.JScrollPane();
 		diffTable = new javax.swing.JTable();
 		jPanel2 = new javax.swing.JPanel();
@@ -242,21 +244,22 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 		diffTable.setDefaultRenderer(Object.class, new DiffCellRenderer());
 		jScrollPane1.setViewportView(diffTable);
 
-		final GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
-		jPanel1.setLayout(jPanel1Layout);
-		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(
+		final GroupLayout columnDiffLayout = new GroupLayout(columnDiffPanel);
+		columnDiffPanel.setLayout(columnDiffLayout);
+		columnDiffLayout.setHorizontalGroup(columnDiffLayout.createParallelGroup(Alignment.LEADING).addComponent(
 			jScrollPane1, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE));
-		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(
+		columnDiffLayout.setVerticalGroup(columnDiffLayout.createParallelGroup(Alignment.LEADING).addComponent(
 			jScrollPane1, GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE));
-		jTabbedPane1.addTab("Columns", jPanel1);
+		//jTabbedPane1.addTab("Columns", jPanel1);
+		jTabbedPane1.add(columnDiffPanel);
 
-		final GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
-		jPanel2.setLayout(jPanel2Layout);
-		jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING).addGap(0, 395,
-			Short.MAX_VALUE));
-		jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING).addGap(0, 264,
-			Short.MAX_VALUE));
-		jTabbedPane1.addTab("Constraints", jPanel2);
+		//final GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+		//jPanel2.setLayout(jPanel2Layout);
+		//jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING).addGap(0, 395,
+		//	Short.MAX_VALUE));
+		//jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING).addGap(0, 264,
+		//	Short.MAX_VALUE));
+		//jTabbedPane1.addTab("Constraints", jPanel2);
 
 		final Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());

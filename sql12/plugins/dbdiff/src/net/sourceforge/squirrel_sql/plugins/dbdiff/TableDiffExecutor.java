@@ -30,6 +30,7 @@ import java.util.Set;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class TableDiffExecutor
 {
@@ -60,47 +61,54 @@ public class TableDiffExecutor
 		}
 	}
 
-	public void execute() throws SQLException
+	public void execute()
 	{
-		colDifferences = new ArrayList<ColumnDifference>();
-		final TableColumnInfo[] t1cols = _md1.getColumnInfo(_t1);
-		final TableColumnInfo[] t2cols = _md2.getColumnInfo(_t2);
-		final Set<String> columnNames = getAllColumnNames(t1cols, t2cols);
-		final Set<String> t1ColumnNames = getAllColumnNames(t1cols);
-		final Map<String, TableColumnInfo> t1ColMap = getColumnMap(t1cols);
-		final Set<String> t2ColumnNames = getAllColumnNames(t2cols);
-		final Map<String, TableColumnInfo> t2ColMap = getColumnMap(t2cols);
-
-		for (final String columnName : columnNames)
+		try
 		{
-			final ColumnDifference diff = new ColumnDifference();
-			if (t1ColumnNames.contains(columnName))
-			{
-				final TableColumnInfo c1 = t1ColMap.get(columnName);
+			colDifferences = new ArrayList<>();
+			final TableColumnInfo[] t1cols = _md1.getColumnInfo(_t1);
+			final TableColumnInfo[] t2cols = _md2.getColumnInfo(_t2);
+			final Set<String> columnNames = getAllColumnNames(t1cols, t2cols);
+			final Set<String> t1ColumnNames = getAllColumnNames(t1cols);
+			final Map<String, TableColumnInfo> t1ColMap = getColumnMap(t1cols);
+			final Set<String> t2ColumnNames = getAllColumnNames(t2cols);
+			final Map<String, TableColumnInfo> t2ColMap = getColumnMap(t2cols);
 
-				if (t2ColumnNames.contains(columnName))
-				{ // Column is in both table 1 and 2
-					final TableColumnInfo c2 = t2ColMap.get(columnName);
-					diff.setColumns(c1, c2);
+			for (final String columnName : columnNames)
+			{
+				final ColumnDifference diff = new ColumnDifference();
+				if (t1ColumnNames.contains(columnName))
+				{
+					final TableColumnInfo c1 = t1ColMap.get(columnName);
+
+					if (t2ColumnNames.contains(columnName))
+					{ // Column is in both table 1 and 2
+						final TableColumnInfo c2 = t2ColMap.get(columnName);
+						diff.setColumns(c1, c2);
+					}
+					else
+					{
+						// Column is in table 1, but not table 2
+						diff.setCol2Exists(false);
+						diff.setColumn1(c1);
+					}
 				}
 				else
 				{
-					// Column is in table 1, but not table 2
-					diff.setCol2Exists(false);
-					diff.setColumn1(c1);
+					// Column is in table 2, but not table 1 - how else would we get
+					// here??
+					diff.setCol1Exists(false);
+					diff.setColumn2(t2ColMap.get(columnName));
+				}
+				if (diff.execute())
+				{
+					colDifferences.add(diff);
 				}
 			}
-			else
-			{
-				// Column is in table 2, but not table 1 - how else would we get
-				// here??
-				diff.setCol1Exists(false);
-				diff.setColumn2(t2ColMap.get(columnName));
-			}
-			if (diff.execute())
-			{
-				colDifferences.add(diff);
-			}
+		}
+		catch(SQLException e)
+		{
+			throw Utilities.wrapRuntime(e);
 		}
 	}
 
