@@ -25,7 +25,7 @@ public class BaseTableTypeHandler
    {
       try
       {
-         return !md.getDatabaseProductVersion().startsWith("0.") && !md.getDatabaseProductVersion().startsWith("1.");
+         return DialectFactory.isH2(md) && !md.getDatabaseProductVersion().startsWith("0.") && !md.getDatabaseProductVersion().startsWith("1.");
       }
       catch (SQLException e)
       {
