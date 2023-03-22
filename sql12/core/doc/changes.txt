@@ -89,6 +89,10 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/11 (once more)
+  H2 Plugin: For H2 version 2.* the Plugin's way to access
+  the databases internal information schema for index details was fixed.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/11
   H2 DB versions greater than 2.* didn't show indexes in the Object tree's index details tab.
   The reason was that H2 changed the table type of ordinary tables from "TABLE" from to "BASE TABLE".

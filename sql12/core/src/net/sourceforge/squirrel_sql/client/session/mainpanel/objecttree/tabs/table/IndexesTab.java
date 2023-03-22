@@ -79,7 +79,7 @@ public class IndexesTab extends BaseTableTab
 			// Bug fixes:
 			// - #1460 Scripts Plugin: Create table scripts contained redundant index for primary key.
 			// - Object tree: NullPointerException occurred when a table's index tab was selected and the table's type other than "TABLE".
-			if (BaseTableTypeHandler.isDatabaseUsingTypeBaseTableInsteadOpTable(dmd))
+			if (false == BaseTableTypeHandler.isDatabaseUsingTypeBaseTableInsteadOpTable(dmd))
 			{
 				// See also SchemaInfoCache.initTypes(...)
 				return null;
