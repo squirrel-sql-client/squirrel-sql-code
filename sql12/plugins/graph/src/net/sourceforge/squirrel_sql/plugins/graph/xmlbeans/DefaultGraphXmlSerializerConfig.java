@@ -1,15 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphUtil;
 import net.sourceforge.squirrel_sql.plugins.graph.link.LinkXmlBean;
-
-import java.io.File;
-import java.io.IOException;
 
 public class DefaultGraphXmlSerializerConfig
 {
@@ -18,6 +21,8 @@ public class DefaultGraphXmlSerializerConfig
    
    public static final String XML_BEAN_POSTFIX = ".graph.xml";
    public static final String LINK_PREFIX = "lnk_";
+
+   public static final String  DETACHED_GRAPH_PREFIX = "___DETACHED___";
 
    GraphPlugin _plugin;
    private ISession _session;
@@ -211,6 +216,23 @@ public class DefaultGraphXmlSerializerConfig
       else
       {
          return false;
+      }
+   }
+
+   public void detachGraphFile()
+   {
+      try
+      {
+         Path path = Path.of(_graphFilePath);
+         if( path.toFile().exists())
+         {
+            //Files.move(path, Path.of(path.getParent() + File.separator + DETACHED_GRAPH_PREFIX + path.getFileName()));
+            Files.move(path, path.resolveSibling(DETACHED_GRAPH_PREFIX + path.getFileName()));
+         }
+      }
+      catch(IOException e)
+      {
+         throw Utilities.wrapRuntime(e);
       }
    }
 

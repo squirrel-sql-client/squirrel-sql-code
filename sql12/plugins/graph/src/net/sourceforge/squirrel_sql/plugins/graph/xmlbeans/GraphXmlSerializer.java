@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
@@ -12,12 +18,6 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 import net.sourceforge.squirrel_sql.plugins.graph.link.LinkXmlBean;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
 
 
 public class GraphXmlSerializer
@@ -255,7 +255,11 @@ public class GraphXmlSerializer
    public void remove()
    {
       _cfg.removeGraphFile();
+   }
 
+   public void detach()
+   {
+      _cfg.detachGraphFile();
    }
 
    public String getGraphFile()

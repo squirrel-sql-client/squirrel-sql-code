@@ -1,28 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsCtrl;
-import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsScope;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeDndTransfer;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
-import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionListener;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.dnd.DropTarget;
@@ -36,6 +13,29 @@ import java.util.List;
 import java.util.TooManyListenersException;
 import java.util.Vector;
 import java.util.stream.Collectors;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsCtrl;
+import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsScope;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeDndTransfer;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
+import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionListener;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
 public class GraphDesktopController
@@ -52,6 +52,7 @@ public class GraphDesktopController
    private JMenuItem _mnuSaveGraph;
    private JMenuItem _mnuRenameGraph;
    private JMenuItem _mnuRemoveGraph;
+   private JMenuItem _mnuDetachGraph;
    //
    ////////////////////////////////////
 
@@ -299,6 +300,7 @@ public class GraphDesktopController
          _popUp.add(_mnuSaveGraph);
          _popUp.add(_mnuRenameGraph);
          _popUp.add(_mnuRemoveGraph);
+         _popUp.add(_mnuDetachGraph);
       }
       _popUp.add(new JSeparator());
       _popUp.add(_mnuCopyGraph);
@@ -390,6 +392,10 @@ public class GraphDesktopController
       // i18n[graph.removeGraph=Remove graph]
       _mnuRemoveGraph= new JMenuItem(s_stringMgr.getString("graph.removeGraph"));
       _mnuRemoveGraph.addActionListener(e -> onRemoveGraph());
+
+      _mnuDetachGraph= new JMenuItem(s_stringMgr.getString("graph.detach"));
+      _mnuDetachGraph.setToolTipText(s_stringMgr.getString("graph.detach.tooltip"));
+      _mnuDetachGraph.addActionListener(e -> onDetachGraph());
    }
 
    private void onPopupMenuWillBecomeInvisible()
@@ -496,6 +502,14 @@ public class GraphDesktopController
       _channel.refreshAllTablesRequested();
    }
 
+   private void onDetachGraph()
+   {
+      if(showRemoveOptionPane("graph.detachGraph") == JOptionPane.YES_OPTION)
+      {
+         _channel.detachRequest();
+         _modeManager.graphClosed();
+      }
+   }
    private void onRemoveGraph()
    {
       if(showRemoveOptionPane("graph.delGraph") == JOptionPane.YES_OPTION)

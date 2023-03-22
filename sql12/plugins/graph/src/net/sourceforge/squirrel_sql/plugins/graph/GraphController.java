@@ -1,5 +1,22 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -15,23 +32,6 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 
 public class GraphController
@@ -74,6 +74,12 @@ public class GraphController
          public void removeRequest()
          {
             removeGraph();
+         }
+
+         @Override
+         public void detachRequest()
+         {
+            detachGraph();
          }
 
          @Override
@@ -327,6 +333,13 @@ public class GraphController
    private void refreshAllTables()
    {
       _tableFramesModel.refreshAllTables();
+   }
+
+   private void detachGraph()
+   {
+      _xmlSerializer.detach();
+      _tabToWindowHandler.removeGraph();
+      _plugin.removeGraphController(this, _session);
    }
 
    private void removeGraph()

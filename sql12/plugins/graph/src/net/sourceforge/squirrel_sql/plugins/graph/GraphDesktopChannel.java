@@ -1,15 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-
 import java.awt.Point;
 import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 public interface GraphDesktopChannel
 {
    void saveGraphRequested();
    void renameRequest(String newName);
    void removeRequest();
+   void detachRequest();
    void refreshAllTablesRequested();
    void scriptAllTablesRequested();
 
