@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Introduced Java 20 compatibility.
+
 Graph Plugin:
   A Graph's context menu now offers an option to detach a Graph from a Session.
   The Graph will remain available for linking, see the "Link Graph" toolbar button.
