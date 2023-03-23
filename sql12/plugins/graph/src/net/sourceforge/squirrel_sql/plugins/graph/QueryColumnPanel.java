@@ -1,19 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
-import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterController;
-import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
@@ -22,11 +8,33 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Utilities;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterController;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterListener;
 
 class QueryColumnPanel extends JPanel
 {
    private static final StringManager s_stringMgr =  StringManagerFactory.getStringManager(QueryColumnPanel.class);
+
+   private static final ILogger s_log = LoggerController.createLogger(QueryColumnPanel.class);
 
 
    private JCheckBox chkSelect;
@@ -85,15 +93,45 @@ class QueryColumnPanel extends JPanel
 
       add(_pnlButtons, BorderLayout.WEST);
 
-
-
-
       txtColumn = new QueryColumnTextField(_columnInfo.toString(), dndCallback, _session);
       txtColumn.setEditable(false);
+
+      txtColumn.addMouseListener(new MouseAdapter()
+      {
+         @Override
+         public void mouseClicked(MouseEvent e)
+         {
+            makeWordSelectionByDoubleClickWork(e);
+         }
+      });
+
       GraphColoring.setTableFrameBackground(txtColumn);
       txtColumn.setBorder(BorderFactory.createEmptyBorder());
 
       add(txtColumn, BorderLayout.CENTER);
+   }
+
+   private void makeWordSelectionByDoubleClickWork(MouseEvent e)
+   {
+      try
+      {
+         if( 2 != e.getClickCount() )
+         {
+            return;
+         }
+
+         final int pos = txtColumn.viewToModel(e.getPoint());
+
+         int wordStart = Utilities.getWordStart(txtColumn, pos);
+         int wordEnd = Utilities.getWordEnd(txtColumn, pos);
+
+         txtColumn.setSelectionStart(wordStart);
+         txtColumn.setSelectionEnd(wordEnd);
+      }
+      catch(BadLocationException ex)
+      {
+         s_log.warn("Failed to select word in column text field:", ex);
+      }
    }
 
    private void initFilter(final GraphPlugin graphPlugin, JPanel pnlButtons, int xPos)

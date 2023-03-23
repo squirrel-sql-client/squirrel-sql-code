@@ -89,6 +89,8 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+Graph Plugin --> Query builder mode: Fixed double click selection in column text field.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/11 (once more)
   H2 Plugin: For H2 version 2.* the Plugin's way to access
   the databases internal information schema for index details was fixed.
