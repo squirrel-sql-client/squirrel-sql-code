@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Graph Plugin:
+  Made resizing tables easier.
+
 Introduced Java 20 compatibility.
 
 Graph Plugin:

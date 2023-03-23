@@ -1,17 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -25,6 +13,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JScrollPane;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
 
 
 public class TableFrame extends JInternalFrame
@@ -55,6 +55,13 @@ public class TableFrame extends JInternalFrame
 
       setTitle(tableName);
       GraphColoring.setTableFrameBackground(this);
+
+      // Makes resizing TableFrames easier.
+      setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 1, true),
+            BorderFactory.createLineBorder(this.getBackground(),3)
+      ));
+
 
       setResizable(true);
 
@@ -101,8 +108,6 @@ public class TableFrame extends JInternalFrame
             onModeChanged(newMode);
          }
       };
-      
-      setBorder(new LineBorder(Color.BLACK));
    }
 
    private void setTitleBarIconsVisible(boolean visible)
