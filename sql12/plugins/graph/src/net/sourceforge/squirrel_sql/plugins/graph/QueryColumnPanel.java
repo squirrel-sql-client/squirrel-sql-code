@@ -120,7 +120,7 @@ class QueryColumnPanel extends JPanel
             return;
          }
 
-         final int pos = txtColumn.viewToModel(e.getPoint());
+         final int pos = txtColumn.viewToModel2D(e.getPoint());
 
          int wordStart = Utilities.getWordStart(txtColumn, pos);
          int wordEnd = Utilities.getWordEnd(txtColumn, pos);

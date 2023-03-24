@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Data compare / JDiff Plugin:
+  The compare dialog now offers options to change the way differences are displayed.
+
 Graph Plugin:
   Made resizing tables easier.
 

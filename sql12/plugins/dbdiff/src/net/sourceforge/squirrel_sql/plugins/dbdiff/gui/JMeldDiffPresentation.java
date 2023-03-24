@@ -19,6 +19,17 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -26,17 +37,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.jmeld.settings.EditorSettings;
 import org.jmeld.settings.JMeldSettings;
+import org.jmeld.ui.AbstractContentPanel;
+import org.jmeld.ui.BufferDiffPanel;
 import org.jmeld.ui.JMeldPanel;
-
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 
 /**
  * A DiffPresentation that uses components from the JMeld project to render a comparison of the content of two
@@ -45,9 +48,12 @@ import java.awt.Insets;
 public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 {
 	public static final String PREF_IGNORE_WHITE_SPACES = "JMeldDiffPresentation.PREF_IGNORE_WHITE_SPACES";
-
+	public static final String PREF_DRAW_CURVES = "JMeldDiffPresentation.PREF_DRAW_CURVES";
+	public static final String PREF_SELECTED_CURVE_TYPE = "JMeldDiffPresentation.PREF_SELECTED_CURVE_TYPE";
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(JMeldDiffPresentation.class);
 	private JCheckBox _chkIgnoreWhiteSpaces;
+	private JCheckBox _chkDrawCurves;
+	private JComboBox<JMeldCurveType> _cboCurveType;
 	private JMeldPanel _meldPanel;
 
 	/**
@@ -71,9 +77,16 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		diffDialog.getContentPane().setLayout(new GridLayout(1,1));
 		diffDialog.add(pnl);
 
+		JMeldSettings.getInstance().setDrawCurves(true);
+
 		_chkIgnoreWhiteSpaces.setSelected(Props.getBoolean(PREF_IGNORE_WHITE_SPACES, false));
-		onIgnoreWhiteSpaces(_meldPanel);
-		_chkIgnoreWhiteSpaces.addActionListener(e -> onIgnoreWhiteSpaces(_meldPanel));
+		_chkDrawCurves.setSelected(Props.getBoolean(PREF_DRAW_CURVES, false));
+		_cboCurveType.setSelectedItem(getCurveTypeFromPrefs());
+
+		onUpdateMeldPanel(_meldPanel);
+		_chkIgnoreWhiteSpaces.addActionListener(e -> onUpdateMeldPanel(_meldPanel));
+		_chkDrawCurves.addActionListener(e -> onUpdateMeldPanel(_meldPanel));
+		_cboCurveType.addActionListener(e -> onUpdateMeldPanel(_meldPanel));
 
 
 		GUIUtils.enableCloseByEscape(diffDialog);
@@ -86,15 +99,28 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		_meldPanel.openComparison(script1Filename, script2Filename);
 	}
 
+	private static JMeldCurveType getCurveTypeFromPrefs()
+	{
+		String name = Props.getString(PREF_SELECTED_CURVE_TYPE, JMeldCurveType.TYPE_ZERO.name());
+		try
+		{
+			return JMeldCurveType.valueOf(name);
+		}
+		catch(IllegalArgumentException e)
+		{
+			// In Case a constant was renamed.
+			return JMeldCurveType.TYPE_ZERO;
+		}
+	}
+
 	private JPanel createPanel(JDialog diffDialog)
 	{
 		JPanel ret = new JPanel(new GridBagLayout());
 
 		GridBagConstraints gbc;
 
-		gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		_chkIgnoreWhiteSpaces = new JCheckBox(s_stringMgr.getString("JMeldDiffPresentation.ignore.white.spaces"));
-		ret.add(_chkIgnoreWhiteSpaces, gbc);
+		gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0);
+		ret.add(createTopPanel(), gbc);
 
 		_meldPanel = new NonExitingJMeldPanel(() -> close(diffDialog));
 		_meldPanel.SHOW_TABBEDPANE_OPTION.disable();
@@ -105,19 +131,58 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		return ret;
 	}
 
-	private void onIgnoreWhiteSpaces(JMeldPanel meldPanel)
+	private JPanel createTopPanel()
+	{
+		JPanel ret = new JPanel(new GridBagLayout());
+
+		GridBagConstraints gbc;
+
+		gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0);
+		_chkIgnoreWhiteSpaces = new JCheckBox(s_stringMgr.getString("JMeldDiffPresentation.ignore.white.spaces"));
+		ret.add(_chkIgnoreWhiteSpaces, gbc);
+
+		gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 20, 5, 0), 0, 0);
+		_chkDrawCurves = new JCheckBox(s_stringMgr.getString("JMeldDiffPresentation.draw.curves"));
+		ret.add(_chkDrawCurves, gbc);
+
+		gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 10, 5, 0), 0, 0);
+		ret.add(new JLabel(s_stringMgr.getString("JMeldDiffPresentation.curve.type")), gbc);
+
+		gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0);
+		_cboCurveType = new JComboBox<>(JMeldCurveType.values());
+		ret.add(_cboCurveType, gbc);
+
+		return ret;
+	}
+
+	private void onUpdateMeldPanel(JMeldPanel meldPanel)
 	{
 		JMeldSettings.getInstance().getEditor().setIgnoreBlankLines(_chkIgnoreWhiteSpaces.isSelected());
 		JMeldSettings.getInstance().getEditor().setIgnoreWhitespaceAtBegin(_chkIgnoreWhiteSpaces.isSelected());
 		JMeldSettings.getInstance().getEditor().setIgnoreWhitespaceAtEnd(_chkIgnoreWhiteSpaces.isSelected());
 		JMeldSettings.getInstance().getEditor().setIgnoreWhitespaceInBetween(_chkIgnoreWhiteSpaces.isSelected());
 
-		//meldPanel.doRefresh(new ActionEvent("SQuirreL", 0, "onIgnoreWhiteSpaces"));
-		JMeldPanel.getContentPanelList(meldPanel.getTabbedPane()).forEach(p -> p.doRefresh());
+		_cboCurveType.setEnabled(_chkDrawCurves.isSelected());
 
+		JMeldSettings.getInstance().setDrawCurves(_chkDrawCurves.isSelected());
+		if(_chkDrawCurves.isSelected())
+		{
+			JMeldSettings.getInstance().setCurveType(_cboCurveType.getItemAt(_cboCurveType.getSelectedIndex()).getTypeId());
+		}
+
+		for( AbstractContentPanel abstractContentPanel : JMeldPanel.getContentPanelList(meldPanel.getTabbedPane()) )
+		{
+			if(abstractContentPanel instanceof BufferDiffPanel)
+			{
+				((BufferDiffPanel)abstractContentPanel).configurationChanged();
+			}
+			//abstractContentPanel.doRefresh();
+		}
 		meldPanel.revalidate();
 
 		Props.putBoolean(PREF_IGNORE_WHITE_SPACES, _chkIgnoreWhiteSpaces.isSelected());
+		Props.putBoolean(PREF_DRAW_CURVES, _chkDrawCurves.isSelected());
+		Props.putString(PREF_SELECTED_CURVE_TYPE, ((JMeldCurveType)_cboCurveType.getSelectedItem()).name());
 	}
 
 	private void close(JDialog diffDialog)
