@@ -97,6 +97,9 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+Hibernate Plugin:
+  HQL execution raised ClassNotFoundException if mapped plain value fields were not of JDK types.
+
 Graph Plugin --> Query builder mode: Fixed double click selection in column text field.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/11 (once more)

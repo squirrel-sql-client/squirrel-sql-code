@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class PropertySubstitute  implements Serializable
@@ -31,12 +32,45 @@ public class PropertySubstitute  implements Serializable
       _hibernatePropertyInfo = hibernatePropertyInfo;
       _plainValue = plainValue;
 
-      if(null != plainValue && plainValue.getClass().isEnum())
+      if(null != plainValue)
       {
-         _plainValue = getEnumConstantName(plainValue);
+         if( plainValue.getClass().isEnum() )
+         {
+            _plainValue = getEnumConstantName(plainValue);
+         }
+         else if(false == isJDKClass(plainValue.getClass()))
+         {
+            String plainValueToString;
+            try
+            {
+               plainValueToString = "" + plainValue;
+            }
+            catch(Exception e)
+            {
+               plainValueToString = "<Failed to represent as string>, Error message: " + e;
+            }
+
+            _plainValue = "Type: " + plainValue.getClass().getName() + "; toString: " + plainValueToString;
+         }
       }
 
       _initialized = isInitialized;
+   }
+
+   private boolean isJDKClass(Class<?> clazz)
+   {
+      String className = clazz.getName();
+      if( className.startsWith("java.") || className.startsWith("javax.") )
+      {
+         return true;
+      }
+      URL classUrl = clazz.getResource(className.replace('.', '/') + ".class");
+      if( classUrl == null )
+      {
+         return false;
+      }
+      String classPath = classUrl.toString();
+      return classPath.startsWith("jar:file:") && classPath.contains("rt.jar");
    }
 
    private String getEnumConstantName(Object plainValue)
