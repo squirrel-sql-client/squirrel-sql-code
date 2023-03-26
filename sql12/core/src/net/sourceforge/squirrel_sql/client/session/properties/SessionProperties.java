@@ -105,6 +105,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String ALLOW_CTRL_MOUSE_CLICK_JUMP_TO_OBJECT_TREE = "AllowCtrlMouseClickJumpToObjectTree";
       String NULL_VALUE_COLOR_RGB = "nullValueColorRGB";
       String COLOR_NULL_VALUES = "colorNullValues";
+      String SORT_NULLS_AS_HIGHEST_VALUE = "sortNullsAsHighestValue";
    }
 
    private static final FontInfo DEFAULT_FONT_INFO = new FontInfo(new Font("Monospaced", 0, 12));
@@ -293,6 +294,8 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 
    private boolean _colorNullValues = true;
    private int _nullValueColorRGB = DEFAULT_NULL_VALUE_COLOR_RGB;
+
+   private boolean _sortNullsAsHighestValue = true;
 
    public SessionProperties()
    {
@@ -1297,4 +1300,17 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       _colorNullValues = data;
       getPropertyChangeReporter().firePropertyChange( IPropertyNames.COLOR_NULL_VALUES, oldValue, _colorNullValues);
    }
+
+   public boolean isSortNullsAsHighestValue()
+   {
+      return _sortNullsAsHighestValue;
+   }
+
+   public void setSortNullsAsHighestValue(boolean data)
+   {
+      final boolean oldValue = _sortNullsAsHighestValue;
+      _sortNullsAsHighestValue = data;
+      getPropertyChangeReporter().firePropertyChange( IPropertyNames.SORT_NULLS_AS_HIGHEST_VALUE, oldValue, _sortNullsAsHighestValue);
+   }
+
 }

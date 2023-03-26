@@ -35,6 +35,7 @@ final class GeneralSessionPropertiesUIPanel extends JPanel
    private OutputTypeCombo _tableContentsCmb = new OutputTypeCombo(true);
    private SplitPaneOrientationCombo _splitPaneOrientationCmb = new SplitPaneOrientationCombo();
    private ColorNullValuesController _colorNullValuesController = new ColorNullValuesController();
+   private NullValuesSortingPanel _nullValuesSortingPanel = new NullValuesSortingPanel();
 
 
    GeneralSessionPropertiesUIPanel()
@@ -132,6 +133,8 @@ final class GeneralSessionPropertiesUIPanel extends JPanel
       _tableContentsCmb.selectClassName(props.getTableContentsOutputClassName());
 
       _colorNullValuesController.init(props.isColorNullValues(), props.getNullValueColorRGB());
+
+      _nullValuesSortingPanel.setNullHighest(props.isSortNullsAsHighestValue());
    }
 
    void applyChanges(SessionProperties props)
@@ -160,6 +163,8 @@ final class GeneralSessionPropertiesUIPanel extends JPanel
 
       props.setColorNullValues(_colorNullValuesController.isColorNullValues());
       props.setNullValueColorRGB(_colorNullValuesController.getNullValueColorRGB());
+
+      props.setSortNullsAsHighestValue(_nullValuesSortingPanel.isNullHighest());
    }
 
    private void createGUI()
@@ -316,9 +321,16 @@ final class GeneralSessionPropertiesUIPanel extends JPanel
       gbc.gridwidth = 2;
       pnl.add(_colorNullValuesController.getPanel(), gbc);
 
+      ++gbc.gridy;
+      gbc.gridx = 0;
+      gbc.weightx = 0;
+      gbc.gridwidth = 2;
+      gbc.insets.top = 10;
+      pnl.add(_nullValuesSortingPanel, gbc);
+
+
       return pnl;
    }
-
 
    private static final class TabPlacementCombo extends JComboBox
    {

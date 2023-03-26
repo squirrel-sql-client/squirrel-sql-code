@@ -78,7 +78,7 @@ public class RowWrapper implements Comparable<RowWrapper>
    {
       for (int i = 0; i < _dataSetViewerTableModel.getColumnCount(); i++)
       {
-         int compareResult = _collator.compareTableCellValues(getCellValueAtColumn(i), other.getCellValueAtColumn(i), 1, false);
+         int compareResult = _collator.compareTableCellValues(getCellValueAtColumn(i), other.getCellValueAtColumn(i), 1, false, false);
          if(0 != compareResult)
          {
             return compareResult;

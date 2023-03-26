@@ -16,7 +16,7 @@ public class SquirrelTableCellValueCollator
     *
     * @param iAscending Pass 1 for ascending and -1 for descending
     */
-   public int compareTableCellValues(Object data1, Object data2, int iAscending, boolean allDataIsString)
+   public int compareTableCellValues(Object data1, Object data2, int iAscending, boolean allDataIsString, boolean nullIsHighest)
    {
       try
       {
@@ -26,11 +26,11 @@ public class SquirrelTableCellValueCollator
          }
          if (data1 == null)
          {
-            return 1 * iAscending;
+            return (nullIsHighest ? 1 : -1) * iAscending;
          }
          if (data2 == null)
          {
-            return -1 * iAscending;
+            return (nullIsHighest ? -1 : 1) * iAscending;
          }
 //				Comparable c1 = (Comparable)data1;
 //				return c1.compareTo(data2) * _iAscending;

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+New option to define if NULL values are sorted highest or lowest
+  when tables are sorted by clicking column headers.
+  See menu File --> New Session Properties --> tab General --> section Output
+
 Data compare / JDiff Plugin:
   The compare dialog now offers options to change the way differences are displayed.
 

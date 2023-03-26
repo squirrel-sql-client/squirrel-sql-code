@@ -156,7 +156,10 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
                         "getNullValueColorRGB", "setNullValueColorRGB"),
 
                   new PropertyDescriptor(IPropNames.COLOR_NULL_VALUES, SessionProperties.class,
-                        "isColorNullValues", "setColorNullValues")
+                        "isColorNullValues", "setColorNullValues"),
+
+                  new PropertyDescriptor(IPropNames.SORT_NULLS_AS_HIGHEST_VALUE, SessionProperties.class,
+                        "isSortNullsAsHighestValue", "setSortNullsAsHighestValue")
             };
 
 			return result;

@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 
@@ -237,9 +238,10 @@ public class SortableTableModel extends AbstractTableModel
 	{
 		_sortedColumn = column;
 		_columnOrder = newOrder;
-      if (ColumnOrder.NATURAL != newOrder)
+
+		if (ColumnOrder.NATURAL != newOrder)
       {
-         TableModelComparator comparator = new TableModelComparator(column, newOrder);
+         TableModelComparator comparator = new TableModelComparator(column, newOrder, isSortNullsAsHighestValue());
          // Should the data be first cloned so that the sorting doesn't take place
          // on the array that is used in getValue()
          Arrays.sort(_indexes, comparator);
@@ -255,7 +257,21 @@ public class SortableTableModel extends AbstractTableModel
       fireSortingListeners(column, _columnOrder);
 	}
 
-   private void fireSortingListeners(int column, ColumnOrder columnOrder)
+	private boolean isSortNullsAsHighestValue()
+	{
+		boolean nullIsHighest;
+		if(null != Main.getApplication().getSessionManager().getActiveSession())
+		{
+			nullIsHighest = Main.getApplication().getSessionManager().getActiveSession().getProperties().isSortNullsAsHighestValue();
+		}
+		else
+		{
+			nullIsHighest = Main.getApplication().getSquirrelPreferences().getSessionProperties().isSortNullsAsHighestValue();
+		}
+		return nullIsHighest;
+	}
+
+	private void fireSortingListeners(int column, ColumnOrder columnOrder)
    {
       SortingListener[] listeners = _sortingListeners.toArray(new SortingListener[_sortingListeners.size()]);
 
@@ -349,14 +365,16 @@ public class SortableTableModel extends AbstractTableModel
    class TableModelComparator implements Comparator<Integer>
 	{
       private int _iColumn;
-      private int _iAscending;
+		private boolean _nullIsHighest;
+		private int _iAscending;
       private final SquirrelTableCellValueCollator _collator = new SquirrelTableCellValueCollator();
       private boolean _allDataIsString = true;
 
-      public TableModelComparator(int iColumn, ColumnOrder compColumnOrder)
+      public TableModelComparator(int iColumn, ColumnOrder compColumnOrder, boolean nullIsHighest)
 		{
 			_iColumn = iColumn;
-         if (ColumnOrder.ASC == compColumnOrder)
+			_nullIsHighest = nullIsHighest;
+			if (ColumnOrder.ASC == compColumnOrder)
 			{
 				_iAscending = 1;
 			}
@@ -383,7 +401,7 @@ public class SortableTableModel extends AbstractTableModel
 		{
 			final Object data1 = _actualModel.getValueAt(i1.intValue(), _iColumn);
 			final Object data2 = _actualModel.getValueAt(i2.intValue(), _iColumn);
-			return _collator.compareTableCellValues(data1, data2, _iAscending, _allDataIsString);
+			return _collator.compareTableCellValues(data1, data2, _iAscending, _allDataIsString, _nullIsHighest);
 		}
 	}
 
