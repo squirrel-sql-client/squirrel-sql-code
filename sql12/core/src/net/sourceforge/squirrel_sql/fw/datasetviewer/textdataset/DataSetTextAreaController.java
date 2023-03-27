@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 
+import javax.swing.JComponent;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-
-import javax.swing.JComponent;
 
 public class DataSetTextAreaController
 {
@@ -76,6 +76,10 @@ public class DataSetTextAreaController
 	 */
 	public int getRowCount()
 	{
+		if(null == _resultAsText)
+		{
+			return 0;
+		}
 		return _resultAsText.getRowCount();
 	}
 }

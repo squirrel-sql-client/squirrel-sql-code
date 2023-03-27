@@ -101,6 +101,8 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+#1513 NullPointerException when SQL results were displayed as text.
+
 Hibernate Plugin:
   HQL execution raised ClassNotFoundException if mapped plain value fields were not of JDK types.
 
