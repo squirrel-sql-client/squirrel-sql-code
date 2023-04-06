@@ -16,13 +16,14 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
- import net.sourceforge.squirrel_sql.fw.util.StringManager;
- import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
- import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
- import javax.swing.JOptionPane;
- import java.util.ArrayList;
+import java.awt.Window;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * This is an XML prettyprinter.  It takes a string that is in XML format
@@ -37,7 +38,7 @@ public class XmlRefomatter
 {
 
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(XmlRefomatter.class);
+			StringManagerFactory.getStringManager(XmlRefomatter.class);
 
 
 	// i18n[xmlRefomatter.unexpectedProblem=Unexpected problem during formatting.]
@@ -45,16 +46,16 @@ public class XmlRefomatter
 	private static String _message = DEFAULT_MESSAGE;
    private static boolean _showWarningMessages = true;
 
-   public static String reformatXml(String xml)
+   public static String reformatXml(Window owningWindow, String xml)
 	{
 		// do a simple check to see if the string might contain XML or not
 		if (xml.indexOf("<") == -1 || xml.equals(StringUtilities.NULL_AS_STRING)) {
 			// no tags, so cannot be XML
-			JOptionPane.showMessageDialog(null,
-				// i18n[xmlRefomatter.noXml=The data does not contain any XML tags.  No reformatting done.]
-				s_stringMgr.getString("xmlRefomatter.noXml"),
-				// i18n[xmlRefomatter.xmlWarning=XML Warning]
-				s_stringMgr.getString("xmlRefomatter.xmlWarning"), JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(owningWindow,
+													// i18n[xmlRefomatter.noXml=The data does not contain any XML tags.  No reformatting done.]
+													s_stringMgr.getString("xmlRefomatter.noXml"),
+													// i18n[xmlRefomatter.xmlWarning=XML Warning]
+													s_stringMgr.getString("xmlRefomatter.xmlWarning"), JOptionPane.WARNING_MESSAGE);
 			return xml;
 		}
 
@@ -74,14 +75,14 @@ public class XmlRefomatter
 			xml = xml.trim();
 
 			// GWG XML format check code
-			ArrayList<String> tagList = new ArrayList<String>();	
+			ArrayList<String> tagList = new ArrayList<String>();
 
 			while(null != parseRes)
 			{
 
 				if(ParseRes.BEGIN_TAG == parseRes.type)
 				{
-					tagList.add(parseRes.item);	// GWG XML format check code
+					tagList.add(parseRes.item);   // GWG XML format check code
 
 					ret.append(getIndent(depth)).append(parseRes.item);
 					ParseRes nextRes = getParseRes(xml, parseRes.pos);
@@ -89,7 +90,7 @@ public class XmlRefomatter
 					// see if there was a problem during parsing
 					if (nextRes == null) {
 						// the parse did not find XML, or it was mal-formed
-					    showWarning(_message);
+						showWarning(_message);
 						return xml;
 					}
 
@@ -149,9 +150,9 @@ public class XmlRefomatter
 		{
 			// the parse did not find XML, or it was mal-formed
 			JOptionPane.showMessageDialog(null,
-				DEFAULT_MESSAGE,
-				// i18n[xmlReformatter.xmlWarning2=XML Warning]
-				s_stringMgr.getString("xmlReformatter.xmlWarning2"), JOptionPane.WARNING_MESSAGE);
+													DEFAULT_MESSAGE,
+													// i18n[xmlReformatter.xmlWarning2=XML Warning]
+													s_stringMgr.getString("xmlReformatter.xmlWarning2"), JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace();
 		}
       finally
@@ -172,18 +173,18 @@ public class XmlRefomatter
       }
 
       Object[] options =
-			{
-				// i18n[xmlReformatter.yes=YES]
-				s_stringMgr.getString("xmlReformatter.yes"),
-				// i18n[xmlReformatter.no=NO]
-				s_stringMgr.getString("xmlReformatter.no")
-			};
+				{
+						// i18n[xmlReformatter.yes=YES]
+						s_stringMgr.getString("xmlReformatter.yes"),
+						// i18n[xmlReformatter.no=NO]
+						s_stringMgr.getString("xmlReformatter.no")
+				};
 
 
 		int ret = JOptionPane.showOptionDialog(null,
-		    		 // i18n[xmlReformatter.seeOtherErrs={0}\nDo you wish to see other errors?"]
-					s_stringMgr.getString("xmlReformatter.seeOtherErrs", message),
-					 // i18n[xmlReformatter.xmlWarning5=XML Warning]
+															// i18n[xmlReformatter.seeOtherErrs={0}\nDo you wish to see other errors?"]
+															s_stringMgr.getString("xmlReformatter.seeOtherErrs", message),
+															// i18n[xmlReformatter.xmlWarning5=XML Warning]
                 s_stringMgr.getString("xmlReformatter.xmlWarning5"),
                 JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                 null, options, options[0]);
@@ -241,7 +242,7 @@ public class XmlRefomatter
 				// i18n[xmlReformatter.malformedXmlAt=Malformed XML.  No ending tag seen for text starting at:\n{0}]
 				_message = s_stringMgr.getString("xmlReformatter.malformedXmlAt", xml.substring(pos, pos + lengthToPrint));
 				return null;
-			}		
+			}
 
 			ret.type = ParseRes.TEXT;
 			ret.item = xml.substring(pos, ltIndex);

@@ -18,38 +18,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.JsonFormatter;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.XmlRefomatter;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
-import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
-import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -60,6 +34,34 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.JsonFormatter;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.XmlRefomatter;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
+import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * @author gwg
@@ -421,378 +423,421 @@ public class PopupEditableIOPanel extends JPanel
 	private void onActionPerformed(ActionEvent e)
 	{
 
-		//File object for doing IO
-		File file;
-
 		if (e.getActionCommand().equals(ACTION_APPLY))
 		{
-			// If file name default and cmd is null or empty,
-			// make sure this entry is not being held in CellImportExportInfoSaver
-			if ((cboFileNameHandler.getItem() != null) &&
-				 (externalCommandCombo.getEditor().getItem() == null ||
-							((String) externalCommandCombo.getEditor().getItem()).length() == 0))
-			{
-				// user has not entered anything or has reset to defaults,
-				// so make sure there is no entry for this column in the
-				// saved info
-				CellImportExportInfoSaver.remove(_colDef.getFullTableColumnName());
-			}
-			else
-			{
-				// user has entered some non-default info, so save it
-				CellImportExportInfoSaver.getInstance().save(
-						_colDef.getFullTableColumnName(), cboFileNameHandler.getItem(),
-						((String) externalCommandCombo.getEditor().getItem()));
-			}
-
+			onActionApply();
 		}
 		else if (e.getActionCommand().equals(ACTION_IMPORT))
 		{
-
-			// IMPORT OBJECT FROM OSX_FILE
-
-			if (StringUtilities.isEmpty(cboFileNameHandler.getItem(), true))
-			{
-				// not allowed - must have existing file for import
-				JOptionPane.showMessageDialog(this,
-						// i18n[popupeditableIoPanel.selectImportDataFile=You must select an existing file to import data from.]
-						s_stringMgr.getString("popupeditableIoPanel.selectImportDataFile"),
-						// i18n[popupeditableIoPanel.noFile=No File Selected]
-						s_stringMgr.getString("popupeditableIoPanel.noFile"), JOptionPane.ERROR_MESSAGE);
-				return;   // do not do import
-			}
-
-			// get name of file, which must exist
-			file = new File(cboFileNameHandler.getItem());
-			if (!file.exists() || !file.isFile() || !file.canRead())
-			{
-				// not something we can read
-
-				// i18n[popupeditableIoPanel.fileDoesNotExist=File {0} does not exist,\nor is not a readable, normal file.\nPlease enter a valid file name or use Browse to select a file.]
-				String msg = s_stringMgr.getString("popupeditableIoPanel.fileDoesNotExist", cboFileNameHandler.getItem());
-
-				JOptionPane.showMessageDialog(this, msg,
-
-						// i18n[popupeditableIoPanel.fileError=File Name Error]
-						s_stringMgr.getString("popupeditableIoPanel.fileError"), JOptionPane.ERROR_MESSAGE);
-				return;   // do not do import
-			}
-
-			// Now that we have the file, do the import.
-			//
-			// Note: the sequence of operations is divided into two sections
-			// at this point.  The preceeding code ensures that we have
-			// a readable file, and the code in the following method call
-			// does the import.  The reason for splitting at this point is
-			// that the Execute operation needs to do an import, and it will
-			// already have the file to do the import from (which is the same
-			// as the file it exported into).
-			importData(file);
-
-			// save the user options - we know that it is not the default
-			// because we do not allow importing from "temp file"
-			CellImportExportInfoSaver.getInstance().save(
-					_colDef.getFullTableColumnName(), cboFileNameHandler.getItem(),
-					((String) externalCommandCombo.getEditor().getItem()));
-
+			onActionImport();
+		}
+		else if(e.getActionCommand().equals(ACTION_REFORMAT))
+		{
+			reformat(GUIUtils.getOwningWindow(this));
 		}
 		else
 		{
-
-			// GET OSX_FILE FOR EXPORT & EXTERNAL PROCESSING
-
-			String canonicalFilePathName = cboFileNameHandler.getItem();
-
-			// file name verification operations are the same for both
-			// export and execute, so do that work here for both.
-			//
-			// If file name is null or empty, do not proceed
-			if (cboFileNameHandler.getItem() == null ||
-				 cboFileNameHandler.getItem().equals(""))
+			FileResult result = createFileResult();
+			if( result == null )
 			{
-
-				JOptionPane.showMessageDialog(this,
-
-						// i18n[popupeditableIoPanel.noExportFile=No file name given for export.\nPlease enter a file name  or use Browse before clicking Export.]
-						s_stringMgr.getString("popupeditableIoPanel.noExportFile"),
-						// i18n[popupeditableIoPanel.exportError=Export Error]
-						s_stringMgr.getString("popupeditableIoPanel.exportError"), JOptionPane.ERROR_MESSAGE);
 				return;
-			}
-
-			// create the file to open
-			//user must have supplied a file name.
-			file = new File(cboFileNameHandler.getItem());
-
-			try
-			{
-				canonicalFilePathName = file.getCanonicalPath();
-			}
-			catch (Exception ex)
-			{
-				// an error here may mean that the file cannot be
-				// reached or has moved or some such.  In any case,
-				// the file cannot be used for export.
-				JOptionPane.showMessageDialog(this,
-														// i18n[popupeditableIoPanel.cannotAccessFile=Cannot access file name {0}\nAborting export.]
-														s_stringMgr.getString("popupeditableIoPanel.cannotAccessFile", cboFileNameHandler.getItem()),
-
-														// i18n[popupeditableIoPanel.exportError3=Export Error]
-														s_stringMgr.getString("popupeditableIoPanel.exportError3"), JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-			// see if file exists
-			if(file.exists())
-			{
-				if(!file.isFile())
-				{
-					JOptionPane.showMessageDialog(this,
-															// i18n[popupeditableIoPanel.notANormalFile=File is not a normal file.\n Cannot do export to a directory or system file.]
-															s_stringMgr.getString("popupeditableIoPanel.notANormalFile"),
-															// i18n[popupeditableIoPanel.exportError4=Export Error]
-															s_stringMgr.getString("popupeditableIoPanel.exportError4"), JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				if(!file.canWrite())
-				{
-					JOptionPane.showMessageDialog(this,
-															// i18n[popupeditableIoPanel.notWriteable=File is not writeable.\nChange file permissions or select a differnt file for export.]
-															s_stringMgr.getString("popupeditableIoPanel.notWriteable"),
-															// i18n[popupeditableIoPanel.exportError5=Export Error]
-															s_stringMgr.getString("popupeditableIoPanel.exportError5"), JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				// file exists, is normal and is writable, so see if user
-				// wants to overwrite contents of file
-				int option = JOptionPane.showConfirmDialog(this,
-																		 // i18n[popupeditableIoPanel.fileOverwrite=File {0} already exists.\n\nDo you wish to overwrite this file?]
-																		 s_stringMgr.getString("popupeditableIoPanel.fileOverwrite", canonicalFilePathName),
-																		 // i18n[popupeditableIoPanel.overwriteWarning=File Overwrite Warning]
-																		 s_stringMgr.getString("popupeditableIoPanel.overwriteWarning"), JOptionPane.YES_NO_OPTION);
-				if(option != JOptionPane.YES_OPTION)
-				{
-					// user does not want to overwrite the file
-
-					// we could tell user here that export was canceled,
-					// but I don't think its necessary, and that avoids
-					// forcing user to do yet another annoying mouse click.
-					return;
-				}
-				// user is ok with overwriting file
-				// We do not need to do anything special to overwrite
-				// (as opposed to appending) since the OutputString
-				// starts at the beginning of the file by default.
-			}
-			else
-			{
-				// file does not already exist, so try to create it
-				try
-				{
-					if(!file.createNewFile())
-					{
-						JOptionPane.showMessageDialog(this,
-																// i18n[popupeditableIoPanel.createFileError=Failed to create file {0}.\nChange file name or select a differnt file for export.]
-																s_stringMgr.getString("popupeditableIoPanel.createFileError", canonicalFilePathName),
-																// i18n[popupeditableIoPanel.exportError6=Export Error]
-																s_stringMgr.getString("popupeditableIoPanel.exportError6"), JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
-				catch (Exception ex)
-				{
-
-					Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
-					JOptionPane.showMessageDialog(this,
-															// i18n[popupeditableIoPanel.cannotOpenFile=Cannot open file {0}.\nError was:{1}]
-															s_stringMgr.getString("popupeditableIoPanel.cannotOpenFile", args),
-															// i18n[popupeditableIoPanel.exportError7=Export Error]
-															s_stringMgr.getString("popupeditableIoPanel.exportError7"), JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-			}
-
-			// at this point we have an actual file that we can output to,
-			// so create the output stream
-			// (so that data type objects do not have to).
-
-			// We have done everything we can prior to this point
-			// to ensure that the the file is accessible, but it is
-			// still possible that an existing file was removed
-			// at a bad moment.  Also, the compiler insists that we
-			// put this in a try statement
-			FileOutputStream outStream;
-			try
-			{
-				outStream = new FileOutputStream(file);
-			}
-			catch (Exception ex)
-			{
-				JOptionPane.showMessageDialog(this,
-						// i18n[popupeditableIoPanel.cannotFindFile=Cannot find file {0}\nCheck file name and re-try export.]
-						s_stringMgr.getString("popupeditableIoPanel.cannotFindFile", canonicalFilePathName),
-						// i18n[popupeditableIoPanel.exportError8=Export Error]
-						s_stringMgr.getString("popupeditableIoPanel.exportError8"), JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-			String extCmdComboItemStr = null;
-			if (externalCommandCombo != null
-					&& externalCommandCombo.getEditor() != null)
-			{
-				extCmdComboItemStr =
-						(String) externalCommandCombo.getEditor().getItem();
-			}
-
-			// if user did anything other than default, then save
-			// their options
-			if ((extCmdComboItemStr != null && extCmdComboItemStr.length() > 0))
-			{
-
-				// This may be called either when the table is editable or when it is
-				// read-only.  When it is read-only, there is no command to be saved,
-				// but when it is editable, there may be a command.
-				String commandString = extCmdComboItemStr;
-
-				CellImportExportInfoSaver.getInstance().save(
-						_colDef.getFullTableColumnName(), cboFileNameHandler.getItem(),
-						commandString);
 			}
 
 			if (e.getActionCommand().equals(ACTION_EXPORT))
 			{
-				// EXPORT OBJECT TO OSX_FILE
-
-				if(exportData(outStream, canonicalFilePathName) == true)
-				{
-
-					// if we get here, then everything worked correctly, so
-					// tell user that data was put into file.
-					// This is different from the Import strategy
-					// because the user may not know the name of the file
-					// that was used if they selected the automatic temp file
-					// operation, or they may not know what directory the file
-					// was actually put into, so this tells them the full file path.
-					JOptionPane.showMessageDialog(this,
-															// i18n[popupeditableIoPanel.exportedToFile=Data Successfully exported to file {0}]
-															s_stringMgr.getString("popupeditableIoPanel.exportedToFile", canonicalFilePathName),
-															// i18n[popupeditableIoPanel.exportSuccess=Export Success]
-															s_stringMgr.getString("popupeditableIoPanel.exportSuccess"), JOptionPane.INFORMATION_MESSAGE);
-				}
+				onActionExport(result);
 			}
-
-			if(e.getActionCommand().equals(ACTION_REFORMAT))
+			else if(e.getActionCommand().equals(ACTION_EXECUTE))
 			{
-				reformat();
-			}
-
-			if(e.getActionCommand().equals(ACTION_EXECUTE))
-			{
-
-				// EXPORT OBJECT TO OSX_FILE, EXECUTE PROGRAM ON IT, IMPORT IT BACK
-
-				if(((String) externalCommandCombo.getEditor().getItem()) == null ||
-					((String) externalCommandCombo.getEditor().getItem()).length() == 0)
-				{
-					// cannot execute a null command
-					JOptionPane.showMessageDialog(this,
-															// i18n[popupeditableIoPanel.cannotExec=Cannot execute a null command.\nPlease enter a command in the Command field before clicking on Execute.]
-															s_stringMgr.getString("popupeditableIoPanel.cannotExec"),
-															// i18n[popupeditableIoPanel.executeError=Execute Error]
-															s_stringMgr.getString("popupeditableIoPanel.executeError"), JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				// replace any instance of flag in command with file name
-				String command = ((String) externalCommandCombo.getEditor().getItem());
-
-				int index;
-				while ((index = command.indexOf(FILE_REPLACE_FLAG)) >= 0)
-				{
-					command = command.substring(0, index) +
-								 canonicalFilePathName +
-								 command.substring(index + FILE_REPLACE_FLAG.length());
-				}
-
-				// export data to file
-				if(exportData(outStream, canonicalFilePathName) == false)
-				{
-					// bad export - do not proceed with command
-					// The exportData() method has already put up a message
-					// to the user saying the export failed.
-					return;
-				}
-
-				int commandResult;
-				BufferedReader err = null;
-				try
-				{
-					// execute command
-					Process cmdProcess = Runtime.getRuntime().exec(command);
-
-					// wait for command to complete
-					commandResult = cmdProcess.waitFor();
-
-					// check the error stream for a problem
-					//
-					// This is a bit questionable since it is possible
-					// for processes to output something on stderr
-					// but continue processing.  But without this, some
-					// problems are not seen (e.g. "bad argument" type
-					// messages from the process).
-					err = new BufferedReader(
-							new InputStreamReader(cmdProcess.getErrorStream()));
-
-					String errMsg = err.readLine();
-					if(errMsg != null)
-					{
-						throw new IOException(
-								"text on error stream from command starting with:\n" + errMsg);
-					}
-				}
-				catch (Exception ex)
-				{
-
-					Object[] args = new Object[]{command, ex.getMessage()};
-					JOptionPane.showMessageDialog(this,
-															// i18n[popupeditableIoPanel.errWhileExecutin=Error while executing command.\nThe command was:\n {0}\nThe error was:\n{1}]
-															s_stringMgr.getString("popupeditableIoPanel.errWhileExecutin", args),
-															// i18n[popupeditableIoPanel.executeError2=Execute Error]
-															s_stringMgr.getString("popupeditableIoPanel.executeError2"), JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				finally
-				{
-					_iou.closeReader(err);
-				}
-
-				// check for possibly bad return from child
-				if(commandResult != 0)
-				{
-					// command returned non-standard value.
-					// ask user before proceeding.
-					int option = JOptionPane.showConfirmDialog(this,
-																			 // i18n[popupeditableIoPanel.commandReturnNot0=The convention for command returns is that 0 means success, but this command returned {0}.\nDo you wish to import the file contents anyway?]
-																			 s_stringMgr.getString("popupeditableIoPanel.commandReturnNot0", Integer.valueOf(commandResult)),
-
-																			 // i18n[popupeditableIoPanel.importWarning=Import Warning]
-																			 s_stringMgr.getString("popupeditableIoPanel.importWarning"), JOptionPane.YES_NO_OPTION);
-					if(option != JOptionPane.YES_OPTION)
-					{
-						return;
-					}
-				}
-
-				//import the data back from the same file
-				importData(file);
-
-				// If the file was a temp file, delete it now.
-				// We assume that Export-only operations want to leave the
-				// file in place, but Execute operations just want a temp
-				// space to work with and do not want it lying around afterwards.
-				file.delete();
+				onActionExecute(result);
 			}
 		} // end of combined export and execute operations
+	}
+
+	private void onActionExecute(FileResult result)
+	{
+		FileOutputStream outStream = getFileOutputStream(result.file, result.canonicalFilePathName);
+		if( outStream == null )
+		{
+			return;
+		}
+
+		onActionExecute(result.file, result.canonicalFilePathName, outStream);
+	}
+
+	private void onActionExport(FileResult result)
+	{
+		// EXPORT OBJECT TO OSX_FILE
+
+		FileOutputStream outStream = getFileOutputStream(result.file, result.canonicalFilePathName);
+		if( outStream == null )
+		{
+			return;
+		}
+
+		if( exportData(outStream, result.canonicalFilePathName) == true)
+		{
+
+			// if we get here, then everything worked correctly, so
+			// tell user that data was put into file.
+			// This is different from the Import strategy
+			// because the user may not know the name of the file
+			// that was used if they selected the automatic temp file
+			// operation, or they may not know what directory the file
+			// was actually put into, so this tells them the full file path.
+			JOptionPane.showMessageDialog(this,
+													// i18n[popupeditableIoPanel.exportedToFile=Data Successfully exported to file {0}]
+													s_stringMgr.getString("popupeditableIoPanel.exportedToFile", result.canonicalFilePathName),
+													// i18n[popupeditableIoPanel.exportSuccess=Export Success]
+													s_stringMgr.getString("popupeditableIoPanel.exportSuccess"), JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	private FileResult createFileResult()
+	{
+		// GET OSX_FILE FOR EXPORT & EXTERNAL PROCESSING
+
+		String canonicalFilePathName = cboFileNameHandler.getItem();
+
+		// file name verification operations are the same for both
+		// export and execute, so do that work here for both.
+		//
+		// If file name is null or empty, do not proceed
+		if (cboFileNameHandler.getItem() == null ||
+			 cboFileNameHandler.getItem().equals(""))
+		{
+
+			JOptionPane.showMessageDialog(this,
+
+					// i18n[popupeditableIoPanel.noExportFile=No file name given for export.\nPlease enter a file name  or use Browse before clicking Export.]
+					s_stringMgr.getString("popupeditableIoPanel.noExportFile"),
+					// i18n[popupeditableIoPanel.exportError=Export Error]
+					s_stringMgr.getString("popupeditableIoPanel.exportError"), JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+
+		// create the file to open
+		//user must have supplied a file name.
+		File file = new File(cboFileNameHandler.getItem());
+
+		try
+		{
+			canonicalFilePathName = file.getCanonicalPath();
+		}
+		catch (Exception ex)
+		{
+			// an error here may mean that the file cannot be
+			// reached or has moved or some such.  In any case,
+			// the file cannot be used for export.
+			JOptionPane.showMessageDialog(this,
+													// i18n[popupeditableIoPanel.cannotAccessFile=Cannot access file name {0}\nAborting export.]
+													s_stringMgr.getString("popupeditableIoPanel.cannotAccessFile", cboFileNameHandler.getItem()),
+
+													// i18n[popupeditableIoPanel.exportError3=Export Error]
+													s_stringMgr.getString("popupeditableIoPanel.exportError3"), JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+
+		// see if file exists
+		if(file.exists())
+		{
+			if(!file.isFile())
+			{
+				JOptionPane.showMessageDialog(this,
+														// i18n[popupeditableIoPanel.notANormalFile=File is not a normal file.\n Cannot do export to a directory or system file.]
+														s_stringMgr.getString("popupeditableIoPanel.notANormalFile"),
+														// i18n[popupeditableIoPanel.exportError4=Export Error]
+														s_stringMgr.getString("popupeditableIoPanel.exportError4"), JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(!file.canWrite())
+			{
+				JOptionPane.showMessageDialog(this,
+														// i18n[popupeditableIoPanel.notWriteable=File is not writeable.\nChange file permissions or select a differnt file for export.]
+														s_stringMgr.getString("popupeditableIoPanel.notWriteable"),
+														// i18n[popupeditableIoPanel.exportError5=Export Error]
+														s_stringMgr.getString("popupeditableIoPanel.exportError5"), JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			// file exists, is normal and is writable, so see if user
+			// wants to overwrite contents of file
+			int option = JOptionPane.showConfirmDialog(this,
+																	 // i18n[popupeditableIoPanel.fileOverwrite=File {0} already exists.\n\nDo you wish to overwrite this file?]
+																	 s_stringMgr.getString("popupeditableIoPanel.fileOverwrite", canonicalFilePathName),
+																	 // i18n[popupeditableIoPanel.overwriteWarning=File Overwrite Warning]
+																	 s_stringMgr.getString("popupeditableIoPanel.overwriteWarning"), JOptionPane.YES_NO_OPTION);
+			if(option != JOptionPane.YES_OPTION)
+			{
+				// user does not want to overwrite the file
+
+				// we could tell user here that export was canceled,
+				// but I don't think its necessary, and that avoids
+				// forcing user to do yet another annoying mouse click.
+				return null;
+			}
+			// user is ok with overwriting file
+			// We do not need to do anything special to overwrite
+			// (as opposed to appending) since the OutputString
+			// starts at the beginning of the file by default.
+		}
+		else
+		{
+			// file does not already exist, so try to create it
+			try
+			{
+				if(!file.createNewFile())
+				{
+					JOptionPane.showMessageDialog(this,
+															// i18n[popupeditableIoPanel.createFileError=Failed to create file {0}.\nChange file name or select a differnt file for export.]
+															s_stringMgr.getString("popupeditableIoPanel.createFileError", canonicalFilePathName),
+															// i18n[popupeditableIoPanel.exportError6=Export Error]
+															s_stringMgr.getString("popupeditableIoPanel.exportError6"), JOptionPane.ERROR_MESSAGE);
+					return null;
+				}
+			}
+			catch (Exception ex)
+			{
+
+				Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
+				JOptionPane.showMessageDialog(this,
+														// i18n[popupeditableIoPanel.cannotOpenFile=Cannot open file {0}.\nError was:{1}]
+														s_stringMgr.getString("popupeditableIoPanel.cannotOpenFile", args),
+														// i18n[popupeditableIoPanel.exportError7=Export Error]
+														s_stringMgr.getString("popupeditableIoPanel.exportError7"), JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+		}
+
+
+		String extCmdComboItemStr = null;
+		if (externalCommandCombo != null
+				&& externalCommandCombo.getEditor() != null)
+		{
+			extCmdComboItemStr =
+					(String) externalCommandCombo.getEditor().getItem();
+		}
+
+		// if user did anything other than default, then save
+		// their options
+		if ((extCmdComboItemStr != null && extCmdComboItemStr.length() > 0))
+		{
+
+			// This may be called either when the table is editable or when it is
+			// read-only.  When it is read-only, there is no command to be saved,
+			// but when it is editable, there may be a command.
+			String commandString = extCmdComboItemStr;
+
+			CellImportExportInfoSaver.getInstance().save(
+					_colDef.getFullTableColumnName(), cboFileNameHandler.getItem(),
+					commandString);
+		}
+		FileResult result = new FileResult(canonicalFilePathName, file);
+		return result;
+	}
+
+	// at this point we have an actual file that we can output to,
+	// so create the output stream
+	// (so that data type objects do not have to).
+	private FileOutputStream getFileOutputStream(File file, String canonicalFilePathName)
+	{
+		// We have done everything we can prior to this point
+		// to ensure that the the file is accessible, but it is
+		// still possible that an existing file was removed
+		// at a bad moment.  Also, the compiler insists that we
+		// put this in a try statement
+		FileOutputStream outStream;
+		try
+		{
+			outStream = new FileOutputStream(file);
+		}
+		catch (Exception ex)
+		{
+			JOptionPane.showMessageDialog(this,
+					// i18n[popupeditableIoPanel.cannotFindFile=Cannot find file {0}\nCheck file name and re-try export.]
+					s_stringMgr.getString("popupeditableIoPanel.cannotFindFile", canonicalFilePathName),
+					// i18n[popupeditableIoPanel.exportError8=Export Error]
+					s_stringMgr.getString("popupeditableIoPanel.exportError8"), JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		return outStream;
+	}
+
+	private void onActionExecute(File file, String canonicalFilePathName, FileOutputStream outStream)
+	{
+		// EXPORT OBJECT TO OSX_FILE, EXECUTE PROGRAM ON IT, IMPORT IT BACK
+
+		if(((String) externalCommandCombo.getEditor().getItem()) == null ||
+			((String) externalCommandCombo.getEditor().getItem()).length() == 0)
+		{
+			// cannot execute a null command
+			JOptionPane.showMessageDialog(this,
+													// i18n[popupeditableIoPanel.cannotExec=Cannot execute a null command.\nPlease enter a command in the Command field before clicking on Execute.]
+													s_stringMgr.getString("popupeditableIoPanel.cannotExec"),
+													// i18n[popupeditableIoPanel.executeError=Execute Error]
+													s_stringMgr.getString("popupeditableIoPanel.executeError"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		// replace any instance of flag in command with file name
+		String command = ((String) externalCommandCombo.getEditor().getItem());
+
+		int index;
+		while ((index = command.indexOf(FILE_REPLACE_FLAG)) >= 0)
+		{
+			command = command.substring(0, index) +
+						 canonicalFilePathName +
+						 command.substring(index + FILE_REPLACE_FLAG.length());
+		}
+
+		// export data to file
+		if( exportData(outStream, canonicalFilePathName) == false)
+		{
+			// bad export - do not proceed with command
+			// The exportData() method has already put up a message
+			// to the user saying the export failed.
+			return;
+		}
+
+		int commandResult;
+		BufferedReader err = null;
+		try
+		{
+			// execute command
+			Process cmdProcess = Runtime.getRuntime().exec(command);
+
+			// wait for command to complete
+			commandResult = cmdProcess.waitFor();
+
+			// check the error stream for a problem
+			//
+			// This is a bit questionable since it is possible
+			// for processes to output something on stderr
+			// but continue processing.  But without this, some
+			// problems are not seen (e.g. "bad argument" type
+			// messages from the process).
+			err = new BufferedReader(
+					new InputStreamReader(cmdProcess.getErrorStream()));
+
+			String errMsg = err.readLine();
+			if(errMsg != null)
+			{
+				throw new IOException(
+						"text on error stream from command starting with:\n" + errMsg);
+			}
+		}
+		catch (Exception ex)
+		{
+
+			Object[] args = new Object[]{command, ex.getMessage()};
+			JOptionPane.showMessageDialog(this,
+													// i18n[popupeditableIoPanel.errWhileExecutin=Error while executing command.\nThe command was:\n {0}\nThe error was:\n{1}]
+													s_stringMgr.getString("popupeditableIoPanel.errWhileExecutin", args),
+													// i18n[popupeditableIoPanel.executeError2=Execute Error]
+													s_stringMgr.getString("popupeditableIoPanel.executeError2"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		finally
+		{
+			_iou.closeReader(err);
+		}
+
+		// check for possibly bad return from child
+		if(commandResult != 0)
+		{
+			// command returned non-standard value.
+			// ask user before proceeding.
+			int option = JOptionPane.showConfirmDialog(this,
+																	 // i18n[popupeditableIoPanel.commandReturnNot0=The convention for command returns is that 0 means success, but this command returned {0}.\nDo you wish to import the file contents anyway?]
+																	 s_stringMgr.getString("popupeditableIoPanel.commandReturnNot0", Integer.valueOf(commandResult)),
+
+																	 // i18n[popupeditableIoPanel.importWarning=Import Warning]
+																	 s_stringMgr.getString("popupeditableIoPanel.importWarning"), JOptionPane.YES_NO_OPTION);
+			if(option != JOptionPane.YES_OPTION)
+			{
+				return;
+			}
+		}
+
+		//import the data back from the same file
+		importData(file);
+
+		// If the file was a temp file, delete it now.
+		// We assume that Export-only operations want to leave the
+		// file in place, but Execute operations just want a temp
+		// space to work with and do not want it lying around afterwards.
+		file.delete();
+	}
+
+	private void onActionImport()
+	{
+		File file;
+		// IMPORT OBJECT FROM OSX_FILE
+
+		if (StringUtilities.isEmpty(cboFileNameHandler.getItem(), true))
+		{
+			// not allowed - must have existing file for import
+			JOptionPane.showMessageDialog(this,
+					// i18n[popupeditableIoPanel.selectImportDataFile=You must select an existing file to import data from.]
+					s_stringMgr.getString("popupeditableIoPanel.selectImportDataFile"),
+					// i18n[popupeditableIoPanel.noFile=No File Selected]
+					s_stringMgr.getString("popupeditableIoPanel.noFile"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		// get name of file, which must exist
+		file = new File(cboFileNameHandler.getItem());
+		if (!file.exists() || !file.isFile() || !file.canRead())
+		{
+			// not something we can read
+
+			// i18n[popupeditableIoPanel.fileDoesNotExist=File {0} does not exist,\nor is not a readable, normal file.\nPlease enter a valid file name or use Browse to select a file.]
+			String msg = s_stringMgr.getString("popupeditableIoPanel.fileDoesNotExist", cboFileNameHandler.getItem());
+
+			JOptionPane.showMessageDialog(this, msg,
+
+					// i18n[popupeditableIoPanel.fileError=File Name Error]
+					s_stringMgr.getString("popupeditableIoPanel.fileError"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		// Now that we have the file, do the import.
+		//
+		// Note: the sequence of operations is divided into two sections
+		// at this point.  The preceeding code ensures that we have
+		// a readable file, and the code in the following method call
+		// does the import.  The reason for splitting at this point is
+		// that the Execute operation needs to do an import, and it will
+		// already have the file to do the import from (which is the same
+		// as the file it exported into).
+		importData(file);
+
+		// save the user options - we know that it is not the default
+		// because we do not allow importing from "temp file"
+		CellImportExportInfoSaver.getInstance().save(
+				_colDef.getFullTableColumnName(), cboFileNameHandler.getItem(),
+				((String) externalCommandCombo.getEditor().getItem()));
+	}
+
+	private void onActionApply()
+	{
+		// If file name default and cmd is null or empty,
+		// make sure this entry is not being held in CellImportExportInfoSaver
+		if ((cboFileNameHandler.getItem() != null) &&
+			 (externalCommandCombo.getEditor().getItem() == null ||
+						((String) externalCommandCombo.getEditor().getItem()).length() == 0))
+		{
+			// user has not entered anything or has reset to defaults,
+			// so make sure there is no entry for this column in the
+			// saved info
+			CellImportExportInfoSaver.remove(_colDef.getFullTableColumnName());
+		}
+		else
+		{
+			// user has entered some non-default info, so save it
+			CellImportExportInfoSaver.getInstance().save(
+					_colDef.getFullTableColumnName(), cboFileNameHandler.getItem(),
+					((String) externalCommandCombo.getEditor().getItem()));
+		}
 	}
 
 	private void onBrowse()
@@ -1062,11 +1107,11 @@ public class PopupEditableIOPanel extends JPanel
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			reformat();
+			reformat(GUIUtils.getOwningWindow(PopupEditableIOPanel.this));
 		}
 	}
 
-	private void reformat()
+	private void reformat(Window owningWindow)
 	{
 		JsonFormatter jsonFormatter = new JsonFormatter(_ta.getText());
 		if(jsonFormatter.success())
@@ -1075,7 +1120,7 @@ public class PopupEditableIOPanel extends JPanel
 			return;
 		}
 
-		_ta.setText(XmlRefomatter.reformatXml(_ta.getText()));
+		_ta.setText(XmlRefomatter.reformatXml(owningWindow, _ta.getText()));
 	}
 
 

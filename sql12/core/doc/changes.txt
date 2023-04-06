@@ -101,6 +101,9 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+Table cell data popup:
+  Reformat button unintentionally triggered file export.
+
 #1513 NullPointerException when SQL results were displayed as text.
 
 Hibernate Plugin:
