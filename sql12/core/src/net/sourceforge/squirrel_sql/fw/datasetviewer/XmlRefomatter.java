@@ -17,13 +17,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Window;
-import java.util.ArrayList;
-import javax.swing.JOptionPane;
-
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.JOptionPane;
+import java.awt.Window;
+import java.util.ArrayList;
 
 /**
  * This is an XML prettyprinter.  It takes a string that is in XML format
@@ -36,9 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
  */
 public class XmlRefomatter
 {
-
-	private static final StringManager s_stringMgr =
-			StringManagerFactory.getStringManager(XmlRefomatter.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(XmlRefomatter.class);
 
 
 	// i18n[xmlRefomatter.unexpectedProblem=Unexpected problem during formatting.]
@@ -68,7 +66,7 @@ public class XmlRefomatter
 			if (parseRes == null)
          {
 				// the parse did not find XML, or it was mal-formed
-            showWarning(_message);
+            showWarning(owningWindow, _message);
 				return xml;
 			}
 
@@ -90,7 +88,7 @@ public class XmlRefomatter
 					// see if there was a problem during parsing
 					if (nextRes == null) {
 						// the parse did not find XML, or it was mal-formed
-						showWarning(_message);
+						showWarning(owningWindow, _message);
 						return xml;
 					}
 
@@ -121,7 +119,7 @@ public class XmlRefomatter
 
 							// i18n[xmlRefomatter.malformedXml=Possible mal-formed XML:\n   Starting tag was: {0}\nEnding Tag was: {1}\nContinuing with reformatting XML."]
 							String msg = s_stringMgr.getString("xmlRefomatter.malformedXml", args);
-							showWarning(msg);
+							showWarning(owningWindow, msg);
 						}
 					}
 					// End GWG format check code
@@ -149,7 +147,7 @@ public class XmlRefomatter
 		catch(Exception e)
 		{
 			// the parse did not find XML, or it was mal-formed
-			JOptionPane.showMessageDialog(null,
+			JOptionPane.showMessageDialog(owningWindow,
 													DEFAULT_MESSAGE,
 													// i18n[xmlReformatter.xmlWarning2=XML Warning]
 													s_stringMgr.getString("xmlReformatter.xmlWarning2"), JOptionPane.WARNING_MESSAGE);
@@ -165,7 +163,7 @@ public class XmlRefomatter
 	}
 
 
-   private static void showWarning(String message)
+   private static void showWarning(Window owningWindow, String message)
    {
       if(false == _showWarningMessages)
       {
@@ -181,7 +179,7 @@ public class XmlRefomatter
 				};
 
 
-		int ret = JOptionPane.showOptionDialog(null,
+		int ret = JOptionPane.showOptionDialog(owningWindow,
 															// i18n[xmlReformatter.seeOtherErrs={0}\nDo you wish to see other errors?"]
 															s_stringMgr.getString("xmlReformatter.seeOtherErrs", message),
 															// i18n[xmlReformatter.xmlWarning5=XML Warning]
