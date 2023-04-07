@@ -170,7 +170,9 @@ public class SyntaxPreferencesPanel implements INewSessionPropertiesPanel, ISess
       private final JTextField _txtTextLimitLineWidth = new JTextField();
       private final JCheckBox _chkLineNumbersEnabled = new JCheckBox(s_stringMgr.getString("syntax.lineNumbersEnabled"));
       
-      private final JCheckBox _useCopyAsRtf = new JCheckBox(s_stringMgr.getString("syntax.useCopyAsRtf"));
+      private final JCheckBox _chkUseCopyAsRtf = new JCheckBox(s_stringMgr.getString("syntax.useCopyAsRtf"));
+
+		private final JCheckBox _chkInsertPairedQuotes = new JCheckBox(s_stringMgr.getString("syntax.useInsertPairedQuotes"));
 
 		private final JTextField _txtTabLength = new JTextField();
 		private final JCheckBox _chkReplaceTabsBySpaces = new JCheckBox(s_stringMgr.getString("syntax.replaceTabsBySpaces"));
@@ -231,7 +233,9 @@ public class SyntaxPreferencesPanel implements INewSessionPropertiesPanel, ISess
 
          _txtTextLimitLineWidth.setText("" + prefs.getTextLimitLineWidth());
 
-         _useCopyAsRtf.setSelected(prefs.isUseCopyAsRtf());
+         _chkUseCopyAsRtf.setSelected(prefs.isUseCopyAsRtf());
+
+			_chkInsertPairedQuotes.setSelected(prefs.isInsertPairedQuotes());
          
          _stylesList.loadData(prefs);
 			_styleMaintPnl.setStyle(_stylesList.getSelectedSyntaxStyle());
@@ -271,7 +275,8 @@ public class SyntaxPreferencesPanel implements INewSessionPropertiesPanel, ISess
 
          prefs.setTextLimitLineVisible(_chkTextLimitLineVisible.isSelected());
          prefs.setLineNumbersEnabled(_chkLineNumbersEnabled.isSelected());
-         prefs.setUseCopyAsRtf(_useCopyAsRtf.isSelected());
+         prefs.setUseCopyAsRtf(_chkUseCopyAsRtf.isSelected());
+         prefs.setInsertPairedQuotes(_chkInsertPairedQuotes.isSelected());
 
 			fillTextLineLimit(prefs);
 
@@ -365,7 +370,8 @@ public class SyntaxPreferencesPanel implements INewSessionPropertiesPanel, ISess
 
 			_currentLineHighlightColorCtrl.setEnabled(useRSyntaxControl);
     	  _chkLineNumbersEnabled.setEnabled(useRSyntaxControl);
-    	  _useCopyAsRtf.setEnabled(useRSyntaxControl);
+    	  _chkUseCopyAsRtf.setEnabled(useRSyntaxControl);
+    	  _chkInsertPairedQuotes.setEnabled(useRSyntaxControl);
 
     	  _adjustCaretColorCtrl.setEnabled(useRSyntaxControl);
       }
@@ -441,12 +447,15 @@ public class SyntaxPreferencesPanel implements INewSessionPropertiesPanel, ISess
          pnlRet.add(_chkLineNumbersEnabled, gbc);
 
          gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-         pnlRet.add(_useCopyAsRtf, gbc);
+         pnlRet.add(_chkUseCopyAsRtf, gbc);
 
          gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-         pnlRet.add(createTabConfigPanel(), gbc);
+         pnlRet.add(_chkInsertPairedQuotes, gbc);
 
          gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+         pnlRet.add(createTabConfigPanel(), gbc);
+
+         gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
          pnlRet.add(_adjustCaretColorCtrl.createCaretColorPanel(), gbc);
 
          return pnlRet;

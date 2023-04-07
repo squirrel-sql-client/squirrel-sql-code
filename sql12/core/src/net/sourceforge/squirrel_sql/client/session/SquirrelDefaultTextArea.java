@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import net.sourceforge.squirrel_sql.client.session.editorpaint.EditorPaintService;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -21,7 +22,7 @@ public class SquirrelDefaultTextArea extends JTextArea
          this.setFont(props.getFontInfo().createFont());
       }
 
-      _textAreaPaintHandler = new TextAreaPaintHandler(this, session);
+      _textAreaPaintHandler = new TextAreaPaintHandler(this, EditorPaintService.EMPTY, session);
 
 
       /////////////////////////////////////////////////////////////////////

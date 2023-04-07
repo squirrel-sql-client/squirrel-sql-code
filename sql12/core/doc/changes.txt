@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Syntax Plugin:
+  New option >>Quotes (' or ") are doubled / enclose selection<<:
+  See menu File --> New Session Properties --> tab Syntax
+
 New option to define if NULL values are sorted highest or lowest
   when tables are sorted by clicking column headers.
   See menu File --> New Session Properties --> tab General --> section Output

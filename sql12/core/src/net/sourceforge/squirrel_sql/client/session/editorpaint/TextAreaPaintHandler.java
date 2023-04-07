@@ -14,10 +14,10 @@ public class TextAreaPaintHandler
    private MultiCaretHandler _multiCaretHandler;
 
 
-   public TextAreaPaintHandler(JTextArea editor, ISession session)
+   public TextAreaPaintHandler(JTextArea editor, EditorPaintService paintService, ISession session)
    {
       _markCurrentSqlHandler = new MarkCurrentSqlHandler(editor, session);
-      _multiCaretHandler = new MultiCaretHandler(editor);
+      _multiCaretHandler = new MultiCaretHandler(editor, paintService);
    }
 
    public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)

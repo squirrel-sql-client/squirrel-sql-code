@@ -104,9 +104,21 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
          }
       }
 
-      _textAreaPaintHandler = new TextAreaPaintHandler(this, session);
+      _textAreaPaintHandler = new TextAreaPaintHandler(this, b -> onPauseInsertPairedCharacters(b), session);
+      setInsertPairedCharacters(_prefs.isInsertPairedQuotes());
    }
 
+   private void onPauseInsertPairedCharacters(boolean b)
+   {
+      if(b)
+      {
+         setInsertPairedCharacters(false);
+      }
+      else
+      {
+         setInsertPairedCharacters(_prefs.isInsertPairedQuotes());
+      }
+   }
 
    /**
     * Modifies the current {@link InputMap} of this component according to the actual preferences.
@@ -231,7 +243,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       }
    }
 
-	private void onErrorsFound(ErrorInfo[] errorInfos)
+   private void onErrorsFound(ErrorInfo[] errorInfos)
    {
       _currentErrorInfos = errorInfos;
    }

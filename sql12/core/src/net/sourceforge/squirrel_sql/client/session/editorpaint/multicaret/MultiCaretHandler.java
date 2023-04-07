@@ -1,19 +1,20 @@
 package net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret;
 
-import java.awt.Graphics;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.EditorPaintService;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import org.apache.commons.lang3.StringUtils;
+import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * https://stackoverflow.com/questions/40955172/java-how-to-select-multiple-non-consecutive-lines-of-text-in-a-text-area-the-s
@@ -23,12 +24,14 @@ public class MultiCaretHandler
    private MultiEdits _multiEdits;
    private MultiCaretPainter _multiCaretPainter;
    private JTextArea _textArea;
+   private final EditorPaintService _editorPaintService;
    private DocumentMultiEditor _documentMultiEditor;
 
 
-   public MultiCaretHandler(JTextArea textArea)
+   public MultiCaretHandler(JTextArea textArea, EditorPaintService editorPaintService)
    {
       _textArea = textArea;
+      _editorPaintService = editorPaintService;
       _multiEdits = new MultiEdits(_textArea);
       _multiCaretPainter = new MultiCaretPainter(_textArea, _multiEdits);
 
@@ -214,6 +217,12 @@ public class MultiCaretHandler
       {
          _textArea.scrollRectToVisible(GUIUtils.getRectangleOfPosition(_textArea, _multiEdits.last().getStart()));
       }
+
+      if(false == _multiEdits.requiresMultipleCarets())
+      {
+         _editorPaintService.setPauseInsertPairedCharacters(false);
+      }
+
       SwingUtilities.invokeLater(() -> _textArea.repaint());
    }
 
@@ -226,12 +235,19 @@ public class MultiCaretHandler
          return;
       }
 
+      boolean didRequireMultipleCarets = _multiEdits.requiresMultipleCarets();
+
       _multiEdits.add(buf);
       newCaret(_multiEdits.last());
 
       if(false == _multiEdits.isEmpty() && _multiEdits.last().isInitialEdit())
       {
          createNextCaret();
+      }
+
+      if(false == didRequireMultipleCarets && _multiEdits.requiresMultipleCarets())
+      {
+         _editorPaintService.setPauseInsertPairedCharacters(true);
       }
 
       SwingUtilities.invokeLater(() -> _textArea.repaint());
@@ -253,6 +269,11 @@ public class MultiCaretHandler
       }
 
       _multiEdits.clear();
+
+      if(false == _multiEdits.requiresMultipleCarets())
+      {
+         _editorPaintService.setPauseInsertPairedCharacters(false);
+      }
    }
 
    private boolean isAddNextTrigger(KeyEvent e)

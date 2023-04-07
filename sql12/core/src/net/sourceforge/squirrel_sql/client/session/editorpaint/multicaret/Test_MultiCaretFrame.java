@@ -1,10 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret;
 
-import java.awt.GridLayout;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.EditorPaintService;
+
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import java.awt.GridLayout;
 
 public class Test_MultiCaretFrame
 {
@@ -28,7 +30,7 @@ public class Test_MultiCaretFrame
       textArea.setText(getText());
       textArea.setCaretPosition(0);
 
-      final MultiCaretHandler multiCaretHandler = new MultiCaretHandler(textArea);
+      final MultiCaretHandler multiCaretHandler = new MultiCaretHandler(textArea, EditorPaintService.EMPTY);
       textArea.setMultiCaretHandler(multiCaretHandler);
 
 

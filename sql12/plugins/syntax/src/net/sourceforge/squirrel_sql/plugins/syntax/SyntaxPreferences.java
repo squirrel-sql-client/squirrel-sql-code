@@ -98,6 +98,7 @@ public class SyntaxPreferences implements Serializable
     */
    private boolean _useCopyAsRtf = false;
 
+   private boolean _insertPairedQuotes;
 
    private SyntaxTheme _syntaxTheme;
 
@@ -529,20 +530,24 @@ public class SyntaxPreferences implements Serializable
       return _propChgReporter;
    }
 
-   /**
-    * @return the useCopyAsRtf
-    */
    public boolean isUseCopyAsRtf()
    {
       return _useCopyAsRtf;
    }
 
-   /**
-    * @param _useCopyAsRtf the useCopyAsRtf to set
-    */
    public void setUseCopyAsRtf(boolean useCopyAsRtf)
    {
       this._useCopyAsRtf = useCopyAsRtf;
    }
 
+
+   public boolean isInsertPairedQuotes()
+   {
+      return _insertPairedQuotes;
+   }
+
+   public void setInsertPairedQuotes(boolean insertPairedQuotes)
+   {
+      _insertPairedQuotes = insertPairedQuotes;
+   }
 }
