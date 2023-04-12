@@ -48,22 +48,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 
-/**
- * @version 	$Id: ButtonTableHeader.java,v 1.10 2009-09-17 05:40:53 gerdwagner Exp $
- * @author		Johan Compagner
- */
 public class ButtonTableHeader extends JTableHeader
 {
-   /** Logger for this class. */
    private static ILogger s_log = LoggerController.createLogger(ButtonTableHeader.class);
 
    private static final String PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS = "Squirrel.alwaysAdoptAllColumnHeaders";
 
    /** Icon for "Sorted ascending". */
-   private static Icon s_ascIcon;
+   private Icon _ascIcon;
 
    /** Icon for "Sorted descending". */
-   private static Icon s_descIcon;
+   private Icon _descIcon;
 
    /** Listens for changes in the underlying data. */
    private TableDataListener _dataListener = new TableDataListener();
@@ -91,22 +86,6 @@ public class ButtonTableHeader extends JTableHeader
    /** Physical (as opposed to model) index of the currently sorted column. */
    private int _currentlySortedModelIdx = -1;
 
-   static
-   {
-      try
-      {
-         LibraryResources rsrc = new LibraryResources();
-         s_descIcon =
-            rsrc.getIcon(LibraryResources.IImageNames.TABLE_DESCENDING);
-         s_ascIcon =
-            rsrc.getIcon(LibraryResources.IImageNames.TABLE_ASCENDING);
-      }
-      catch (Exception ex)
-      {
-         s_log.error("Error retrieving icons", ex);
-      }
-   }
-
    private ButtonTableHeaderDraggedColumnListener _buttonTableHeaderDraggedColumnListener;
 
    /**
@@ -114,6 +93,10 @@ public class ButtonTableHeader extends JTableHeader
     */
    public ButtonTableHeader()
    {
+      LibraryResources rsrc = new LibraryResources();
+      _descIcon = rsrc.getIcon(LibraryResources.IImageNames.TABLE_DESCENDING);
+      _ascIcon = rsrc.getIcon(LibraryResources.IImageNames.TABLE_ASCENDING);
+
       _pressed = false;
       _dragged = false;
       _pressedViewColumnIdx = -1;
@@ -135,11 +118,11 @@ public class ButtonTableHeader extends JTableHeader
 
       if (ColumnOrder.ASC == columnOrder)
       {
-         _currentSortedColumnIcon = s_ascIcon;
+         _currentSortedColumnIcon = _ascIcon;
       }
       else if (ColumnOrder.DESC == columnOrder)
       {
-         _currentSortedColumnIcon = s_descIcon;
+         _currentSortedColumnIcon = _descIcon;
       }
       else
       {
@@ -236,7 +219,7 @@ public class ButtonTableHeader extends JTableHeader
     */
    public boolean isAscending()
    {
-      return _currentSortedColumnIcon == s_ascIcon;
+      return _currentSortedColumnIcon == _ascIcon;
    }
 
    public void columnIndexWillBeRemoved(int colIx)
@@ -471,11 +454,11 @@ public class ButtonTableHeader extends JTableHeader
                ((SortableTableModel) tm).sortByColumn(column);
                if (ColumnOrder.ASC == ((SortableTableModel)tm).getColumnOrder())
                {
-                  _currentSortedColumnIcon = s_ascIcon;
+                  _currentSortedColumnIcon = _ascIcon;
                }
                else if (ColumnOrder.DESC == ((SortableTableModel)tm).getColumnOrder())
                {
-                  _currentSortedColumnIcon = s_descIcon;
+                  _currentSortedColumnIcon = _descIcon;
                }
                else
                {
