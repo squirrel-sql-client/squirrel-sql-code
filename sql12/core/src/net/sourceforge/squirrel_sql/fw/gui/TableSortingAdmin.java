@@ -12,27 +12,13 @@ public class TableSortingAdmin
    /** Icon for "Sorted descending". */
    private Icon _descIcon;
 
-   //////////////////////////////////////////////////////////////////////
-   // Originating from ButtonTableHeader TODO: Fix redundancies to below
-   //
    /** Icon for the currently sorted column. */
-   private Icon _currentSortedColumnIcon;
+   private Icon _sortedColumnIcon;
 
-   private int _currentlySortedModelIdx = -1;
-   //
-   /////////////////////////////////////////////////////////////////
-
-
-   //////////////////////////////////////////////////////////////////////
-   // Originating from SortableTableModel TODO: Fix redundancies to above
-   //
    /** Column currently being sorted by. -1 means unsorted. */
    private int _sortedColumn = -1;
 
    private ColumnOrder _columnOrder = ColumnOrder.NATURAL;
-   //
-   /////////////////////////////////////////////////////////////////
-
 
    public TableSortingAdmin()
    {
@@ -41,60 +27,43 @@ public class TableSortingAdmin
       _ascIcon = rsrc.getIcon(LibraryResources.IImageNames.TABLE_ASCENDING);
    }
 
-   public void sort(int modelColumnIx, ColumnOrder columnOrder)
-   {
-      if (ColumnOrder.ASC == columnOrder)
-      {
-         _currentSortedColumnIcon = _ascIcon;
-      }
-      else if (ColumnOrder.DESC == columnOrder)
-      {
-         _currentSortedColumnIcon = _descIcon;
-      }
-      else
-      {
-         _currentSortedColumnIcon = null;
-      }
-      _currentlySortedModelIdx = modelColumnIx;
-   }
 
-   public void sort2(int sortedColumn, ColumnOrder newOrder)
+   public void sort(int sortedColumn, ColumnOrder newOrder)
    {
       _sortedColumn = sortedColumn;
       _columnOrder = newOrder;
+      if (ColumnOrder.ASC == _columnOrder)
+      {
+         _sortedColumnIcon = _ascIcon;
+      }
+      else if (ColumnOrder.DESC == _columnOrder)
+      {
+         _sortedColumnIcon = _descIcon;
+      }
+      else
+      {
+         _sortedColumnIcon = null;
+      }
    }
 
 
    public void clear()
    {
-      _currentSortedColumnIcon = null;
-      _currentlySortedModelIdx = -1;
+      _sortedColumnIcon = null;
+      _sortedColumn = -1;
+      _columnOrder = ColumnOrder.NATURAL;
    }
 
-   // ButtonTableHeader
-   public int getCurrentlySortedModelIdx()
+   public Icon getSortedColumnIcon()
    {
-      return _currentlySortedModelIdx;
+      return _sortedColumnIcon;
    }
 
-   // ButtonTableHeader
-   public Icon getCurrentSortedColumnIcon()
-   {
-      return _currentSortedColumnIcon;
-   }
-
-   public void clearCurrentSortedColumnIcon()
-   {
-      _currentSortedColumnIcon = null;
-   }
-
-   // from SortableTableModel
    public int getSortedColumn()
    {
       return _sortedColumn;
    }
 
-   // from SortableTableModel
    public ColumnOrder getColumnOrder()
    {
       return _columnOrder;

@@ -210,23 +210,6 @@ public class SortableTableModel extends AbstractTableModel
 	}
 
 	/**
-	 * Sorts the column specified in a mode depending if the that column
-	 * was last sorted and then inverted that mode. If the column was not
-	 * the previous sorted column then it will be sorted in ascending mode.
-	 */
-	public void applySorting()
-	{
-		ColumnOrder newOrder = ColumnOrder.ASC;
-		if (_tableSortingAdmin.getCurrentlySortedModelIdx() == _tableSortingAdmin.getSortedColumn())
-		{
-			newOrder = _tableSortingAdmin.getColumnOrder().next();
-		}
-		_tableSortingAdmin.sort2(_tableSortingAdmin.getCurrentlySortedModelIdx(), newOrder);
-
-		sortByColumn(_tableSortingAdmin.getCurrentlySortedModelIdx(), newOrder);
-	}
-
-	/**
 	 * Sorts the table by the specified column.
 	 *
 	 * @param   column      column to sort by
@@ -234,12 +217,12 @@ public class SortableTableModel extends AbstractTableModel
 	 */
 	public void sortByColumn(int column, ColumnOrder newOrder)
 	{
-		_tableSortingAdmin.sort2(column, newOrder);
+		_tableSortingAdmin.sort(column, newOrder);
 		sortTableBySortingAdmin();
 	}
 
 	//private void _sortTable(int column, ColumnOrder newOrder)
-	private void sortTableBySortingAdmin()
+	public void sortTableBySortingAdmin()
 	{
 		if (ColumnOrder.NATURAL != _tableSortingAdmin.getColumnOrder())
       {

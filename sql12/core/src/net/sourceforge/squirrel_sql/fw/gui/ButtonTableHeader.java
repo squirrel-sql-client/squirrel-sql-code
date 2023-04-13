@@ -98,11 +98,7 @@ public class ButtonTableHeader extends JTableHeader
 
    private void onSortingDone(int modelColumnIx, ColumnOrder columnOrder)
    {
-      int viewColumnIndex = getViewColumnIndex(modelColumnIx);
-
-      getTableSortingAdmin().sort(modelColumnIx, columnOrder);
-      _pressedViewColumnIdx = viewColumnIndex;
-
+      _pressedViewColumnIdx = getViewColumnIndex(modelColumnIx);
       repaint();
    }
 
@@ -227,11 +223,15 @@ public class ButtonTableHeader extends JTableHeader
          Rectangle2D bounds = headerFontMetrics.getStringBounds("" + column.getHeaderValue(), headerComp.getGraphics());
 
          int width = bounds.getBounds().width;
-         if(   -1 != getTableSortingAdmin().getCurrentlySortedModelIdx()
-             && colIx == getViewColumnIndex(getTableSortingAdmin().getCurrentlySortedModelIdx())
-             && null != getTableSortingAdmin().getCurrentSortedColumnIcon())
+         if(-1 != getTableSortingAdmin().getSortedColumn())
          {
-            width += getTableSortingAdmin().getCurrentSortedColumnIcon().getIconWidth();
+            TableSortingAdmin tableSortingAdmin = getTableSortingAdmin();
+            //return _currentlySortedModelIdx;
+            if(colIx == getViewColumnIndex(tableSortingAdmin.getSortedColumn())
+               && null != getTableSortingAdmin().getSortedColumnIcon())
+            {
+               width += getTableSortingAdmin().getSortedColumnIcon().getIconWidth();
+            }
          }
 
 
@@ -307,9 +307,6 @@ public class ButtonTableHeader extends JTableHeader
 
    class HeaderListener extends MouseAdapter implements MouseMotionListener
    {
-      /*
-         * @see MouseListener#mousePressed(MouseEvent)
-         */
       public void mousePressed(MouseEvent e)
       {
          if(getCursor().getType() == Cursor.E_RESIZE_CURSOR || MouseEvent.BUTTON1 != e.getButton())
@@ -347,9 +344,6 @@ public class ButtonTableHeader extends JTableHeader
       }
 
 
-      /*
-		* @see MouseListener#mouseReleased(MouseEvent)
-		*/
       public void mouseReleased(MouseEvent e)
       {
          if(getCursor().getType() == Cursor.E_RESIZE_CURSOR || MouseEvent.BUTTON1 != e.getButton())
@@ -368,19 +362,21 @@ public class ButtonTableHeader extends JTableHeader
          _pressed = false;
          if (!_dragged)
          {
-            getTableSortingAdmin().clearCurrentSortedColumnIcon();
-            int column = getTable().convertColumnIndexToModel(_pressedViewColumnIdx);
+            int newSortColumn = getTable().convertColumnIndexToModel(_pressedViewColumnIdx);
             TableModel tm = table.getModel();
-
-            if (column > -1
-               && column < tm.getColumnCount()
-               && tm instanceof SortableTableModel)
+            if (newSortColumn > -1  && newSortColumn < tm.getColumnCount() && tm instanceof SortableTableModel)
             {
-//               ((SortableTableModel) tm).sortByColumn(column);
-//               _tableSortingManager.sort(column, ((SortableTableModel)tm).getColumnOrder());
-
-               getTableSortingAdmin().sort(column, ((SortableTableModel)tm).getColumnOrder());
-               ((SortableTableModel) tm).applySorting();
+               ColumnOrder newOrder = ColumnOrder.ASC;
+               if (newSortColumn == getTableSortingAdmin().getSortedColumn())
+               {
+                  newOrder = getTableSortingAdmin().getColumnOrder().next();
+               }
+               getTableSortingAdmin().sort(newSortColumn, newOrder);
+               ((SortableTableModel) tm).sortTableBySortingAdmin();
+            }
+            else
+            {
+               getTableSortingAdmin().clear();
             }
             repaint();
          }
@@ -394,25 +390,16 @@ public class ButtonTableHeader extends JTableHeader
          _dragged = false;
       }
 
-      /*
-         * @see MouseMotionListener#mouseDragged(MouseEvent)
-         */
       public void mouseDragged(MouseEvent e)
       {
          _dragged = true;
          if (_pressed)
          {
-            //_currentSortedColumnIcon = null;
-//            _currentlySortedModelIdx = -1;
-//            _pressedViewColumnIdx = -1;
             _pressed = false;
             repaint();
          }
       }
 
-      /*
-         * @see MouseMotionListener#mouseMoved(MouseEvent)
-         */
       public void mouseMoved(MouseEvent e)
       {
          _dragged = false;
@@ -442,9 +429,7 @@ public class ButtonTableHeader extends JTableHeader
          _buttonLowered.setMinimumSize(new Dimension(50, 25));
          _buttonRaised.setMinimumSize(new Dimension(50, 25));
       }
-      /*
-         * @see TableCellRenderer#getTableCellRendererComponent(JTable, Object, boolean, boolean, int, int)
-         */
+
       public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
       {
          if (value == null)
@@ -459,10 +444,12 @@ public class ButtonTableHeader extends JTableHeader
 
             // If this is the column that the table is currently
             // sorted by then display the sort icon.
-            if (    column == getViewColumnIndex(getTableSortingAdmin().getCurrentlySortedModelIdx())
-                 && getTableSortingAdmin().getCurrentSortedColumnIcon() != null)
+            TableSortingAdmin tableSortingAdmin = getTableSortingAdmin();
+            //return _currentlySortedModelIdx;
+            if (    column == getViewColumnIndex(tableSortingAdmin.getSortedColumn())
+                 && getTableSortingAdmin().getSortedColumnIcon() != null)
             {
-               _buttonLowered.setIcon(getTableSortingAdmin().getCurrentSortedColumnIcon());
+               _buttonLowered.setIcon(getTableSortingAdmin().getSortedColumnIcon());
             }
             else
             {
@@ -473,10 +460,12 @@ public class ButtonTableHeader extends JTableHeader
 
          // This is not the column that the mouse has been pressed in.
          _buttonRaised.setText(value.toString());
-         if (    getTableSortingAdmin().getCurrentSortedColumnIcon() != null
-              && column == getViewColumnIndex(getTableSortingAdmin().getCurrentlySortedModelIdx()))
+         TableSortingAdmin tableSortingAdmin = getTableSortingAdmin();
+         //return _currentlySortedModelIdx;
+         if (getTableSortingAdmin().getSortedColumnIcon() != null
+              && column == getViewColumnIndex(tableSortingAdmin.getSortedColumn()))
          {
-            _buttonRaised.setIcon(getTableSortingAdmin().getCurrentSortedColumnIcon());
+            _buttonRaised.setIcon(getTableSortingAdmin().getSortedColumnIcon());
          }
          else
          {
