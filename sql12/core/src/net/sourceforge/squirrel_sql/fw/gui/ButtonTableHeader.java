@@ -22,15 +22,12 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
 import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -54,14 +51,9 @@ public class ButtonTableHeader extends JTableHeader
 
    private static final String PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS = "Squirrel.alwaysAdoptAllColumnHeaders";
 
-   /** Icon for "Sorted ascending". */
-   private Icon _ascIcon;
-
-   /** Icon for "Sorted descending". */
-   private Icon _descIcon;
 
    /** Listens for changes in the underlying data. */
-   private TableDataListener _dataListener = new TableDataListener();
+   private TableModelListener _dataListener;
 
    private SortingListener _sortingListener;
 
@@ -80,12 +72,6 @@ public class ButtonTableHeader extends JTableHeader
     */
    private int _pressedViewColumnIdx;
 
-   /** Icon for the currently sorted column. */
-   private Icon _currentSortedColumnIcon;
-
-   /** Physical (as opposed to model) index of the currently sorted column. */
-   private int _currentlySortedModelIdx = -1;
-
    private ButtonTableHeaderDraggedColumnListener _buttonTableHeaderDraggedColumnListener;
 
    /**
@@ -93,9 +79,6 @@ public class ButtonTableHeader extends JTableHeader
     */
    public ButtonTableHeader()
    {
-      LibraryResources rsrc = new LibraryResources();
-      _descIcon = rsrc.getIcon(LibraryResources.IImageNames.TABLE_DESCENDING);
-      _ascIcon = rsrc.getIcon(LibraryResources.IImageNames.TABLE_ASCENDING);
 
       _pressed = false;
       _dragged = false;
@@ -109,26 +92,15 @@ public class ButtonTableHeader extends JTableHeader
 
       _sortingListener = (modelColumnIx, columnOrder) -> onSortingDone(modelColumnIx, columnOrder);
 
+      _dataListener = e -> getTableSortingAdmin().clear();
+
    }
 
    private void onSortingDone(int modelColumnIx, ColumnOrder columnOrder)
    {
       int viewColumnIndex = getViewColumnIndex(modelColumnIx);
 
-
-      if (ColumnOrder.ASC == columnOrder)
-      {
-         _currentSortedColumnIcon = _ascIcon;
-      }
-      else if (ColumnOrder.DESC == columnOrder)
-      {
-         _currentSortedColumnIcon = _descIcon;
-      }
-      else
-      {
-         _currentSortedColumnIcon = null;
-      }
-      _currentlySortedModelIdx = modelColumnIx;
+      getTableSortingAdmin().sort(modelColumnIx, columnOrder);
       _pressedViewColumnIdx = viewColumnIndex;
 
       repaint();
@@ -172,8 +144,8 @@ public class ButtonTableHeader extends JTableHeader
             sortableTableModel.addSortingListener(_sortingListener);
          }
       }
-      _currentSortedColumnIcon = null;
-      _currentlySortedModelIdx = -1;
+
+      getTableSortingAdmin().clear();
    }
 
    // SS: Display complete column header as tooltip if the column isn't wide enough to display it
@@ -205,43 +177,6 @@ public class ButtonTableHeader extends JTableHeader
       return retStr;
    }
 
-   /**
-    * @return The currently sorted column index. If no column is sorted -1.
-    */
-   public int getCurrentlySortedModelIdx()
-   {
-      return _currentlySortedModelIdx;
-   }
-
-   /**
-    *
-    * @return The direction of the currently sorted column. If no column is sorted false.
-    */
-   public boolean isAscending()
-   {
-      return _currentSortedColumnIcon == _ascIcon;
-   }
-
-   public void columnIndexWillBeRemoved(int colIx)
-   {
-//      if( colIx < _currentlySortedModelIdx)
-//      {
-//         --_currentlySortedModelIdx;
-//      }
-//      else if (colIx == _currentlySortedModelIdx)
-//      {
-//         _currentlySortedModelIdx = -1;
-//      }
-   }
-
-   public void columnIndexWillBeAdded(int colIx)
-   {
-//      if( colIx <= _currentlySortedModelIdx)
-//      {
-//         ++_currentlySortedModelIdx;
-//      }
-   }
-
    public void adjustAllColWidths(boolean includeColHeaders)
    {
       for(int i=0; i < getTable().getColumnModel().getColumnCount(); ++i)
@@ -264,26 +199,9 @@ public class ButtonTableHeader extends JTableHeader
    {
       if (isAlwaysAdjustAllColWidths())
       {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               adjustAllColWidths(true);
-            }
-         });
+         SwingUtilities.invokeLater(() -> adjustAllColWidths(true));
       }
    }
-
-   private final class TableDataListener implements TableModelListener
-   {
-      public void tableChanged(TableModelEvent evt)
-      {
-         _currentSortedColumnIcon = null;
-         _currentlySortedModelIdx = -1;
-      }
-
-   }
-
 
    private void adjustColWidth(int colIx, boolean includeColHeaders)
    {
@@ -309,9 +227,11 @@ public class ButtonTableHeader extends JTableHeader
          Rectangle2D bounds = headerFontMetrics.getStringBounds("" + column.getHeaderValue(), headerComp.getGraphics());
 
          int width = bounds.getBounds().width;
-         if(-1 != _currentlySortedModelIdx && colIx == getViewColumnIndex(_currentlySortedModelIdx) && null != _currentSortedColumnIcon)
+         if(   -1 != getTableSortingAdmin().getCurrentlySortedModelIdx()
+             && colIx == getViewColumnIndex(getTableSortingAdmin().getCurrentlySortedModelIdx())
+             && null != getTableSortingAdmin().getCurrentSortedColumnIcon())
          {
-            width += _currentSortedColumnIcon.getIconWidth();
+            width += getTableSortingAdmin().getCurrentSortedColumnIcon().getIconWidth();
          }
 
 
@@ -380,6 +300,11 @@ public class ButtonTableHeader extends JTableHeader
       _buttonTableHeaderDraggedColumnListener = buttonTableHeaderDraggedColumnListener;
    }
 
+   private TableSortingAdmin getTableSortingAdmin()
+   {
+      return ((SortableTableModel)table.getModel()).getTableSortingAdmin();
+   }
+
    class HeaderListener extends MouseAdapter implements MouseMotionListener
    {
       /*
@@ -443,7 +368,7 @@ public class ButtonTableHeader extends JTableHeader
          _pressed = false;
          if (!_dragged)
          {
-            _currentSortedColumnIcon = null;
+            getTableSortingAdmin().clearCurrentSortedColumnIcon();
             int column = getTable().convertColumnIndexToModel(_pressedViewColumnIdx);
             TableModel tm = table.getModel();
 
@@ -451,20 +376,11 @@ public class ButtonTableHeader extends JTableHeader
                && column < tm.getColumnCount()
                && tm instanceof SortableTableModel)
             {
-               ((SortableTableModel) tm).sortByColumn(column);
-               if (ColumnOrder.ASC == ((SortableTableModel)tm).getColumnOrder())
-               {
-                  _currentSortedColumnIcon = _ascIcon;
-               }
-               else if (ColumnOrder.DESC == ((SortableTableModel)tm).getColumnOrder())
-               {
-                  _currentSortedColumnIcon = _descIcon;
-               }
-               else
-               {
-                  _currentSortedColumnIcon = null;
-               }
-               _currentlySortedModelIdx = column;
+//               ((SortableTableModel) tm).sortByColumn(column);
+//               _tableSortingManager.sort(column, ((SortableTableModel)tm).getColumnOrder());
+
+               getTableSortingAdmin().sort(column, ((SortableTableModel)tm).getColumnOrder());
+               ((SortableTableModel) tm).applySorting();
             }
             repaint();
          }
@@ -505,10 +421,10 @@ public class ButtonTableHeader extends JTableHeader
    }
 
 
-   protected class ButtonTableRenderer implements TableCellRenderer
+   private class ButtonTableRenderer implements TableCellRenderer
    {
-      JButton _buttonRaised;
-      JButton _buttonLowered;
+      private JButton _buttonRaised;
+      private JButton _buttonLowered;
 
       ButtonTableRenderer(Font font)
       {
@@ -529,15 +445,8 @@ public class ButtonTableHeader extends JTableHeader
       /*
          * @see TableCellRenderer#getTableCellRendererComponent(JTable, Object, boolean, boolean, int, int)
          */
-      public Component getTableCellRendererComponent(
-         JTable table,
-         Object value,
-         boolean isSelected,
-         boolean hasFocus,
-         int row,
-         int column)
+      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
       {
-
          if (value == null)
          {
             value = "";
@@ -548,12 +457,12 @@ public class ButtonTableHeader extends JTableHeader
          {
             _buttonLowered.setText(value.toString());
 
-            // If this is the column that the table is currently is
-            // currently sorted by then display the sort icon.
-            if (column == getViewColumnIndex(_currentlySortedModelIdx)
-               && _currentSortedColumnIcon != null)
+            // If this is the column that the table is currently
+            // sorted by then display the sort icon.
+            if (    column == getViewColumnIndex(getTableSortingAdmin().getCurrentlySortedModelIdx())
+                 && getTableSortingAdmin().getCurrentSortedColumnIcon() != null)
             {
-               _buttonLowered.setIcon(_currentSortedColumnIcon);
+               _buttonLowered.setIcon(getTableSortingAdmin().getCurrentSortedColumnIcon());
             }
             else
             {
@@ -564,10 +473,10 @@ public class ButtonTableHeader extends JTableHeader
 
          // This is not the column that the mouse has been pressed in.
          _buttonRaised.setText(value.toString());
-         if (_currentSortedColumnIcon != null
-            && column == getViewColumnIndex(_currentlySortedModelIdx))
+         if (    getTableSortingAdmin().getCurrentSortedColumnIcon() != null
+              && column == getViewColumnIndex(getTableSortingAdmin().getCurrentlySortedModelIdx()))
          {
-            _buttonRaised.setIcon(_currentSortedColumnIcon);
+            _buttonRaised.setIcon(getTableSortingAdmin().getCurrentSortedColumnIcon());
          }
          else
          {

@@ -37,14 +37,11 @@ public class SortableTableModel extends AbstractTableModel
 {
    transient private MyTableModelListener _actualModelLis = new MyTableModelListener();
 
-	/** Column currently being sorted by. -1 means unsorted. */
-	private int _sortedColumn = -1;
-
-	private ColumnOrder _columnOrder = ColumnOrder.NATURAL;
-
 	/** The actual model that this model is wrapped around. */
 	private TableModel _actualModel;
-   private ArrayList<SortingListener> _sortingListeners = new ArrayList<SortingListener>();
+   private ArrayList<SortingListener> _sortingListeners = new ArrayList<>();
+
+	private TableSortingAdmin _tableSortingAdmin = new TableSortingAdmin();
 
    public TableModel getActualModel()
 	{
@@ -81,7 +78,7 @@ public class SortableTableModel extends AbstractTableModel
 	/**
 	 * Return the number of rows in this table.
 	 *
-	 * @return	Number of rows in this table.
+	 * @return Number of rows in this table.
 	 */
 	public int getRowCount()
 	{
@@ -91,7 +88,7 @@ public class SortableTableModel extends AbstractTableModel
 	/**
 	 * Return the number of columns in this table.
 	 *
-	 * @return	Number of columns in this table.
+	 * @return Number of columns in this table.
 	 */
 	public int getColumnCount()
 	{
@@ -101,10 +98,10 @@ public class SortableTableModel extends AbstractTableModel
 	/**
 	 * Return the value at the specified row/column.
 	 *
-	 * @param	row		Row to return data for.
-	 * @param	col		Column to return data for.
+	 * @param   row      Row to return data for.
+	 * @param   col      Column to return data for.
 	 *
-	 * @return	value at the specified row/column.
+	 * @return value at the specified row/column.
 	 */
 	public Object getValueAt(int row, int col)
 	{
@@ -128,11 +125,11 @@ public class SortableTableModel extends AbstractTableModel
 	/**
 	 * Set the value at the specified row/column.
 	 *
-	 * @param	value	Value to place in cell.
-	 * @param	row		Row to return data for.
-	 * @param	col		Column to return data for.
+	 * @param   value   Value to place in cell.
+	 * @param   row      Row to return data for.
+	 * @param   col      Column to return data for.
 	 *
-	 * @return	value at the specified row/column.
+	 * @return value at the specified row/column.
 	 */
 	public void setValueAt(Object value, int row, int col)
 	{
@@ -158,7 +155,7 @@ public class SortableTableModel extends AbstractTableModel
 	/**
 	 * Delete the selected rows in the actual table.
 	 *
-	 * @param	rows[]	List of row indexes in sorted model
+	 * @param   rows[]   List of row indexes in sorted model
 	 */
 	public void deleteRows(int[] rows)
 	{
@@ -202,10 +199,10 @@ public class SortableTableModel extends AbstractTableModel
 	 * the value returned by the model when asked if this
 	 * cell is editable.
 	 *
-	 * @param	row		Row to return data for.
-	 * @param	col		Column to return data for.
+	 * @param   row      Row to return data for.
+	 * @param   col      Column to return data for.
 	 *
-	 * @return	value returned by actual model
+	 * @return value returned by actual model
 	 */
 	public boolean isCellEditable(int row, int col)
 	{
@@ -217,31 +214,36 @@ public class SortableTableModel extends AbstractTableModel
 	 * was last sorted and then inverted that mode. If the column was not
 	 * the previous sorted column then it will be sorted in ascending mode.
 	 */
-	public ColumnOrder sortByColumn(int column)
+	public void applySorting()
 	{
 		ColumnOrder newOrder = ColumnOrder.ASC;
-		if (column == _sortedColumn)
+		if (_tableSortingAdmin.getCurrentlySortedModelIdx() == _tableSortingAdmin.getSortedColumn())
 		{
-			newOrder = _columnOrder.next();
+			newOrder = _tableSortingAdmin.getColumnOrder().next();
 		}
-		sortByColumn(column, newOrder);
-		return newOrder;
+		_tableSortingAdmin.sort2(_tableSortingAdmin.getCurrentlySortedModelIdx(), newOrder);
+
+		sortByColumn(_tableSortingAdmin.getCurrentlySortedModelIdx(), newOrder);
 	}
 
 	/**
 	 * Sorts the table by the specified column.
 	 *
-	 * @param	column		column to sort by
-	 * @param	ascending	sort ascending if <TT>true</TT> else descending.
+	 * @param   column      column to sort by
+	 * @param   ascending   sort ascending if <TT>true</TT> else descending.
 	 */
 	public void sortByColumn(int column, ColumnOrder newOrder)
 	{
-		_sortedColumn = column;
-		_columnOrder = newOrder;
+		_tableSortingAdmin.sort2(column, newOrder);
+		sortTableBySortingAdmin();
+	}
 
-		if (ColumnOrder.NATURAL != newOrder)
+	//private void _sortTable(int column, ColumnOrder newOrder)
+	private void sortTableBySortingAdmin()
+	{
+		if (ColumnOrder.NATURAL != _tableSortingAdmin.getColumnOrder())
       {
-         TableModelComparator comparator = new TableModelComparator(column, newOrder, isSortNullsAsHighestValue());
+         TableModelComparator comparator = new TableModelComparator(_tableSortingAdmin.getSortedColumn(), _tableSortingAdmin.getColumnOrder(), isSortNullsAsHighestValue());
          // Should the data be first cloned so that the sorting doesn't take place
          // on the array that is used in getValue()
          Arrays.sort(_indexes, comparator);
@@ -253,8 +255,8 @@ public class SortableTableModel extends AbstractTableModel
             _indexes[i] = i;
          }
       }
-      fireTableDataChanged();
-      fireSortingListeners(column, _columnOrder);
+		fireTableDataChanged();
+		fireSortingListeners(_tableSortingAdmin.getSortedColumn(), _tableSortingAdmin.getColumnOrder());
 	}
 
 	private boolean isSortNullsAsHighestValue()
@@ -283,16 +285,16 @@ public class SortableTableModel extends AbstractTableModel
 
    public ColumnOrder getColumnOrder()
 	{
-		return _columnOrder;
+		return _tableSortingAdmin.getColumnOrder();
 	}
 
 	public void tableChanged()
 	{
       tableChangedIntern();
 
-      if(-1 != _sortedColumn)
+      if(-1 != _tableSortingAdmin.getSortedColumn())
       {
-         sortByColumn(_sortedColumn, _columnOrder);
+         sortTableBySortingAdmin();
       }
       else
       {
@@ -361,8 +363,12 @@ public class SortableTableModel extends AbstractTableModel
       _sortingListeners.add(sortingListener);
    }
 
+	public TableSortingAdmin getTableSortingAdmin()
+	{
+		return _tableSortingAdmin;
+	}
 
-   class TableModelComparator implements Comparator<Integer>
+	class TableModelComparator implements Comparator<Integer>
 	{
       private int _iColumn;
 		private boolean _nullIsHighest;
@@ -383,15 +389,15 @@ public class SortableTableModel extends AbstractTableModel
 				_iAscending = -1;
 			}
 
-			 for (int i = 0, limit = _actualModel.getRowCount(); i < limit; ++i)
-			 {
-				 final Object data = _actualModel.getValueAt(i, _iColumn);
-				 if (!(data instanceof String))
-				 {
-					 _allDataIsString = false;
-					 break;
-				 }
-			 }
+			for (int i = 0, limit = _actualModel.getRowCount(); i < limit; ++i)
+			{
+				final Object data = _actualModel.getValueAt(i, _iColumn);
+				if (!(data instanceof String))
+				{
+					_allDataIsString = false;
+					break;
+				}
+			}
 		}
 
 		/*
@@ -416,6 +422,6 @@ public class SortableTableModel extends AbstractTableModel
 
    public int getSortedColumn()
    {
-      return _sortedColumn;
+      return _tableSortingAdmin.getSortedColumn();
    }
 }

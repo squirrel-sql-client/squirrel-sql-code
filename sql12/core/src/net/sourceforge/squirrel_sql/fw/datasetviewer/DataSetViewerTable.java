@@ -297,20 +297,9 @@ public final class DataSetViewerTable extends JTable
 
    void setShowRowNumbers(boolean show)
    {
-      try
-      {
-         int rowNumColIx = getColumnModel().getColumnIndex(RowNumberTableColumn.ROW_NUMBER_COL_IDENTIFIER);
-         _tableHeader.columnIndexWillBeRemoved(rowNumColIx);
-      }
-      catch (IllegalArgumentException e)
-      {
-         // Column not in model
-      }
-
       getColumnModel().removeColumn(_rowNumberTableColumn);
       if (show)
       {
-         _tableHeader.columnIndexWillBeAdded(0);
          getColumnModel().addColumn(_rowNumberTableColumn);
          getColumnModel().moveColumn(getColumnModel().getColumnCount() - 1, 0);
       }
