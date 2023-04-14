@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.table;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net

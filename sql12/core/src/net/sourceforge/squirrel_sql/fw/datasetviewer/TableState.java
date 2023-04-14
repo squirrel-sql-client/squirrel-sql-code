@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.RowColorHandlerState;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
-import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;

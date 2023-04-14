@@ -18,11 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import javax.swing.JFrame;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
@@ -34,6 +29,11 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
+
+import javax.swing.JFrame;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * This class uses column type defintions from the source session table column
@@ -116,9 +116,8 @@ public class ColTypeMapper {
         String result = null;
         JFrame mainFrame = destSession.getApplication().getMainFrame();
         HibernateDialect destDialect = 
-            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
-                                      mainFrame, 
-                                      destSession.getMetaData());
+            DialectFactory.getDialect(
+                  destSession.getMetaData());
 
         if (s_log.isDebugEnabled()) {
             s_log.debug(
@@ -130,9 +129,8 @@ public class ColTypeMapper {
         }
         if (destDialect != null) {
             HibernateDialect sourceDialect = 
-                DialectFactory.getDialect(DialectFactory.SOURCE_TYPE, 
-                                          mainFrame, 
-                                          sourceSession.getMetaData());
+                DialectFactory.getDialect(
+                      sourceSession.getMetaData());
             
             int precision = sourceDialect.getPrecisionDigits(size, colJdbcType);
             
@@ -234,9 +232,7 @@ public class ColTypeMapper {
         throws UserCancelledOperationException
     {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(DialectFactory.SOURCE_TYPE, 
-                                      sourceSession.getApplication().getMainFrame(), 
-                                      sourceSession.getMetaData());
+            DialectFactory.getDialect(sourceSession.getMetaData());
         int length = colInfo.getColumnSize();
         int type = colInfo.getDataType();
         length = dialect.getColumnLength(length, type); 

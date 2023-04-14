@@ -19,13 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-
 import net.sourceforge.squirrel_sql.client.gui.db.IDisposableDialog;
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -44,6 +38,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesManager;
 
+import javax.swing.JDialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public abstract class AbstractRefactoringCommand implements ICommand
 {
 	/**
@@ -55,17 +53,17 @@ public abstract class AbstractRefactoringCommand implements ICommand
 	 * Internationalized strings for this class
 	 */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AbstractRefactoringCommand.class);
+			StringManagerFactory.getStringManager(AbstractRefactoringCommand.class);
 
 	static interface i18n
 	{
 		String NO_CHANGES = s_stringMgr.getString("AbstractRefactoringCommand.noChanges");
 
 		String DIALECT_SELECTION_CANCELLED =
-			s_stringMgr.getString("AbstractRefactoringCommand.dialectSelectionCancelled");
+				s_stringMgr.getString("AbstractRefactoringCommand.dialectSelectionCancelled");
 
 		String UNSUPPORTED_TYPE_TITLE =
-			s_stringMgr.getString("AbstractRefactoringCommand.unsupportedTypeTitle");
+				s_stringMgr.getString("AbstractRefactoringCommand.unsupportedTypeTitle");
 	}
 
 	/**
@@ -85,7 +83,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 
 	/** User preferences regarding the generation of SQL scripts. */
 	protected final SqlGenerationPreferences _sqlPrefs;
-	
+
 	/** qualifier object to use in qualifying identifiers. */
 	protected final DatabaseObjectQualifier _qualifier;
 
@@ -97,16 +95,16 @@ public abstract class AbstractRefactoringCommand implements ICommand
 		if (info == null) {
 			throw new IllegalArgumentException("IDatabaseObjectInfo[] cannot be null");
 		}
-		if (info[0] == null) { 
+		if (info[0] == null) {
 			throw new IllegalArgumentException("IDatabaseObjectInfo[0] cannot be null.  Must have at least " +
-					"one object selected to be refactored");
+														  "one object selected to be refactored");
 		}
-		
+
 		_session = session;
 		_info = info;
 
 		_qualifier = new DatabaseObjectQualifier(info[0].getCatalogName(), info[0].getSchemaName());
-		
+
 		RefactoringPreferenceBean prefsBean = RefactoringPreferencesManager.getPreferences();
 		_sqlPrefs = new SqlGenerationPreferences();
 		if (prefsBean != null)
@@ -118,7 +116,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 			if (s_log.isDebugEnabled())
 			{
 				s_log.debug("RefactoringPreferencesManager.getPreferences returned null.  "
-					+ "Unable to get user preferences");
+								+ "Unable to get user preferences");
 			}
 			_sqlPrefs.setQualifyTableNames(false);
 			_sqlPrefs.setQuoteIdentifiers(false);
@@ -135,22 +133,22 @@ public abstract class AbstractRefactoringCommand implements ICommand
 		try
 		{
 			ISQLDatabaseMetaData md = _session.getMetaData();
-			_dialect =
-				DialectFactory.getDialect(DialectFactory.DEST_TYPE, _session.getApplication().getMainFrame(), md);
-			if (isRefactoringSupportedForDialect(_dialect))
+			_dialect = DialectFactory.getDialect(md);
+			if(isRefactoringSupportedForDialect(_dialect))
 			{
 				onExecute();
-			} else
+			}
+			else
 			{
 				String dialectName = DialectFactory.getDialectType(md).name();
-				String msg =
-					s_stringMgr.getString("AbstractRefactoringCommand.unsupportedRefactoringMsg", dialectName);
-				_session.showErrorMessage(msg);
+				_session.showErrorMessage(s_stringMgr.getString("AbstractRefactoringCommand.unsupportedRefactoringMsg", dialectName));
 			}
-		} catch (UserCancelledOperationException e)
+		}
+		catch (UserCancelledOperationException e)
 		{
 			_session.showErrorMessage(AbstractRefactoringCommand.i18n.DIALECT_SELECTION_CANCELLED);
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			_session.showErrorMessage(e);
 			s_log.error("Unexpected exception on execution: " + e.getMessage(), e);
@@ -160,7 +158,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 	/**
 	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified
 	 * dialect.
-	 * 
+	 *
 	 * @param dialectExt
 	 *           the HibernateDialect to check
 	 * @return true if this refactoring is supported; false otherwise.
@@ -169,7 +167,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 
 	/**
 	 * The subclass should implement this method with it's refactoring specific execution code.
-	 * 
+	 *
 	 * @throws Exception
 	 *            if something goes wrong while executing the command
 	 */
@@ -177,7 +175,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 
 	/**
 	 * The subclass should implement this so that getSQLStatements can generate the actual statements.
-	 * 
+	 *
 	 * @return the sql statements
 	 * @throws Exception
 	 *            if something goes wrong while generating the sql statements
@@ -187,7 +185,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 	/**
 	 * Adds a new task to the ThreadPool that generates the SQL statements and notifies the listener when the
 	 * statements were successfully generated.
-	 * 
+	 *
 	 * @param listener
 	 *           the listener to notify when the statments are ready
 	 */
@@ -215,7 +213,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 	/**
 	 * The subclass should implement this so that the ExecuteListener can delegate the execution of the sql
 	 * script to the subclass.
-	 * 
+	 *
 	 * @param script
 	 *           the sql script that should be executed
 	 */
@@ -353,7 +351,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 	/**
 	 * Builds a script as a single string from the specified statements. EOL chars and statement separators are
 	 * inserted.
-	 * 
+	 *
 	 * @param stmts
 	 *           the SQL statements to form into a script.
 	 * @param stripComments

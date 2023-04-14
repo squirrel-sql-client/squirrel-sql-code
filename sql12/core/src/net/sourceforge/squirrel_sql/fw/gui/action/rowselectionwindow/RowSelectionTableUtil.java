@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 
 import javax.swing.JTable;
 import java.util.ArrayList;

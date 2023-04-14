@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.table;
 /*
  * Copyright (C) 2002-2004 Johan Compagner
  * jcompagner@j-com.nl
@@ -24,6 +24,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
+import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;

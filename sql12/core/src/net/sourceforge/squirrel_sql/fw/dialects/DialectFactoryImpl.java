@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import javax.swing.JFrame;
-
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+
+import javax.swing.JFrame;
 
 /*
  * Copyright (C) 2010 Rob Manning
@@ -309,7 +309,7 @@ public class DialectFactoryImpl implements IDialectFactory
 	public HibernateDialect getDialect(int sessionType, JFrame parent, ISQLDatabaseMetaData md)
 		throws UserCancelledOperationException
 	{
-		return DialectFactory.getDialect(sessionType, parent, md);
+		return DialectFactory.getDialect(md);
 	}
 
 	/**

@@ -18,16 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import net.sourceforge.squirrel_sql.fw.gui.DialogUtils;
-import net.sourceforge.squirrel_sql.fw.gui.IDialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -119,19 +113,6 @@ public class DialectFactory
 	 * TODO: Remove and put static dialects in DialectType enum.
 	 */
 	private static HashMap<String, HibernateDialect> dbNameDialectMap = new HashMap<>();
-
-	public static boolean isPromptForDialect = false;
-
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DialectFactory.class);
-
-	private static IDialogUtils dialogUtils = new DialogUtils();
-
-	public static void setDialogUtils(IDialogUtils dialogUtils)
-	{
-		DialectFactory.dialogUtils = dialogUtils;
-	}
 
 	/**
 	 * The keys to dbNameDialectMap are displayed to the user in the dialect chooser widget, so be sure to use
@@ -420,64 +401,6 @@ public class DialectFactory
 		return genericDialect;
 	}
 
-	public static HibernateDialect getDialect(int sessionType, JFrame parent, ISQLDatabaseMetaData md)
-		throws UserCancelledOperationException
-	{
-		HibernateDialect result = null;
-
-		// User doesn't wish for us to try to auto-detect the dest db.
-		if (isPromptForDialect)
-		{
-			result = showDialectDialog(parent, sessionType);
-		}
-		else
-		{
-			result = getDialect(md);
-		}
-		return result;
-	}
-
-	/**
-	 * Shows the user a dialog explaining that we failed to detect the dialect of the destination database, and
-	 * we are offering the user the opportunity to pick one from our supported dialects list. If the user
-	 * cancels this dialog, null is returned to indicate that the user doesn't wish to continue the paste
-	 * operation.
-	 * 
-	 * @param parent
-	 *           the JFrame to use to display the dialog over.
-	 * @param sessionType
-	 *           the type of the session (source or destination). This is a left over from DBCopy Plugin and
-	 *           should be refactored to not need this at some point.
-	 * @return the dialect that the user picked.
-	 */
-	private static HibernateDialect showDialectDialog(JFrame parent, int sessionType)
-		throws UserCancelledOperationException
-	{
-		Object[] dbNames = getDbNames();
-		String chooserTitle = s_stringMgr.getString("dialectChooseTitle");
-		String typeStr = null;
-		if (sessionType == SOURCE_TYPE)
-		{
-			typeStr = s_stringMgr.getString("sourceSessionTypeName");
-		}
-		if (sessionType == DEST_TYPE)
-		{
-			typeStr = s_stringMgr.getString("destSessionTypeName");
-		}
-		String message = s_stringMgr.getString("dialectDetectFailedMessage", typeStr);
-		if (isPromptForDialect)
-		{
-			message = s_stringMgr.getString("autoDetectDisabledMessage", typeStr);
-		}
-
-		String dbName =
-			dialogUtils.showInputDialog(parent, message, chooserTitle, JOptionPane.INFORMATION_MESSAGE, null,
-				dbNames, dbNames[0]);
-
-		if (dbName == null || "".equals(dbName)) { throw new UserCancelledOperationException(); }
-		return dbNameDialectMap.get(dbName);
-	}
-
 	/**
 	 * Returns a list of Database server names that can be preented to the user whenever we want the user to
 	 * pick a dialect.
@@ -502,5 +425,4 @@ public class DialectFactory
 		Collection<HibernateDialect> c = dbNameDialectMap.values();
 		return c.toArray();
 	}
-
 }

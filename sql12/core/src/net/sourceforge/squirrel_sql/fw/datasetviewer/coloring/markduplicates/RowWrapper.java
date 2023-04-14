@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
-import net.sourceforge.squirrel_sql.fw.gui.SquirrelTableCellValueCollator;
+import net.sourceforge.squirrel_sql.fw.gui.table.SquirrelTableCellValueCollator;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class RowWrapper implements Comparable<RowWrapper>

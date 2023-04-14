@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.fw.gui.DialogUtils;
 
 import java.awt.event.ActionEvent;
 
@@ -38,7 +37,8 @@ public class SavePreferencesAction extends SquirrelAction
      * @param app
      *            Application API.           
      */
-    public SavePreferencesAction(IApplication app) {
+    public SavePreferencesAction(IApplication app)
+    {
         super(app);
     }
 
@@ -48,11 +48,8 @@ public class SavePreferencesAction extends SquirrelAction
      * @param evt
      *            The current event.
      */
-    public void actionPerformed(ActionEvent evt) {
-        IApplication app = getApplication();
-        SavePreferencesCommand command = 
-            new SavePreferencesCommand(app, getParentFrame(evt));
-        command.setDialogUtils(new DialogUtils());
-        command.execute();
+    public void actionPerformed(ActionEvent evt)
+    {
+        new SavePreferencesCommand(getParentFrame(evt)).execute();
     }
 }

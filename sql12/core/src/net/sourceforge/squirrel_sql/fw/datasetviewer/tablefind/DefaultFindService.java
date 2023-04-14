@@ -3,8 +3,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
-import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
-import net.sourceforge.squirrel_sql.fw.gui.SortingListener;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortingListener;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;

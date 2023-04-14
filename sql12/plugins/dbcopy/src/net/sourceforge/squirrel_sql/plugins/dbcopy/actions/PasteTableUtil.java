@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.dbcopy.actions;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -78,7 +79,7 @@ public class PasteTableUtil
          {
             return;
          }
-         if (!checkSession(destSession, info, app1))
+         if (!checkSession(destSession, info))
          {
             return;
          }
@@ -111,38 +112,33 @@ public class PasteTableUtil
     * schema != catalog.(Otherwise the copy operation will fail as the qualified
     * name will be [catalog].[tablename] instead of [schema].[tablename]
     *
-    * @param app1
     * @param session
     * @param dbObjs
     *
     * @return true if it is ok to proceed with the copy operation; false otherwise.
     */
-   private static boolean checkSession(ISession session, IDatabaseObjectInfo dbObj, IApplication app1)
-       throws UserCancelledOperationException
+   private static boolean checkSession(ISession session, IDatabaseObjectInfo dbObj)
+         throws UserCancelledOperationException
    {
-       if (session == null || dbObj == null) {
-           return true;
-       }
-       String typeName = dbObj.getDatabaseObjectType().getName();
+      if(session == null || dbObj == null)
+      {
+         return true;
+      }
+      String typeName = dbObj.getDatabaseObjectType().getName();
 
-       log.debug("PasteTableAction.checkSession: dbObj type="+typeName+
-                 " name="+dbObj.getSimpleName());
+      log.debug("PasteTableAction.checkSession: dbObj type=" + typeName + " name=" + dbObj.getSimpleName());
 
-       HibernateDialect d =
-           DialectFactory.getDialect(DialectFactory.DEST_TYPE,
-                 session.getApplication().getMainFrame(),
-                 session.getMetaData());
-       if (!d.canPasteTo(dbObj)) {
-           //i18n[PasteTableAction.error.destdbobj=The destination database
-           //doesn't support copying tables into '{0}' objects.\n Please
-           //select a schema to paste into.]
-           String errmsg =
-               s_stringMgr.getString("PasteTableAction.error.destdbobj",
-                                     new Object[] { typeName });
-           app1.showErrorDialog(errmsg);
-           return false;
-       }
-       return true;
+      HibernateDialect d = DialectFactory.getDialect(session.getMetaData());
+      if(!d.canPasteTo(dbObj))
+      {
+         //i18n[PasteTableAction.error.destdbobj=The destination database
+         //doesn't support copying tables into '{0}' objects.\n Please
+         //select a schema to paste into.]
+         String errmsg = s_stringMgr.getString("PasteTableAction.error.destdbobj", new Object[]{typeName});
+         Main.getApplication().showErrorDialog(errmsg);
+         return false;
+      }
+      return true;
    }
 
    /**

@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelecte
 import net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues.ShowDistinctValuesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
+import net.sourceforge.squirrel_sql.fw.gui.table.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.tableselectiondiff.TableSelectionDiff;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

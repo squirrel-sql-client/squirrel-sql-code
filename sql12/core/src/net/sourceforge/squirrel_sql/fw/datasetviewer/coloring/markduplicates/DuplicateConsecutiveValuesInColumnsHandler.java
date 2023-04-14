@@ -1,18 +1,18 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.util.HashMap;
-import java.util.TreeMap;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 public class DuplicateConsecutiveValuesInColumnsHandler implements DuplicateHandler
 {

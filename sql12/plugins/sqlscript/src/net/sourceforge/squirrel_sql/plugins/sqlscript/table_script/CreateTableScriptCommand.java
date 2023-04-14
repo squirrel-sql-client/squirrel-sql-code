@@ -144,7 +144,7 @@ public class CreateTableScriptCommand
 
          List<ITableInfo> tables = convertArrayToList(dbObjs);
 
-         HibernateDialect dialect =  DialectFactory.getDialect(DialectFactory.SOURCE_TYPE, Main.getApplication().getMainFrame(),md);
+         HibernateDialect dialect =  DialectFactory.getDialect(md);
          List<String> sqls = dialect.getCreateTableSQL(tables, md, csprefs, isJdbcOdbc);
          String sep = _objectTreeAPI.getSession().getQueryTokenizer().getSQLStatementSeparator();
 

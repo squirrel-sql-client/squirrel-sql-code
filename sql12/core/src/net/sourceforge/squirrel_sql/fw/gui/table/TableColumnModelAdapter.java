@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.table;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
