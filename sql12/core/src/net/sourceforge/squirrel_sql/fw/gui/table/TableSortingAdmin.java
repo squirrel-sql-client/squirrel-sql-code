@@ -29,10 +29,6 @@ public class TableSortingAdmin
    }
 
 
-   public void updateSortedColumn(int sortedColumn, ColumnOrder columnOrder)
-   {
-      updateSortedColumn(sortedColumn, columnOrder, true);
-   }
    public void updateSortedColumn(int sortedColumn, ColumnOrder columnOrder, boolean clearFirst)
    {
       if(clearFirst)
@@ -87,25 +83,4 @@ public class TableSortingAdmin
    {
       return _lastChangedSortingItem;
    }
-
-   public int getFirstSortedColumn()
-   {
-      if(hasSortedColumns())
-      {
-         return _tableSortingItems.get(0).getSortedModelColumn();
-      }
-
-      return -1;
-   }
-
-   public ColumnOrder getFirstColumnOrder()
-   {
-      if(hasSortedColumns())
-      {
-         return _tableSortingItems.get(0).getColumnOrder();
-      }
-
-      return ColumnOrder.NATURAL;
-   }
-
 }

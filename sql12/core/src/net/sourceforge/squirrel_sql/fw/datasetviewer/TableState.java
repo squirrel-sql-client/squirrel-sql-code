@@ -1,22 +1,24 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.RowColorHandlerState;
-import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.gui.table.TableSortingAdmin;
+import net.sourceforge.squirrel_sql.fw.gui.table.TableSortingItem;
 
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class TableState
 {
    private boolean _applySorting;
 
-   private int _sortedColumn;
-   private ColumnOrder _columnOrder;
+   private List<TableStateSortingItem> _tableStateSortingItems = new ArrayList<>();
    private Rectangle _visibleRect;
    private HashMap<Integer, Integer> _columnWidthsByModelIndex = new HashMap<Integer, Integer>();
    private HashMap<Integer, Integer> _columnIndexByModelIndex = new HashMap<Integer, Integer>();
@@ -31,8 +33,11 @@ public class TableState
       if(table.getModel() instanceof SortableTableModel)
       {
          _applySorting = true;
-         _sortedColumn = ((SortableTableModel)table.getModel()).getFirstSortedColumn();
-         _columnOrder = ((SortableTableModel)table.getModel()).getFirstColumnOrder();
+
+         for (TableSortingItem tableSortingItem : ((SortableTableModel)table.getModel()).getTableSortingAdmin().getTableSortingItems())
+         {
+            _tableStateSortingItems.add(new TableStateSortingItem(tableSortingItem.getSortedModelColumn(), tableSortingItem.getColumnOrder()));
+         }
       }
 
 
@@ -93,10 +98,15 @@ public class TableState
 
       if (_applySorting && table.getModel() instanceof SortableTableModel)
       {
-         if(-1 != _sortedColumn)
+         SortableTableModel sortableTableModel = (SortableTableModel) table.getModel();
+         TableSortingAdmin tableSortingAdmin = sortableTableModel.getTableSortingAdmin();
+
+         tableSortingAdmin.clear();
+         for (TableStateSortingItem tableStateSortingItem : _tableStateSortingItems)
          {
-            ((SortableTableModel)table.getModel()).sortByColumn(_sortedColumn, _columnOrder);
+            tableSortingAdmin.updateSortedColumn(tableStateSortingItem.getSortedModelColumn(), tableStateSortingItem.getColumnOrder(), false);
          }
+         sortableTableModel.sortTableBySortingAdmin();
       }
 
       table.getSelectionModel().clearSelection();

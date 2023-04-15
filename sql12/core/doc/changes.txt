@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+UI-Tables can now be sorted by multiple columns
+  when the ctrl key is pressed while column headers are clicked.
+
 Syntax Plugin:
   New option >>Quotes (' or ") are doubled / enclose selection<<:
   See menu File --> New Session Properties --> tab Syntax

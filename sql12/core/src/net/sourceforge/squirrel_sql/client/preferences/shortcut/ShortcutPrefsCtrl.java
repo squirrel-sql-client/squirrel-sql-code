@@ -195,7 +195,7 @@ public class ShortcutPrefsCtrl
          int viewRow = _shortcutPrefsPanel.tblShortcuts.getTable().getSortableTableModel().transformToViewRow(selectedModelRows[0]);
          _shortcutPrefsPanel.tblShortcuts.getTable().getSelectionModel().setSelectionInterval(viewRow, viewRow);
 
-         if(2 == _shortcutPrefsPanel.tblShortcuts.getTable().getSortableTableModel().getFirstSortedColumn())
+         if(null != _shortcutPrefsPanel.tblShortcuts.getTable().getSortableTableModel().getTableSortingAdmin().getTableSortingItem(2))
          {
             _shortcutPrefsPanel.tblShortcuts.getTable().scrollToVisible(viewRow, 1);
          }

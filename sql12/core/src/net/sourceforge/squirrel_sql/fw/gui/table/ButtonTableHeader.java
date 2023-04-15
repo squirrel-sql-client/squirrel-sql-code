@@ -23,8 +23,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JTable;
@@ -48,7 +48,7 @@ import java.awt.geom.Rectangle2D;
 
 public class ButtonTableHeader extends JTableHeader
 {
-   private static ILogger s_log = LoggerController.createLogger(ButtonTableHeader.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ButtonTableHeader.class);
 
    private static final String PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS = "Squirrel.alwaysAdoptAllColumnHeaders";
 
@@ -390,6 +390,7 @@ public class ButtonTableHeader extends JTableHeader
                   newOrder = tableSortingItem.getColumnOrder().next();
                }
                getTableSortingAdmin().updateSortedColumn(newSortColumn, newOrder, 0 == (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK));
+               writeMultipleSortingToMessagePanel();
                ((SortableTableModel) tm).sortTableBySortingAdmin();
             }
             else
@@ -406,6 +407,29 @@ public class ButtonTableHeader extends JTableHeader
             }
          }
          _dragged = false;
+      }
+
+      public void writeMultipleSortingToMessagePanel()
+      {
+         if(1 < getTableSortingAdmin().getTableSortingItems().size())
+         {
+            String msg = s_stringMgr.getString("TableSortingAdmin.multipleSortingMessagePrefix") + " ";
+
+
+            for (int i = 0; i < getTableSortingAdmin().getTableSortingItems().size(); i++)
+            {
+               TableSortingItem tableSortingItem = getTableSortingAdmin().getTableSortingItems().get(i);
+
+               msg += getColumnModel().getColumn(tableSortingItem.getSortedModelColumn()).getHeaderValue() + " " + tableSortingItem.getColumnOrder().name();
+
+               if(i + 1 < getTableSortingAdmin().getTableSortingItems().size())
+               {
+                  msg += ", ";
+               }
+            }
+
+            Main.getApplication().getMessageHandler().showMessage(msg);
+         }
       }
 
       public void mouseDragged(MouseEvent e)

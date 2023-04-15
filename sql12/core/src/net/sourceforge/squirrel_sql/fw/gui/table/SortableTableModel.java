@@ -23,7 +23,6 @@ package net.sourceforge.squirrel_sql.fw.gui.table;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -208,19 +207,6 @@ public class SortableTableModel extends AbstractTableModel
 		return _actualModel.isCellEditable(row,col);
 	}
 
-	/**
-	 * Sorts the table by the specified column.
-	 *
-	 * @param   column      column to sort by
-	 * @param   ascending   sort ascending if <TT>true</TT> else descending.
-	 */
-	public void sortByColumn(int column, ColumnOrder newOrder)
-	{
-		_tableSortingAdmin.updateSortedColumn(column, newOrder);
-		sortTableBySortingAdmin();
-	}
-
-	//private void _sortTable(int column, ColumnOrder newOrder)
 	public void sortTableBySortingAdmin()
 	{
 		if (_tableSortingAdmin.hasSortedColumns())
@@ -250,11 +236,6 @@ public class SortableTableModel extends AbstractTableModel
          listener.sortingDone(_tableSortingAdmin);
       }
    }
-
-   public ColumnOrder getFirstColumnOrder()
-	{
-		return _tableSortingAdmin.getFirstColumnOrder();
-	}
 
 	public void tableChanged()
 	{
@@ -343,10 +324,4 @@ public class SortableTableModel extends AbstractTableModel
 			SortableTableModel.this.tableChangedIntern();
 		}
 	}
-
-
-   public int getFirstSortedColumn()
-   {
-      return _tableSortingAdmin.getFirstSortedColumn();
-   }
 }
