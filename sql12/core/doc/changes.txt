@@ -108,6 +108,8 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+DB2 Plugin: Fixed trigger details for AS400.
+
 Table cell data popup:
   Reformat button unintentionally triggered file export.
 

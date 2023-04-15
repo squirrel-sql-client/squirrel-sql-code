@@ -266,7 +266,12 @@ public class DB2SqlImpl implements DB2Sql
 		
 		switch(db2Type) {
 		case OS400:
-			result = genericTriggerDetailsSql;
+			result =
+					"SELECT " +
+					"* " +
+					"FROM qsys2.systriggers " +
+					"WHERE trigger_schema = ? " +
+					"AND trigger_name = ? ";
 			break;
 		case LUW:
 			result = genericTriggerDetailsSql;
