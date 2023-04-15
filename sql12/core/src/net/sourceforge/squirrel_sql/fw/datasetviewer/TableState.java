@@ -31,8 +31,8 @@ public class TableState
       if(table.getModel() instanceof SortableTableModel)
       {
          _applySorting = true;
-         _sortedColumn = ((SortableTableModel)table.getModel()).getSortedColumn();
-         _columnOrder = ((SortableTableModel)table.getModel()).getColumnOrder();
+         _sortedColumn = ((SortableTableModel)table.getModel()).getFirstSortedColumn();
+         _columnOrder = ((SortableTableModel)table.getModel()).getFirstColumnOrder();
       }
 
 

@@ -22,7 +22,7 @@ public class DuplicateCellsInSameRowHandler implements DuplicateHandler
    public DuplicateCellsInSameRowHandler(DataSetViewerTable dataSetViewerTable)
    {
       _dataSetViewerTable = dataSetViewerTable;
-      _dataSetViewerTable.getSortableTableModel().addSortingListener((modelColumnIx, columnOrder) -> onSorted());
+      _dataSetViewerTable.getSortableTableModel().addSortingListener(tableSortingAdmin -> onSorted());
    }
 
    private void onSorted()

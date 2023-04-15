@@ -71,7 +71,7 @@ public class MarkDuplicatesChooserController
       if(_sqlResultDataSetViewer instanceof DataSetViewerTablePanel)
       {
          SortableTableModel sortableTableModel = ((DataSetViewerTablePanel) _sqlResultDataSetViewer).getTable().getSortableTableModel();
-         sortableTableModel.addSortingListener((modelColumnIx, columnOrder) -> onTableSorted());
+         sortableTableModel.addSortingListener(tableSortingAdmin -> onTableSorted());
       }
 
       if(_sqlResultDataSetViewer instanceof DataSetViewerTablePanel)

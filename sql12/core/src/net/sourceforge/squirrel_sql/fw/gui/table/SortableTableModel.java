@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.fw.gui.table;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
@@ -32,7 +31,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class SortableTableModel extends AbstractTableModel
 {
@@ -218,18 +216,16 @@ public class SortableTableModel extends AbstractTableModel
 	 */
 	public void sortByColumn(int column, ColumnOrder newOrder)
 	{
-		_tableSortingAdmin.sort(column, newOrder);
+		_tableSortingAdmin.updateSortedColumn(column, newOrder);
 		sortTableBySortingAdmin();
 	}
 
 	//private void _sortTable(int column, ColumnOrder newOrder)
 	public void sortTableBySortingAdmin()
 	{
-		if (ColumnOrder.NATURAL != _tableSortingAdmin.getColumnOrder())
+		if (_tableSortingAdmin.hasSortedColumns())
       {
-         TableModelComparator comparator = new TableModelComparator(_tableSortingAdmin.getSortedColumn(), _tableSortingAdmin.getColumnOrder(), isSortNullsAsHighestValue());
-         // Should the data be first cloned so that the sorting doesn't take place
-         // on the array that is used in getValue()
+         TableModelComparator comparator = new TableModelComparator(_actualModel, _tableSortingAdmin);
          Arrays.sort(_indexes, comparator);
       }
       else
@@ -239,44 +235,32 @@ public class SortableTableModel extends AbstractTableModel
             _indexes[i] = i;
          }
       }
+
 		fireTableDataChanged();
-		fireSortingListeners(_tableSortingAdmin.getSortedColumn(), _tableSortingAdmin.getColumnOrder());
+		fireSortingListeners();
 	}
 
-	private boolean isSortNullsAsHighestValue()
-	{
-		boolean nullIsHighest;
-		if(null != Main.getApplication().getSessionManager().getActiveSession())
-		{
-			nullIsHighest = Main.getApplication().getSessionManager().getActiveSession().getProperties().isSortNullsAsHighestValue();
-		}
-		else
-		{
-			nullIsHighest = Main.getApplication().getSquirrelPreferences().getSessionProperties().isSortNullsAsHighestValue();
-		}
-		return nullIsHighest;
-	}
 
-	private void fireSortingListeners(int column, ColumnOrder columnOrder)
+	private void fireSortingListeners()
    {
       SortingListener[] listeners = _sortingListeners.toArray(new SortingListener[_sortingListeners.size()]);
 
       for (SortingListener listener : listeners)
       {
-         listener.sortingDone(column, columnOrder);
+         listener.sortingDone(_tableSortingAdmin);
       }
    }
 
-   public ColumnOrder getColumnOrder()
+   public ColumnOrder getFirstColumnOrder()
 	{
-		return _tableSortingAdmin.getColumnOrder();
+		return _tableSortingAdmin.getFirstColumnOrder();
 	}
 
 	public void tableChanged()
 	{
       tableChangedIntern();
 
-      if(-1 != _tableSortingAdmin.getSortedColumn())
+      if(_tableSortingAdmin.hasSortedColumns())
       {
          sortTableBySortingAdmin();
       }
@@ -352,49 +336,6 @@ public class SortableTableModel extends AbstractTableModel
 		return _tableSortingAdmin;
 	}
 
-	class TableModelComparator implements Comparator<Integer>
-	{
-      private int _iColumn;
-		private boolean _nullIsHighest;
-		private int _iAscending;
-      private final SquirrelTableCellValueCollator _collator = new SquirrelTableCellValueCollator();
-      private boolean _allDataIsString = true;
-
-      public TableModelComparator(int iColumn, ColumnOrder compColumnOrder, boolean nullIsHighest)
-		{
-			_iColumn = iColumn;
-			_nullIsHighest = nullIsHighest;
-			if (ColumnOrder.ASC == compColumnOrder)
-			{
-				_iAscending = 1;
-			}
-			else if (ColumnOrder.DESC == compColumnOrder)
-			{
-				_iAscending = -1;
-			}
-
-			for (int i = 0, limit = _actualModel.getRowCount(); i < limit; ++i)
-			{
-				final Object data = _actualModel.getValueAt(i, _iColumn);
-				if (!(data instanceof String))
-				{
-					_allDataIsString = false;
-					break;
-				}
-			}
-		}
-
-		/*
-		 * @see Comparator#compare(Object, Object)
-		 */
-		public int compare(final Integer i1, final Integer i2)
-		{
-			final Object data1 = _actualModel.getValueAt(i1.intValue(), _iColumn);
-			final Object data2 = _actualModel.getValueAt(i2.intValue(), _iColumn);
-			return _collator.compareTableCellValues(data1, data2, _iAscending, _allDataIsString, _nullIsHighest);
-		}
-	}
-
 	protected class MyTableModelListener implements TableModelListener
 	{
 		public void tableChanged(TableModelEvent evt)
@@ -404,8 +345,8 @@ public class SortableTableModel extends AbstractTableModel
 	}
 
 
-   public int getSortedColumn()
+   public int getFirstSortedColumn()
    {
-      return _tableSortingAdmin.getSortedColumn();
+      return _tableSortingAdmin.getFirstSortedColumn();
    }
 }

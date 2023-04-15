@@ -2,9 +2,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
-import net.sourceforge.squirrel_sql.fw.gui.table.SortingListener;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -102,14 +100,7 @@ public class DefaultFindService implements FindService
 
       if (_table.getModel() instanceof SortableTableModel)
       {
-         ((SortableTableModel)_table.getModel()).addSortingListener(new SortingListener()
-         {
-            @Override
-            public void sortingDone(int modelColumnIx, ColumnOrder columnOrder)
-            {
-               findServiceCallBack.tableCellStructureChanged();
-            }
-         });
+         ((SortableTableModel)_table.getModel()).addSortingListener(tableSortingAdmin -> findServiceCallBack.tableCellStructureChanged());
       }
 
       _table.getColumnModel().addColumnModelListener(new TableColumnModelListener()

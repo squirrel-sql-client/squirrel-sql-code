@@ -24,7 +24,7 @@ public class DuplicateCellsInSameRowIfConsecutiveHandler implements DuplicateHan
    public DuplicateCellsInSameRowIfConsecutiveHandler(DataSetViewerTable dataSetViewerTable)
    {
       _dataSetViewerTable = dataSetViewerTable;
-      _dataSetViewerTable.getSortableTableModel().addSortingListener((modelColumnIx, columnOrder) -> onSorted());
+      _dataSetViewerTable.getSortableTableModel().addSortingListener(tableSortingAdmin -> onSorted());
    }
 
    private void onSorted()
