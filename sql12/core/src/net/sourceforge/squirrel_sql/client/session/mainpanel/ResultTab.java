@@ -64,7 +64,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -567,18 +569,36 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private JPanel createTopRightButtonsPanel()
    {
       JPanel ret = new JPanel();
-      ret.setLayout(new GridLayout(1, 0, 0, 0)); // 0 columns means any number of columns
+      ret.setLayout(new GridBagLayout()); // 0 columns means any number of columns
 
-      ret.add(_readMoreResultsHandler.getLoadingLabel());
-      ret.add(new TabButton(getRerunCurrentSQLResultTabAction()));
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,5,0,0), 0,0);
+      ret.add(_readMoreResultsHandler.getLoadingLabel(),gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,10,0,0), 0,0);
+      ret.add(new TabButton(getRerunCurrentSQLResultTabAction()), gbc);
 
       _markDuplicatesChooserController = new MarkDuplicatesChooserController(this);
-      ret.add(_markDuplicatesChooserController.getComponent());
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      ret.add(GUIUtils.setPreferredWidth(_markDuplicatesChooserController.getComponent(), 42), gbc);
 
-      ret.add(new TabButton(new FindResultColumnAction(this)));
-      ret.add(new TabButton(new FindInResultAction(this)));
-      ret.add(new TabButton(new CreateResultTabFrameAction(this)));
-      ret.add(new TabButton(new CloseAction(this)));
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,0,0,0), 0,0);
+      ret.add(new TabButton(new FindResultColumnAction(this)), gbc);
+
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      ret.add(new TabButton(new FindInResultAction(this)), gbc);
+
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      ret.add(new TabButton(new CreateResultTabFrameAction(this)), gbc);
+
+      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,2), 0,0);
+      ret.add(new TabButton(new CloseAction(this)), gbc);
+
+      gbc = new GridBagConstraints(0,1, GridBagConstraints.REMAINDER, 1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+      ret.add(new JPanel(), gbc);
+
+      //ret.setBorder(BorderFactory.createLineBorder(Color.red, 1));
       return ret;
    }
 
