@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Data compare / DBDiff Plugin:
+  The compare dialog now offers to ignore case.
+
 UI-Tables can now be sorted by multiple columns
   when the ctrl key is pressed while column headers are clicked.
 
@@ -17,7 +20,7 @@ New option to define if NULL values are sorted highest or lowest
   when tables are sorted by clicking column headers.
   See menu File --> New Session Properties --> tab General --> section Output
 
-Data compare / JDiff Plugin:
+Data compare / DBDiff Plugin:
   The compare dialog now offers options to change the way differences are displayed.
 
 Graph Plugin:

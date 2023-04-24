@@ -48,10 +48,12 @@ import org.jmeld.ui.JMeldPanel;
 public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 {
 	public static final String PREF_IGNORE_WHITE_SPACES = "JMeldDiffPresentation.PREF_IGNORE_WHITE_SPACES";
+		public static final String PREF_IGNORE_CASE = "JMeldDiffPresentation.PREF_IGNORE_CASE";
 	public static final String PREF_DRAW_CURVES = "JMeldDiffPresentation.PREF_DRAW_CURVES";
 	public static final String PREF_SELECTED_CURVE_TYPE = "JMeldDiffPresentation.PREF_SELECTED_CURVE_TYPE";
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(JMeldDiffPresentation.class);
 	private JCheckBox _chkIgnoreWhiteSpaces;
+	private JCheckBox _chkIgnoreCase;
 	private JCheckBox _chkDrawCurves;
 	private JComboBox<JMeldCurveType> _cboCurveType;
 	private JMeldPanel _meldPanel;
@@ -80,11 +82,13 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		JMeldSettings.getInstance().setDrawCurves(true);
 
 		_chkIgnoreWhiteSpaces.setSelected(Props.getBoolean(PREF_IGNORE_WHITE_SPACES, false));
+		_chkIgnoreCase.setSelected(Props.getBoolean(PREF_IGNORE_CASE, false));
 		_chkDrawCurves.setSelected(Props.getBoolean(PREF_DRAW_CURVES, false));
 		_cboCurveType.setSelectedItem(getCurveTypeFromPrefs());
 
 		onUpdateMeldPanel(_meldPanel);
 		_chkIgnoreWhiteSpaces.addActionListener(e -> onUpdateMeldPanel(_meldPanel));
+		_chkIgnoreCase.addActionListener(e -> onUpdateMeldPanel(_meldPanel));
 		_chkDrawCurves.addActionListener(e -> onUpdateMeldPanel(_meldPanel));
 		_cboCurveType.addActionListener(e -> onUpdateMeldPanel(_meldPanel));
 
@@ -141,14 +145,18 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		_chkIgnoreWhiteSpaces = new JCheckBox(s_stringMgr.getString("JMeldDiffPresentation.ignore.white.spaces"));
 		ret.add(_chkIgnoreWhiteSpaces, gbc);
 
-		gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 20, 5, 0), 0, 0);
+		gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0);
+		_chkIgnoreCase = new JCheckBox(s_stringMgr.getString("JMeldDiffPresentation.ignore.case"));
+		ret.add(_chkIgnoreCase, gbc);
+
+		gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 20, 5, 0), 0, 0);
 		_chkDrawCurves = new JCheckBox(s_stringMgr.getString("JMeldDiffPresentation.draw.curves"));
 		ret.add(_chkDrawCurves, gbc);
 
-		gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 10, 5, 0), 0, 0);
+		gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 10, 5, 0), 0, 0);
 		ret.add(new JLabel(s_stringMgr.getString("JMeldDiffPresentation.curve.type")), gbc);
 
-		gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0);
+		gbc = new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0);
 		_cboCurveType = new JComboBox<>(JMeldCurveType.values());
 		ret.add(_cboCurveType, gbc);
 
@@ -161,6 +169,8 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		JMeldSettings.getInstance().getEditor().setIgnoreWhitespaceAtBegin(_chkIgnoreWhiteSpaces.isSelected());
 		JMeldSettings.getInstance().getEditor().setIgnoreWhitespaceAtEnd(_chkIgnoreWhiteSpaces.isSelected());
 		JMeldSettings.getInstance().getEditor().setIgnoreWhitespaceInBetween(_chkIgnoreWhiteSpaces.isSelected());
+
+		JMeldSettings.getInstance().getEditor().setIgnoreCase(_chkIgnoreCase.isSelected());
 
 		_cboCurveType.setEnabled(_chkDrawCurves.isSelected());
 
@@ -181,6 +191,7 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		meldPanel.revalidate();
 
 		Props.putBoolean(PREF_IGNORE_WHITE_SPACES, _chkIgnoreWhiteSpaces.isSelected());
+		Props.putBoolean(PREF_IGNORE_CASE, _chkIgnoreCase.isSelected());
 		Props.putBoolean(PREF_DRAW_CURVES, _chkDrawCurves.isSelected());
 		Props.putString(PREF_SELECTED_CURVE_TYPE, ((JMeldCurveType)_cboCurveType.getSelectedItem()).name());
 	}
