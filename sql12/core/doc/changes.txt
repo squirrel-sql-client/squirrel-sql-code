@@ -111,6 +111,8 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+Fixed NullPointerException when rerunning SQL result.
+
 DB2 Plugin: Fixed trigger details for AS400.
 
 Table cell data popup:
