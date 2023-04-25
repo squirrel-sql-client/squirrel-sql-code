@@ -345,8 +345,8 @@
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/i18n" />
 		</pack>
 
-		<pack required="no" preselected="no" name="Optional Plugin - Intersystems Cache Plugin ">
-			<description>Intersystems Cache Plugin for query statistics and plan</description>
+		<pack required="no" preselected="no" name="Optional Plugin - Intersystems Cache/IRIS Plugin ">
+			<description>Intersystems Cache/IRIS Plugin for query statistics and plan</description>
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/cache.jar"/>
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/cache" />
 		</pack>
