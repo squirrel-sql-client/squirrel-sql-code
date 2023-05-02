@@ -1744,7 +1744,7 @@ Aliases can be colored. This feature for example can be used to mark important A
 
 Cell data popup dialog --> Browse button now remembers last directory.
 
-Reworked corrections/abbreviations dialog. See Session toolbar button 'Configure auto correct /abbreviation'.
+Reworked corrections/abbreviations dialog. See Session toolbar button 'Configure auto correct / abbreviation'.
 
 #438 The 'Run query output to a file'-feature does now respect the 'Abort on error ...'-property.
   See menu File --> New Session Properties --> tab SQL
