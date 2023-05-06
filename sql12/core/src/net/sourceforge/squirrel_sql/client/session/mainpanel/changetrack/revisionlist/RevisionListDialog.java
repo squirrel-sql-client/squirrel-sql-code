@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.DiffToLocalPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.DiffPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -32,7 +32,7 @@ public class RevisionListDialog extends JDialog
    JSplitPane splitTreePreview;
 
 
-   public RevisionListDialog(JComponent parentComp, String fileName, String filePathRelativeToRepoRoot, String repoRootPath, DiffToLocalPanel diffToLocalPanel)
+   public RevisionListDialog(JComponent parentComp, String fileName, String filePathRelativeToRepoRoot, String repoRootPath, DiffPanel diffToLocalPanel, DiffPanel revisionsDiffPanel)
    {
       super(GUIUtils.getOwningFrame(parentComp), s_stringMgr.getString("RevisionListDialog.title", fileName), ModalityType.MODELESS);
 
@@ -52,12 +52,11 @@ public class RevisionListDialog extends JDialog
       txtPreview.setEditable(false);
       tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.script"), txtPreview);
       tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.diffToLocal"), diffToLocalPanel);
+      tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.revisionsDiff"), revisionsDiffPanel);
 
       splitTreePreview.setRightComponent(tabbedPane);
 
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
       getContentPane().add(splitTreePreview, gbc);
-
-
    }
 }

@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeT
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackCloseListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.DiffToLocalCtrl;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.RevisionsDiffCtrl;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -32,6 +33,8 @@ public class RevisionListController
    private static final String PREF_KEY_SPLIT_DIVIDER_LOCATION = "changetrack.RevisionListController.split.divider.location";
    private final DiffToLocalCtrl _diffToLocalCtrl;
 
+   private final RevisionsDiffCtrl _revisionsDiffCtrl;
+
 
    private RevisionListDialog _dlg;
    private ChangeTrackCloseDispatcher _changeTrackCloseDispatcher;
@@ -47,7 +50,13 @@ public class RevisionListController
       _file = file;
 
       _diffToLocalCtrl = new DiffToLocalCtrl(revisionListControllerChannel);
-      _dlg = new RevisionListDialog(parentComp, _file.getName(), GitHandler.getPathRelativeToRepo(file), GitHandler.getFilesRepositoryWorkTreePath(file), _diffToLocalCtrl.getPanel());
+      _revisionsDiffCtrl = new RevisionsDiffCtrl();
+      _dlg = new RevisionListDialog(parentComp,
+                                    _file.getName(),
+                                    GitHandler.getPathRelativeToRepo(file),
+                                    GitHandler.getFilesRepositoryWorkTreePath(file),
+                                    _diffToLocalCtrl.getPanel(),
+                                    _revisionsDiffCtrl.getPanel());
 
       _changeTrackCloseDispatcher = changeTrackCloseDispatcher;
       _revisionListControllerChannel = revisionListControllerChannel;
@@ -57,7 +66,7 @@ public class RevisionListController
       List<RevisionWrapper> revisions = GitHandler.getRevisions(file);
 
       _dlg.lstRevisions.setListData(revisions.toArray(new RevisionWrapper[0]));
-      _dlg.lstRevisions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      _dlg.lstRevisions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
       if(0 < revisions.size())
       {
@@ -189,23 +198,55 @@ public class RevisionListController
       _dlg.txtPreview.setText(null);
       _diffToLocalCtrl.setSelectedRevision(null, null);
 
-      RevisionWrapper selectedWrapper = _dlg.lstRevisions.getSelectedValue();
-
-      if(null == selectedWrapper)
+      if(_dlg.lstRevisions.getSelectedValuesList().isEmpty())
       {
+         _dlg.tabbedPane.setEnabledAt(0, true);
+         _dlg.tabbedPane.setEnabledAt(1, true);
+         _dlg.tabbedPane.setEnabledAt(2, false);
+         if(2 == _dlg.tabbedPane.getSelectedIndex())
+         {
+            _dlg.tabbedPane.setSelectedIndex(0);
+         }
+
          return;
       }
-
-      String fileContent = GitHandler.getVersionOfFile(_file, selectedWrapper.getRevCommitId(), selectedWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
-
-      _dlg.txtPreview.setText(fileContent);
-
-      if(_dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getPanel())
+      else if(1 == _dlg.lstRevisions.getSelectedValuesList().size())
       {
-         _diffToLocalCtrl.setSelectedRevision(fileContent, selectedWrapper.getRevisionDateString());
-      }
+         _dlg.tabbedPane.setEnabledAt(0, true);
+         _dlg.tabbedPane.setEnabledAt(1, true);
+         _dlg.tabbedPane.setEnabledAt(2, false);
+         if(2 == _dlg.tabbedPane.getSelectedIndex())
+         {
+            _dlg.tabbedPane.setSelectedIndex(0);
+         }
 
-      SwingUtilities.invokeLater(() -> _dlg.txtPreview.scrollRectToVisible(new Rectangle(0,0,1,1)));
+         RevisionWrapper selectedWrapper = _dlg.lstRevisions.getSelectedValuesList().get(0);
+         String fileContent = GitHandler.getVersionOfFile(_file, selectedWrapper.getRevCommitId(), selectedWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
+
+         _dlg.txtPreview.setText(fileContent);
+
+         if(_dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getPanel())
+         {
+            _diffToLocalCtrl.setSelectedRevision(fileContent, selectedWrapper.getRevisionDateString());
+         }
+
+         SwingUtilities.invokeLater(() -> _dlg.txtPreview.scrollRectToVisible(new Rectangle(0,0,1,1)));
+      }
+      else
+      {
+         _dlg.tabbedPane.setEnabledAt(0, false);
+         _dlg.tabbedPane.setEnabledAt(1, false);
+         _dlg.tabbedPane.setEnabledAt(2, true);
+         _dlg.tabbedPane.setSelectedIndex(2);
+
+         RevisionWrapper leftWrapper = _dlg.lstRevisions.getSelectedValuesList().get(0);
+         RevisionWrapper rightWrapper = _dlg.lstRevisions.getSelectedValuesList().get(1);
+
+         String fileContentLeft = GitHandler.getVersionOfFile(_file, leftWrapper.getRevCommitId(), leftWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
+         String fileContentRight = GitHandler.getVersionOfFile(_file, rightWrapper.getRevCommitId(), rightWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
+
+         _revisionsDiffCtrl.setSelectedRevisions(fileContentLeft, leftWrapper.getRevisionDateString(), fileContentRight, rightWrapper.getRevisionDateString());
+      }
    }
 
    private void initSplitDividerLocation()

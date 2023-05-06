@@ -11,15 +11,16 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 
-public class DiffToLocalPanel extends JPanel
+public class DiffPanel extends JPanel
 {
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DiffToLocalPanel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DiffPanel.class);
 
    JPanel pnlDiffContainer;
-   JLabel lblGitRevision = new JLabel();
+   JLabel lblLeftTitle = new JLabel();
+   JLabel lblRightTitle = new JLabel();
 
-   public DiffToLocalPanel()
+   public DiffPanel()
    {
       setLayout(new GridBagLayout());
 
@@ -36,9 +37,9 @@ public class DiffToLocalPanel extends JPanel
    private JPanel createDiffTitlePanel()
    {
       JPanel ret = new JPanel(new BorderLayout());
-      ret.add(lblGitRevision, BorderLayout.WEST);
+      ret.add(lblLeftTitle, BorderLayout.WEST);
       ret.add(new JPanel(), BorderLayout.CENTER);
-      ret.add(new JLabel(s_stringMgr.getString("DiffToLocalPanel.sqlEditor")), BorderLayout.EAST);
+      ret.add(lblRightTitle, BorderLayout.EAST);
 
       return ret;
    }
