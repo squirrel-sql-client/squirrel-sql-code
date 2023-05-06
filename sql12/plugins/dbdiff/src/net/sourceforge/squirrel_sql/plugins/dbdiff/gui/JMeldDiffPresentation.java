@@ -19,18 +19,8 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.JMeldUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -41,6 +31,19 @@ import org.jmeld.ui.AbstractContentPanel;
 import org.jmeld.ui.BufferDiffPanel;
 import org.jmeld.ui.JMeldPanel;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 /**
  * A DiffPresentation that uses components from the JMeld project to render a comparison of the content of two
  * files in a JFrame.
@@ -48,7 +51,7 @@ import org.jmeld.ui.JMeldPanel;
 public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 {
 	public static final String PREF_IGNORE_WHITE_SPACES = "JMeldDiffPresentation.PREF_IGNORE_WHITE_SPACES";
-		public static final String PREF_IGNORE_CASE = "JMeldDiffPresentation.PREF_IGNORE_CASE";
+	public static final String PREF_IGNORE_CASE = "JMeldDiffPresentation.PREF_IGNORE_CASE";
 	public static final String PREF_DRAW_CURVES = "JMeldDiffPresentation.PREF_DRAW_CURVES";
 	public static final String PREF_SELECTED_CURVE_TYPE = "JMeldDiffPresentation.PREF_SELECTED_CURVE_TYPE";
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(JMeldDiffPresentation.class);
@@ -93,7 +96,21 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		_cboCurveType.addActionListener(e -> onUpdateMeldPanel(_meldPanel));
 
 
-		GUIUtils.enableCloseByEscape(diffDialog);
+		GUIUtils.enableCloseByEscape(diffDialog, w -> JMeldUtil.cleanMeldPanel(_meldPanel));
+		diffDialog.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				JMeldUtil.cleanMeldPanel(_meldPanel);
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e)
+			{
+				JMeldUtil.cleanMeldPanel(_meldPanel);
+			}
+		});
+
 		GUIUtils.initLocation(diffDialog, 500, 400, JMeldDiffPresentation.class.getName());
 
 		diffDialog.setVisible(true);
@@ -129,6 +146,8 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		_meldPanel = new NonExitingJMeldPanel(() -> close(diffDialog));
 		_meldPanel.SHOW_TABBEDPANE_OPTION.disable();
 		_meldPanel.SHOW_TOOLBAR_OPTION.disable();
+		_meldPanel.SHOW_FILE_LABEL_OPTION.disable();
+
 		gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
 		ret.add(_meldPanel, gbc);
 

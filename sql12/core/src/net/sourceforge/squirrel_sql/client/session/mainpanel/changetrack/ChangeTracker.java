@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.Preference
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListController;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListControllerListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListControllerChannel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -154,7 +154,7 @@ public class ChangeTracker
 
    private void onShowGitRevisions(File file)
    {
-      RevisionListControllerListener revisionListControllerListener = new RevisionListControllerListener()
+      RevisionListControllerChannel revisionListControllerChannel = new RevisionListControllerChannel()
       {
          @Override
          public void replaceEditorContent(String newEditorContent)
@@ -167,9 +167,15 @@ public class ChangeTracker
          {
             _gutterItemsManager.getGutterItemsProvider().rebaseChangeTrackingBy(newChangeTrackBase);
          }
+
+         @Override
+         public String getEditorContent()
+         {
+            return _sqlEntry.getText();
+         }
       };
 
-      new RevisionListController(_sqlEntry.getTextComponent(), _changeTrackCloseDispatcher, revisionListControllerListener, file);
+      new RevisionListController(_sqlEntry.getTextComponent(), _changeTrackCloseDispatcher, revisionListControllerChannel, file);
    }
 
    private void onOpenChangeTrackPreferences()

@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackCloseDispatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackCloseListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.DiffToLocalCtrl;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -29,27 +30,29 @@ public class RevisionListController
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RevisionListController.class);
 
    private static final String PREF_KEY_SPLIT_DIVIDER_LOCATION = "changetrack.RevisionListController.split.divider.location";
+   private final DiffToLocalCtrl _diffToLocalCtrl;
 
 
    private RevisionListDialog _dlg;
    private ChangeTrackCloseDispatcher _changeTrackCloseDispatcher;
-   private RevisionListControllerListener _revisionListControllerListener;
+   private RevisionListControllerChannel _revisionListControllerChannel;
    private File _file;
    private ChangeTrackCloseListener _changeTrackCloseListener;
 
    public RevisionListController(JComponent parentComp,
                                  ChangeTrackCloseDispatcher changeTrackCloseDispatcher,
-                                 RevisionListControllerListener revisionListControllerListener,
+                                 RevisionListControllerChannel revisionListControllerChannel,
                                  File file)
    {
       _file = file;
-      _dlg = new RevisionListDialog(parentComp, _file.getName(), GitHandler.getPathRelativeToRepo(file), GitHandler.getFilesRepositoryWorkTreePath(file));
+
+      _diffToLocalCtrl = new DiffToLocalCtrl(revisionListControllerChannel);
+      _dlg = new RevisionListDialog(parentComp, _file.getName(), GitHandler.getPathRelativeToRepo(file), GitHandler.getFilesRepositoryWorkTreePath(file), _diffToLocalCtrl.getPanel());
 
       _changeTrackCloseDispatcher = changeTrackCloseDispatcher;
-      _revisionListControllerListener = revisionListControllerListener;
+      _revisionListControllerChannel = revisionListControllerChannel;
       _changeTrackCloseListener = () -> onChangeTrackClosed();
       _changeTrackCloseDispatcher.addChangeTrackCloseListener(_changeTrackCloseListener);
-
 
       List<RevisionWrapper> revisions = GitHandler.getRevisions(file);
 
@@ -90,8 +93,10 @@ public class RevisionListController
          }
       });
 
+      _dlg.tabbedPane.addChangeListener(e -> onTabChanged());
+
       GUIUtils.initLocation(_dlg, 500, 500);
-      GUIUtils.enableCloseByEscape(_dlg, dialog -> saveSplitLocation());
+      GUIUtils.enableCloseByEscape(_dlg, dialog -> onCloseRevisionList());
 
       initSplitDividerLocation();
 
@@ -104,18 +109,41 @@ public class RevisionListController
          @Override
          public void windowClosing(WindowEvent e)
          {
-            saveSplitLocation();
+            onCloseRevisionList();
          }
 
          @Override
          public void windowClosed(WindowEvent e)
          {
-            saveSplitLocation();
+            onCloseRevisionList();
          }
       });
 
       _dlg.setVisible(true);
 
+   }
+
+   private void onTabChanged()
+   {
+      RevisionWrapper selectedWrapper = _dlg.lstRevisions.getSelectedValue();
+
+      if(null == selectedWrapper)
+      {
+         return;
+      }
+
+      String fileContent = GitHandler.getVersionOfFile(_file, selectedWrapper.getRevCommitId(), selectedWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
+
+      if(_dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getPanel())
+      {
+         _diffToLocalCtrl.setSelectedRevision(fileContent, selectedWrapper.getRevisionDateString());
+      }
+   }
+
+   private void onCloseRevisionList()
+   {
+      saveSplitLocation();
+      _diffToLocalCtrl.close();
    }
 
    private void maybeShowPreviewPopup(MouseEvent me)
@@ -159,6 +187,7 @@ public class RevisionListController
       }
 
       _dlg.txtPreview.setText(null);
+      _diffToLocalCtrl.setSelectedRevision(null, null);
 
       RevisionWrapper selectedWrapper = _dlg.lstRevisions.getSelectedValue();
 
@@ -170,6 +199,11 @@ public class RevisionListController
       String fileContent = GitHandler.getVersionOfFile(_file, selectedWrapper.getRevCommitId(), selectedWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
 
       _dlg.txtPreview.setText(fileContent);
+
+      if(_dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getPanel())
+      {
+         _diffToLocalCtrl.setSelectedRevision(fileContent, selectedWrapper.getRevisionDateString());
+      }
 
       SwingUtilities.invokeLater(() -> _dlg.txtPreview.scrollRectToVisible(new Rectangle(0,0,1,1)));
    }
@@ -219,11 +253,11 @@ public class RevisionListController
 
 
       JMenuItem mnuAsChangeTrackBase = new JMenuItem(s_stringMgr.getString("RevisionListController.as.change.track.base"));
-      mnuAsChangeTrackBase.addActionListener(e -> _revisionListControllerListener.replaceChangeTrackBase(_dlg.txtPreview.getText()));
+      mnuAsChangeTrackBase.addActionListener(e -> _revisionListControllerChannel.replaceChangeTrackBase(_dlg.txtPreview.getText()));
       popupMenu.add(mnuAsChangeTrackBase);
 
       JMenuItem mnuAsEditorContent = new JMenuItem(s_stringMgr.getString("RevisionListController.as.editor.content"));
-      mnuAsEditorContent.addActionListener(e -> _revisionListControllerListener.replaceEditorContent(_dlg.txtPreview.getText()));
+      mnuAsEditorContent.addActionListener(e -> _revisionListControllerChannel.replaceEditorContent(_dlg.txtPreview.getText()));
       popupMenu.add(mnuAsEditorContent);
 
       popupMenu.show(_dlg.lstRevisions, me.getX(), me.getY());
