@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff;
 
+import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListControllerChannel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -12,7 +13,6 @@ import org.jmeld.ui.JMeldPanel;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import java.awt.Component;
 import java.awt.Font;
 import java.nio.file.Path;
 
@@ -86,7 +86,7 @@ public class JMeldPanelHandler
 
 
 
-   public Component getMeldPanel()
+   public JMeldPanel getMeldPanel()
    {
       return _meldPanel;
    }

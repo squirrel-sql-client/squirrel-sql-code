@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Change tracking: GIT revision dialog now offers to compare GIT revisions
+  or to compare a GIT revisions to the local SQL editor.
+  To open the GIT revisions dialog right click the left SQL editor gutter.
+  Note that the GIT revision dialog is available only when change tracking by GIT must be used.
+
 Data compare / DBDiff Plugin:
   The compare dialog now offers to ignore case.
 

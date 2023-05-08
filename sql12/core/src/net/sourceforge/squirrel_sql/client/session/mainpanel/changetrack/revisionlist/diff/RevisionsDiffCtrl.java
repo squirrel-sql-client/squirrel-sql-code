@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff;
 
+import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldConfigCtrl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -9,13 +10,14 @@ public class RevisionsDiffCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DiffToLocalCtrl.class);
 
-   private DiffPanel _panel = new DiffPanel();
+   private DiffPanel _panel;
    private JMeldPanelHandler _meldPanelHandler;
 
 
    public RevisionsDiffCtrl()
    {
       _meldPanelHandler = new JMeldPanelHandler(false, null);
+      _panel = new DiffPanel(new JMeldConfigCtrl(_meldPanelHandler.getMeldPanel()).getPanel());
    }
 
    public DiffPanel getPanel()
@@ -38,7 +40,7 @@ public class RevisionsDiffCtrl
       _panel.pnlDiffContainer.add(_meldPanelHandler.getMeldPanel());
    }
 
-   public void close()
+   public void cleanUpMelds()
    {
       _meldPanelHandler.cleanMeldPanel();
    }

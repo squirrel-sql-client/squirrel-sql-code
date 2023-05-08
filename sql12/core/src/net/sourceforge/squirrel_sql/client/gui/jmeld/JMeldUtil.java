@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff;
+package net.sourceforge.squirrel_sql.client.gui.jmeld;
 
 import org.jmeld.settings.JMeldSettings;
 import org.jmeld.ui.AbstractContentPanel;

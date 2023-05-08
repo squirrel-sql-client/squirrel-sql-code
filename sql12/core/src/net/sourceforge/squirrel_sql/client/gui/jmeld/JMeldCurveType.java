@@ -1,9 +1,9 @@
-package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
-
-import java.util.function.Supplier;
+package net.sourceforge.squirrel_sql.client.gui.jmeld;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.util.function.Supplier;
 
 public enum JMeldCurveType
 {

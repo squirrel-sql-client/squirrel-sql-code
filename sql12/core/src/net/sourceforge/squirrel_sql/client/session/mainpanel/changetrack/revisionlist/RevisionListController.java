@@ -134,25 +134,39 @@ public class RevisionListController
 
    private void onTabChanged()
    {
-      RevisionWrapper selectedWrapper = _dlg.lstRevisions.getSelectedValue();
+      cleanUpMelds();
 
-      if(null == selectedWrapper)
+      if(  _dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getPanel()
+         && 1 == _dlg.lstRevisions.getSelectedValuesList().size())
       {
-         return;
-      }
+         RevisionWrapper selectedWrapper = _dlg.lstRevisions.getSelectedValue();
+         String fileContent = GitHandler.getVersionOfFile(_file, selectedWrapper.getRevCommitId(), selectedWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
 
-      String fileContent = GitHandler.getVersionOfFile(_file, selectedWrapper.getRevCommitId(), selectedWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
-
-      if(_dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getPanel())
-      {
          _diffToLocalCtrl.setSelectedRevision(fileContent, selectedWrapper.getRevisionDateString());
+      }
+      else if(_dlg.tabbedPane.getSelectedComponent() == _revisionsDiffCtrl.getPanel()
+              && 1 < _dlg.lstRevisions.getSelectedValuesList().size())
+      {
+         RevisionWrapper leftWrapper = _dlg.lstRevisions.getSelectedValuesList().get(0);
+         RevisionWrapper rightWrapper = _dlg.lstRevisions.getSelectedValuesList().get(1);
+
+         String fileContentLeft = GitHandler.getVersionOfFile(_file, leftWrapper.getRevCommitId(), leftWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
+         String fileContentRight = GitHandler.getVersionOfFile(_file, rightWrapper.getRevCommitId(), rightWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
+
+         _revisionsDiffCtrl.setSelectedRevisions(fileContentLeft, leftWrapper.getRevisionDateString(), fileContentRight, rightWrapper.getRevisionDateString());
       }
    }
 
    private void onCloseRevisionList()
    {
       saveSplitLocation();
-      _diffToLocalCtrl.close();
+      cleanUpMelds();
+   }
+
+   private void cleanUpMelds()
+   {
+      _diffToLocalCtrl.cleanUpMelds();
+      _revisionsDiffCtrl.cleanUpMelds();
    }
 
    private void maybeShowPreviewPopup(MouseEvent me)
@@ -195,6 +209,8 @@ public class RevisionListController
          return;
       }
 
+      cleanUpMelds();
+
       _dlg.txtPreview.setText(null);
       _diffToLocalCtrl.setSelectedRevision(null, null);
 
@@ -207,8 +223,6 @@ public class RevisionListController
          {
             _dlg.tabbedPane.setSelectedIndex(0);
          }
-
-         return;
       }
       else if(1 == _dlg.lstRevisions.getSelectedValuesList().size())
       {
