@@ -116,6 +116,9 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+DBDiff Plugin: Several fixes for tabular diffs of DB tables.
+  Note that side-by-side diffs are preferable.
+
 Change tracking: Positioning of split slider in GIT revision dialog did not work.
   To open the GIT revisions dialog right click the SQL editor's left gutter.
   Note that the GIT revision dialog is available only when change tracking by GIT must be used.

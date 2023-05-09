@@ -26,21 +26,13 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -314,7 +306,15 @@ public class ButtonTableHeader extends JTableHeader
 
    private TableSortingAdmin getTableSortingAdmin()
    {
-      return ((SortableTableModel)table.getModel()).getTableSortingAdmin();
+      if (table.getModel() instanceof SortableTableModel)
+      {
+         return ((SortableTableModel)table.getModel()).getTableSortingAdmin();
+      }
+      else
+      {
+         // Dummy
+         return new TableSortingAdmin();
+      }
    }
 
    class HeaderListener extends MouseAdapter implements MouseMotionListener

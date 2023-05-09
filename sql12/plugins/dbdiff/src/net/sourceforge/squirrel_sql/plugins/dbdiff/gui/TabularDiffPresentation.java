@@ -19,28 +19,21 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.swing.JOptionPane;
-
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.TableDiffExecutor;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the class that performs the table comparison using database connections to two different database
@@ -57,9 +50,6 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 		// i18n[TabularDiffPresentation.noDiffsMessage=No differences were detected]
 		String NO_DIFFS_MESSAGE = s_stringMgr.getString("TabularDiffPresentation.noDiffsMessage");
 	}
-
-	/** the thread we do the work in */
-	private Thread execThread = null;
 
 	private final List<ColumnDifference> colDifferences = new ArrayList<ColumnDifference>();
 
@@ -87,12 +77,6 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 		final ISQLDatabaseMetaData sourceMetaData = sessionInfoProvider.getSourceSession().getMetaData();
 		final ISQLDatabaseMetaData destMetaData = sessionInfoProvider.getDestSession().getMetaData();
 
-		final Map<String, ITableInfo> tableMap1 = getTableMap(sourceMetaData, sourceObjs);
-		final Map<String, ITableInfo> tableMap2 = getTableMap(destMetaData, destObjs);
-
-		final Set<String> tableNames = getAllTableNames(tableMap1);
-		tableNames.addAll(getAllTableNames(tableMap2));
-
 		final TableDiffExecutor diff = new TableDiffExecutor(sourceMetaData, destMetaData);
 
 		// Special case: when comparing two tables, ignore the names, letting the user specify any two
@@ -105,114 +89,59 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 		}
 		else
 		{
-			for( final String table : tableNames )
+			final List<ITableInfo> tableList1 = getTableList(sourceMetaData, sourceObjs);
+			final List<ITableInfo> tableList2 = getTableList(destMetaData, destObjs);
+
+			// sanityCheck() ensures lists have the same length
+			for (int i = 0; i < tableList1.size(); i++)
 			{
-				if( tableMap1.containsKey(table) )
+				final ITableInfo t1 = tableList1.get(i);
+				final ITableInfo t2 = tableList2.get(i);
+				diff.setTableInfos(t1, t2);
+				diff.execute();
+				final List<ColumnDifference> columnDiffs = diff.getColumnDifferences();
+				if( columnDiffs != null && columnDiffs.size() > 0 )
 				{
-					if( tableMap2.containsKey(table) )
+					colDifferences.addAll(columnDiffs);
+					for( final ColumnDifference colDiff : columnDiffs )
 					{
-						final ITableInfo t1 = tableMap1.get(table);
-						final ITableInfo t2 = tableMap2.get(table);
-						diff.setTableInfos(t1, t2);
-						diff.execute();
-						final List<ColumnDifference> columnDiffs = diff.getColumnDifferences();
-						if( columnDiffs != null && columnDiffs.size() > 0 )
+						if( s_log.isDebugEnabled() )
 						{
-							colDifferences.addAll(columnDiffs);
-							for( final ColumnDifference colDiff : columnDiffs )
-							{
-								if( s_log.isDebugEnabled() )
-								{
-									s_log.debug(colDiff.toString());
-								}
-							}
+							s_log.debug(colDiff.toString());
 						}
-					}
-					else
-					{
-						// table exists in source db but not dest
-						if( s_log.isInfoEnabled() )
-						{
-							s_log.info("Skipping Table (" + table + ") that exists in database (" + sourceSession +
-										  "), but not in the database (" + destSession + ")");
-						}
-					}
-				}
-				else
-				{
-					// table doesn't exist in source db
-					if( s_log.isInfoEnabled() )
-					{
-						s_log.info("Skipping Table (" + table + ") that exists in database (" + destSession +
-									  "), but not in the database (" + sourceSession + ")");
 					}
 				}
 			}
 		}
-		final MainFrame frame = sourceSession.getApplication().getMainFrame();
+
 		if( colDifferences != null && colDifferences.size() > 0 )
 		{
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					final ColumnDiffDialog dialog = new ColumnDiffDialog(frame, false);
-					dialog.setColumnDifferences(colDifferences);
-					dialog.setSession1Label(sourceSession.getAlias().getName());
-					dialog.setSession2Label(destSession.getAlias().getName());
-					dialog.setVisible(true);
-				}
-			});
+			final ColumnDiffDialog dialog = new ColumnDiffDialog(Main.getApplication().getMainFrame(), false);
+			dialog.setColumnDifferences(colDifferences);
+			dialog.setSession1Label(sourceSession.getAlias().getName());
+			dialog.setSession2Label(destSession.getAlias().getName());
+			dialog.setVisible(true);
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(frame, i18n.NO_DIFFS_MESSAGE, "DBDiff", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(Main.getApplication().getMainFrame(), i18n.NO_DIFFS_MESSAGE, "DBDiff", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
-	private Set<String> getAllTableNames(Map<String, ITableInfo> tables)
+	private List<ITableInfo> getTableList(ISQLDatabaseMetaData md, IDatabaseObjectInfo[] objs)
 	{
-		final HashSet<String> result = new HashSet<String>();
-		result.addAll(tables.keySet());
-		return result;
-	}
-
-	private Map<String, ITableInfo> getTableMap(ISQLDatabaseMetaData md, IDatabaseObjectInfo[] objs)
-	{
-		try
+		final List<ITableInfo> result = new ArrayList<>();
+		if (objs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE)
 		{
-			final HashMap<String, ITableInfo> result = new HashMap<>();
-			if (objs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE)
+			for (final IDatabaseObjectInfo info : objs)
 			{
-				for (final IDatabaseObjectInfo info : objs)
+				if (info instanceof ITableInfo)
 				{
-					// TODO: allow the user to specify ignore case or preserve case.
-					result.put(info.getSimpleName().toUpperCase(), (ITableInfo) info);
+					result.add((ITableInfo) info);
 				}
 			}
-			else
-			{
-				// Assume objs[0] is a schema/catalog
-				final String catalog = objs[0].getCatalogName();
-				final String schema = objs[0].getSchemaName();
-				md.getTables(catalog, schema, null, new String[] { "TABLE" }, null);
-			}
-			return result;
 		}
-		catch(SQLException e)
-		{
-			throw Utilities.wrapRuntime(e);
-		}
-	}
-
-	/**
-	 * Returns a list of column differences.
-	 * 
-	 * @return Returns null if no diffs exist.
-	 */
-	public List<ColumnDifference> getColumnDifferences()
-	{
-		return colDifferences;
+		return result;
 	}
 
 	/**
@@ -228,10 +157,14 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 		boolean result = true;
 		if (sourceObjs.length != destObjs.length)
 		{
+			JOptionPane.showMessageDialog(Main.getApplication().getMainFrame(),
+					s_stringMgr.getString("TabularDiffPresentation.number.of.dest.and.source.objects.mismatch"));
 			result = false;
 		}
 		if (sourceObjs[0].getDatabaseObjectType() != destObjs[0].getDatabaseObjectType())
 		{
+			JOptionPane.showMessageDialog(Main.getApplication().getMainFrame(),
+					s_stringMgr.getString("TabularDiffPresentation.objects.type.mismatch"));
 			result = false;
 		}
 		return result;
