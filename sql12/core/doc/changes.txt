@@ -8,7 +8,7 @@ Enhancements:
 
 Change tracking: GIT revision dialog now offers to compare GIT revisions
   or to compare a GIT revisions to the local SQL editor.
-  To open the GIT revisions dialog right click the left SQL editor gutter.
+  To open the GIT revisions dialog right click the SQL editor's left gutter.
   Note that the GIT revision dialog is available only when change tracking by GIT must be used.
 
 Data compare / DBDiff Plugin:
@@ -115,6 +115,10 @@ Export of multiple SQL results.
   Then right click one of the UI result tables to open the file export dialog.
 
 Bug fixes:
+
+Change tracking: Positioning of split slider in GIT revision dialog did not work.
+  To open the GIT revisions dialog right click the SQL editor's left gutter.
+  Note that the GIT revision dialog is available only when change tracking by GIT must be used.
 
 Fixed NullPointerException when rerunning SQL result.
 

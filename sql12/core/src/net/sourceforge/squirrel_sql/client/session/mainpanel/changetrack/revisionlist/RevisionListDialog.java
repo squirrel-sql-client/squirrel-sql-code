@@ -1,11 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.DiffPanel;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JList;
@@ -13,9 +10,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.DiffPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class RevisionListDialog extends JDialog
 {
@@ -47,14 +47,14 @@ public class RevisionListDialog extends JDialog
 
       lstRevisions = new JList<>();
       lstRevisions.setCellRenderer(new RevisionListCellRenderer());
-      splitTreePreview.setLeftComponent(new JScrollPane(lstRevisions));
+      splitTreePreview.setLeftComponent(GUIUtils.setMinimumWidth(new JScrollPane(lstRevisions), 0));
 
       txtPreview.setEditable(false);
       tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.script"), txtPreview);
       tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.diffToLocal"), diffToLocalPanel);
       tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.revisionsDiff"), revisionsDiffPanel);
 
-      splitTreePreview.setRightComponent(tabbedPane);
+      splitTreePreview.setRightComponent(GUIUtils.setMinimumWidth(tabbedPane, 0));
 
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
       getContentPane().add(splitTreePreview, gbc);
