@@ -3,8 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
+import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import java.util.ArrayList;
@@ -98,7 +97,10 @@ public class EditableComboBoxHandler
          _cbo.removeItem(item);
       }
 
-      _cbo.setSelectedIndex(0);
+      if (0 < _cbo.getItemCount())
+      {
+         _cbo.setSelectedIndex(0);
+      }
 
    }
 
