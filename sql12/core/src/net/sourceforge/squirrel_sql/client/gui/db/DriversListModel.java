@@ -17,45 +17,32 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.Iterator;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import java.util.Iterator;
 /**
  * Model for a <CODE>DriverList</CODE>.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class DriversListModel extends SortedListModel
+class DriversListModel extends SortedListModel<SQLDriver>
 {
-    /** Application API. */
-	private IApplication _app;
-
 	/**
 	 * Specify whether only JDBC drivers that can be loaded should be loaded
 	 * into this model.
 	 */
 	private boolean _showLoadedDriversOnly;
 
-	/**
-	 * Load drivers from the <CODE>DataCache</CODE>.
-	 *
-	 * @param	app	 Application API.
-	 */
-	public DriversListModel(IApplication app) throws IllegalArgumentException
+	public DriversListModel()
 	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		_app = app;
 		load();
-		_app.getAliasesAndDriversManager().addDriversListener(new MyDriversListener());
+		Main.getApplication().getAliasesAndDriversManager().addDriversListener(new MyDriversListener());
 	}
 
 	/**
@@ -80,7 +67,7 @@ class DriversListModel extends SortedListModel
 	private void load()
 	{
 		clear();
-		Iterator<? extends ISQLDriver> it = _app.getAliasesAndDriversManager().drivers();
+		Iterator<SQLDriver> it = Main.getApplication().getAliasesAndDriversManager().drivers();
 		while (it.hasNext())
 		{
 			addDriver(it.next());
@@ -92,7 +79,7 @@ class DriversListModel extends SortedListModel
 	 *
 	 * @param	driver	<CODE>ISQLDriver</CODE> to be added.
 	 */
-	private void addDriver(ISQLDriver driver)
+	private void addDriver(SQLDriver driver)
 	{
 		if (!_showLoadedDriversOnly || driver.isJDBCDriverClassLoaded())
 		{
@@ -124,9 +111,9 @@ class DriversListModel extends SortedListModel
 		public void objectAdded(ObjectCacheChangeEvent evt)
 		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLDriver)
+			if (obj instanceof SQLDriver)
 			{
-				addDriver((ISQLDriver)obj);
+				addDriver((SQLDriver)obj);
 			}
 		}
 

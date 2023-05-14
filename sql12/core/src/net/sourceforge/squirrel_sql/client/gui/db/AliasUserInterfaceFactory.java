@@ -3,26 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseAllAliasFolderAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseSelectedAliasFolderAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ColorAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyToPasteAliasFolderAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CutAliasFolderAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandAllAliasFolderAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandSelectedAliasFolderAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.NewAliasFolderAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.PasteAliasFolderAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.SortAliasesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ToggleTreeViewAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.TransferAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
@@ -33,17 +14,11 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
-final class AliasUserInterfaceFactory implements IUserInterfaceFactory
+final class AliasUserInterfaceFactory implements IUserInterfaceFactory<AliasesList>
 {
    private static final String PREF_KEY_VIEW_ALIASES_AS_TREE = "Squirrel.viewAliasesAsTree";
 
@@ -229,7 +204,7 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory
       return _pm;
    }
 
-   public IBaseList getList()
+   public AliasesList getList()
    {
       return _aliasesList;
    }

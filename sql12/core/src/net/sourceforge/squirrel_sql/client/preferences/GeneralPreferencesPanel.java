@@ -20,11 +20,12 @@ package net.sourceforge.squirrel_sql.client.preferences;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JScrollPane;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 {
@@ -62,6 +63,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		{
 			_myPanel = new GeneralPreferencesGUI();
          _myScrollPane = new JScrollPane(_myPanel);
+
+			GUIUtils.forceScrollToBegin(_myScrollPane,1);
       }
 		return _myScrollPane;
 	}

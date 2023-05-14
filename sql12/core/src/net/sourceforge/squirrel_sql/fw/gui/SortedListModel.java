@@ -17,12 +17,15 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.DefaultListModel;
+
+import javax.swing.*;
+import java.util.List;
+
 /**
  * This class is a descendant of <CODE>DefaultListModel</CODE> that will
  * keep its data in a sorted order.
  */
-public class SortedListModel extends DefaultListModel
+public class SortedListModel<T> extends DefaultListModel<T>
 {
 	public SortedListModel()
 	{
@@ -32,7 +35,7 @@ public class SortedListModel extends DefaultListModel
 	 * Add <CODE>obj</CODE> to list ignoring <CODE>index</CODE> as list
 	 * is sorted.
 	 */
-	public void add(int index, Object obj)
+	public void add(int index, T obj)
 	{
 		addElement(obj);
 	}
@@ -41,7 +44,7 @@ public class SortedListModel extends DefaultListModel
 	 * Add <CODE>obj</CODE> to list ignoring <CODE>index</CODE> as list
 	 * is sorted.
 	 */
-	public void insertElementAt(int index, Object obj)
+	public void insertElementAt(int index, T obj)
 	{
 		addElement(obj);
 	}
@@ -49,14 +52,14 @@ public class SortedListModel extends DefaultListModel
 	/**
 	 * Add <CODE>obj</CODE> to list sorting by <CODE>obj.toString()</CODE>.
 	 */
-	public void addElement(Object obj)
+	public void addElement(T obj)
 	{
 		super.add(getIndexInList(obj), obj);
 	}
 
-	public Object remove(int index)
+	public T remove(int index)
 	{
-		Object obj = get(index);
+		T obj = get(index);
 		removeElement(obj);
 		return obj;
 	}
@@ -79,7 +82,7 @@ public class SortedListModel extends DefaultListModel
 	 * does a sequential read through the list so you wouldn't want to use it
 	 * for large lists.
 	 */
-	protected int getIndexInList(Object obj)
+	private int getIndexInList(T obj)
 	{
 		final int limit = getSize();
 		final String objStr = obj.toString();
@@ -91,5 +94,13 @@ public class SortedListModel extends DefaultListModel
 			}
 		}
 		return limit;
+	}
+
+	public void replaceAllAndSort(List<T> driverList)
+	{
+		clear();
+
+		// Takes care this model is sorted and refrains from sorting the driverList parameter
+		driverList.forEach(d -> addElement(d));
 	}
 }

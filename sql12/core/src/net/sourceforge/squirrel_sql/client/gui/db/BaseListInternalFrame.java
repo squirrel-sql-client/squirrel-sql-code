@@ -29,18 +29,16 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JFrame;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-abstract class BaseListInternalFrame extends DockWidget
+abstract class BaseListInternalFrame<T extends IBaseList> extends DockWidget
 {
-   private static ILogger s_log = LoggerController.createLogger(BaseListInternalFrame.class);
+   private static final ILogger s_log = LoggerController.createLogger(BaseListInternalFrame.class);
 
-   private IUserInterfaceFactory _uiFactory;
+   private IUserInterfaceFactory<T> _uiFactory;
 
    /**
     * Popup menu for the list.
@@ -56,7 +54,7 @@ abstract class BaseListInternalFrame extends DockWidget
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(BaseListInternalFrame.class);
 
-   public BaseListInternalFrame(IUserInterfaceFactory uiFactory)
+   public BaseListInternalFrame(IUserInterfaceFactory<T> uiFactory)
    {
       super(uiFactory.getWindowTitle(), true, true, Main.getApplication());
       _uiFactory = uiFactory;
@@ -64,7 +62,7 @@ abstract class BaseListInternalFrame extends DockWidget
       createUserInterface();
    }
 
-   protected IUserInterfaceFactory getUserInterfaceFactory()
+   protected IUserInterfaceFactory<T> getUserInterfaceFactory()
    {
       return _uiFactory;
    }

@@ -1,15 +1,14 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import java.util.Iterator;
-import java.util.Arrays;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /*
  * Copyright (C) 2001-2004 Colin Bell
@@ -34,7 +33,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasesListModel extends SortedListModel
+public class AliasesListModel extends SortedListModel<ISQLAlias>
 {
     /** Application API. */
 	private IApplication _app;
@@ -100,7 +99,7 @@ public class AliasesListModel extends SortedListModel
 
 			for (int i = 0; i < aliases.length; i++)
          {
-            addElement(aliases[i]);
+            addElement((ISQLAlias) aliases[i]);
 			}
 		}
 		finally

@@ -116,6 +116,15 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+#1517 Global preferences --> tab "general" was not correctly scrolled.
+
+#1516 Updated default JDBC driver definition for MariaDB to driver version 3.x.
+
+JDBC driver list:
+  Web site URLs from default driver definitions (default_drivers.xml) were not displayed.
+
+JDBC driver list: Fixed repaint problems when default drivers were copied into the driver list.
+
 #1515 File export raised IllegalArgumentException when used the first time.
 
 DBDiff Plugin: Several fixes for tabular diffs of DB tables.

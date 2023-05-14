@@ -22,15 +22,16 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JInternalFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
+import java.util.List;
 
 /**
  * This windows displays a list of JDBC drivers and allows the user
@@ -38,7 +39,7 @@ import java.beans.VetoableChangeListener;
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriversListInternalFrame extends BaseListInternalFrame
+public class DriversListInternalFrame extends BaseListInternalFrame<DriversList>
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriversListInternalFrame.class);
 
@@ -119,4 +120,9 @@ public class DriversListInternalFrame extends BaseListInternalFrame
    }
 
 
+   public void updateDriverList(List<SQLDriver> driverList)
+   {
+      DriversList list = getUserInterfaceFactory().getList();
+      list.getTypedModel().replaceAllAndSort(driverList);
+   }
 }

@@ -6,13 +6,13 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import java.awt.event.MouseEvent;
 
-interface IUserInterfaceFactory
+interface IUserInterfaceFactory<T extends IBaseList>
 {
    ToolBar getToolBar();
 
    BasePopupMenu getPopupMenu();
 
-   IBaseList getList();
+   T getList();
 
    String getWindowTitle();
 

@@ -17,14 +17,15 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.IOException;
-import java.net.URL;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to install the defautl drivers.
@@ -78,6 +79,8 @@ public class InstallDefaultDriversCommand implements ICommand
 			final AliasesAndDriversManager aliasesAndDriversManager = _app.getAliasesAndDriversManager();
 			aliasesAndDriversManager.loadDefaultDrivers(_url);
 			new ShowLoadedDriversOnlyCommand(_app, false).execute();
+
+			Main.getApplication().getWindowManager().getDriversListInternalFrame().updateDriverList(aliasesAndDriversManager.getDriverList());
 		}
 		catch (IOException ex)
 		{

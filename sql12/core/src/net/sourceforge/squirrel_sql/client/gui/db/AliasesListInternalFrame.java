@@ -25,8 +25,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JInternalFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
@@ -39,7 +38,7 @@ import java.beans.VetoableChangeListener;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasesListInternalFrame extends BaseListInternalFrame
+public class AliasesListInternalFrame extends BaseListInternalFrame<AliasesList>
 {
 
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasesListInternalFrame.class);

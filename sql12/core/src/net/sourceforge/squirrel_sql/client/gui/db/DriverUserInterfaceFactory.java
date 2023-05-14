@@ -3,14 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ShowDriverWebsiteAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -19,14 +12,11 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JToggleButton;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
 
-final class DriverUserInterfaceFactory implements IUserInterfaceFactory
+final class DriverUserInterfaceFactory implements IUserInterfaceFactory<DriversList>
 {
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverUserInterfaceFactory.class);
@@ -131,6 +121,17 @@ final class DriverUserInterfaceFactory implements IUserInterfaceFactory
       btn.setSelected(show);
       btn.setText(null);
       _tb.add(btn);
+      Main.getApplication().getSquirrelPreferences().addPropertyChangeListener(evt -> onPreferencesChanged(evt, btn));
+   }
+
+   private void onPreferencesChanged(PropertyChangeEvent evt, JToggleButton btnShowLoadedDriversOnlyToggle)
+   {
+      final String propName = evt != null ? evt.getPropertyName() : null;
+      if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_LOADED_DRIVERS_ONLY))
+      {
+         boolean show = _app.getSquirrelPreferences().getShowLoadedDriversOnly();
+         btnShowLoadedDriversOnlyToggle.setSelected(show);
+      }
    }
 
    public ToolBar getToolBar()
@@ -143,7 +144,7 @@ final class DriverUserInterfaceFactory implements IUserInterfaceFactory
       return _pm;
    }
 
-   public IBaseList getList()
+   public DriversList getList()
    {
       return _driversList;
    }

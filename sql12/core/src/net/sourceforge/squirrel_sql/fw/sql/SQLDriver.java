@@ -18,17 +18,17 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.beans.PropertyChangeListener;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This represents a JDBC driver.
@@ -75,7 +75,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	private transient PropertyChangeReporter _propChgReporter;
 
     /** Default Website URL for more info about the JDBC driver */
-    private String _websiteUrl;
+    private String _webSiteUrl;
     
 	/**
 	 * Ctor specifying the identifier.
@@ -89,7 +89,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		_jarFileName = null;
 		_driverClassName = null;
 		_url = "";
-        _websiteUrl = "";
+        _webSiteUrl = "";
 	}
 
 	/**
@@ -352,7 +352,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDriver#getWebSiteUrl()
      */
     public String getWebSiteUrl() {
-        return _websiteUrl;
+        return _webSiteUrl;
     }
 
     /* (non-Javadoc)
@@ -360,13 +360,13 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
      */
     public void setWebSiteUrl(String url) throws ValidationException { 
         String data = getString(url);
-        if (!data.equals(_websiteUrl)) {
-            final String oldValue = _websiteUrl;
-            _websiteUrl = data;
+        if (!data.equals(_webSiteUrl)) {
+            final String oldValue = _webSiteUrl;
+            _webSiteUrl = data;
             PropertyChangeReporter pcr = getPropertyChangeReporter();
             pcr.firePropertyChange(ISQLDriver.IPropertyNames.WEBSITE_URL,
                                    oldValue,
-                                   _websiteUrl);            
+						_webSiteUrl);
         }
     }
     
