@@ -55,7 +55,7 @@ public class PopupMenuAtticModel
       _popupMenuAtticJsonBean = new PopupMenuAtticJsonBean();
       if(new ApplicationFiles().getPopupMenuAtticFile().exists())
       {
-         _popupMenuAtticJsonBean = JsonMarshalUtil.readObjectFromFile(new ApplicationFiles().getPopupMenuAtticFile(), PopupMenuAtticJsonBean.class);
+         _popupMenuAtticJsonBean = JsonMarshalUtil.readObjectFromFileSave(new ApplicationFiles().getPopupMenuAtticFile(), PopupMenuAtticJsonBean.class, _popupMenuAtticJsonBean);
       }
    }
 }

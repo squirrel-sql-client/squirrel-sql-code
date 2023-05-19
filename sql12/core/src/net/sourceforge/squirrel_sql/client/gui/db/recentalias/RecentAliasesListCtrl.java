@@ -3,12 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.db.recentalias;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.FindAliasListCellRenderer;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.AliasSearchWrapper;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.AliasesUtil;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
@@ -21,9 +16,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -52,7 +45,7 @@ public class RecentAliasesListCtrl
       {
          try
          {
-            jsonBean = JsonMarshalUtil.readObjectFromFile(jsonBeanFile, RecentAliasesJsonBean.class);
+            jsonBean = JsonMarshalUtil.readObjectFromFileSave(jsonBeanFile, RecentAliasesJsonBean.class, jsonBean);
          }
          catch (Exception e)
          {

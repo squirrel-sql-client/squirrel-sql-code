@@ -184,7 +184,7 @@ public class SavedSessionsManager
          final File jsonFile = new ApplicationFiles().getSavedSessionsJsonFile();
          if(jsonFile.exists())
          {
-            _savedSessionsJsonBean = JsonMarshalUtil.readObjectFromFile(jsonFile, SavedSessionsJsonBean.class);
+            _savedSessionsJsonBean = JsonMarshalUtil.readObjectFromFileSave(jsonFile, SavedSessionsJsonBean.class, new SavedSessionsJsonBean());
          }
          else
          {

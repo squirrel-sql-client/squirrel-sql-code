@@ -2,21 +2,13 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import org.eclipse.jgit.lib.Repository;
 
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import java.awt.Frame;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -46,7 +38,7 @@ public class GitCommitMessageController
 
       if(jsonBeanFile.exists())
       {
-         _gitCommitMessageJsonBean = JsonMarshalUtil.readObjectFromFile(jsonBeanFile, GitCommitMessageJsonBean.class);
+         _gitCommitMessageJsonBean = JsonMarshalUtil.readObjectFromFileSave(jsonBeanFile, GitCommitMessageJsonBean.class, new GitCommitMessageJsonBean());
       }
 
       setMessage(_gitCommitMessageJsonBean.getLastEditorContent());

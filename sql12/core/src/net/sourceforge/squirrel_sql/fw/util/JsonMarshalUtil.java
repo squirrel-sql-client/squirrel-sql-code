@@ -5,15 +5,15 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.SimpleType;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class JsonMarshalUtil
 {
+   public final static ILogger s_log = LoggerController.createLogger(JsonMarshalUtil.class);
+
    public static void writeObjectToFile(File file, Object jsonBean)
    {
       try
@@ -35,6 +35,19 @@ public class JsonMarshalUtil
       catch (Exception e)
       {
          throw new RuntimeException(e);
+      }
+   }
+
+   public static <T> T readObjectFromFileSave(File file, Class<T> clazz, T errorFallBackReturnValue)
+   {
+      try
+      {
+         return readObjectFromFile(file, clazz);
+      }
+      catch (Throwable e)
+      {
+         s_log.error("Failed to read Json file " + file + " for to load object of class " + clazz + ". Will return errorFallBackReturnValue.", e);
+         return errorFallBackReturnValue;
       }
    }
 

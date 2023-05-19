@@ -116,6 +116,9 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+Prevented SQuirreL from failing to start when an erroneous Json configuration exists.
+  Such an error will now be logged and a default/empty configuration will be used.
+
 #1517 Global preferences --> tab "general" was not correctly scrolled.
 
 #1516 Updated default JDBC driver definition for MariaDB to driver version 3.x.

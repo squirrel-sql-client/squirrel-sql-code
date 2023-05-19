@@ -79,13 +79,12 @@ public class RecentFilesManager
    {
       checkIfOlderVersionWarningIsNeeded();
 
-
       if(false == recentFilesJsonBeanFile.exists())
       {
          return;
       }
 
-      _recentFilesJsonBean = JsonMarshalUtil.readObjectFromFile(recentFilesJsonBeanFile, RecentFilesJsonBean.class);
+      _recentFilesJsonBean = JsonMarshalUtil.readObjectFromFileSave(recentFilesJsonBeanFile, RecentFilesJsonBean.class, new RecentFilesJsonBean());
    }
 
    private void checkIfOlderVersionWarningIsNeeded()

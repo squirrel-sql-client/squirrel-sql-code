@@ -107,7 +107,7 @@ public class HighResolutionIconPlugin extends DefaultPlugin
 
 		if (prefsFile.exists())
 		{
-			_highResPrefJsonBean = JsonMarshalUtil.readObjectFromFile(prefsFile, HighResPrefJsonBean.class);
+			_highResPrefJsonBean = JsonMarshalUtil.readObjectFromFileSave(prefsFile, HighResPrefJsonBean.class, new HighResPrefJsonBean());
 		}
 
 		IconScale.setFollowTextSize(_highResPrefJsonBean.isScaleIconsWithText());

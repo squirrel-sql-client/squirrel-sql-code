@@ -56,7 +56,7 @@ public class ExcelTabOrFileNamesDao
       final File file = new ApplicationFiles().getExcelTabOrFileNamesJsonBeanFile();
       if(file.exists())
       {
-         containerBean = JsonMarshalUtil.readObjectFromFile(file, ExcelTabOrFileNamesContainerJsonBean.class);
+         containerBean = JsonMarshalUtil.readObjectFromFileSave(file, ExcelTabOrFileNamesContainerJsonBean.class, new ExcelTabOrFileNamesContainerJsonBean());
       }
 
       List<NamedExcelTabOrFileNamesJsonBean> beans =   containerBean.getNamedExcelTabOrFileNamesJsonBeans();
