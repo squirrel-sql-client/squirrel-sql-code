@@ -38,10 +38,10 @@ public class NimbusDarkThemePlugin extends DefaultPlugin {
 
 	/**
 	 * Returns the name of the change log for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * be a text or HTML file residing in the getPluginAppSettingsFolder
 	 * directory.
 	 *
-	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
+	 * @return	the changelog file name or null if plugin doesn't have
 	 * 			a change log.
 	 */
 	public String getChangeLogFileName()
@@ -51,10 +51,10 @@ public class NimbusDarkThemePlugin extends DefaultPlugin {
 
 	/**
 	 * Returns the name of the Help file for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * be a text or HTML file residing in the getPluginAppSettingsFolder
 	 * directory.
 	 *
-	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
+	 * @return	the Help file name or null if plugin doesn't have
 	 * 			a help file.
 	 */
 	public String getHelpFileName()
@@ -64,10 +64,10 @@ public class NimbusDarkThemePlugin extends DefaultPlugin {
 
 	/**
 	 * Returns the name of the Licence file for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * be a text or HTML file residing in the getPluginAppSettingsFolder
 	 * directory.
 	 *
-	 * @return	the Licence file name or <TT>null</TT> if plugin doesn't have
+	 * @return	the Licence file name or null if plugin doesn't have
 	 * 			a licence file.
 	 */
 	public String getLicenceFileName()
@@ -75,7 +75,7 @@ public class NimbusDarkThemePlugin extends DefaultPlugin {
 		return "licence.txt";
 	}    
     /**
-     * Should configure in load() method instead ofinitalize(), or tree icon doesn't work.
+     * Should configure in load() method instead oninitalize(), or tree icon doesn't work.
      * 
      * I guess tree is built already when initialize() called.
      * 
