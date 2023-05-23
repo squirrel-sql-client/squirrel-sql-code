@@ -255,6 +255,14 @@
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/mysql" />
 		</pack>
 
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Nimbus Dark Theme">
+			<description>
+				This optional plugin adds Nimbus LnF dark theme
+         </description>
+			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/nimbusdark.jar" />
+			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/nimbusdark" />
+		</pack>
+		
 		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Netezza">
 			<description>
 				This optional plugin adds Netezza-specific functionality
