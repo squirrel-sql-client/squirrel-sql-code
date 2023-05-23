@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sourceforge.squirrel_sql.plugin;
+package net.sourceforge.squirrel_sql.plugin.nimbusdark;
 
 import java.awt.Color;
 import java.net.URL;
@@ -51,6 +51,14 @@ public class NimbusDarkTheme {
             configColor("Tree.foreground", new Color(255, 255, 255));
 
             configTreeIcon();
+        }
+    }
+    
+    public void resetDefaultTheme(){
+        if(UIManager.getLookAndFeel() instanceof NimbusLookAndFeel){ 
+            UIManager.getDefaults().putAll(
+                    ((NimbusLookAndFeel)UIManager.getLookAndFeel()).getDefaults()
+            );
         }
     }
 
