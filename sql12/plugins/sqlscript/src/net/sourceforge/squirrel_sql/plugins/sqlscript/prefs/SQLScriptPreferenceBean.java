@@ -35,7 +35,7 @@ public class SQLScriptPreferenceBean implements Cloneable,
     /** whether or not to qualify table names with the schema when generating 
      *  scripts*/
     private boolean qualifyTableNames = true;
-    private boolean useDoubleQuotes = true;
+    private boolean useDoubleQuotes;
 
     private boolean escapeNewLine = true;
     private  String escapeNewLineString = ESCAPE_NEW_LINE_STRING_DEFAULT;

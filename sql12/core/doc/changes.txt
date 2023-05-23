@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Changed default of the "Quote identifiers in scripts" check box from checked to unchecked.
+  See Global Preferences --> tab SQL Scripts
+  This change concerns new installations only. For reference see discussion in bug #1506.
+
 Change tracking: GIT revision dialog now offers to compare GIT revisions
   or to compare a GIT revisions to the local SQL editor.
   To open the GIT revisions dialog right click the SQL editor's left gutter.
