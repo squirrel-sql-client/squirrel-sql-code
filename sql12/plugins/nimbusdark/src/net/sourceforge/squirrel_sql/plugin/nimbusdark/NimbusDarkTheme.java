@@ -58,6 +58,8 @@ public class NimbusDarkTheme {
     
     /**
      * Rest theme to system default
+     * 
+     * @param window parent window need to refresh when theme changed.
      */
     public void resetDefaultTheme(Window window){
         if(UIManager.getLookAndFeel() instanceof NimbusLookAndFeel){ 
