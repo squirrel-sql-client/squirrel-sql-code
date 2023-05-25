@@ -6,9 +6,11 @@
 package net.sourceforge.squirrel_sql.plugin.nimbusdark;
 
 import java.awt.Color;
+import java.awt.Window;
 import java.net.URL;
 import java.util.function.BooleanSupplier;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
@@ -54,11 +56,21 @@ public class NimbusDarkTheme {
         }
     }
     
-    public void resetDefaultTheme(){
+    /**
+     * Rest theme to system default
+     */
+    public void resetDefaultTheme(Window window){
         if(UIManager.getLookAndFeel() instanceof NimbusLookAndFeel){ 
-            UIManager.getDefaults().putAll(
-                    ((NimbusLookAndFeel)UIManager.getLookAndFeel()).getDefaults()
-            );
+            SwingUtilities.invokeLater(new Runnable(){
+                public void run(){
+                    UIManager.getDefaults().putAll(
+                            ((NimbusLookAndFeel)UIManager.getLookAndFeel()).getDefaults()
+                    );
+
+                    // referesh Window to apply the theme change!
+                    SwingUtilities.updateComponentTreeUI(window);
+                }
+            });
         }
     }
 

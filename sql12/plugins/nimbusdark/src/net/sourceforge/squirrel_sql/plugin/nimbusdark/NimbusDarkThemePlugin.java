@@ -6,6 +6,7 @@
 package net.sourceforge.squirrel_sql.plugin.nimbusdark;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 
@@ -15,7 +16,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
  * @author Wayne Zhang
  */
 public class NimbusDarkThemePlugin extends DefaultPlugin {
-
     @Override
     public String getAuthor() {
         return "Wayne Zhang";
@@ -93,6 +93,8 @@ public class NimbusDarkThemePlugin extends DefaultPlugin {
     public void unload() {
         super.unload();
         
-        new NimbusDarkTheme().resetDefaultTheme();
+        new NimbusDarkTheme().resetDefaultTheme(
+                Main.getApplication().getMainFrame()
+        );
     }
 }
