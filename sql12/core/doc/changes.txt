@@ -120,6 +120,9 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/13
+  Java version check in plain zip scripts didn't allow Java versions 18 19 20.
+
 Prevented SQuirreL from failing to start when an erroneous Json configuration exists.
   Such an error will now be logged and a default/empty configuration will be used.
 
