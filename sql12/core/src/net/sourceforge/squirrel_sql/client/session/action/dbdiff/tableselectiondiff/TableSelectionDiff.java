@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselection
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDIffService;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyasmarkdown.CopyAsMarkDown;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -25,6 +26,10 @@ public class TableSelectionDiff
       JMenuItem mnuCompare = new JMenuItem(s_stringMgr.getString("TableSelectionDiff.compare"));
       mnuCompare.addActionListener(e -> onCompare(diffTableProvider));
       ret.add(mnuCompare);
+
+      JMenuItem mnuCompareToClip = new JMenuItem(s_stringMgr.getString("TableSelectionDiff.compare.to.clipboard"));
+      mnuCompareToClip.addActionListener(e -> onCompareToClip(diffTableProvider));
+      ret.add(mnuCompareToClip);
 
       return ret;
    }
@@ -66,7 +71,11 @@ public class TableSelectionDiff
          return;
       }
 
+      compareSelectedCellsToLeftTempFile(diffTableProvider, leftMarkdownTempFile);
+   }
 
+   private static void compareSelectedCellsToLeftTempFile(DiffTableProvider diffTableProvider, Path leftMarkdownTempFile)
+   {
       int nbrSelRows = diffTableProvider.getTable().getSelectedRowCount();
       int nbrSelCols = diffTableProvider.getTable().getSelectedColumnCount();
 
@@ -81,13 +90,26 @@ public class TableSelectionDiff
          Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("TableSelectionDiff.single.selection.warn"));
       }
 
-
-
       String rightMarkdown = CopyAsMarkDown.createMarkdownForSelectedCells(diffTableProvider.getTable());
       Path rightMarkdownTempFile = TableSelectionDiffUtil.createRightTempFile(rightMarkdown);
+
 
       String diffDialogTitle = s_stringMgr.getString("TableSelectionDiff.dialog.title");
       DBDIffService.showDiff(leftMarkdownTempFile, rightMarkdownTempFile, diffDialogTitle);
    }
 
+   private static void onCompareToClip(DiffTableProvider diffTableProvider)
+   {
+      String clipboardAsString = ClipboardUtil.getClipboardAsString();
+
+      if(StringUtilities.isEmpty(clipboardAsString, true))
+      {
+         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("TableSelectionDiff.clipboard.empty.warn"));
+         return;
+      }
+
+      Path leftClipboardTempFile = TableSelectionDiffUtil.createLeftTempFile(clipboardAsString);
+
+      compareSelectedCellsToLeftTempFile(diffTableProvider, leftClipboardTempFile);
+   }
 }

@@ -1,8 +1,8 @@
-package net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff;
+package net.sourceforge.squirrel_sql.client.session.action.dbdiff;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffScriptFileManager;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.prefs.DBDiffPreferenceBean;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.TableSelectionDiffUtil;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;

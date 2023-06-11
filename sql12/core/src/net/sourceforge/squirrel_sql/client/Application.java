@@ -48,7 +48,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.DBDiffState;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffState;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;

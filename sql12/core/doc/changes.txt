@@ -4,11 +4,14 @@ SQuirreL SQL Client Change Log
 Not yet released, available in our GIT repository, snapshots and future releases.
 ===============================================================================================
 
+Enhancements:
+
+Data compare: New submenu in SQL result's "Compare selected cells" menu
+  which allows to compare cells to clipboard.
+
 Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
   The DBDiff-Plugin won't be shipped anymore
   and in case it is still found it is programmatically kept from being loaded.
-
-
 
 
 

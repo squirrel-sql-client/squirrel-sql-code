@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 public class TableSelectionDiffUtil
 {
-   static Path createLeftTempFile(String markDown)
+   public static Path createLeftTempFile(String markDown)
    {
       return createTempFile(markDown, "SQuirreLSQL.tableSelectionDiff-left");
    }
