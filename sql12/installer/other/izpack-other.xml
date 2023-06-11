@@ -121,9 +121,6 @@
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dbcopy.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dbcopy" />
 
-			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dbdiff.jar" />
-			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dbdiff" />
-
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/refactoring.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/refactoring" />
 

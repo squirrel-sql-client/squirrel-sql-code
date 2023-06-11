@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.DBDiffState;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
@@ -66,51 +67,24 @@ import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowF
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationStorage;
-import net.sourceforge.squirrel_sql.fw.gui.tableselectiondiff.TableSelectionDiffStore;
 import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import net.sourceforge.squirrel_sql.fw.resources.DefaultIconHandler;
 import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
 import net.sourceforge.squirrel_sql.fw.resources.LazyResourceBundle;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.PopupFactory;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 /**
  * Defines the API to do callbacks on the application.
  * 
@@ -208,7 +182,7 @@ public class Application implements IApplication
 	private PopupMenuAtticModel _popupMenuAtticModel = new PopupMenuAtticModel();
 	private MultipleSqlResultExportChannel _multipleSqlResultExportChannel = new MultipleSqlResultExportChannel();
 
-	private TableSelectionDiffStore _tableSelectionDiffStore = new TableSelectionDiffStore();
+	private DBDiffState _DBDiffState = new DBDiffState();
 
 	public Application()
 	{
@@ -1512,8 +1486,8 @@ public class Application implements IApplication
    }
 
 	@Override
-	public TableSelectionDiffStore getTableSelectionDiffStore()
+	public DBDiffState getDBDiffState()
 	{
-		return _tableSelectionDiffStore;
+		return _DBDiffState;
 	}
 }
