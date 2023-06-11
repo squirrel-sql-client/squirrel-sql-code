@@ -13,6 +13,11 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
   The DBDiff-Plugin won't be shipped anymore
   and in case it is still found it is programmatically kept from being loaded.
 
+Bug fixes:
+
+Fixed inconsistencies in DBDiff preferences tab,
+  see menu Files --> Global Preferences --> tab "DB diff"
+
 
 
 4.6.0 (06/04/2022)
