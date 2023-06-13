@@ -18,6 +18,10 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/14
+  The DB login dialog was missing the user name text field.
+  The DB login dialog is shown when an Alias without auto logon is connected.
+
 Fixed inconsistencies in DBDiff preferences tab,
   see menu Files --> Global Preferences --> tab "DB diff"
 
