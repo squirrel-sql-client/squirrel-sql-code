@@ -13,7 +13,7 @@ public class TableSelectionDiffUtil
    {
       return createTempFile(markDown, "SQuirreLSQL.tableSelectionDiff-left");
    }
-   static Path createRightTempFile(String markDown)
+   public static Path createRightTempFile(String markDown)
    {
       return createTempFile(markDown, "SQuirreLSQL.tableSelectionDiff-right");
    }

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff;
 
 import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldConfigCtrl;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.JMeldPanelHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 

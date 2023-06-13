@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPreferencesAction;
 import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.DBDiffCompareAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.DBDiffSelectAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.*;
@@ -78,6 +79,8 @@ public class ActionRegistry
       toolsPopupController.addAction("caretremove", ac.get(CaretRemoveAction.class));
 
       toolsPopupController.addAction("format", ac.get(FormatSQLAction.class));
+
+      toolsPopupController.addAction("compare", ac.get(CompareToClipboardAction.class));
 
       toolsPopupController.addAction("sqlhist", ac.get(OpenSqlHistoryAction.class));
 
@@ -235,6 +238,7 @@ public class ActionRegistry
 
       actionCollection.add(new DBDiffSelectAction());
       actionCollection.add(new DBDiffCompareAction());
+      actionCollection.add(new CompareToClipboardAction());
 
    }
 

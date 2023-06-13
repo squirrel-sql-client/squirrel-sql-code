@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL editor offers to compare selected text or complete editor content to clipboard.
+  See the editor's right mouse menu or tolls popup (ctrl+t).
+
 Data compare: New submenu in SQL result's "Compare selected cells" menu
   which allows to compare cells to clipboard.
 

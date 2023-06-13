@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPref
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.*;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAction;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
@@ -318,6 +319,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, SelectSqlAction.class, menu);
 		addToMenu(rsrc, GoToLastEditLocationAction.class, menu);
 		menu.addSeparator();
+      addToMenu(rsrc, CompareToClipboardAction.class, menu);
       addToMenu(rsrc, FormatSQLAction.class, menu);
 
 		addToMenu(rsrc, InQuotesAction.class, menu);

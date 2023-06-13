@@ -1,7 +1,6 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff;
+package net.sourceforge.squirrel_sql.client.session.action.dbdiff;
 
 import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldUtil;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListControllerChannel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -11,9 +10,8 @@ import org.jmeld.ui.BufferDiffPanel;
 import org.jmeld.ui.FilePanel;
 import org.jmeld.ui.JMeldPanel;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.nio.file.Path;
 
 public class JMeldPanelHandler
@@ -22,16 +20,17 @@ public class JMeldPanelHandler
 
    private final JMeldPanel _meldPanel;
    private final boolean _allowSaveToSqlEditor;
-   private final RevisionListControllerChannel _revisionListControllerChannel;
+   private final JMeldPanelHandlerSaveCallback _meldPanelHandlerSaveCallback;
 
-   /**
-    *
-    * @param revisionListControllerChannel only needed when allowSaveToSqlEditor = true
-    */
-   public JMeldPanelHandler(boolean allowSaveToSqlEditor, RevisionListControllerChannel revisionListControllerChannel)
+   public JMeldPanelHandler()
+   {
+      this(false, t->{/* not saved */});
+   }
+
+   public JMeldPanelHandler(boolean allowSaveToSqlEditor, JMeldPanelHandlerSaveCallback meldPanelHandlerSaveCallback)
    {
       _allowSaveToSqlEditor = allowSaveToSqlEditor;
-      _revisionListControllerChannel = revisionListControllerChannel;
+      _meldPanelHandlerSaveCallback = meldPanelHandlerSaveCallback;
       _meldPanel = new JMeldPanel();
 
       _meldPanel.SHOW_TOOLBAR_OPTION.disable();
@@ -69,7 +68,7 @@ public class JMeldPanelHandler
    private void onSaveToEditor(JMeldPanel meldPanel)
    {
       String savedText = getRightFilePanel(meldPanel).getEditor().getText();
-      _revisionListControllerChannel.replaceEditorContent(savedText);
+      _meldPanelHandlerSaveCallback.rightSideSaved(savedText);
    }
 
    private FilePanel getRightFilePanel(JMeldPanel meldPanel)

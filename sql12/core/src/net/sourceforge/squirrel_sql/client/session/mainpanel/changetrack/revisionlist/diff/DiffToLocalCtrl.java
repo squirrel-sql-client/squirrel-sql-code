@@ -1,13 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff;
 
 import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldConfigCtrl;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.JMeldPanelHandler;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListControllerChannel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.BorderFactory;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import java.nio.file.Path;
 
 public class DiffToLocalCtrl
@@ -22,7 +21,7 @@ public class DiffToLocalCtrl
    public DiffToLocalCtrl(RevisionListControllerChannel revisionListControllerChannel)
    {
       _revisionListControllerChannel = revisionListControllerChannel;
-      _meldPanelHandler = new JMeldPanelHandler(true, revisionListControllerChannel);
+      _meldPanelHandler = new JMeldPanelHandler(true, text -> revisionListControllerChannel.replaceEditorContent(text));
 
       _panel = new DiffPanel(new JMeldConfigCtrl(_meldPanelHandler.getMeldPanel()).getPanel());
    }
