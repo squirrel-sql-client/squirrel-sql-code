@@ -59,7 +59,6 @@ public class DBDiffSelectCommand implements ICommand
 			{
 				Main.getApplication().getDBDiffState().setSourceSession(_session);
 				Main.getApplication().getDBDiffState().setSourceSelectedDatabaseObjects(dbObjs);
-				Main.getApplication().getDBDiffState().setCompareMenuEnabled(true);
 			}
 			catch (final Exception e)
 			{

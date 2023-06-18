@@ -11,10 +11,9 @@ import java.nio.file.Path;
 
 public class DBDiffState
 {
-   private Path _selectedMarkdownTempFile;
+   private Path _selectedTableCellsMarkdownTempFile;
+   private Path _selectedTableCellsRawSingleColumnDataTempFile;
    private ISession _sourceSession;
-   private IDatabaseObjectInfo[] _selectedDatabaseObjects;
-   private boolean _compareMenuEnabled;
    private ISession _destSession;
    private IDatabaseObjectInfo[] _destSelectedDatabaseObjects;
    private IDatabaseObjectInfo[] _sourceSelectedDatabaseObjects;
@@ -22,14 +21,30 @@ public class DBDiffState
 
    private DBDiffScriptFileManager _scriptFileManager = new DBDiffScriptFileManager();
 
-   public void storeSelectedForCompareMarkdown(String selectedMarkDown)
+   public void storeSelectedTableCellsForMarkdownCompare(String selectedMarkDown)
    {
-      _selectedMarkdownTempFile = TableSelectionDiffUtil.createLeftTempFile(selectedMarkDown);
+      storeSelectedTableCellsForCompare(selectedMarkDown, null);
    }
 
-   public Path getSelectedMarkdownTempFile()
+   public void storeSelectedTableCellsForCompare(String selectedMarkDown, String rawSingleColumnData)
    {
-      return _selectedMarkdownTempFile;
+      _selectedTableCellsMarkdownTempFile = TableSelectionDiffUtil.createLeftTempFile(selectedMarkDown);
+
+      _selectedTableCellsRawSingleColumnDataTempFile = null;
+      if(null != rawSingleColumnData)
+      {
+         _selectedTableCellsRawSingleColumnDataTempFile = TableSelectionDiffUtil.createLeftTempFile(rawSingleColumnData);
+      }
+   }
+
+   public Path getSelectedTableCellsMarkdownTempFile()
+   {
+      return _selectedTableCellsMarkdownTempFile;
+   }
+
+   public Path getSelectedTableCellsRawSingleColumnDataTempFile()
+   {
+      return _selectedTableCellsRawSingleColumnDataTempFile;
    }
 
    public void setSourceSession(ISession sourceSession)
@@ -40,26 +55,6 @@ public class DBDiffState
    public ISession getSourceSession()
    {
       return _sourceSession;
-   }
-
-//   public void setSelectedDatabaseObjects(IDatabaseObjectInfo[] selectedDatabaseObjects)
-//   {
-//      _selectedDatabaseObjects = selectedDatabaseObjects;
-//   }
-//
-//   public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
-//   {
-//      return _selectedDatabaseObjects;
-//   }
-
-   public void setCompareMenuEnabled(boolean compareMenuEnabled)
-   {
-      _compareMenuEnabled = compareMenuEnabled;
-   }
-
-   public boolean isCompareMenuEnabled()
-   {
-      return _compareMenuEnabled;
    }
 
    public ISession getDestSession()

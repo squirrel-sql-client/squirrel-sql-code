@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Data compare: "Compare selected cells" function of result tables now offers to
+  compare raw data instead of markdown format if cells from single columns were selected.
+  This is may be useful when cells contain multiple lines.
+  Hint: SQuirreL allows to configure if table cells render line feeds by "\n".
+  See menu File --> Global Preferences --> tab "Data Type Controls"
+  --> sections "CHAR, VARCHAR, ..." and "CLOB ..."
+
 SQL editor offers to compare selected text or complete editor content to clipboard.
   See the editor's right mouse menu or tolls popup (ctrl+t).
 

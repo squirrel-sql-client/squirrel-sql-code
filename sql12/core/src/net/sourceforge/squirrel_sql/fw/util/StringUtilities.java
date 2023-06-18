@@ -486,4 +486,9 @@ public class StringUtilities
 
       return StringUtils.strip(possiblyQuotedString, "\"");
    }
+
+   public static String pad(int width, char padChar)
+   {
+      return new String(new char[width]).replace('\0', padChar);
+   }
 }
