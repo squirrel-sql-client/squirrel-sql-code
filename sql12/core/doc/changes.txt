@@ -25,6 +25,9 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+Saved Sessions: Fixed restoring the active editor
+  when a Saved Sessions was saved (ctrl+alt+shift+s) or committed to GIT (ctrl+alt+shift+k).
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/14
   The DB login dialog was missing the user name text field.
   The DB login dialog is shown when an Alias without auto logon is connected.
