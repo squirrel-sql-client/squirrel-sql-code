@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+
 /**
  * String handling utilities.
  * 
@@ -465,6 +467,16 @@ public class StringUtilities
       return text.replaceAll("\r","");
    }
 
+   public static String removeNewLine(String text)
+   {
+      if(null == text)
+      {
+         return null;
+      }
+
+      return removeCarriageReturn(text).replaceAll("\n","");
+   }
+
    public static String prefixNulls(int toPrefix, int digitCount)
    {
       String ret = "" + toPrefix;
@@ -490,5 +502,40 @@ public class StringUtilities
    public static String pad(int width, char padChar)
    {
       return new String(new char[width]).replace('\0', padChar);
+   }
+
+   public static String removeEmptyLines(String text)
+   {
+      return removeEmptyLines(text, s -> false);
+   }
+   public static String removeEmptyLines(String text, Predicate<String> previousLineVeto)
+   {
+      String[] lines = text.split("\n");
+
+      StringBuilder builder = new StringBuilder();
+      for (int i = 0; i < lines.length; i++)
+      {
+
+         boolean append = false;
+         if (false == lines[i].trim().isEmpty())
+         {
+            append = true;
+         }
+         else if (previousLineVeto.test(lines[i - 1]))
+         {
+            append = true;
+         }
+
+         if (append)
+         {
+            if (0 < builder.length())
+            {
+               builder.append("\n");
+            }
+            builder.append(lines[i]);
+         }
+
+      }
+      return builder.toString();
    }
 }

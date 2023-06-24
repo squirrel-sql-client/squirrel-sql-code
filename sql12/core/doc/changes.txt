@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Table cell data popup: Replaced legacy XML formatting by standard XML library formatting.
+  Replaced formatting error dialogs by message panel and logging.
+
 Data compare: "Compare selected cells" function of result tables now offers to
   compare raw data instead of markdown format if cells from single columns were selected.
   This is may be useful when cells contain multiple lines.
