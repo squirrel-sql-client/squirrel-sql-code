@@ -20,10 +20,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardCtrl;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.TableSelectionDiffUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
@@ -37,6 +40,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.nio.file.Path;
 
 /**
  * @author gwg
@@ -205,6 +209,7 @@ public class PopupEditableIOPanel extends JPanel
 		_popupMenu.add(new LineWrapAction());
 		_popupMenu.add(new WordWrapAction());
 		_popupMenu.add(new XMLReformatAction());
+		_popupMenu.add(new CompareToClipAction()).setToolTipText(s_stringMgr.getString("popupEditableIoPanel.compare.to.clip.tooltip"));
 		_popupMenu.setTextComponent(_ta);
 	}
 
@@ -370,18 +375,18 @@ public class PopupEditableIOPanel extends JPanel
 	 * from the text form into the Object are reported
 	 * through the messageBuffer.
 	 */
-	public Object getObject(StringBuffer messageBuffer) {
-		String text = null;
-		try {
-			text = getTextAreaCannonicalForm();
+	public Object getObject(StringBuffer messageBuffer)
+	{
+		try
+		{
+			String text = getTextAreaCannonicalForm();
+			return CellComponentFactory.validateAndConvertInPopup(_colDef, originalValue, text, messageBuffer);
 		}
-		catch (Exception e) {
-			messageBuffer.append(
-				"Failed to convert binary text; error was:\n"+e.getMessage());
+		catch (Exception e)
+		{
+			messageBuffer.append("Failed to convert binary text; error was:\n" + e.getMessage());
 			return null;
 		}
-		return CellComponentFactory.validateAndConvertInPopup(_colDef,
-					originalValue, text, messageBuffer);
 	}
 
 	/**
@@ -1083,6 +1088,54 @@ public class PopupEditableIOPanel extends JPanel
 		{
 			reformat(GUIUtils.getOwningWindow(PopupEditableIOPanel.this));
 		}
+	}
+
+	private class CompareToClipAction extends BaseAction
+	{
+		CompareToClipAction()
+		{
+			// i18n[popupEditableIoPanel.reformatXml=Reformat XML]
+			super(s_stringMgr.getString("popupEditableIoPanel.compare.to.clip"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			compareToClip();
+		}
+	}
+
+	private void compareToClip()
+	{
+
+		String clipboardAsString = ClipboardUtil.getClipboardAsString();
+
+		if(StringUtilities.isEmpty(clipboardAsString, true))
+		{
+			Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("popupEditableIoPanel.clipboard.empty.warn"));
+			return;
+		}
+
+
+		String cellText = _ta.getSelectedText();
+
+		if(StringUtilities.isEmpty(cellText, true))
+		{
+			cellText = _ta.getText();
+		}
+
+		if(StringUtilities.isEmpty(cellText, true))
+		{
+			Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("popupEditableIoPanel.cell.empty.warn"));
+			return;
+		}
+
+		Path leftClipboardTempFile = TableSelectionDiffUtil.createLeftTempFile(clipboardAsString);
+
+		Path rightCellTextTempFile = TableSelectionDiffUtil.createRightTempFile(cellText);
+
+		String title = s_stringMgr.getString("popupEditableIoPanel.clipboard.vs.cell.data");
+		CompareToClipboardCtrl compareToClipboardCtrl =
+				new CompareToClipboardCtrl(GUIUtils.getOwningWindow(_ta), leftClipboardTempFile, rightCellTextTempFile, title, false);
 	}
 
 	private void reformat(Window owningWindow)

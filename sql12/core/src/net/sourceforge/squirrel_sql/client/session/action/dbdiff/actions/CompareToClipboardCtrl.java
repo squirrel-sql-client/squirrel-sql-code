@@ -10,14 +10,14 @@ public class CompareToClipboardCtrl
 {
    private final CompareToClipboardDlg _dialog;
    private String _textToSave = null;
-   public CompareToClipboardCtrl(Frame owningFrame, Path leftClipboardTempFile, Path rightEditorTextTempFile)
+   public CompareToClipboardCtrl(Window owningFrame, Path leftClipboardTempFile, Path rightEditorTextTempFile, String title, boolean allowSaveToSqlEditor)
    {
-      JMeldPanelHandler meldPanelHandler = new JMeldPanelHandler(true, text -> _textToSave = text);
+      JMeldPanelHandler meldPanelHandler = new JMeldPanelHandler(allowSaveToSqlEditor, text -> _textToSave = text);
       try
       {
          meldPanelHandler.showDiff(leftClipboardTempFile, rightEditorTextTempFile);
 
-         _dialog = new CompareToClipboardDlg(owningFrame, meldPanelHandler.getMeldPanel());
+         _dialog = new CompareToClipboardDlg(owningFrame, meldPanelHandler.getMeldPanel(), title);
 
 
          GUIUtils.enableCloseByEscape(_dialog);

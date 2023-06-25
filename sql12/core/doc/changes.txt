@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Table cell data popup: New right mouse menu which offers to compare
+  selected text or the complete cell content to clipboard.
+
 Table cell data popup: Replaced legacy XML formatting by standard XML library formatting.
   Replaced formatting error dialogs by message panel and logging.
 

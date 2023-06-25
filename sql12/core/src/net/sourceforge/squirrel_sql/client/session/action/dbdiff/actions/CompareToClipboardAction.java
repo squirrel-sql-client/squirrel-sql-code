@@ -76,7 +76,9 @@ public class CompareToClipboardAction extends SquirrelAction implements ISQLPane
 
 		Path rightEditorTextTempFile = TableSelectionDiffUtil.createRightTempFile(rightEditorTextToCompare);
 
-		CompareToClipboardCtrl compareToClipboardCtrl = new CompareToClipboardCtrl(_sqlPanelAPI.getOwningFrame(), leftClipboardTempFile, rightEditorTextTempFile);
+		String title = s_stringMgr.getString("CompareToClipboardDlg.clipboard.vs.editor");
+		CompareToClipboardCtrl compareToClipboardCtrl =
+				new CompareToClipboardCtrl(_sqlPanelAPI.getOwningFrame(), leftClipboardTempFile, rightEditorTextTempFile, title, true);
 
 
 		String textToSave = compareToClipboardCtrl.getTextToSave();
@@ -91,11 +93,6 @@ public class CompareToClipboardAction extends SquirrelAction implements ISQLPane
 				_sqlPanelAPI.setEntireSQLScript(textToSave, false);
 			}
 		}
-
-
-
-		//DBDIffService.showDiff(leftClipboardTempFile, rightEditorTextTempFile, s_stringMgr.getString("CompareToClipboardAction.clipboard.vs.editor"));
-
 	}
 
 	@Override
