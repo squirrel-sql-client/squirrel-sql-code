@@ -31,6 +31,8 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+Improved title of cells compare dialog and corrected the diffs left/right display.
+
 Saved Sessions: Fixed restoring the active editor
   when a Saved Sessions was saved (ctrl+alt+shift+s) or committed to GIT (ctrl+alt+shift+k).
 

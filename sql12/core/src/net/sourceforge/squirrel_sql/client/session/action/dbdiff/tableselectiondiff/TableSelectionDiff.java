@@ -122,26 +122,26 @@ public class TableSelectionDiff
 
    private static void onCompare(DiffTableProvider diffTableProvider, boolean singleColumnRaw)
    {
-      Path leftMarkdownTempFile;
+      Path leftTempFile;
       if (singleColumnRaw)
       {
-         leftMarkdownTempFile = Main.getApplication().getDBDiffState().getSelectedTableCellsRawSingleColumnDataTempFile();
+         leftTempFile = Main.getApplication().getDBDiffState().getSelectedTableCellsRawSingleColumnDataTempFile();
       }
       else
       {
-         leftMarkdownTempFile = Main.getApplication().getDBDiffState().getSelectedTableCellsMarkdownTempFile();
+         leftTempFile = Main.getApplication().getDBDiffState().getSelectedTableCellsMarkdownTempFile();
       }
 
-      if(null == leftMarkdownTempFile)
+      if(null == leftTempFile)
       {
          Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("TableSelectionDiff.no.selection.for.compare.err"));
          return;
       }
 
-      compareSelectedCellsToLeftTempFile(diffTableProvider, leftMarkdownTempFile, singleColumnRaw);
+      compareSelectedCellsToLeftTempFile(diffTableProvider, leftTempFile, singleColumnRaw, s_stringMgr.getString("TableSelectionDiff.dialog.title"));
    }
 
-   private static void compareSelectedCellsToLeftTempFile(DiffTableProvider diffTableProvider, Path leftMarkdownTempFile, boolean singleColumnRaw)
+   private static void compareSelectedCellsToLeftTempFile(DiffTableProvider diffTableProvider, Path leftTempFile, boolean singleColumnRaw, String diffDialogTitle)
    {
       int nbrSelRows = diffTableProvider.getTable().getSelectedRowCount();
       int nbrSelCols = diffTableProvider.getTable().getSelectedColumnCount();
@@ -153,20 +153,19 @@ public class TableSelectionDiff
       }
 
 
-      Path rightMarkdownTempFile;
+      Path rightTempFile;
       if (singleColumnRaw)
       {
          CopyAsMarkDownResult copyAsMarkDownResult = CopyAsMarkDown.createMarkdownForSelectedCellsIncludingRawData(diffTableProvider.getTable());
-         rightMarkdownTempFile = TableSelectionDiffUtil.createRightTempFile(copyAsMarkDownResult.getRawColumnString(copyAsMarkDownResult.getColNames()[0]));
+         rightTempFile = TableSelectionDiffUtil.createRightTempFile(copyAsMarkDownResult.getRawColumnString(copyAsMarkDownResult.getColNames()[0]));
       }
       else
       {
          String markdownForSelectedCells = CopyAsMarkDown.createMarkdownForSelectedCells(diffTableProvider.getTable());
-         rightMarkdownTempFile = TableSelectionDiffUtil.createRightTempFile(markdownForSelectedCells);
+         rightTempFile = TableSelectionDiffUtil.createRightTempFile(markdownForSelectedCells);
       }
 
-      String diffDialogTitle = s_stringMgr.getString("TableSelectionDiff.dialog.title");
-      DBDIffService.showDiff(leftMarkdownTempFile, rightMarkdownTempFile, diffDialogTitle);
+      DBDIffService.showDiff(leftTempFile, rightTempFile, diffDialogTitle);
    }
 
    private static void onCompareToClip(DiffTableProvider diffTableProvider, boolean singleColumnRaw)
@@ -181,6 +180,6 @@ public class TableSelectionDiff
 
       Path leftClipboardTempFile = TableSelectionDiffUtil.createLeftTempFile(clipboardAsString);
 
-      compareSelectedCellsToLeftTempFile(diffTableProvider, leftClipboardTempFile, singleColumnRaw);
+      compareSelectedCellsToLeftTempFile(diffTableProvider, leftClipboardTempFile, singleColumnRaw, s_stringMgr.getString("TableSelectionDiff.to.clip.dialog.title"));
    }
 }

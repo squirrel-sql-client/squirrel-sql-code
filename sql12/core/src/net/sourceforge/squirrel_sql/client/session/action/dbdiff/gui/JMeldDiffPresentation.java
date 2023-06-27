@@ -51,11 +51,11 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 	 * @see AbstractSideBySideDiffPresentation#
 	 *      executeDiff(java.lang.String, java.lang.String)
 	 */
-	public void executeDiff(String script1Filename, String script2Filename)
+	public void executeDiff(String leftFilename, String rightFilename)
 	{
-		executeDiff(script1Filename, script2Filename, s_stringMgr.getString("JMeldDiffPresentation.table.diff"));
+		executeDiff(leftFilename, rightFilename, s_stringMgr.getString("JMeldDiffPresentation.table.diff"));
 	}
-	public void executeDiff(String script1Filename, String script2Filename, String diffDialogTitle)
+	public void executeDiff(String leftFilename, String rightFilename, String diffDialogTitle)
 	{
 		final EditorSettings editorSettings = JMeldSettings.getInstance().getEditor();
 		editorSettings.setRightsideReadonly(true);
@@ -92,7 +92,7 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 
 		JMeldSettings.getInstance().getEditor().enableCustomFont(true);
 		JMeldSettings.getInstance().getEditor().setFont(new Font(Font.MONOSPACED, Font.PLAIN, new JLabel().getFont().getSize()));
-		_meldPanel.openComparison(script1Filename, script2Filename);
+		_meldPanel.openComparison(leftFilename, rightFilename);
 	}
 
 
