@@ -11,14 +11,9 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -55,8 +50,8 @@ public class RevisionListController
                                     _file.getName(),
                                     GitHandler.getPathRelativeToRepo(file),
                                     GitHandler.getFilesRepositoryWorkTreePath(file),
-                                    _diffToLocalCtrl.getPanel(),
-                                    _revisionsDiffCtrl.getPanel());
+                                    _diffToLocalCtrl.getDiffPanel(),
+                                    _revisionsDiffCtrl.getDiffPanel());
 
       _changeTrackCloseDispatcher = changeTrackCloseDispatcher;
       _revisionListControllerChannel = revisionListControllerChannel;
@@ -136,7 +131,7 @@ public class RevisionListController
    {
       cleanUpMelds();
 
-      if(  _dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getPanel()
+      if(  _dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getDiffPanel()
          && 1 == _dlg.lstRevisions.getSelectedValuesList().size())
       {
          RevisionWrapper selectedWrapper = _dlg.lstRevisions.getSelectedValue();
@@ -144,7 +139,7 @@ public class RevisionListController
 
          _diffToLocalCtrl.setSelectedRevision(fileContent, selectedWrapper.getRevisionDateString());
       }
-      else if(_dlg.tabbedPane.getSelectedComponent() == _revisionsDiffCtrl.getPanel()
+      else if(_dlg.tabbedPane.getSelectedComponent() == _revisionsDiffCtrl.getDiffPanel()
               && 1 < _dlg.lstRevisions.getSelectedValuesList().size())
       {
          RevisionWrapper leftWrapper = _dlg.lstRevisions.getSelectedValuesList().get(0);
@@ -239,7 +234,7 @@ public class RevisionListController
 
          _dlg.txtPreview.setText(fileContent);
 
-         if(_dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getPanel())
+         if(_dlg.tabbedPane.getSelectedComponent() == _diffToLocalCtrl.getDiffPanel())
          {
             _diffToLocalCtrl.setSelectedRevision(fileContent, selectedWrapper.getRevisionDateString());
          }

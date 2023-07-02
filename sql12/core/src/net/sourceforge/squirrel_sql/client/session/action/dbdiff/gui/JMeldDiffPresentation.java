@@ -22,11 +22,15 @@ package net.sourceforge.squirrel_sql.client.session.action.dbdiff.gui;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldConfigCtrl;
 import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldUtil;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.JMeldPanelHandlerSaveCallback;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.jmeld.settings.EditorSettings;
 import org.jmeld.settings.JMeldSettings;
+import org.jmeld.ui.AbstractContentPanel;
+import org.jmeld.ui.BufferDiffPanel;
+import org.jmeld.ui.FilePanel;
 import org.jmeld.ui.JMeldPanel;
 
 import javax.swing.*;
@@ -41,10 +45,25 @@ import java.awt.event.WindowEvent;
 public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(JMeldDiffPresentation.class);
+	private boolean _useEmbedded;
 	private JMeldPanel _meldPanel;
+	private ConfigurableMeldPanel _configurableMeldPanel;
 
 	public JMeldDiffPresentation()
 	{
+	}
+
+	public JMeldDiffPresentation(boolean useEmbedded, JMeldPanelHandlerSaveCallback saveCallback)
+	{
+		_useEmbedded = useEmbedded;
+
+		if(false == _useEmbedded)
+		{
+			return;
+		}
+
+		_configurableMeldPanel = createPanel(null);
+
 	}
 
 	/**
@@ -57,73 +76,115 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 	}
 	public void executeDiff(String leftFilename, String rightFilename, String diffDialogTitle)
 	{
+		executeDiff(leftFilename, rightFilename, diffDialogTitle, null);
+	}
+
+	public void executeDiff(String leftFilename, String rightFilename, String diffDialogTitle, JMeldPanelHandlerSaveCallback saveCallback)
+	{
+		if (false == _useEmbedded && null != diffDialogTitle)
+		{
+			JDialog diffDialog = new JDialog(Main.getApplication().getMainFrame(), diffDialogTitle);
+
+			_configurableMeldPanel = createPanel(diffDialog);
+			diffDialog.getContentPane().setLayout(new GridLayout(1,1));
+			diffDialog.add(_configurableMeldPanel);
+
+			JMeldSettings.getInstance().setDrawCurves(true);
+
+
+			GUIUtils.enableCloseByEscape(diffDialog, w -> cleanMeldPanel());
+			diffDialog.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e)
+				{
+					cleanMeldPanel();
+				}
+
+				@Override
+				public void windowClosed(WindowEvent e)
+				{
+					cleanMeldPanel();
+				}
+			});
+
+			GUIUtils.initLocation(diffDialog, 500, 400, JMeldDiffPresentation.class.getName());
+
+			diffDialog.setVisible(true);
+		}
+
+		if (_useEmbedded)
+		{
+			JMeldUtil.cleanMeldPanel(_meldPanel);
+		}
+
 		final EditorSettings editorSettings = JMeldSettings.getInstance().getEditor();
-		editorSettings.setRightsideReadonly(true);
-		editorSettings.setLeftsideReadonly(true);
-
-		JDialog diffDialog = new JDialog(Main.getApplication().getMainFrame(), diffDialogTitle);
-
-		JPanel pnl = createPanel(diffDialog);
-		diffDialog.getContentPane().setLayout(new GridLayout(1,1));
-		diffDialog.add(pnl);
-
-		JMeldSettings.getInstance().setDrawCurves(true);
-
-
-
-		GUIUtils.enableCloseByEscape(diffDialog, w -> JMeldUtil.cleanMeldPanel(_meldPanel));
-		diffDialog.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e)
-			{
-				JMeldUtil.cleanMeldPanel(_meldPanel);
-			}
-
-			@Override
-			public void windowClosed(WindowEvent e)
-			{
-				JMeldUtil.cleanMeldPanel(_meldPanel);
-			}
-		});
-
-		GUIUtils.initLocation(diffDialog, 500, 400, JMeldDiffPresentation.class.getName());
-
-		diffDialog.setVisible(true);
-
 		JMeldSettings.getInstance().getEditor().enableCustomFont(true);
 		JMeldSettings.getInstance().getEditor().setFont(new Font(Font.MONOSPACED, Font.PLAIN, new JLabel().getFont().getSize()));
+		editorSettings.setRightsideReadonly(null == saveCallback);
+		editorSettings.setLeftsideReadonly(true);
+
+		if(null != saveCallback)
+		{
+			GUIUtils.forceProperty(() -> 1 < JMeldPanel.getContentPanelList(_meldPanel.getTabbedPane()).size(), () -> prepareSaveButton(_meldPanel, saveCallback));
+		}
+
 		_meldPanel.openComparison(leftFilename, rightFilename);
 	}
 
-
-	private JPanel createPanel(JDialog diffDialog)
+	private void prepareSaveButton(JMeldPanel meldPanel, JMeldPanelHandlerSaveCallback saveCallback)
 	{
-		JPanel ret = new JPanel(new GridBagLayout());
+		JButton saveButton = getRightFilePanel(meldPanel).getSaveButton();
+		saveButton.addActionListener(e -> onSaveToEditor(meldPanel, saveCallback));
+		saveButton.setToolTipText(s_stringMgr.getString("JMeldDiffPresentation.write.changes.to.sql.editor"));
+	}
 
-		GridBagConstraints gbc;
+	private FilePanel getRightFilePanel(JMeldPanel meldPanel)
+	{
+		for( AbstractContentPanel abstractContentPanel : JMeldPanel.getContentPanelList(meldPanel.getTabbedPane()) )
+		{
+			if(abstractContentPanel instanceof BufferDiffPanel)
+			{
+				return ((BufferDiffPanel) abstractContentPanel).getFilePanel(BufferDiffPanel.RIGHT);
+			}
+		}
+		throw new IllegalStateException("Failed to return org.jmeld.ui.FilePanel");
+	}
+
+	private void onSaveToEditor(JMeldPanel meldPanel, JMeldPanelHandlerSaveCallback saveCallback)
+	{
+		String savedText = getRightFilePanel(meldPanel).getEditor().getText();
+		saveCallback.rightSideSaved(savedText);
+	}
 
 
+	private ConfigurableMeldPanel createPanel(JDialog diffDialog)
+	{
 		_meldPanel = new NonExitingJMeldPanel(() -> close(diffDialog));
 		_meldPanel.SHOW_TABBEDPANE_OPTION.disable();
 		_meldPanel.SHOW_TOOLBAR_OPTION.disable();
 		_meldPanel.SHOW_FILE_LABEL_OPTION.disable();
 
-
-		gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0);
-		ret.add(new JMeldConfigCtrl(_meldPanel).getPanel(), gbc);
-
-		gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
-		ret.add(_meldPanel, gbc);
-
-		return ret;
+		return new ConfigurableMeldPanel(_meldPanel, new JMeldConfigCtrl(_meldPanel));
 	}
 
-
+	public ConfigurableMeldPanel getConfigurableMeldPanel()
+	{
+		return _configurableMeldPanel;
+	}
 
 	private void close(JDialog diffDialog)
 	{
-		diffDialog.setVisible(false);
-		diffDialog.dispose();
+		cleanMeldPanel();
+
+		if (null != diffDialog)
+		{
+			diffDialog.setVisible(false);
+			diffDialog.dispose();
+		}
 	}
 
+	public void cleanMeldPanel()
+	{
+		JMeldUtil.cleanMeldPanel(_meldPanel);
+	}
 }

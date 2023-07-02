@@ -32,21 +32,22 @@ public class DiffPresentationFactoryImpl implements IDiffPresentationFactory
 	{
 		IDiffPresentation result = null;
 
-		if (Main.getApplication().getDBDiffState().getDBDiffPreferenceBean().isUseExternalGraphicalDiffTool())
+		if (Main.getApplication().getDBDiffState().getDBDiffPreferenceBean().isUseTabularDiffPresentation())
 		{
-			result = new ExternalToolSideBySideDiffPresentation();
+			result = new TabularDiffPresentation();
 		}
 		else
 		{
-			if (Main.getApplication().getDBDiffState().getDBDiffPreferenceBean().isUseTabularDiffPresentation())
+			if (Main.getApplication().getDBDiffState().getDBDiffPreferenceBean().isUseExternalGraphicalDiffTool())
 			{
-				result = new TabularDiffPresentation();
+				result = new ExternalToolSideBySideDiffPresentation();
 			}
 			else
 			{
 				result = new JMeldDiffPresentation();
 			}
 		}
+
 		return result;
 	}
 

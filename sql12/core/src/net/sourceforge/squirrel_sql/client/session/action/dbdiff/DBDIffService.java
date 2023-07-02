@@ -30,4 +30,9 @@ public class DBDIffService
 
    }
 
+   public static void showEditableDiff(Path leftFile, Path rightFile, String diffDialogTitle, JMeldPanelHandlerSaveCallback saveCallback)
+   {
+   }
+
+
 }

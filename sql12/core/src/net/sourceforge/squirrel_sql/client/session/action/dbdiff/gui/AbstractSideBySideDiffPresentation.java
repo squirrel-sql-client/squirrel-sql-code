@@ -26,10 +26,12 @@ import net.sourceforge.squirrel_sql.client.session.action.dbdiff.prefs.DBDiffPre
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.IDialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -50,11 +52,6 @@ public abstract class AbstractSideBySideDiffPresentation implements IDiffPresent
 
 	/** fileWrapperFactory that allows this class to avoid constructing File objects directly */
 	protected FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
-
-	/** Utility class for working with I/O */
-	protected IOUtilities ioutils = new IOUtilitiesImpl();
-
-	private IDialectFactory dialectFactory = new DialectFactoryImpl();
 
 	/**
 	 * Sub-class implementations should override this method to provide the implementation for comparing the
@@ -83,13 +80,13 @@ public abstract class AbstractSideBySideDiffPresentation implements IDiffPresent
 		final IDatabaseObjectInfo[] selectedSourceObjects = Main.getApplication().getDBDiffState().getSourceSelectedDatabaseObjects();
 
 		// Here we use the same dialect for both the source and destination object.
-		final HibernateDialect dialect = dialectFactory.getDialect(sourceSession.getMetaData());
+		final HibernateDialect dialect = new DialectFactoryImpl().getDialect(sourceSession.getMetaData());
 
 		final CreateScriptPreferences csprefs = new CreateScriptPreferences();
 
-		final List<ITableInfo> sourcetables = convertArrayToList(selectedSourceObjects);
+		final List<ITableInfo> sourcetables = getContainedTableInfos(selectedSourceObjects);
 
-		final List<ITableInfo> desttables = convertArrayToList(selectedDestObjects);
+		final List<ITableInfo> desttables = getContainedTableInfos(selectedDestObjects);
 
 		try
 		{
@@ -119,17 +116,13 @@ public abstract class AbstractSideBySideDiffPresentation implements IDiffPresent
 
 	private void writeScriptToFile(String sqlscript, String file) throws IOException
 	{
-		if (s_log.isInfoEnabled())
-		{
-			s_log.info("Writing SQL script to file : " + file);
-		}
 		final FileWrapper sourcefileWrapper = fileWrapperFactory.create(file);
-		ioutils.copyBytesToFile(new ByteArrayInputStream(sqlscript.getBytes()), sourcefileWrapper);
+		new IOUtilitiesImpl().copyBytesToFile(new ByteArrayInputStream(sqlscript.getBytes()), sourcefileWrapper);
 	}
 
-	private List<ITableInfo> convertArrayToList(IDatabaseObjectInfo[] dbObjs)
+	private List<ITableInfo> getContainedTableInfos(IDatabaseObjectInfo[] dbObjs)
 	{
-		final List<ITableInfo> result = new ArrayList<ITableInfo>();
+		final List<ITableInfo> result = new ArrayList<>();
 		for (final IDatabaseObjectInfo dbObj : dbObjs)
 		{
 			if (dbObj instanceof ITableInfo)
@@ -151,35 +144,4 @@ public abstract class AbstractSideBySideDiffPresentation implements IDiffPresent
 		}
 		return script.toString();
 	}
-
-	/**
-	 * @param fileWrapperFactory
-	 *           the fileWrapperFactory to set
-	 */
-	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
-	{
-		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
-		this.fileWrapperFactory = fileWrapperFactory;
-	}
-
-	/**
-	 * @param ioutils
-	 *           the ioutils to set
-	 */
-	public void setIoutils(IOUtilities ioutils)
-	{
-		Utilities.checkNull("setIoutils", "ioutils", ioutils);
-		this.ioutils = ioutils;
-	}
-
-	/**
-	 * @param dialectFactory
-	 *           the dialectFactory to set
-	 */
-	public void setDialectFactory(IDialectFactory dialectFactory)
-	{
-		Utilities.checkNull("setDialectFactory", "dialectFactory", dialectFactory);
-		this.dialectFactory = dialectFactory;
-	}
-
 }
