@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardCtrl;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDIffService;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.TableSelectionDiffUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
@@ -1134,8 +1134,7 @@ public class PopupEditableIOPanel extends JPanel
 		Path rightCellTextTempFile = TableSelectionDiffUtil.createRightTempFile(cellText);
 
 		String title = s_stringMgr.getString("popupEditableIoPanel.clipboard.vs.cell.data");
-		CompareToClipboardCtrl compareToClipboardCtrl =
-				new CompareToClipboardCtrl(GUIUtils.getOwningWindow(_ta), leftClipboardTempFile, rightCellTextTempFile, title, false);
+		DBDIffService.showDiff(leftClipboardTempFile, rightCellTextTempFile, title, GUIUtils.getOwningWindow(_ta));
 	}
 
 	private void reformat(Window owningWindow)

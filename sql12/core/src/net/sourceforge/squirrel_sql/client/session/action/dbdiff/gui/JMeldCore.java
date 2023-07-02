@@ -28,6 +28,7 @@ public class JMeldCore
 
    public JMeldCore()
    {
+      this(false);
    }
 
    public JMeldCore(boolean useEmbedded)
@@ -39,8 +40,9 @@ public class JMeldCore
          return;
       }
 
+      // Callers of embedded usage need the ConfigurableMeldPanel to place the meld panel itself
+      // es well as the configuration panel in their own dialog.
       _configurableMeldPanel = createPanel(null);
-
    }
 
    public void executeDiff(String leftFilename, String rightFilename, String diffDialogTitle)
@@ -50,9 +52,23 @@ public class JMeldCore
 
    public void executeDiff(String leftFilename, String rightFilename, String diffDialogTitle, JMeldPanelHandlerSaveCallback saveCallback)
    {
-      if (false == _useEmbedded && null != diffDialogTitle)
+      executeDiff(leftFilename, rightFilename, diffDialogTitle, saveCallback, Main.getApplication().getMainFrame());
+   }
+   
+   public void executeDiff(String leftFilename, String rightFilename, String diffDialogTitle, JMeldPanelHandlerSaveCallback saveCallback, Window owningWindow)
+   {
+      if (_useEmbedded)
       {
-         JDialog diffDialog = new JDialog(Main.getApplication().getMainFrame(), diffDialogTitle);
+         cleanMeldPanel();
+         doCompare(leftFilename, rightFilename, saveCallback);
+      }
+      else
+      {
+         JDialog diffDialog = new JDialog(owningWindow, diffDialogTitle);
+
+         // When saving is allowed the dialog is made modal
+         // to prevent the editor contents from being changed concurrently.
+         // diffDialog.setModal(null != saveCallback);
 
          _configurableMeldPanel = createPanel(diffDialog);
          diffDialog.getContentPane().setLayout(new GridLayout(1,1));
@@ -78,14 +94,13 @@ public class JMeldCore
 
          GUIUtils.initLocation(diffDialog, 500, 400, JMeldDiffPresentation.class.getName());
 
+         doCompare(leftFilename, rightFilename, saveCallback);
          diffDialog.setVisible(true);
       }
+   }
 
-      if (_useEmbedded)
-      {
-         cleanMeldPanel();
-      }
-
+   private void doCompare(String leftFilename, String rightFilename, JMeldPanelHandlerSaveCallback saveCallback)
+   {
       final EditorSettings editorSettings = JMeldSettings.getInstance().getEditor();
       JMeldSettings.getInstance().getEditor().enableCustomFont(true);
       JMeldSettings.getInstance().getEditor().setFont(new Font(Font.MONOSPACED, Font.PLAIN, new JLabel().getFont().getSize()));

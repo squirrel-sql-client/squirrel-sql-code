@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDIffService;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.TableSelectionDiffUtil;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -36,10 +37,9 @@ import java.nio.file.Path;
 
 public class CompareToClipboardAction extends SquirrelAction implements ISQLPanelAction
 {
-
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CompareToClipboardAction.class);
 
-	private final static ILogger log = LoggerController.createLogger(CompareToClipboardAction.class);
+	private final static ILogger s_log = LoggerController.createLogger(CompareToClipboardAction.class);
 	private ISQLPanelAPI _sqlPanelAPI;
 
 	public CompareToClipboardAction()
@@ -59,11 +59,9 @@ public class CompareToClipboardAction extends SquirrelAction implements ISQLPane
 
 		Path leftClipboardTempFile = TableSelectionDiffUtil.createLeftTempFile(clipboardAsString);
 
-		boolean isSelectedText = true;
 		String rightEditorTextToCompare = _sqlPanelAPI.getSQLEntryPanel().getSelectedText();
 		if(null == rightEditorTextToCompare)
 		{
-			isSelectedText = false;
 			rightEditorTextToCompare = _sqlPanelAPI.getSQLEntryPanel().getText();
 
 			if(StringUtilities.isEmpty(rightEditorTextToCompare, true))
@@ -71,20 +69,20 @@ public class CompareToClipboardAction extends SquirrelAction implements ISQLPane
 				Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("CompareToClipboardAction.editor.empty.warn"));
 				return;
 			}
-
 		}
 
 		Path rightEditorTextTempFile = TableSelectionDiffUtil.createRightTempFile(rightEditorTextToCompare);
 
 		String title = s_stringMgr.getString("CompareToClipboardDlg.clipboard.vs.editor");
-		CompareToClipboardCtrl compareToClipboardCtrl =
-				new CompareToClipboardCtrl(_sqlPanelAPI.getOwningFrame(), leftClipboardTempFile, rightEditorTextTempFile, title, true);
 
+		DBDIffService.showDiff(leftClipboardTempFile, rightEditorTextTempFile, title, _sqlPanelAPI.getOwningFrame(), savedText -> onSaveText(savedText));
+	}
 
-		String textToSave = compareToClipboardCtrl.getTextToSave();
+	private void onSaveText(String textToSave)
+	{
 		if(null != textToSave)
 		{
-			if(isSelectedText)
+			if(null != _sqlPanelAPI.getSQLEntryPanel().getSelectedText())
 			{
 				_sqlPanelAPI.getSQLEntryPanel().replaceSelection(textToSave);
 			}
