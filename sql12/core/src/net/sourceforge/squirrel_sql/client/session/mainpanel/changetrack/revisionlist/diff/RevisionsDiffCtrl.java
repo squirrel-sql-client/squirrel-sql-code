@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff;
 
-import net.sourceforge.squirrel_sql.client.session.action.dbdiff.gui.JMeldDiffPresentation;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.gui.JMeldCore;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -11,12 +11,12 @@ public class RevisionsDiffCtrl
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DiffToLocalCtrl.class);
 
    private DiffPanel _diffPanel;
-   private JMeldDiffPresentation _meldDiffPresentation;
+   private JMeldCore _meldCore;
 
    public RevisionsDiffCtrl()
    {
-      _meldDiffPresentation = new JMeldDiffPresentation(true, null);
-      _diffPanel = new DiffPanel(_meldDiffPresentation.getConfigurableMeldPanel());
+      _meldCore = new JMeldCore(true);
+      _diffPanel = new DiffPanel(_meldCore.getConfigurableMeldPanel());
    }
 
    public DiffPanel getDiffPanel()
@@ -35,12 +35,12 @@ public class RevisionsDiffCtrl
       Path gitRevisionContentTempFileLeft = DiffFileUtil.createGitRevisionTempFile(leftGitRevisionContent);
       Path gitRevisionContentTempFileRight = DiffFileUtil.createGitRevisionTempFile(rightGitRevisionContent);;
 
-      _meldDiffPresentation.executeDiff(gitRevisionContentTempFileLeft.toFile().getAbsolutePath(), gitRevisionContentTempFileRight.toFile().getAbsolutePath(), null, null);
-      _diffPanel.pnlDiffContainer.add(_meldDiffPresentation.getConfigurableMeldPanel().getMeldPanel());
+      _meldCore.executeDiff(gitRevisionContentTempFileLeft.toFile().getAbsolutePath(), gitRevisionContentTempFileRight.toFile().getAbsolutePath(), null, null);
+      _diffPanel.pnlDiffContainer.add(_meldCore.getConfigurableMeldPanel().getMeldPanel());
    }
 
    public void cleanUpMelds()
    {
-      _meldDiffPresentation.cleanMeldPanel();
+      _meldCore.cleanMeldPanel();
    }
 }

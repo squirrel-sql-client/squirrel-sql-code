@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -71,8 +72,8 @@ public class DBDiffPreferencesPanel extends JPanel implements IGlobalPreferences
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints gbc;
 
-		gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,3,0), 0,0);
-		add(new JLabel(s_stringMgr.getString("DBDiffPreferencesPanel.configure.table.diff.presentation")), gbc);
+		gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,3,0), 0,0);
+		add(new MultipleLineLabel(s_stringMgr.getString("DBDiffPreferencesPanel.configure.table.diff.presentation")), gbc);
 
 		gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
 		add(createTopPanel(), gbc);

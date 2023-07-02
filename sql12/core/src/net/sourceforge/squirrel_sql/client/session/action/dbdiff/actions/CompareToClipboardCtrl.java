@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions;
 
-import net.sourceforge.squirrel_sql.client.session.action.dbdiff.gui.JMeldDiffPresentation;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.gui.JMeldCore;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import java.awt.*;
@@ -12,12 +12,19 @@ public class CompareToClipboardCtrl
    private String _textToSave = null;
    public CompareToClipboardCtrl(Window owningFrame, Path leftClipboardTempFile, Path rightEditorTextTempFile, String title, boolean allowSaveToSqlEditor)
    {
-      JMeldDiffPresentation  diffPresentation = new JMeldDiffPresentation(true, null);
+      JMeldCore meldCore = new JMeldCore(true);
       try
       {
-         diffPresentation.executeDiff(leftClipboardTempFile.toFile().getAbsolutePath(), rightEditorTextTempFile.toFile().getAbsolutePath());
+         if (allowSaveToSqlEditor)
+         {
+            meldCore.executeDiff(leftClipboardTempFile.toFile().getAbsolutePath(), rightEditorTextTempFile.toFile().getAbsolutePath(), null, savedText -> _textToSave = savedText);
+         }
+         else
+         {
+            meldCore.executeDiff(leftClipboardTempFile.toFile().getAbsolutePath(), rightEditorTextTempFile.toFile().getAbsolutePath(), null, null);
+         }
 
-         _dialog = new CompareToClipboardDlg(owningFrame, diffPresentation.getConfigurableMeldPanel(), title);
+         _dialog = new CompareToClipboardDlg(owningFrame, meldCore.getConfigurableMeldPanel(), title);
 
 
          GUIUtils.enableCloseByEscape(_dialog);
@@ -27,7 +34,7 @@ public class CompareToClipboardCtrl
       }
       finally
       {
-         diffPresentation.cleanMeldPanel();
+         meldCore.cleanMeldPanel();
       }
    }
 
