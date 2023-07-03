@@ -31,6 +31,10 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/15
+  SQL result: The display of the result row limit was corrected
+  in case the number of rows read matched the number of rows in the result.
+
 Compare functions: Refactoring including some bug fixes.
 
 Improved title of cells compare dialog and corrected the diffs left/right display.

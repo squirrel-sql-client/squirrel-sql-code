@@ -30,24 +30,11 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn.FindResultColumnCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CloseAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindResultColumnAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ContinueReadChannel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -59,14 +46,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -274,7 +255,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 		final int rowCount = _rsds.currentRowCount();
 
-      _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead(), _sql, _exInfo.getQueryHolder().getOriginalQuery());
+      _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.isResultLimitedByMaxRowsCount(), _sql, _exInfo.getQueryHolder().getOriginalQuery());
 
       _additionalResultTabsController.setCurrentResult(_rsds);
 
@@ -335,7 +316,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          restoreTableState(resultSortableTableState, _resultDataSetViewerFindHandler.getDataSetViewer());
          _resultDataSetViewerFindHandler.resetFind();
 
-         _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
+         _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.isResultLimitedByMaxRowsCount());
          _queryInfoPanel.displayRowCount(_rsds.currentRowCount());
 
 

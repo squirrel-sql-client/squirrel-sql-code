@@ -704,6 +704,11 @@ public class ResultSetReader
       return _rs.areAllPossibleResultsOfSQLRead();
    }
 
+   public boolean isResultLimitedByMaxRowsCount()
+   {
+      return _rs.isResultLimitedByMaxRowsCount();
+   }
+
    public void closeStatementAndResultSet()
    {
       _rs.closeStatementAndResultSet();
