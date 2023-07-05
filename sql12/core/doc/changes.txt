@@ -31,6 +31,8 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+Find in preferences/configurations dialog: Fixed UI refresh problem of "Details" panel.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/15
   SQL result: The display of the result row limit was corrected
   in case the number of rows read matched the number of rows in the result.
