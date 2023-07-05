@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Table cell data popup: The right mouse menu entries "Wrap Lines on/off" and "Wrap Word on/off"
+  are now checked menu items and their dependence is respected.
+
 Table cell data popup: New right mouse menu which offers to compare
   selected text or the complete cell content to clipboard.
 

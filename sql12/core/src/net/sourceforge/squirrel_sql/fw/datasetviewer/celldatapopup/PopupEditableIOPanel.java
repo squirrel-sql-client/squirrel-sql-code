@@ -69,6 +69,8 @@ public class PopupEditableIOPanel extends JPanel
 
 	// Description needed to handle conversion of data to/from Object
 	transient private final ColumnDisplayDefinition _colDef;
+	private final JCheckBoxMenuItem _chkMnuLineWrap;
+	private final JCheckBoxMenuItem _chkMnuWordWrap;
 
 	transient private MouseAdapter _lis;
 
@@ -146,11 +148,13 @@ public class PopupEditableIOPanel extends JPanel
 		_colDef = colDef;
 		_ta = CellComponentFactory.getJTextArea(colDef, value);
 
-		if (isEditable) {
+		if (isEditable)
+		{
 			_ta.setEditable(true);
 			_ta.setBackground(SquirrelConstants.CELL_EDITABLE_COLOR);	// tell user it is editable
 		}
-		else {
+		else
+		{
 			_ta.setEditable(false);
 		}
 
@@ -173,7 +177,8 @@ public class PopupEditableIOPanel extends JPanel
 		 */
 
 		displayPanel.add(scrollPane, BorderLayout.CENTER);
-		if (CellComponentFactory.useBinaryEditingPanel(colDef)) {
+		if (CellComponentFactory.useBinaryEditingPanel(colDef))
+		{
 			// this is a binary field, so allow for multiple viewing options
 
 			String[] radixListData = { "Hex", "Decimal", "Octal", "Binary" };
@@ -201,13 +206,20 @@ public class PopupEditableIOPanel extends JPanel
 
 		// add controls for file handling, but only if DataType
 		// can do File operations
-		if (CellComponentFactory.canDoFileIO(colDef)) {
+		if (CellComponentFactory.canDoFileIO(colDef))
+		{
 			// yes it can, so add controls
 			add(exportImportPanel(isEditable), BorderLayout.SOUTH);
 		}
 
-		_popupMenu.add(new LineWrapAction());
-		_popupMenu.add(new WordWrapAction());
+		_chkMnuLineWrap = new JCheckBoxMenuItem(new LineWrapAction());
+		_chkMnuLineWrap.setSelected(_ta.getLineWrap());
+		_popupMenu.add(_chkMnuLineWrap);
+
+		_chkMnuWordWrap = new JCheckBoxMenuItem(new WordWrapAction());
+		_chkMnuWordWrap.setSelected(_ta.getWrapStyleWord());
+		_popupMenu.add(_chkMnuWordWrap);
+
 		_popupMenu.add(new XMLReformatAction());
 		_popupMenu.add(new CompareToClipAction()).setToolTipText(s_stringMgr.getString("popupEditableIoPanel.compare.to.clip.tooltip"));
 		_popupMenu.setTextComponent(_ta);
@@ -1053,7 +1065,7 @@ public class PopupEditableIOPanel extends JPanel
 		{
 			if (_ta != null)
 			{
-				_ta.setLineWrap(!_ta.getLineWrap());
+				lineWrapWordWrapChanged(false);
 			}
 		}
 	}
@@ -1071,10 +1083,36 @@ public class PopupEditableIOPanel extends JPanel
 		{
 			if (_ta != null)
 			{
-				_ta.setWrapStyleWord(!_ta.getWrapStyleWord());
+				lineWrapWordWrapChanged(true);
 			}
 		}
 	}
+
+	private void lineWrapWordWrapChanged(boolean wordWrapChanged)
+	{
+		if(wordWrapChanged)
+		{
+			_ta.setWrapStyleWord(!_ta.getWrapStyleWord());
+			if(_ta.getWrapStyleWord())
+			{
+				// Word wrap requires line wrap.
+				_ta.setLineWrap(true);
+			}
+		}
+		else
+		{
+			_ta.setLineWrap(!_ta.getLineWrap());
+			if(_ta.getWrapStyleWord())
+			{
+				// Word wrap requires line wrap.
+				_ta.setWrapStyleWord(false);
+			}
+		}
+
+		_chkMnuLineWrap.setSelected(_ta.getLineWrap());
+		_chkMnuWordWrap.setSelected(_ta.getWrapStyleWord());
+	}
+
 
 	private class XMLReformatAction extends BaseAction
 	{
