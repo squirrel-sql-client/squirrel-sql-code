@@ -7,26 +7,16 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 public class AtticToFromDlg extends JDialog
 {
    private static StringManager s_stringMgr = StringManagerFactory.getStringManager(AtticToFromDlg.class);
    JList<AtticToFromItem> lstOutAttic = new JList<>();
    JList<AtticToFromItem> lstInAttic = new JList<>();
-   JButton btnMoveInAttic = new JButton(new LibraryResources().getIcon(LibraryResources.IImageNames.RIGHT_ARROW));
-   JButton btnMoveOutAttic = new JButton(new LibraryResources().getIcon(LibraryResources.IImageNames.LEFT_ARROW));
+   JButton btnMoveInAttic = new JButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.RIGHT_ARROW));
+   JButton btnMoveOutAttic = new JButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.LEFT_ARROW));
    JButton btnOk = new JButton(s_stringMgr.getString("AtticToFromDlg.ok"));
    JButton btnCancel = new JButton(s_stringMgr.getString("AtticToFromDlg.cancel"));
 

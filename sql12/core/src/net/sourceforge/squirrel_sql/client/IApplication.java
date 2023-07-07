@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowF
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
@@ -97,6 +98,8 @@ public interface IApplication
    DesktopStyle getDesktopStyle();
 
 	SquirrelResources getResources();
+
+	LibraryResources getResourcesFw();
 
 	ShortcutManager getShortcutManager();
 

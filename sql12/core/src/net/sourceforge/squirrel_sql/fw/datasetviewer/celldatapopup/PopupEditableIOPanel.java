@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFindCtrl;
 import net.sourceforge.squirrel_sql.fw.util.*;
 
 import javax.swing.*;
@@ -57,6 +58,7 @@ public class PopupEditableIOPanel extends JPanel
 	public static final String ACTION_BROWSE = "browse";
 	public static final String ACTION_EXPORT = "export";
 	public static final String ACTION_REFORMAT = "reformat";
+	public static final String ACTION_FIND = "find";
 	public static final String ACTION_EXECUTE = "execute";
 	public static final String ACTION_APPLY = "apply";
 	public static final String ACTION_IMPORT = "import";
@@ -65,7 +67,10 @@ public class PopupEditableIOPanel extends JPanel
 	private final JTextArea _ta;
 
 	// the scroll pane that holds the text area
-	private final JScrollPane scrollPane;
+	private final JScrollPane _scrollPane;
+
+	private final TextFindCtrl _textFindCtrl;
+
 
 	// Description needed to handle conversion of data to/from Object
 	transient private final ColumnDisplayDefinition _colDef;
@@ -167,7 +172,7 @@ public class PopupEditableIOPanel extends JPanel
 		// add a panel containing binary data editing options, if needed
 		JPanel displayPanel = new JPanel();
 		displayPanel.setLayout(new BorderLayout());
-		scrollPane = new JScrollPane(_ta);
+		_scrollPane = new JScrollPane(_ta);
 		/*
 		 * TODO: When 1.4 is the earliest version supported, include
 		 * the following line here:
@@ -176,7 +181,8 @@ public class PopupEditableIOPanel extends JPanel
 		 * setWheelScrollingEnabled function is not available in java 1.3.
 		 */
 
-		displayPanel.add(scrollPane, BorderLayout.CENTER);
+		_textFindCtrl = new TextFindCtrl(_ta, _scrollPane);
+		displayPanel.add(_textFindCtrl.getContainerPanel(), BorderLayout.CENTER);
 		if (CellComponentFactory.useBinaryEditingPanel(colDef))
 		{
 			// this is a binary field, so allow for multiple viewing options
@@ -287,6 +293,7 @@ public class PopupEditableIOPanel extends JPanel
 		if ( isEditable == false)
 		{
 			addReformatButton(eiPanel, gbc);
+			addFindButton(eiPanel, gbc);
 
 			return eiPanel;
 		}
@@ -301,6 +308,7 @@ public class PopupEditableIOPanel extends JPanel
 		eiPanel.add(importButton, gbc);
 
 		addReformatButton(eiPanel, gbc);
+		addFindButton(eiPanel, gbc);
 
 
 		// add external processing command field and button
@@ -380,6 +388,16 @@ public class PopupEditableIOPanel extends JPanel
 		eiPanel.add(reformatButton, gbc);
 	}
 
+	private void addFindButton(JPanel eiPanel, GridBagConstraints gbc)
+	{
+		JButton findButton = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND));
+		findButton.setActionCommand(ACTION_FIND);
+		findButton.addActionListener(e -> onActionPerformed(e));
+
+		gbc.gridx++;
+		eiPanel.add(findButton, gbc);
+	}
+
 
 	/**
 	 * Return the contents of the editable text area as an Object
@@ -426,6 +444,10 @@ public class PopupEditableIOPanel extends JPanel
 		else if(e.getActionCommand().equals(ACTION_REFORMAT))
 		{
 			reformat(GUIUtils.getOwningWindow(this));
+		}
+		else if(e.getActionCommand().equals(ACTION_FIND))
+		{
+			_textFindCtrl.toggleFind();
 		}
 		else
 		{

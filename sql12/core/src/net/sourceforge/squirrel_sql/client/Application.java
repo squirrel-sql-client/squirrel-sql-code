@@ -71,6 +71,7 @@ import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import net.sourceforge.squirrel_sql.fw.resources.DefaultIconHandler;
 import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
 import net.sourceforge.squirrel_sql.fw.resources.LazyResourceBundle;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -112,7 +113,13 @@ public class Application implements IApplication
 
 	private final DummyAppPlugin _dummyPlugin = new DummyAppPlugin();
 
+	/////////////////////////////////////////
+	// TODO move together
 	private SquirrelResources _resources;
+
+	private LibraryResources _resourcesFw;
+	//
+	////////////////////////////////////////
 
 	/** Thread pool for long running tasks. */
 	private final TaskThreadPool _threadPool = new TaskThreadPool();
@@ -238,6 +245,7 @@ public class Application implements IApplication
 		LazyResourceBundle.setLocaleInitialized();
 
 		_resources = new SquirrelResources(SquirrelResources.BUNDLE_BASE_NAME);
+		_resourcesFw = new LibraryResources();
 	}
 
 	/**
@@ -569,6 +577,11 @@ public class Application implements IApplication
 	public SquirrelResources getResources()
 	{
 		return _resources;
+	}
+
+	public LibraryResources getResourcesFw()
+	{
+		return _resourcesFw;
 	}
 
 	@Override

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#156 The table cell data popup and the Object tree source tabs support searching.
+  See the find button at the lower right of the table cell data popup.
+  See the find bar at the bottom of the Object tree source tabs.
+
 Table cell data popup: The right mouse menu entries "Wrap Lines on/off" and "Wrap Word on/off"
   are now checked menu items and their dependence is respected.
 

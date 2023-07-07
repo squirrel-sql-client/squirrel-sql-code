@@ -57,11 +57,11 @@ public class LibraryResources extends Resources
       String HIDE = "hide";
       String HIDE_SELECTED = "hideSelected";
       String COLOR_CHOOSE = "colorChoose";
+      String CONFIGURE = "configure";
    }
 
-	public LibraryResources() throws IllegalArgumentException
+	public LibraryResources()
 	{
-		super(LibraryResources.class.getName(),
-				LibraryResources.class.getClassLoader());
+		super(LibraryResources.class.getName(), LibraryResources.class.getClassLoader());
 	}
 }

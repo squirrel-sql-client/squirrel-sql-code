@@ -18,15 +18,14 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import java.io.Serializable;
 
 import static net.sourceforge.squirrel_sql.fw.resources.LibraryResources.IImageNames.*;
@@ -243,7 +242,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
 
       if (null != imageName)
       {
-         icon = new LibraryResources().getIcon(imageName);
+         icon = Main.getApplication().getResourcesFw().getIcon(imageName);
       }
 
       DatabaseObjectType ret = createNewDatabaseObjectType(s_stringMgr.getString(key), icon);

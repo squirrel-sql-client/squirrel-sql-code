@@ -1,25 +1,21 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.LayoutManager;
-import java.sql.PreparedStatement;
-import java.util.HashMap;
-
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.text.JTextComponent;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
+import java.sql.PreparedStatement;
+import java.util.HashMap;
 
 abstract public class BaseSourcePanel extends JPanel
 {
 
-   private JTextComponent textArea;
-   private ISession session;
+   private JTextComponent _textComponent;
+   private ISession _session;
 
    public BaseSourcePanel(ISession session)
    {
@@ -35,15 +31,18 @@ abstract public class BaseSourcePanel extends JPanel
     */
    protected void createUserInterface()
    {
-
       HashMap<String, Object> props = new HashMap<String, Object>();
       props.put(IParserEventsProcessorFactory.class.getName(), null);
 
       ISQLEntryPanel sqlPanel = getSession().getApplication().getSQLEntryPanelFactory().createSQLEntryPanel(getSession(), props);
-      JTextComponent textComponent = sqlPanel.getTextComponent();
-      textComponent.setEditable(false);
-      setTextArea(textComponent);
-      add(getTextArea(), BorderLayout.CENTER);
+      _textComponent = sqlPanel.getTextComponent();
+      _textComponent.setEditable(false);
+
+      //TextFindCtrl textFindCtrl = new TextFindCtrl(sqlPanel.getTextComponent(), sqlPanel.getTextAreaEmbeddedInScrollPane(), true);
+      //add(textFindCtrl.getContainerPanel(), BorderLayout.NORTH);
+      //sqlPanel.getTextAreaEmbeddedInScrollPane().setPreferredSize(new Dimension(1,1));
+      //add(sqlPanel.getTextAreaEmbeddedInScrollPane(), BorderLayout.CENTER);
+      add(sqlPanel.getTextComponent(), BorderLayout.CENTER);
    }
 
    public abstract void load(ISession session, PreparedStatement stmt);
@@ -53,19 +52,7 @@ abstract public class BaseSourcePanel extends JPanel
     */
    public JTextComponent getTextArea()
    {
-      return textArea;
-   }
-
-   /**
-    * @param textArea the textArea to set
-    */
-   private void setTextArea(JTextComponent textArea)
-   {
-      if (textArea == null)
-      {
-         throw new IllegalArgumentException("textArea == null");
-      }
-      this.textArea = textArea;
+      return _textComponent;
    }
 
    /**
@@ -73,7 +60,7 @@ abstract public class BaseSourcePanel extends JPanel
     */
    public ISession getSession()
    {
-      return session;
+      return _session;
    }
 
    /**
@@ -85,6 +72,6 @@ abstract public class BaseSourcePanel extends JPanel
       {
          throw new IllegalArgumentException("session == null");
       }
-      this.session = session;
+      this._session = session;
    }
 }
