@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Look and Feel Plugin: Dark theme for the Nimbus look and feel.
+  The theme is based on Wayne Zhang's pull request
+  https://github.com/squirrel-sql-client/squirrel-sql-code/pull/12
+  and was integrated into SQuirreL's Look and Feel Plugin.
+  Thanks to Wayne Zhang for the theme.
+
 #156 The table cell data popup and the Object tree source tabs support searching.
   See the find button at the lower right of the table cell data popup.
   See the find bar at the bottom of the Object tree source tabs.
