@@ -2,11 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
-import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
-import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -17,14 +13,9 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCode
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateSQLUtil;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HqlQueryErrorUtil;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
-import java.awt.Frame;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class HQLEntryPanelManager extends EntryPanelManager implements IFileEditorAPI
@@ -58,7 +49,7 @@ public class HQLEntryPanelManager extends EntryPanelManager implements IFileEdit
 
       _fileHandler = new FileHandler(this, titleFileHandler);
 
-      _fileHandler.replaceSqlFileExtensionFilterBy(new FileExtensionFilter("HQL files", new String[]{".hql"}), ".hql");
+      _fileHandler.replaceSqlFileExtensionFilterBy(new FileExtensionFilter("HQL files", new String[]{".hql"}));
 
       getEntryPanel().addUndoableEditListener(_fileHandler.createEditListener());
       initActions(session);

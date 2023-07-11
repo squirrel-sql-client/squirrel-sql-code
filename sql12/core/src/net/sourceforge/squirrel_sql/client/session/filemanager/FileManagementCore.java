@@ -6,19 +6,12 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
-import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import java.awt.Frame;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -115,6 +108,8 @@ public class FileManagementCore
          File selectedFile = chooser.getSelectedFile();
          result = loadScript(selectedFile, appendToExisting);
       }
+
+      _fileChooserManager.saveDisplayPrefs();
 
       return result;
    }
@@ -276,6 +271,7 @@ public class FileManagementCore
             break;
          }
       }
+      _fileChooserManager.saveDisplayPrefs();
 
       if(false == wasSavedToNewFile && null != toSaveToBuf)
       {
@@ -455,9 +451,9 @@ public class FileManagementCore
       _titleFilePathHandler.setUnsavedEdits(unsavedEdits);
    }
 
-   public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter, String fileEndingWithDot)
+   public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter)
    {
-      _fileChooserManager.replaceSqlFileExtensionFilterBy(fileExtensionFilter, fileEndingWithDot);
+      _fileChooserManager.replaceSqlFileExtensionFilterBy(fileExtensionFilter);
    }
 
    public byte[] getBytesForSave()

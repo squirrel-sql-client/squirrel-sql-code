@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The file chooser remembers the last selected view type (list view or details view).
+
 Look and Feel Plugin: Dark theme for the Nimbus look and feel.
   The theme is based on Wayne Zhang's pull request
   https://github.com/squirrel-sql-client/squirrel-sql-code/pull/12
