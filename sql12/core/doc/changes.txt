@@ -50,6 +50,11 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+When non-breaking space where pasted into SQuirreL's editor
+  they broke SQL reformatting and probably caused other problems, too.
+  Now when text is pasted into SQuirreL's editor
+  non-breaking space are replaced by ordinary spaces.
+
 Find in preferences/configurations dialog: Fixed UI refresh problem of "Details" panel.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/15

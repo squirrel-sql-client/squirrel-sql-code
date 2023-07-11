@@ -538,4 +538,9 @@ public class StringUtilities
       }
       return builder.toString();
    }
+
+   public static String replaceNonBreakingSpacesBySpaces(String text)
+   {
+      return StringUtils.replaceChars(text, "\u00A0\u1680\u180e\u2000\u200a\u202f\u205f\u3000", " ");
+   }
 }

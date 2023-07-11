@@ -5,9 +5,10 @@ import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHand
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.JTextArea;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
 
 public class SquirrelDefaultTextArea extends JTextArea
 {
@@ -59,5 +60,19 @@ public class SquirrelDefaultTextArea extends JTextArea
    public TextAreaPaintHandler getTextAreaPaintHandler()
    {
       return _textAreaPaintHandler;
+   }
+
+   /**
+    * This method is called, when text is pasted to the editor.
+    * We replace non-breaking spaces by ordinary spaces because
+    * non-breaking spaces keep reformatting from working.
+    * See https://stackoverflow.com/questions/28295504/how-to-trim-no-break-space-in-java
+    *
+    * To reproduce the problem: Libre Office Writer allows to edit non-breaking spaces be ctrl+shift+space.
+    */
+   @Override
+   public void replaceSelection(String text)
+   {
+      super.replaceSelection(StringUtilities.replaceNonBreakingSpacesBySpaces(text));
    }
 }
