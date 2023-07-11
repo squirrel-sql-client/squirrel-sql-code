@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+When a file is opened in the operating system's file manager the file is now selected.
+  This works only if Java's OS specific Desktop API supports it.
+  Otherwise the file manager just opens the file's directory.
+
 The file chooser remembers the last selected view type (list view or details view).
 
 Look and Feel Plugin: Dark theme for the Nimbus look and feel.
