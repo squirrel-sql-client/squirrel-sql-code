@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.copyasmarkdown;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -42,10 +43,19 @@ public class CopyAsMarkDown
       int[] selRows = table.getSelectedRows();
       int[] selCols = table.getSelectedColumns();
 
+      Integer rowNumberColIx =null;
+
       ArrayList<ColumnDisplayDefinition> columnDisplayDefinitions = new ArrayList<>();
       for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
       {
          TableColumn col = table.getColumnModel().getColumn(selCols[colIdx]);
+
+         if(col instanceof RowNumberTableColumn)
+         {
+            rowNumberColIx = colIdx;
+            continue;
+         }
+
 
          if (col instanceof ExtTableColumn)
          {
@@ -84,6 +94,12 @@ public class CopyAsMarkDown
          int curIx = 0;
          for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
+            if(null != rowNumberColIx && colIdx == rowNumberColIx)
+            {
+               continue;
+            }
+
+
             Object cellObj = table.getValueAt(selRows[rowIdx], selCols[colIdx]);
 
             if(cellObj instanceof String && -1 < ((String)cellObj).indexOf('\n'))
