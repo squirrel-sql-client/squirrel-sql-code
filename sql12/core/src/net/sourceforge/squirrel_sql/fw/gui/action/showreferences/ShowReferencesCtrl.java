@@ -14,9 +14,10 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class ShowReferencesCtrl
       _session = session;
       _window = new ShowReferencesWindow(_session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", rootTable.getFrameTitle()));
 
+      _showQualifiedListeners.add(rootTable.getShowQualifiedListener());
       DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootTable);
       _treeModel = new DefaultTreeModel(root);
 
@@ -104,14 +106,7 @@ public class ShowReferencesCtrl
       });
 
 
-      _window.chkShowQualified.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onChkShowQualified();
-         }
-      });
+      _window.chkShowQualified.addActionListener(e -> onChkShowQualified());
 
       _window.chkShowQualified.setSelected(Props.getBoolean(PREF_KEY_SHOW_REFERENCES_QUALIFIED, false));
       onChkShowQualified();
@@ -137,6 +132,7 @@ public class ShowReferencesCtrl
 
       _window.tree.setModel(null);
       _window.tree.setModel(_treeModel);
+      _window.tree.treeDidChange();
 
    }
 

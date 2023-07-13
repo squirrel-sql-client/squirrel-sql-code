@@ -27,59 +27,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 import javax.swing.plaf.TextUI;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
@@ -856,7 +810,17 @@ public class GUIUtils
       return btn;
    }
 
-   private static boolean isMouseOver(Component component)
+	public static <T extends AbstractButton> T styleAsTabButton(T abstractButton)
+	{
+		//setMargin(new Insets(0, 0, 0, 0));
+		//setBorderPainted(false);
+		abstractButton.setText("");
+		abstractButton.setPreferredSize(new Dimension(28,28));
+		return styleAsToolbarButton(abstractButton);
+	}
+
+
+	private static boolean isMouseOver(Component component)
    {
       if (!component.isShowing() || GraphicsEnvironment.isHeadless())
       {

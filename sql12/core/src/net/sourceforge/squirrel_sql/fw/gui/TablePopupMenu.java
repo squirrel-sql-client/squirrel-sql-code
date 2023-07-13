@@ -34,11 +34,13 @@ import net.sourceforge.squirrel_sql.fw.gui.action.columndetails.ColumnDetailsCon
 import net.sourceforge.squirrel_sql.fw.gui.action.copyasmarkdown.TableCopyAsMarkdownCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExport;
+import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues.ShowDistinctValuesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.table.ButtonTableHeader;
+import net.sourceforge.squirrel_sql.fw.resources.ResourceUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -246,7 +248,9 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private void addAction(Action action, KeyStroke defaultKeyStroke)
 	{
-		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(add(action), defaultKeyStroke, action);
+		JMenuItem mnuAdded = add(action);
+		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(mnuAdded, defaultKeyStroke, action);
+		ResourceUtil.trySetToolTip(mnuAdded, action);
 
 		if (null != validKeyStroke)
 		{
@@ -490,6 +494,7 @@ public class TablePopupMenu extends BasePopupMenu
       ShowReferencesAction()
       {
          super(s_stringMgr.getString("TablePopupMenu.showRefernces"));
+			ResourceUtil.storeToolTipInAction(this, s_stringMgr.getString("TablePopupMenu.showReferences.toolTip"));
       }
 
       public void actionPerformed(ActionEvent evt)

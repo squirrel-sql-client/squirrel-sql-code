@@ -23,13 +23,7 @@ import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsToLeftAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsToRightAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabAnchoredAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -46,20 +40,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -305,9 +287,9 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
          new ISQLExecutionHandlerListener()
          {
             @Override
-            public void addResultsTab(SQLExecutionInfo info, ResultSetDataSet rsds, ResultSetMetaDataDataSet rsmdds, IDataSetUpdateableTableModel model, IResultTab resultTabToReplace)
+            public void addResultsTab(SQLExecutionInfo info, ResultSetDataSet rsds, ResultSetMetaDataDataSet rsmdds, IDataSetUpdateableTableModel dataSetUpdateableTableModel, IResultTab resultTabToReplace)
             {
-               SwingUtilities.invokeLater(() -> onAddResultsTab(info, rsds, rsmdds, model, resultTabToReplace));
+               SwingUtilities.invokeLater(() -> onAddResultsTab(info, rsds, rsmdds, dataSetUpdateableTableModel, resultTabToReplace));
             }
 
             @Override
@@ -682,11 +664,11 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       _resultTabClosing.closeTab(customResultPanel);
    }
 
-   private void onAddResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, IDataSetUpdateableTableModel creator, IResultTab resultTabToReplace)
+   private void onAddResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, IDataSetUpdateableTableModel dataSetUpdateableTableModel, IResultTab resultTabToReplace)
     {
        try
        {
-          ResultTab tab = _resultTabFactory.createResultTab(exInfo, creator, rsds, mdds);
+          ResultTab tab = _resultTabFactory.createResultTab(exInfo, dataSetUpdateableTableModel, rsds, mdds);
           addResultsTab(tab, resultTabToReplace);
           _tabbedExecutionsPanel.setSelectedComponent(tab);
        }

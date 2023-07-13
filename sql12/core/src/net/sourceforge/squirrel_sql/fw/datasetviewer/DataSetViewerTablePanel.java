@@ -27,16 +27,12 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLeng
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
 
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -75,17 +71,21 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
       init(updateableModel, ListSelectionModel.SINGLE_INTERVAL_SELECTION, dataModelImplementationDetails, session);
    }
 
-   public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
+   public void init(IDataSetUpdateableModel dataSetUpdateableModel, int listSelectionMode, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
    {
 		if (null != dataModelImplementationDetails)
       {
          _dataModelImplementationDetails = dataModelImplementationDetails;
       }
 
-      _table = new DataSetViewerTable(this, this, updateableModel, listSelectionMode, session);
+      _table = new DataSetViewerTable(this, this, dataSetUpdateableModel, listSelectionMode, session);
       _continueReadHandler = new ContinueReadHandler(_table);
       _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
-      _updateableModel = updateableModel;
+      _updateableModel = dataSetUpdateableModel;
+
+		// Introduced during implementation of SQL result edit button. Seemed to have been missing.
+		// Noted for clearance in case troubles occur because BaseDataSetViewerDestination._updateableModelReference isn't null anymore.
+		setUpdateableModelReference(_updateableModel);
 
       _table.getSelectionModel().addListSelectionListener(e -> onSelectionChanged());
    }

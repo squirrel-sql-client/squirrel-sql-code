@@ -9,6 +9,7 @@ public class RootTable
 {
    private final ResultMetaDataTable _globalDbTable;
    private final ArrayList<InStatColumnInfo> _inStatColumnInfos;
+   private boolean _showQualified;
 
    public RootTable(ResultMetaDataTable globalDbTable, ArrayList<InStatColumnInfo> inStatColumnInfos)
    {
@@ -29,7 +30,14 @@ public class RootTable
    @Override
    public String toString()
    {
-      return _globalDbTable.getQualifiedName();
+      if (_showQualified)
+      {
+         return _globalDbTable.getQualifiedName();
+      }
+      else
+      {
+         return _globalDbTable.getTableName();
+      }
    }
 
    public String getFrameTitle()
@@ -43,5 +51,10 @@ public class RootTable
 
 
       return ret;
+   }
+
+   public ShowQualifiedListener getShowQualifiedListener()
+   {
+      return b -> _showQualified = b;
    }
 }

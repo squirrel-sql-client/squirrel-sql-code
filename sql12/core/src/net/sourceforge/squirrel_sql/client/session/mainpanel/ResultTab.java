@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableToolbarCtrl;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -93,7 +94,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private boolean _allowEditing;
 
-   private IDataSetUpdateableTableModel _creator;
+   private IDataSetUpdateableTableModel _dataSetUpdateableTableModel;
 
    private ResultSetDataSet _rsds;
    
@@ -121,7 +122,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
     */
    public ResultTab(ISession session, SQLResultExecuterPanelFacade sqlResultExecuterPanelFacade,
                     IIdentifier id, SQLExecutionInfo exInfo,
-                    IDataSetUpdateableTableModel creator, ResultTabListener resultTabListener)
+                    IDataSetUpdateableTableModel dataSetUpdateableTableModel, ResultTabListener resultTabListener)
       throws IllegalArgumentException
    {
       _resultTabListener = resultTabListener;
@@ -142,7 +143,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _sqlResultExecuterPanelFacade = sqlResultExecuterPanelFacade;
       _id = id;
       _exInfo = exInfo;
-      init(creator);
+      init(dataSetUpdateableTableModel);
 
 
 
@@ -155,10 +156,10 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reInit(net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
      */
-	private void init(IDataSetUpdateableTableModel creator)
+	private void init(IDataSetUpdateableTableModel dataSetUpdateableTableModel)
 	{
-		_creator = creator;
-		_creator.addListener(new DataSetUpdateableTableModelListener()
+		_dataSetUpdateableTableModel = dataSetUpdateableTableModel;
+		_dataSetUpdateableTableModel.addListener(new DataSetUpdateableTableModelListener()
 		{
 			public void forceEditMode(boolean mode)
 			{
@@ -173,7 +174,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       IDataSetViewer resultDataSetViewer;
 		if (_allowEditing)
 		{
-         resultDataSetViewer = BaseDataSetViewerDestination.createInstance(props.getSQLResultsOutputClassName(), _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
+         resultDataSetViewer = BaseDataSetViewerDestination.createInstance(props.getSQLResultsOutputClassName(), _dataSetUpdateableTableModel, new DataModelImplementationDetails(_session, _exInfo), _session);
 
          _rowColAndSumController.setDataSetViewer(resultDataSetViewer);
 
@@ -434,7 +435,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             {
                TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
 
-               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
+               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _dataSetUpdateableTableModel, new DataModelImplementationDetails(_session, _exInfo), _session);
                // _resultDataSetViewerFindHandler = new DataSetViewerFindHandler(dataSetViewer);
                _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
 
@@ -460,7 +461,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
             TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
 
-            IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(readOnlyOutput, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
+            IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(readOnlyOutput, _dataSetUpdateableTableModel, new DataModelImplementationDetails(_session, _exInfo), _session);
             _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
 
 
@@ -564,16 +565,19 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
       ret.add(GUIUtils.setPreferredWidth(_markDuplicatesChooserController.getComponent(), 42), gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,0,0,0), 0,0);
-      ret.add(new TabButton(new FindResultColumnAction(this)), gbc);
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      ret.add(new MakeEditableToolbarCtrl(this, _session).getTabButton(), gbc);
 
       gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
-      ret.add(new TabButton(new FindInResultAction(this)), gbc);
+      ret.add(new TabButton(new FindResultColumnAction(this)), gbc);
 
       gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      ret.add(new TabButton(new FindInResultAction(this)), gbc);
+
+      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
       ret.add(new TabButton(new CreateResultTabFrameAction(this)), gbc);
 
-      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,2), 0,0);
+      gbc = new GridBagConstraints(7,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,2), 0,0);
       ret.add(new TabButton(new CloseAction(this)), gbc);
 
       gbc = new GridBagConstraints(0,1, GridBagConstraints.REMAINDER, 1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
@@ -600,7 +604,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       if(null == dataSetViewerFindHandlerOfSelectedTab)
       {
-         _tabResultTabs.setSelectedIndex(0);
+         selectResultTab();
          dataSetViewerFindHandlerOfSelectedTab = _resultDataSetViewerFindHandler;
       }
 
@@ -623,7 +627,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
-      _tabResultTabs.setSelectedIndex(0);
+      selectResultTab();
       FindResultColumnCtrl findResultColumnCtrl = new FindResultColumnCtrl(GUIUtils.getOwningFrame(_tabResultTabs), dataSetViewerTablePanel);
 
       if(null != findResultColumnCtrl.getColumnToGoTo())
@@ -642,7 +646,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    {
       if(_markDuplicatesChooserController.actionWasFired(e))
       {
-         _tabResultTabs.setSelectedIndex(0);
+         selectResultTab();
       }
    }
 
@@ -704,6 +708,16 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       {
          return _additionalResultTabsController.getDataSetViewerFindHandlerOfSelectedTabOrNull();
       }
+   }
+
+   public boolean allowsEditing()
+   {
+      return _allowEditing;
+   }
+
+   public void selectResultTab()
+   {
+      _tabResultTabs.setSelectedIndex(0);
    }
 
 }

@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The SQL result tab now has an edit button.
+
 When a file is opened in the operating system's file manager the file is now selected.
   This works only if Java's OS specific Desktop API supports it.
   Otherwise the file manager just opens the file's directory.

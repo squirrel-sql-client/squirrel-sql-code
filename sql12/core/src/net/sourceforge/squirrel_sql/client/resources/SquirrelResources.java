@@ -182,6 +182,7 @@ public class SquirrelResources extends Resources
 		String SMALL_SHOW_PASSWORD = "small_show_password";
 
 		String EDIT = "edit";
+		String EDIT_RED_DOT = "editRedDot";
 
 		String DELETE = "delete";
 

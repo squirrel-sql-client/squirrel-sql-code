@@ -15,15 +15,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -53,7 +49,7 @@ public final class DataSetViewerTable extends JTable
    private ColoringService _coloringService;
 
 
-   DataSetViewerTable(DataSetViewerTablePanel dataSetViewerTablePanel, IDataSetViewAccess dataSetViewAccess, IDataSetUpdateableModel updateableObject, int listSelectionMode, ISession session)
+   DataSetViewerTable(DataSetViewerTablePanel dataSetViewerTablePanel, IDataSetViewAccess dataSetViewAccess, IDataSetUpdateableModel dataSetUpdateableModel, int listSelectionMode, ISession session)
    {
       super(new SortableTableModel(new DataSetViewerTableModel(dataSetViewerTablePanel)));
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
@@ -67,12 +63,12 @@ public final class DataSetViewerTable extends JTable
       // it would be confusing to include the "Make Editable" option
       // when we are already in edit mode, so only allow that option when
       // the background model is updateable AND we are not already editing
-      if (updateableObject != null && !dataSetViewAccess.isTableEditable())
+      if (dataSetUpdateableModel != null && !dataSetViewAccess.isTableEditable())
       {
          allowUpdate = true;
       }
 
-      createGUI(allowUpdate, updateableObject, listSelectionMode, session);
+      createGUI(allowUpdate, dataSetUpdateableModel, listSelectionMode, session);
 
       // just in case table is editable, call dataSetViewAccess to set up cell editors
       _dataSetViewerTablePanel.setCellEditors(this);
@@ -321,7 +317,7 @@ public final class DataSetViewerTable extends JTable
    }
 
 
-   private void createGUI(boolean allowUpdate, IDataSetUpdateableModel updateableObject, int selectionMode, ISession session)
+   private void createGUI(boolean allowUpdate, IDataSetUpdateableModel dataSetUpdateableModel, int selectionMode, ISession session)
    {
       setSelectionMode(selectionMode);
       setRowSelectionAllowed(false);
@@ -334,7 +330,7 @@ public final class DataSetViewerTable extends JTable
       setTableHeader(_tableHeader);
       _tableHeader.setTable(this);
 
-      _tablePopupMenuHandler = new TablePopupMenuHandler(allowUpdate, updateableObject, _dataSetViewerTablePanel, session);
+      _tablePopupMenuHandler = new TablePopupMenuHandler(allowUpdate, dataSetUpdateableModel, _dataSetViewerTablePanel, session);
 
       addMouseListener(new MouseAdapter()
       {

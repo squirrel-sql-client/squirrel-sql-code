@@ -22,12 +22,12 @@ public class ResultTabFactory
       _sqlResultExecuterPanelFacade = sqlResultExecuterPanelFacade;
    }
 
-   public ResultTab createResultTab(SQLExecutionInfo exInfo, IDataSetUpdateableTableModel creator, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds) throws DataSetException
+   public ResultTab createResultTab(SQLExecutionInfo exInfo, IDataSetUpdateableTableModel dataSetUpdateableTableModel, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds) throws DataSetException
    {
       final ResultTabListener resultTabListener = (sql, resultTab) -> _sqlResultExecuterPanelFacade.rerunSQL(sql, resultTab);
 
 
-      ResultTab tab = new ResultTab(_session, _sqlResultExecuterPanelFacade, _idFactory.createIdentifier(), exInfo, creator, resultTabListener);
+      ResultTab tab = new ResultTab(_session, _sqlResultExecuterPanelFacade, _idFactory.createIdentifier(), exInfo, dataSetUpdateableTableModel, resultTabListener);
       tab.showResults(rsds, mdds);
       return tab;
    }

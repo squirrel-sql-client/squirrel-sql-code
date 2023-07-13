@@ -10,11 +10,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ShowReferencesCommand
@@ -54,7 +51,7 @@ public class ShowReferencesCommand
 
       if (null == globalDbTable)
       {
-         List<ResultMetaDataTable> tables = findTable(inStatColumnInfos);
+         List<ResultMetaDataTable> tables = ShowReferencesUtil.findTables(inStatColumnInfos);
 
          if (0 == tables.size())
          {
@@ -75,22 +72,6 @@ public class ShowReferencesCommand
 
       ReferencesFrameStarter.showReferences(new RootTable(globalDbTable, inStatColumnInfos), _session, _owningFrame);
 
-   }
-
-   private List<ResultMetaDataTable> findTable(ArrayList<InStatColumnInfo> inStatColumnInfos)
-   {
-      HashMap<String,ResultMetaDataTable> ret = new HashMap<String, ResultMetaDataTable>();
-      for (InStatColumnInfo inStatColumnInfo : inStatColumnInfos)
-      {
-         ResultMetaDataTable buf = inStatColumnInfo.getColDef().getResultMetaDataTable();
-
-         if (null != buf)
-         {
-            ret.put(buf.getQualifiedName().toLowerCase() , buf);
-         }
-      }
-
-      return new ArrayList<>(ret.values());
    }
 
 }
