@@ -11,8 +11,10 @@ import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesUtil;
 import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,56 +75,70 @@ public class MakeEditableToolbarCtrl
 
    private void onButtonClicked()
    {
-      if(isTextOutput(_resultTab))
+      try
       {
-         _button.setSelected(false);
-         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("MakeEditableToolbarCtrl.text.output"));
-         return;
-      }
-
-
-      _resultTab.selectResultTab();
-
-      if(false == _resultTab.allowsEditing())
-      {
-         List<ResultMetaDataTable> tables = new ArrayList<>();
-
-         if (_resultTab.getSQLResultDataSetViewer().getComponent() instanceof JTable)
+         if(isTextOutput(_resultTab))
          {
-            tables = ShowReferencesUtil.findTables((JTable) _resultTab.getSQLResultDataSetViewer().getComponent(), _session, true);
+            _button.setSelected(false);
+            Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("MakeEditableToolbarCtrl.text.output"));
+            return;
          }
 
-         if (false == tables.isEmpty())
-         {
-            JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.uneditable.use.show.refs"));
-         }
-         else
-         {
-            JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.uneditable"));
-         }
 
-         _button.setSelected(false);
-      }
-      else
-      {
-         if (_button.isSelected())
+         _resultTab.selectResultTab();
+
+         if(false == _resultTab.allowsEditing())
          {
-            new MakeEditableCommand(_resultTab.getSQLResultDataSetViewer().getUpdateableModelReference()).execute();
-            Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("MakeEditableToolbarCtrl.was.made.editable"));
-         }
-         else
-         {
-            if (isSqlResultTableEditableBySessionProperties())
+            List<ResultMetaDataTable> tables = new ArrayList<>();
+
+            if (_resultTab.getSQLResultDataSetViewer().getComponent() instanceof JTable)
             {
-               JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.cannot.make.uneditable.see.session.properties"));
-               _button.setSelected(true);
+               tables = ShowReferencesUtil.findTables((JTable) _resultTab.getSQLResultDataSetViewer().getComponent(), _session, true);
+            }
+
+            if (false == tables.isEmpty())
+            {
+               JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.uneditable.use.show.refs"));
             }
             else
             {
-               new UndoMakeEditableCommand(_resultTab.getSQLResultDataSetViewer().getUpdateableModelReference()).execute();
-               Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("MakeEditableToolbarCtrl.was.made.uneditable"));
+               JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.uneditable"));
+            }
+
+            _button.setSelected(false);
+         }
+         else
+         {
+            if (_button.isSelected())
+            {
+               new MakeEditableCommand(_resultTab.getSQLResultDataSetViewer().getUpdateableModelReference()).execute();
+               if (_session.getSQLConnection().getAutoCommit())
+               {
+                  Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("MakeEditableToolbarCtrl.was.made.editable.autocommit.true"));
+               }
+               else
+               {
+                  Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("MakeEditableToolbarCtrl.was.made.editable.autocommit.false"));
+               }
+            }
+            else
+            {
+               if (isSqlResultTableEditableBySessionProperties())
+               {
+                  JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.cannot.make.uneditable.see.session.properties"));
+                  _button.setSelected(true);
+               }
+               else
+               {
+                  new UndoMakeEditableCommand(_resultTab.getSQLResultDataSetViewer().getUpdateableModelReference()).execute();
+                  Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("MakeEditableToolbarCtrl.was.made.uneditable"));
+               }
             }
          }
+      }
+      catch (SQLException e)
+      {
+         throw Utilities.wrapRuntime(e);
       }
    }
 

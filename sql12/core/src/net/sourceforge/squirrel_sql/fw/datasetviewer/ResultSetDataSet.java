@@ -693,4 +693,9 @@ public class ResultSetDataSet implements IDataSet
       _rdr.closeStatementAndResultSet();
    }
 
+   public void replaceDataOnUserEdits(ArrayList<Object[]> updatedRows)
+   {
+      resetCursor();
+      _alData = updatedRows;
+   }
 }

@@ -462,9 +462,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
 
             IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(readOnlyOutput, _dataSetUpdateableTableModel, new DataModelImplementationDetails(_session, _exInfo), _session);
-            _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
+            IDataSetViewer previousDataSetViewer = _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
 
-
+            ResultSetDataSetEditsUpdater.updateEdits(previousDataSetViewer, _rsds);
             _rsds.resetCursor();
             _resultDataSetViewerFindHandler.getDataSetViewer().show(_rsds, null);
             initContinueReadChannel();

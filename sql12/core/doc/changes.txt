@@ -6,7 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
-The SQL result tab now has an edit button.
+SQL result tab edit toggle button:
+  Fix: Switching back to uneditable used to redisplay the data from before editing was switched on.
+  Improvement: When editing is switched on the message panel hints to the current auto commit state.
+
+The SQL result tab now has an edit toggle button.
 
 When a file is opened in the operating system's file manager the file is now selected.
   This works only if Java's OS specific Desktop API supports it.

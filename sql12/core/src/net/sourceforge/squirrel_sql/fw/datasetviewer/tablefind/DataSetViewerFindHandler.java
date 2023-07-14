@@ -5,12 +5,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import java.awt.Component;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -101,8 +97,13 @@ public class DataSetViewerFindHandler
       return true;
    }
 
-   public void replaceDataSetViewer(IDataSetViewer dataSetViewer)
+   /**
+    * @return The replaced {@link IDataSetViewer}
+    */
+   public IDataSetViewer replaceDataSetViewer(IDataSetViewer dataSetViewer)
    {
+      IDataSetViewer previousDataSetViewer = _dataSetViewer;
+
       if(null != _dataSetViewer)
       {
          _dataSetViewer.disableContinueRead();
@@ -121,6 +122,8 @@ public class DataSetViewerFindHandler
       {
          _dataSetFindPanelController.setDataSetViewerTablePanel(null);
       }
+
+      return previousDataSetViewer;
    }
 
    public void resetFind()

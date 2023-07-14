@@ -169,14 +169,15 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 		_table.getDataSetViewerTableModel().addRow(row);
 	}
 	
-	/*
-	 * @see BaseDataSetViewerDestination#getRow(row)
-	 */
-	protected Object[] getRow(int row)
+	public Object[] getRow(int row)
 	{
 		Object values[] = new Object[_table.getDataSetViewerTableModel().getColumnCount()];
-		for (int i=0; i < values.length; i++)
+
+		for (int i = 0; i < values.length; i++)
+		{
 			values[i] = _table.getDataSetViewerTableModel().getValueAt(row, i);
+		}
+
 		return values;
 	}
 
