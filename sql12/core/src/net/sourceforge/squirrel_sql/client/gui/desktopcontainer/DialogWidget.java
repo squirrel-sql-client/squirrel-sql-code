@@ -64,6 +64,11 @@ public class DialogWidget implements IWidget
       return _delegate.getRootPane();
    }
 
+   public Window getParentWindow()
+   {
+      return _delegate.getParentWindow();
+   }
+
    public String getTitle()
    {
       return _delegate.getTitle();

@@ -385,6 +385,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		add(_tabResultTabs, BorderLayout.CENTER);
 		_sqlResultExecuterPanelFacade.returnToTabbedPane(this);
       _rowColAndSumController.setDataSetViewer(_resultDataSetViewerFindHandler.getDataSetViewer());
+      _resultDataSetViewerFindHandler.clearParentWindow();
 	}
 
    @Override
@@ -692,6 +693,15 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    public IDataSetViewer getSQLResultDataSetViewer()
    {
       return _resultDataSetViewerFindHandler.getDataSetViewer();
+   }
+
+   @Override
+   public void setParentWindow(Window parent)
+   {
+      if(null != getDataSetViewerFindHandlerOfSelectedTabOrNull())
+      {
+         getDataSetViewerFindHandlerOfSelectedTabOrNull().setParentWindow(parent);
+      }
    }
 
    private DataSetViewerFindHandler getDataSetViewerFindHandlerOfSelectedTabOrNull()

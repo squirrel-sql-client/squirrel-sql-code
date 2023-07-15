@@ -53,8 +53,9 @@ public class GUIUtils
 	private static final ILogger s_log = LoggerController.createLogger(GUIUtils.class);
 
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GUIUtils.class);
+	public static final int TAB_BUTTON_SIDE_LENGTH = 28;
 
-   /**
+	/**
     * Centers <CODE>wind</CODE> within its parent. If it has no parent then
     * center within the screen. If centering would cause the title bar to go
     * above the parent (I.E. cannot see the titlebar and so cannot move the
@@ -815,7 +816,9 @@ public class GUIUtils
 		//setMargin(new Insets(0, 0, 0, 0));
 		//setBorderPainted(false);
 		abstractButton.setText("");
-		abstractButton.setPreferredSize(new Dimension(28,28));
+		abstractButton.setPreferredSize(new Dimension(TAB_BUTTON_SIDE_LENGTH,TAB_BUTTON_SIDE_LENGTH));
+		abstractButton.setMinimumSize(new Dimension(TAB_BUTTON_SIDE_LENGTH,TAB_BUTTON_SIDE_LENGTH));
+		abstractButton.setMaximumSize(new Dimension(TAB_BUTTON_SIDE_LENGTH,TAB_BUTTON_SIDE_LENGTH));
 		return styleAsToolbarButton(abstractButton);
 	}
 

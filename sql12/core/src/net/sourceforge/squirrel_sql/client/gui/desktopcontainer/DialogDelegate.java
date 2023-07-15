@@ -1,17 +1,16 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
+import java.awt.event.WindowListener;
 import java.beans.VetoableChangeListener;
+import java.util.HashMap;
 
 public class DialogDelegate extends JDialog implements IDialogDelegate
 {
@@ -217,6 +216,12 @@ public class DialogDelegate extends JDialog implements IDialogDelegate
    public void removeDialogWidgetListener(WidgetListener widgetListener)
    {
       _eventCaster.removeDialogWidgetListener(widgetListener);
+   }
+
+   @Override
+   public Window getParentWindow()
+   {
+      return this;
    }
 
    public void putClientProperty(Object key, Object prop)

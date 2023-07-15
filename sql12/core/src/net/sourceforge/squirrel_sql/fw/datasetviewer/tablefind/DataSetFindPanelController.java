@@ -14,14 +14,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.awt.Color;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -169,8 +163,8 @@ public class DataSetFindPanelController
 
    private void onShowRowsFoundInTable(ISession session)
    {
-      List<Object[]> allRows = _findService.getRowsForIndexes(_trace.getRowsFound());
-      ColumnDisplayDefinition[] columnDisplayDefinitions = _findService.getColumnDisplayDefinitions();
+      List<Object[]> allRows = ensureFindService().getRowsForIndexes(_trace.getRowsFound());
+      ColumnDisplayDefinition[] columnDisplayDefinitions = ensureFindService().getColumnDisplayDefinitions();
 
       RowsWindowFrame rowsWindowFrame =
             new RowsWindowFrame(SwingUtilities.windowForComponent(_dataSetFindPanel), allRows, List.of(columnDisplayDefinitions), session);

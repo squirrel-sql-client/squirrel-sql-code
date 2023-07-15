@@ -1,15 +1,15 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
-import java.awt.Container;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
+
+import javax.swing.*;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
+import java.awt.*;
 
 public class InternalFrameDelegate extends JInternalFrame implements IDialogDelegate, IDockDelegate, ITabDelegate
 {
@@ -194,6 +194,12 @@ public class InternalFrameDelegate extends JInternalFrame implements IDialogDele
    public void removeDialogWidgetListener(WidgetListener widgetListener)
    {
       _eventCaster.removeDialogWidgetListener(widgetListener);
+   }
+
+   @Override
+   public Window getParentWindow()
+   {
+      return Main.getApplication().getMainFrame();
    }
 
    public void addTabWidgetListener(WidgetListener widgetListener)

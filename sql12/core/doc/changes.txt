@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+When data is copied to a new window, the window now offers the usual data find function.
+
 Minor UI improvements:
   - Added menu item File --> Open Saved Session
   - The About-dialog links to update locations

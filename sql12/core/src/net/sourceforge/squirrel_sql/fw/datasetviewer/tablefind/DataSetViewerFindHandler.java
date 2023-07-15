@@ -14,6 +14,7 @@ public class DataSetViewerFindHandler
 {
    private IDataSetViewer _dataSetViewer;
    private ISession _session;
+   private Window _parent;
    private final JSplitPane _split;
    private boolean _findPanelOpen;
 
@@ -23,8 +24,14 @@ public class DataSetViewerFindHandler
 
    public DataSetViewerFindHandler(IDataSetViewer dataSetViewer, ISession session)
    {
+      this(dataSetViewer, session, null);
+   }
+
+   public DataSetViewerFindHandler(IDataSetViewer dataSetViewer, ISession session, Window parent)
+   {
       _dataSetViewer = dataSetViewer;
       _session = session;
+      _parent = parent;
 
       _split = new JSplitPane();
       _split.setDividerSize(0);
@@ -86,11 +93,18 @@ public class DataSetViewerFindHandler
          _split.setDividerLocation(0);
          _dataSetFindPanelController.wasHidden();
 
-         ISQLPanelAPI sqlPanelAPI = _session.getSQLPanelAPIOfActiveSessionWindow(true);
-
-         if(null != sqlPanelAPI)
+         if (null == _parent)
          {
-            sqlPanelAPI.getSQLEntryPanel().requestFocus();
+            ISQLPanelAPI sqlPanelAPI = _session.getSQLPanelAPIOfActiveSessionWindow(true);
+
+            if(null != sqlPanelAPI)
+            {
+               sqlPanelAPI.getSQLEntryPanel().requestFocus();
+            }
+         }
+         else
+         {
+            _parent.requestFocus();
          }
       }
 
@@ -134,6 +148,16 @@ public class DataSetViewerFindHandler
    public IDataSetViewer getDataSetViewer()
    {
       return _dataSetViewer;
+   }
+
+   public void setParentWindow(Window parent)
+   {
+      _parent = parent;
+   }
+
+   public void clearParentWindow()
+   {
+      _parent = null;
    }
 
    private static class NullPanel extends JPanel

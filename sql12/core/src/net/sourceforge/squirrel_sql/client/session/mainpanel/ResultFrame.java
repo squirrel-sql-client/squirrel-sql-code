@@ -103,6 +103,7 @@ public class ResultFrame extends SessionDialogWidget
       _centerPanel = new JPanel(new GridLayout(1,1));
       getContentPane().add(_centerPanel, BorderLayout.CENTER);
       _centerPanel.add(_resultTab.getTabbedPaneOfResultTabs());
+      _resultTab.setParentWindow(getParentWindow());
 
       _chkOnTop.addActionListener(e -> onStayOnTopChanged());
 

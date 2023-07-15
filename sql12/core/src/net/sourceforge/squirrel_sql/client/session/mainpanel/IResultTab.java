@@ -18,12 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import java.awt.event.ActionEvent;
-import javax.swing.JComponent;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public interface IResultTab
 {
@@ -75,4 +76,6 @@ public interface IResultTab
    SQLResultExecuterPanelFacade getSQLResultExecuterPanelFacade();
 
    IDataSetViewer getSQLResultDataSetViewer();
+
+   void setParentWindow(Window parent);
 }
