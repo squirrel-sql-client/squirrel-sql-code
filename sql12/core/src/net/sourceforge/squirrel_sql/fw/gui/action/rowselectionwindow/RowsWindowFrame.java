@@ -80,8 +80,17 @@ public class RowsWindowFrame extends JDialog
       ret.add(pnlNorth, BorderLayout.NORTH);
 
 
-      ret.add(_dataSetViewerFindHandler.getComponent(), BorderLayout.CENTER);
-      _dataSetViewerTablePanel.getComponent().repaint();
+
+      GUIUtils.forceProperty(() ->
+      {
+         ret.remove(_dataSetViewerFindHandler.getComponent());
+         ret.add(_dataSetViewerFindHandler.getComponent(), BorderLayout.CENTER);
+         _dataSetViewerTablePanel.getTable().getDataSetViewerTableModel().fireTableDataChanged();
+         _dataSetViewerFindHandler.getComponent().doLayout();
+
+         return _dataSetViewerTablePanel.getTable().getRowCount() == 0 || 0 < _dataSetViewerTablePanel.getTable().getSelectedRows().length;
+      });
+
 
       return ret;
    }
@@ -250,7 +259,7 @@ public class RowsWindowFrame extends JDialog
    public void setMyCounterId(int myCounterId)
    {
       _myCounterId = myCounterId;
-      setTitle(s_stringMgr.getString("RowsWindowFrame.title") + " / " + _session.getTitle() + " / (" + _myCounterId + ")");
+      setTitle(s_stringMgr.getString("RowsWindowFrame.title") + " / " + (null != _session ? _session.getTitle() : "") + " / (" + _myCounterId + ")");
    }
 
 
