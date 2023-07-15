@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Minor UI improvements:
+  - Added menu item File --> Open Saved Session
+  - The About-dialog links to update locations
+
 SQL result tab edit toggle button:
   Fix: Switching back to uneditable used to redisplay the data from before editing was switched on.
   Improvement: When editing is switched on the message panel hints to the current auto commit state.

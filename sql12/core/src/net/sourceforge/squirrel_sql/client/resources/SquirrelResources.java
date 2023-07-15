@@ -61,6 +61,9 @@ public class SquirrelResources extends Resources
 		String PERFORMANCE_WARNING = "PerformanceWarning";
 		String PLUGINS = "Plugins";
 		String SPLASH_SCREEN = "SplashScreen";
+		String SPLASH_SCREEN_LESS_HIGH = "SplashScreenLessHigh";
+
+
 		String VIEW = "View";
 
 		String TRASH = "trash";

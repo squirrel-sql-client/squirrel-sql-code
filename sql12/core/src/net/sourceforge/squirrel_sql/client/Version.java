@@ -194,4 +194,23 @@ public class Version
       }
    }
 
+	public static String getSourceforgeStableVersions()
+	{
+		return "https://sourceforge.net/projects/squirrel-sql/files/1-stable/";
+	}
+
+	public static String getGitHubStableVersions()
+	{
+		return "https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases";
+	}
+
+	public static String getSourceforgeSnapshotVersions()
+	{
+		return "https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/";
+	}
+
+	public static String getGitHubSnapshotVersions()
+	{
+		return "https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases";
+	}
 }
