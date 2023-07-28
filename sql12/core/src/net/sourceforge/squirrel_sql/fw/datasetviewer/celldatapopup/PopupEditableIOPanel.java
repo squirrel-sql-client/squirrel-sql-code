@@ -18,6 +18,34 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDIffService;
@@ -32,16 +60,12 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFindCtrl;
-import net.sourceforge.squirrel_sql.fw.util.*;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.*;
-import java.nio.file.Path;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * @author gwg
@@ -599,7 +623,7 @@ public class PopupEditableIOPanel extends JPanel
 			// file does not already exist, so try to create it
 			try
 			{
-				if(!file.createNewFile())
+				if( createNewFileInclNeededDirs(file) )
 				{
 					JOptionPane.showMessageDialog(this,
 															// i18n[popupeditableIoPanel.createFileError=Failed to create file {0}.\nChange file name or select a differnt file for export.]
@@ -647,6 +671,16 @@ public class PopupEditableIOPanel extends JPanel
 		}
 		FileResult result = new FileResult(canonicalFilePathName, file);
 		return result;
+	}
+
+	private static boolean createNewFileInclNeededDirs(File file) throws IOException
+	{
+		if(null != file.getParentFile())
+		{
+			file.getParentFile().mkdirs();
+		}
+
+		return !file.createNewFile();
 	}
 
 	// at this point we have an actual file that we can output to,

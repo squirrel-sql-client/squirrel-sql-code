@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Table cell data popup: File export creates parent directories when needed.
+
 When data is copied to a new window, the window now offers the usual data find function.
 
 Minor UI improvements:
