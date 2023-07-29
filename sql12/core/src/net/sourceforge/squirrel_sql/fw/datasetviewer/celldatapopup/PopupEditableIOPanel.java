@@ -18,34 +18,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDIffService;
@@ -60,12 +32,16 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFindCtrl;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.*;
+import java.nio.file.Path;
 
 /**
  * @author gwg
@@ -523,11 +499,25 @@ public class PopupEditableIOPanel extends JPanel
 			// that was used if they selected the automatic temp file
 			// operation, or they may not know what directory the file
 			// was actually put into, so this tells them the full file path.
-			JOptionPane.showMessageDialog(this,
-													// i18n[popupeditableIoPanel.exportedToFile=Data Successfully exported to file {0}]
-													s_stringMgr.getString("popupeditableIoPanel.exportedToFile", result.canonicalFilePathName),
-													// i18n[popupeditableIoPanel.exportSuccess=Export Success]
-													s_stringMgr.getString("popupeditableIoPanel.exportSuccess"), JOptionPane.INFORMATION_MESSAGE);
+			Object[] options = {
+					s_stringMgr.getString("popupeditableIoPanel.ok"),
+					s_stringMgr.getString("popupeditableIoPanel.ok.open.in.file.manager")
+			};
+
+			int selectIndex = JOptionPane.showOptionDialog(this,
+					s_stringMgr.getString("popupeditableIoPanel.exportedToFile", result.canonicalFilePathName),
+					s_stringMgr.getString("popupeditableIoPanel.exportSuccess"),
+					JOptionPane.OK_OPTION,
+					JOptionPane.INFORMATION_MESSAGE,
+					null,
+					options,
+					options[0]
+			);
+
+			if(1 == selectIndex)
+			{
+				DesktopUtil.openInFileManager(result.file);
+			}
 		}
 	}
 
@@ -623,12 +613,10 @@ public class PopupEditableIOPanel extends JPanel
 			// file does not already exist, so try to create it
 			try
 			{
-				if( createNewFileInclNeededDirs(file) )
+				if( false == createNewFileInclNeededDirs(file) )
 				{
 					JOptionPane.showMessageDialog(this,
-															// i18n[popupeditableIoPanel.createFileError=Failed to create file {0}.\nChange file name or select a differnt file for export.]
 															s_stringMgr.getString("popupeditableIoPanel.createFileError", canonicalFilePathName),
-															// i18n[popupeditableIoPanel.exportError6=Export Error]
 															s_stringMgr.getString("popupeditableIoPanel.exportError6"), JOptionPane.ERROR_MESSAGE);
 					return null;
 				}
@@ -638,9 +626,7 @@ public class PopupEditableIOPanel extends JPanel
 
 				Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
 				JOptionPane.showMessageDialog(this,
-														// i18n[popupeditableIoPanel.cannotOpenFile=Cannot open file {0}.\nError was:{1}]
 														s_stringMgr.getString("popupeditableIoPanel.cannotOpenFile", args),
-														// i18n[popupeditableIoPanel.exportError7=Export Error]
 														s_stringMgr.getString("popupeditableIoPanel.exportError7"), JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
@@ -680,7 +666,7 @@ public class PopupEditableIOPanel extends JPanel
 			file.getParentFile().mkdirs();
 		}
 
-		return !file.createNewFile();
+		return file.createNewFile();
 	}
 
 	// at this point we have an actual file that we can output to,
