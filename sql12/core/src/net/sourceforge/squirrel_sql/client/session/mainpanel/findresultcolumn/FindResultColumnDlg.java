@@ -33,9 +33,10 @@ public class FindResultColumnDlg extends JDialog
 
 
 
-   public FindResultColumnDlg(Frame owner)
+   public FindResultColumnDlg(Window owner)
    {
-      super(owner, true);
+      super(owner);
+      setModal(true);
 
 
       getContentPane().setLayout(new GridBagLayout());

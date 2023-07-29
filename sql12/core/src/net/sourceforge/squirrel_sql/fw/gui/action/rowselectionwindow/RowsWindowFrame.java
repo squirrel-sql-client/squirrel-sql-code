@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.TabButton;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn.FindResultColumnUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
@@ -34,6 +35,7 @@ public class RowsWindowFrame extends JDialog
    private static final String PREF_KEY_ROWS_WINDOW_FRAME_HIGHT = "Squirrel.rowselectionwindow.FrameHight";
 
    private TabButton _btnToggleFind;
+   private TabButton _btnToggleFindColumn;
 
    private final JPanel _contentPanel;
    private List<ColumnDisplayDefinition> _columnDisplayDefinitions;
@@ -116,12 +118,23 @@ public class RowsWindowFrame extends JDialog
       pnlEast.add(GUIUtils.setPreferredWidth(GUIUtils.setPreferredHeight(markDuplicatesChooserController.getComponent(), GUIUtils.TAB_BUTTON_SIDE_LENGTH),45), gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3,1,0,3), 0,0);
+      ImageIcon iconFindColumn = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND_COLUMN);
+      _btnToggleFindColumn = GUIUtils.styleAsTabButton(new TabButton(iconFindColumn));
+      _btnToggleFindColumn.addActionListener(e -> onFindColumn());
+      pnlEast.add(_btnToggleFindColumn, gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3,1,0,3), 0,0);
       ImageIcon iconFind = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND);
       _btnToggleFind = GUIUtils.styleAsTabButton(new TabButton(iconFind));
       _btnToggleFind.addActionListener(e -> onFind());
       pnlEast.add(_btnToggleFind, gbc);
 
       return ret;
+   }
+
+   private void onFindColumn()
+   {
+      FindResultColumnUtil.findAndShowResultColumns(_dataSetViewerTablePanel, this);
    }
 
    private void onFind()

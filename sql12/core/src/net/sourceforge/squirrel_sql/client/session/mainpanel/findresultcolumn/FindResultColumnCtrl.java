@@ -7,22 +7,13 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.DefaultListModel;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
+import java.util.*;
 
 public class FindResultColumnCtrl
 {
@@ -44,13 +35,13 @@ public class FindResultColumnCtrl
    private ArrayList<ExtTableColumn> _columnsToMoveToFront;
    private final boolean _dataSetContainsdifferentTables;
 
-   public FindResultColumnCtrl(final Frame owningFrame, DataSetViewerTablePanel dataSetViewerTablePanel)
+   public FindResultColumnCtrl(final Window owningWindow, DataSetViewerTablePanel dataSetViewerTablePanel)
    {
       _dataSetContainsdifferentTables = dataSetContainsdifferentTables(dataSetViewerTablePanel);
 
 
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
-      _findResultColumnDlg = new FindResultColumnDlg(owningFrame);
+      _findResultColumnDlg = new FindResultColumnDlg(owningWindow);
 
       _findResultColumnDlg.chkFindInTableNames.setSelected(Props.getBoolean(PREF_KEY_FIND_IN_TABLE_NAME, false));
       _findResultColumnDlg.chkFindInTableNames.setEnabled(_dataSetContainsdifferentTables);

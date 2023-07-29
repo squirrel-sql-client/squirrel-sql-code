@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetail
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn.FindResultColumnCtrl;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn.FindResultColumnUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
@@ -629,16 +629,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
       selectResultTab();
-      FindResultColumnCtrl findResultColumnCtrl = new FindResultColumnCtrl(GUIUtils.getOwningFrame(_tabResultTabs), dataSetViewerTablePanel);
-
-      if(null != findResultColumnCtrl.getColumnToGoTo())
-      {
-         dataSetViewerTablePanel.scrollColumnToVisible(findResultColumnCtrl.getColumnToGoTo().getExtTableColumn());
-      }
-      else if(null != findResultColumnCtrl.getColumnsToMoveToFront())
-      {
-         dataSetViewerTablePanel.moveColumnsToFront(findResultColumnCtrl.getColumnsToMoveToFront());
-      }
+      FindResultColumnUtil.findAndShowResultColumns(dataSetViewerTablePanel, GUIUtils.getOwningFrame(_tabResultTabs));
    }
 
 
