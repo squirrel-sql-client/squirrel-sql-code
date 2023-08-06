@@ -7,8 +7,8 @@ import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndEvent;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndHandler;
 
 import javax.swing.*;
-import java.awt.event.MouseEvent;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
 
@@ -57,6 +57,11 @@ public class ZoomableColumnTextArea extends JPanel implements DndColumn, IColumn
          int curBaseLine = textHeight - 3;
          for (int i = 0; i < _columnInfoModel.getColCount(); i++)
          {
+            if(_columnInfoModel.getOrderedColAt(i).isHidden())
+            {
+               continue;
+            }
+
             g2d.drawString(_columnInfoModel.getOrderedColAt(i).toString(), 0, curBaseLine);
             curBaseLine += textHeight;
          }

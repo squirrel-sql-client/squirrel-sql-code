@@ -57,6 +57,11 @@ public class ColumnTextArea extends JTextArea implements DndColumn, IColumnTextA
       StringBuffer sb = new StringBuffer();
       for (int i = 0; i < _columnInfoModel.getColCount(); i++)
       {
+         if (_columnInfoModel.getOrderedColAt(i).isHidden())
+         {
+            continue;
+         }
+
          //_columnInfoModel.getOrderedColAt(i).setIndex(i);
          sb.append(_columnInfoModel.getOrderedColAt(i)).append('\n');
       }

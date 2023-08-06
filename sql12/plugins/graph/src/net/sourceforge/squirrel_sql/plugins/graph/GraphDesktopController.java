@@ -1,29 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.awt.Point;
-import java.awt.Window;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.util.List;
-import java.util.TooManyListenersException;
-import java.util.Vector;
-import java.util.stream.Collectors;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -36,6 +12,22 @@ import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionListener;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+import java.awt.*;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.List;
+import java.util.TooManyListenersException;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
 
 public class GraphDesktopController
@@ -71,6 +63,7 @@ public class GraphDesktopController
    private JMenuItem _mnuRefreshAllTables;
    private JMenuItem _mnuScriptAllTables;
    private JMenuItem _mnuFindColumns;
+   private JMenuItem _mnuConfigColumnHiding;
    private JMenuItem _mnuSelectAllTables;
    private JMenuItem _mnuSelectTablesByName;
    private JMenuItem _mnuCopySelectTables;
@@ -252,6 +245,10 @@ public class GraphDesktopController
       _mnuFindColumns.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND_COLUMN));
       _mnuFindColumns.addActionListener(e -> onFindColumns());
 
+		_mnuConfigColumnHiding = new JMenuItem(s_stringMgr.getString("graph.configure.column.hiding"));
+      _mnuConfigColumnHiding.setIcon(_graphPluginResources.getIcon(GraphPluginResources.IKeys.EYE_CONFIG));
+      _mnuConfigColumnHiding.addActionListener(e -> onConfigColumnHiding());
+
       /////////////////////////////////////////////////////////
       // Tablegroups
 		_mnuSelectAllTables = new JMenuItem(s_stringMgr.getString("graph.selectAllTables"));
@@ -307,6 +304,8 @@ public class GraphDesktopController
       _popUp.add(new JSeparator());
       _popUp.add(_mnuFindColumns);
       _popUp.add(new JSeparator());
+      _popUp.add(_mnuConfigColumnHiding);
+      _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshAllTables);
       _popUp.add(_mnuScriptAllTables);
       _popUp.add(new JSeparator());
@@ -350,6 +349,11 @@ public class GraphDesktopController
          @Override public void popupMenuCanceled(PopupMenuEvent e) {}
       });
 
+   }
+
+   private void onConfigColumnHiding()
+   {
+      System.out.println("GraphDesktopController.onConfigColumnHiding");
    }
 
    private void onFindColumns()

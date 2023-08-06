@@ -51,5 +51,8 @@ public final class GraphPluginResources extends PluginResources
       String LINK = "link";
       String COPY_GRAPH = "copyGraph";
       String PASTE_GRAPH = "pasteGraph";
+
+      String EYE_CONFIG = "eyeConfig";
+      String EYE_CROSSED = "eyeCrossed";
    }
 }

@@ -22,6 +22,7 @@ public class ColumnInfo extends Object
 
    private QueryData _queryData = new QueryData();
    private ColumnInfoModelEventDispatcher _columnInfoModelEventDispatcher;
+   private boolean _hidden;
 
    public ColumnInfo(String columnName, String columnType, int columnSize, int decimalDigits, boolean nullable)
    {
@@ -39,6 +40,7 @@ public class ColumnInfo extends Object
    public ColumnInfo(ColumnInfoXmlBean xmlBean)
    {
       this(xmlBean.getColumnName(), xmlBean.getColumnType(), xmlBean.getColumnSize(), xmlBean.getDecimalDigits(), xmlBean.isNullable());
+      _hidden = xmlBean.isHidden();
       _queryData = new QueryData(xmlBean.getQueryDataXmlBean());
       _index = xmlBean.getIndex();
       if(xmlBean.isPrimaryKey())
@@ -66,6 +68,7 @@ public class ColumnInfo extends Object
       ret.setImportedFromTable(_importedFromTable);
       ret.setImportedColumn(_importedColumn);
       ret.setConstraintName(_constraintName);
+      ret.setHidden(_hidden);
 
       QueryDataXmlBean queryDataXmlBean = new QueryDataXmlBean();
       queryDataXmlBean.setOperatorIndex(_queryData.getOperator().getIndex());
@@ -187,5 +190,15 @@ public class ColumnInfo extends Object
    public int hashCode()
    {
       return _columnName.hashCode();
+   }
+
+   public void setHidden(boolean hidden)
+   {
+      _hidden = hidden;
+   }
+
+   public boolean isHidden()
+   {
+      return _hidden;
    }
 }
