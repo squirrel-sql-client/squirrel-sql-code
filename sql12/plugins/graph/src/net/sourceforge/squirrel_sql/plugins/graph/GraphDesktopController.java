@@ -63,7 +63,6 @@ public class GraphDesktopController
    private JMenuItem _mnuRefreshAllTables;
    private JMenuItem _mnuScriptAllTables;
    private JMenuItem _mnuFindColumns;
-   //private JMenuItem _mnuConfigColumnHiding;
    private JMenuItem _mnuSelectAllTables;
    private JMenuItem _mnuSelectTablesByName;
    private JMenuItem _mnuCopySelectTables;
@@ -245,10 +244,6 @@ public class GraphDesktopController
       _mnuFindColumns.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND_COLUMN));
       _mnuFindColumns.addActionListener(e -> onFindColumns());
 
-		//_mnuConfigColumnHiding = new JMenuItem(s_stringMgr.getString("graph.configure.column.hiding"));
-      //_mnuConfigColumnHiding.setIcon(_graphPluginResources.getIcon(GraphPluginResources.IKeys.EYE_CONFIG));
-      //_mnuConfigColumnHiding.addActionListener(e -> onConfigColumnHiding());
-
       /////////////////////////////////////////////////////////
       // Tablegroups
 		_mnuSelectAllTables = new JMenuItem(s_stringMgr.getString("graph.selectAllTables"));
@@ -303,8 +298,6 @@ public class GraphDesktopController
       _popUp.add(_mnuCopyGraph);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuFindColumns);
-      //_popUp.add(new JSeparator());
-      //_popUp.add(_mnuConfigColumnHiding);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshAllTables);
       _popUp.add(_mnuScriptAllTables);

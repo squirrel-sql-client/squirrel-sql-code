@@ -39,7 +39,8 @@ public class TableFrame extends JInternalFrame
                      ModeManager modeManager,
                      DndCallback dndCallback,
                      SortColumnsListener sortColumnsListener,
-                     ColumnHideConfigListener columnHideConfigListener)
+                     ColumnHideConfigListener columnHideConfigListener,
+                     ColumnHiddenListener columnHiddenListener)
    {
       _plugin = plugin;
       _modeManager = modeManager;
@@ -72,7 +73,7 @@ public class TableFrame extends JInternalFrame
       _myUI = new MyUI(this);
       setUI(_myUI);
 
-      txtColumsFactory = new GraphTextAreaFactory(tableName, session, plugin, toolTipProvider, modeManager, dndCallback);
+      txtColumsFactory = new GraphTextAreaFactory(tableName, session, plugin, toolTipProvider, modeManager, dndCallback, columnHiddenListener);
       scrollPane.setViewportView(txtColumsFactory.getComponent(modeManager.getMode()));
       
       if(null != xmlBean)
@@ -252,7 +253,7 @@ public class TableFrame extends JInternalFrame
          maxIcon = rsc.getIcon(GraphPluginResources.IKeys.SORT_NONE);
 
          // Iconify is used for open column hide dialog
-         iconIcon = rsc.getIcon(GraphPluginResources.IKeys.EYE_CONFIG);
+         //iconIcon = rsc.getIcon(GraphPluginResources.IKeys.EYE_CONFIG);
 
          groupTitleColor = GraphColoring.getGroupTitleColor();
          selectedTitleColor = GraphColoring.getInternalFrameTitleSelectedColor(selectedTitleColor);
@@ -412,6 +413,21 @@ public class TableFrame extends JInternalFrame
          menuBar.setSize(0,0);
          menuBar.setBounds(0,0,0,0);
          return menuBar;
+      }
+
+      public void setHideIconChecked(boolean b)
+      {
+         if (b)
+         {
+            super.iconIcon = new GraphPluginResources(_plugin).getIcon(GraphPluginResources.IKeys.EYE_CONFIG_CHECKED);
+         }
+         else
+         {
+            super.iconIcon = new GraphPluginResources(_plugin).getIcon(GraphPluginResources.IKeys.EYE_CONFIG);
+
+         }
+         super.iconButton.setIcon(super.iconIcon);
+         repaint();
       }
 
       class MyTitlePaneLayout extends BasicInternalFrameTitlePane.TitlePaneLayout

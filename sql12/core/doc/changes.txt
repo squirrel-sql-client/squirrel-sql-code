@@ -7,6 +7,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 Enhancements:
 
 Graph Plugin: Columns in be hidden.
+  Tables with hidden columns are recognizable by the
+  checked the hide-config icon in the tables title bar.
 
 When data is copied to a new window, the window now offers the usual data find column function.
 

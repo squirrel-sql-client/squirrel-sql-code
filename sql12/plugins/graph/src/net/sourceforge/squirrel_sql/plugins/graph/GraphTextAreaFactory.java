@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.awt.event.MouseListener;
 
 public class GraphTextAreaFactory
@@ -12,7 +12,13 @@ public class GraphTextAreaFactory
    private ZoomableColumnTextArea _txtZoomColumns;
    private QueryTextArea _txtQueryTextArea;
 
-   public GraphTextAreaFactory(String tableName, ISession session, GraphPlugin plugin, TableToolTipProvider toolTipProvider, ModeManager modeManager, DndCallback dndCallback)
+   public GraphTextAreaFactory(String tableName,
+                               ISession session,
+                               GraphPlugin plugin,
+                               TableToolTipProvider toolTipProvider,
+                               ModeManager modeManager,
+                               DndCallback dndCallback,
+                               ColumnHiddenListener columnHiddenListener)
    {
       _txtColumns = new ColumnTextArea(toolTipProvider, dndCallback, session);
       _txtColumns.setEditable(false);
@@ -21,7 +27,7 @@ public class GraphTextAreaFactory
       _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, modeManager.getZoomer(), dndCallback, session);
       GraphColoring.setTableFrameBackground(_txtZoomColumns);
 
-      _txtQueryTextArea = new QueryTextArea(tableName, plugin, dndCallback, session);
+      _txtQueryTextArea = new QueryTextArea(tableName, plugin, dndCallback, session, columnHiddenListener);
    }
 
    public int getColumnHeight()

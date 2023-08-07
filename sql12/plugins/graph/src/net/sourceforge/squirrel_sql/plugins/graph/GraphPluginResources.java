@@ -53,6 +53,7 @@ public final class GraphPluginResources extends PluginResources
       String PASTE_GRAPH = "pasteGraph";
 
       String EYE_CONFIG = "eyeConfig";
+      String EYE_CONFIG_CHECKED = "eyeConfigChecked";
       String EYE_CROSSED = "eyeCrossed";
    }
 }

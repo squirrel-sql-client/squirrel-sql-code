@@ -19,15 +19,17 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
 
    private DndCallback _dndCallback;
    private ISession _session;
+   private final ColumnHiddenListener _columnHiddenListener;
    private int _lastColumnHeightBeforeSetColums;
 
 
-   public QueryTextArea(String tableName, GraphPlugin plugin, DndCallback dndCallback, ISession session)
+   public QueryTextArea(String tableName, GraphPlugin plugin, DndCallback dndCallback, ISession session, ColumnHiddenListener columnHiddenListener)
    {
       _tableName = tableName;
       _plugin = plugin;
       _dndCallback = dndCallback;
       _session = session;
+      _columnHiddenListener = columnHiddenListener;
 
       setLayout(new GridBagLayout());
 
@@ -106,6 +108,7 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
       colPnl.setHidden();
       remove(colPnl);
       doLayout();
+      _columnHiddenListener.columnHidden();
    }
 
    @Override

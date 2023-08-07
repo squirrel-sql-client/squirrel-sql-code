@@ -25,19 +25,13 @@ import java.awt.event.*;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 
 
 public class TableFrameController
 {
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableFrameController.class);
-
-    /** Logger for this class. */
-    private final static ILogger s_log = LoggerController.createLogger(TableFrameController.class);
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableFrameController.class);
+   private final static ILogger s_log = LoggerController.createLogger(TableFrameController.class);
 
    ////////////////////////////////////////
    // Serialized attributes
@@ -112,13 +106,6 @@ public class TableFrameController
          _desktopController = desktopController;
          _addTablelRequestListener = listener;
 
-         TableToolTipProvider toolTipProvider = new TableToolTipProvider()
-         {
-            public String getToolTipText(MouseEvent event)
-            {
-               return onGetToolTipText(event);
-            }
-         };
 
          if(null == xmlBean)
          {
@@ -129,11 +116,12 @@ public class TableFrameController
                   plugin,
                   getDisplayName(),
                   null,
-                  toolTipProvider,
+                  event -> onGetToolTipText(event),
                   _desktopController.getModeManager(),
                   createDndCallback(),
                   sortButton -> onSortButtonClicked(sortButton),
-                  () -> onColumnHideConfig());
+                  () -> onColumnHideConfig(),
+                  () -> initColumnHideIcon(_colInfoModel));
 
 
             initFromDB();
@@ -149,11 +137,12 @@ public class TableFrameController
                   plugin,
                   getDisplayName(),
                   xmlBean.getTableFrameXmlBean(),
-                  toolTipProvider,
+                  event -> onGetToolTipText(event),
                   _desktopController.getModeManager(),
                   createDndCallback(),
                   sortButton -> onSortButtonClicked(sortButton),
-                  () -> onColumnHideConfig());
+                  () -> onColumnHideConfig(),
+                  () -> initColumnHideIcon(_colInfoModel));
 
             _columnOrderType = OrderType.getByIx(xmlBean.getColumOrder());
             ColumnInfo[] colInfos = new ColumnInfo[xmlBean.getColumnIfoXmlBeans().length];
@@ -168,6 +157,7 @@ public class TableFrameController
          }
          _frame.txtColumsFactory.setColumnInfoModel(_colInfoModel);
 
+         initColumnHideIcon(_colInfoModel);
 
 
          _constraintViewListener = new ConstraintViewListener()
@@ -276,6 +266,19 @@ public class TableFrameController
       }
    }
 
+   private void initColumnHideIcon(ColumnInfoModel colInfoModel)
+   {
+      if (Arrays.stream(colInfoModel.getAll()).anyMatch(c -> c.isHidden()))
+      {
+         _frame.getTitlePane().setHideIconChecked(true);
+      }
+      else
+      {
+         _frame.getTitlePane().setHideIconChecked(false);
+      }
+
+   }
+
    private void onSortButtonClicked(JButton sortButton)
    {
       JPopupMenu popupMenu = new JPopupMenu();
@@ -288,6 +291,7 @@ public class TableFrameController
       if(new TableColumnHideConfigCtrl(GUIUtils.getOwningWindow(_frame), _colInfoModel, _frame.getTitle()).columnHidingChanged())
       {
          _frame.txtColumsFactory.setColumnInfoModel(_colInfoModel);
+         initColumnHideIcon(_colInfoModel);
       }
    }
 
