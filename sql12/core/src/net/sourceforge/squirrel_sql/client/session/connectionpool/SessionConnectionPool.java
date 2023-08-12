@@ -235,7 +235,7 @@ public class SessionConnectionPool
          _sessionProperties.removePropertyChangeListener(_propertyChangeListener);
 
          // In case the pool is big we timeout this call itself.
-         TimeOutUtil.invokeWithTimeout(() -> getAllSQLConnections().forEach(con -> closeConnection(con)));
+         TimeOutUtil.invokeWithTimeout(() -> getAllSQLConnections().forEach(con -> closeConnection(con, false)));
       }
       catch (Throwable t)
       {
@@ -243,9 +243,9 @@ public class SessionConnectionPool
       }
    }
 
-   private void closeConnection(ISQLConnection con)
+   private void closeConnection(ISQLConnection con, boolean fireChanged)
    {
-      if(null != _querySQLConnections_checkOutCount.remove(con))
+      if(null != _querySQLConnections_checkOutCount.remove(con) && fireChanged)
       {
          try
          {
@@ -352,7 +352,7 @@ public class SessionConnectionPool
          }
       }
 
-      toClose.forEach(con -> closeConnection(con));
+      toClose.forEach(con -> closeConnection(con, true));
    }
 
    private void execSqlOnAllQueryConnections(QueryHolder queryHolder)
@@ -377,7 +377,7 @@ public class SessionConnectionPool
          }
       }
 
-      toClose.forEach(con -> closeConnection(con));
+      toClose.forEach(con -> closeConnection(con, true));
 
    }
 

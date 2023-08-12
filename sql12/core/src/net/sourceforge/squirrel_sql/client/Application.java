@@ -1099,14 +1099,14 @@ public class Application implements IApplication
 		{
 			if (_globalPreferences.getSessionProperties().getLimitSQLEntryHistorySize())
 			{
-				SQLHistoryItem[] data = _sqlHistory.getData();
+				SQLHistoryItem[] data = _sqlHistory.getSQLHistoryItems();
 
 				int maxSize = _globalPreferences.getSessionProperties().getSQLEntryHistorySize();
 				if (data.length > maxSize)
 				{
 					SQLHistoryItem[] reducedData = new SQLHistoryItem[maxSize];
 					System.arraycopy(data, 0, reducedData, 0, maxSize);
-					_sqlHistory.setData(reducedData);
+					_sqlHistory.setSQLHistoryItems(reducedData);
 				}
 			}
 

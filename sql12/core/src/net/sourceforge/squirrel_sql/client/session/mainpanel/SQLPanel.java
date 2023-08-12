@@ -38,7 +38,6 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqllistenerservice.SqlListenerService;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -376,6 +375,7 @@ public class SQLPanel extends JPanel
 		_sqlHistoryComboBox.removeActionListener(_sqlComboListener);
 		_sqlHistoryComboBox.dispose();
 		_sqlListenerService.getSqlExecutionListeners().forEach(l -> _sqlExecPanel.removeSQLExecutionListener(l));
+		_sqlListenerService.close();
 
 		_changeTracker.close();
 
@@ -600,7 +600,7 @@ public class SQLPanel extends JPanel
 			if (!s_loadedSQLHistory)
 			{
 				final SQLHistory sqlHistory = app.getSQLHistory();
-				SQLHistoryComboBoxModel.initializeSharedInstance(sqlHistory.getData());
+				SQLHistoryComboBoxModel.initializeSharedInstance(sqlHistory.getSQLHistoryItems());
 				s_loadedSQLHistory = true;
 			}
 		}

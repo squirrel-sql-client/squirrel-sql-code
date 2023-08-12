@@ -1,11 +1,10 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.sqllistenerservice;
+package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ public class SqlListenerService
             addSQLToHistory(queryHolder.getOriginalQuery());
          }
       });
+      Main.getApplication().getSQLHistory().addSQLHistoryListener(_sqlHistoryListener);
 
       _sqlExecutionListeners.add(new SQLExecutionAdapter()
       {
@@ -51,14 +51,24 @@ public class SqlListenerService
       final SQLHistoryItem shi = new SQLHistoryItem(sql, _session.getAlias().getName());
       if (_session.getProperties().getSQLShareHistory())
       {
-         Main.getApplication().getSQLHistory().add(shi);
+         // Here the _sqlHistoryListener is by the application's SQLHistory.
+         Main.getApplication().getSQLHistory().addSQLHistoryItem(shi);
          Main.getApplication().savePreferences(PreferenceType.SQLHISTORY);
       }
-      _sqlHistoryListener.newSqlHistoryItem(shi);
+      else
+      {
+         // Here the application's SQLHistory is not active and we need to fire the listener ourselves.
+         _sqlHistoryListener.newSqlHistoryItem(shi);
+      }
    }
 
    public List<ISQLExecutionListener> getSqlExecutionListeners()
    {
       return _sqlExecutionListeners;
+   }
+
+   public void close()
+   {
+      Main.getApplication().getSQLHistory().removeSQLHistoryListener(_sqlHistoryListener);
    }
 }

@@ -29,19 +29,19 @@ import java.util.List;
 public class SQLHistory
 {
 	private List<SQLHistoryItem> _history = new ArrayList<>();
+	private List<SqlHistoryListener> _sqlHistoryListeners = new ArrayList<>();
 
 	public SQLHistory()
 	{
-		super();
 	}
 
-	public synchronized SQLHistoryItem[] getData()
+	public SQLHistoryItem[] getSQLHistoryItems()
 	{
 		SQLHistoryItem[] data = new SQLHistoryItem[_history.size()];
 		return _history.toArray(data);
 	}
 
-	public synchronized void setData(SQLHistoryItem[] data)
+	public void setSQLHistoryItems(SQLHistoryItem[] data)
 	{
 		_history.clear();
 
@@ -51,19 +51,31 @@ public class SQLHistory
 	}
 
 
-   public synchronized void add(SQLHistoryItem obj)
+   public void addSQLHistoryItem(SQLHistoryItem sqlHistoryItem)
 	{
-		if (obj == null)
+		if (sqlHistoryItem == null)
 		{
 			throw new IllegalArgumentException("SQLHistoryItem == null");
 		}
 
 		// Make sure no duplicates are kept in history.
-		while (_history.remove(obj))
+		while (_history.remove(sqlHistoryItem))
 		{
 			// Empty body.
 		}
 
-		_history.add(0, obj);
+		_history.add(0, sqlHistoryItem);
+
+		new ArrayList<>(_sqlHistoryListeners).forEach(l -> l.newSqlHistoryItem(sqlHistoryItem));
+	}
+
+	public void addSQLHistoryListener(SqlHistoryListener sqlHistoryListener)
+	{
+		_sqlHistoryListeners.add(sqlHistoryListener);
+	}
+
+	public void removeSQLHistoryListener(SqlHistoryListener sqlHistoryListener)
+	{
+		_sqlHistoryListeners.remove(sqlHistoryListener);
 	}
 }

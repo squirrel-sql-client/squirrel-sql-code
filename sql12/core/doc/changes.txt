@@ -75,6 +75,8 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+SQL history changes are now immediately reflected in all open SQL panels.
+
 SQL result tables: Copy as markdown and comparing table data failed when row numbers were displayed.
 
 When non-breaking space where pasted into SQuirreL's editor
