@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Query connection pool:
+  When a "SET ISOLATION LEVEL ..."-statement is executed
+  it is automatically executed on all existing query pool connections, too.
+
 Graph Plugin: Columns in be hidden.
   Tables with hidden columns are recognizable by the
   checked the hide-config icon in the tables title bar.

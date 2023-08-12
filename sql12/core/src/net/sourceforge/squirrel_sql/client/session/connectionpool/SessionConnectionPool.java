@@ -4,10 +4,8 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionUtil;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
+import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -15,9 +13,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -245,8 +245,21 @@ public class SessionConnectionPool
 
    private void closeConnection(ISQLConnection con)
    {
+      if(null != _querySQLConnections_checkOutCount.remove(con))
+      {
+         try
+         {
+            // Here we know we are closing a pooled connection.
+            fireChanged();
+         }
+         catch (Exception e)
+         {
+            s_log.error("Error firing pool changed", e);
+         }
+      }
+
       // ISQLConnection.close() has decent timeout and error handling itself.
-      con.close();
+      SQLUtilities.closeConnection(con);
    }
 
    public synchronized Set<ISQLConnection> getAllSQLConnections()
@@ -317,22 +330,57 @@ public class SessionConnectionPool
          throw Utilities.wrapRuntime(e);
       }
 
+      setPropertyInAllQueryConnections(propertyDesc, connectionPropertySetter);
+   }
+
+   private void setPropertyInAllQueryConnections(String propertyDesc, ConnectionPropertySetter connectionPropertySetter)
+   {
       HashSet<ISQLConnection> toClose = new HashSet<>();
-      for (ISQLConnection con : _querySQLConnections_checkOutCount.keySet())
+      for (ISQLConnection sqlCon : _querySQLConnections_checkOutCount.keySet())
       {
          try
          {
-            TimeOutUtil.invokeWithTimeout(() -> connectionPropertySetter.setProperty(con));
+            TimeOutUtil.invokeWithTimeout(() -> connectionPropertySetter.setProperty(sqlCon));
          }
          catch (Exception e)
          {
-            s_log.error("Error setting " + propertyDesc + " for query connections", e);
-            toClose.add(con);
+            String msg = "Error setting " + propertyDesc + " for query pool connection. " +
+                  "The connection will be closed removed from the query pool.";
+
+            s_log.error(msg, e);
+            toClose.add(sqlCon);
          }
       }
 
       toClose.forEach(con -> closeConnection(con));
    }
+
+   private void execSqlOnAllQueryConnections(QueryHolder queryHolder)
+   {
+      HashSet<ISQLConnection> toClose = new HashSet<>();
+      for (ISQLConnection sqlCon : _querySQLConnections_checkOutCount.keySet())
+      {
+         try
+         {
+            TimeOutUtil.invokeWithTimeout(() ->
+            {
+               try (Statement stat = sqlCon.createStatement())
+               {
+                  stat.execute(queryHolder.getCleanQuery());
+               }
+            });
+         }
+         catch (Exception e)
+         {
+            s_log.error("Error executing the following SQL on pooled query connection:\n" + queryHolder.getCleanQuery(), e);
+            toClose.add(sqlCon);
+         }
+      }
+
+      toClose.forEach(con -> closeConnection(con));
+
+   }
+
 
    public void setPoolChangeListener(SessionConnectionPoolChangeListener sessionConnectionPoolChangeListener)
    {
@@ -372,5 +420,19 @@ public class SessionConnectionPool
    public int getQueryConnectionPoolSize()
    {
       return _sessionProperties.getQueryConnectionPoolSize();
+   }
+
+   public void sqlStatementExecuted(QueryHolder queryHolder)
+   {
+      if(0 == getQueryConnectionPoolSize())
+      {
+         return;
+      }
+
+      if(StringUtils.startsWithIgnoreCase(queryHolder.getCleanQuery(), "SET TRANSACTION ISOLATION LEVEL"))
+      {
+         execSqlOnAllQueryConnections(queryHolder);
+         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SessionConnectionPool.isolation.level.change.statement.executed", queryHolder.getCleanQuery()));
+      }
    }
 }

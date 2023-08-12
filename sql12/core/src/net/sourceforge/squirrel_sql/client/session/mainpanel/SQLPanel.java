@@ -36,36 +36,24 @@ import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqllistenerservice.SqlListenerService;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
-import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -93,13 +81,14 @@ public class SQLPanel extends JPanel
 	 */
 	private static boolean s_loadedSQLHistory;
 
-	private final SQLExecutionAdapter _sqlExecutorHistoryAdapter;
+	// private final SQLExecutionAdapter _sqlExecutorHistoryAdapter;
+	private SqlListenerService _sqlListenerService;
 	private final SQLPanelSplitter _sqlPanelSplitter;
 
 	/** Current session. */
 	transient private ISession _session;
 
-	private SQLHistoryComboBox _sqlCombo;
+	private SQLHistoryComboBox _sqlHistoryComboBox;
 	private ISQLEntryPanel _sqlEntry;
 
 
@@ -145,16 +134,9 @@ public class SQLPanel extends JPanel
 		propertiesHaveChanged(null);
 		_sqlExecPanel = new SQLResultExecutorPanel(session, true);
 
-		_sqlExecutorHistoryAdapter = new SQLExecutionAdapter()
-		{
-			@Override
-			public void statementExecuted(QueryHolder sql)
-			{
-				onStatementExecuted(sql);
-			}
-		};
 
-		_sqlExecPanel.addSQLExecutionListener(_sqlExecutorHistoryAdapter);
+		_sqlListenerService = new SqlListenerService(session, sqlHistItem -> addSQLToHistoryComboBox(sqlHistItem));
+		_sqlListenerService.getSqlExecutionListeners().forEach(l -> _sqlExecPanel.addSQLExecutionListener(l));
 
 
 		addExecutor(_sqlExecPanel);
@@ -177,11 +159,6 @@ public class SQLPanel extends JPanel
 	public SQLPanelSplitter getSqlPanelSplitter()
 	{
 		return _sqlPanelSplitter;
-	}
-
-	private void onStatementExecuted(QueryHolder sql)
-	{
-		_panelAPI.addSQLToHistory(sql.getOriginalQuery());
 	}
 
 	/**
@@ -396,9 +373,9 @@ public class SQLPanel extends JPanel
          SQLPanelSplitPaneFactory.saveOrientationDependingDividerLocation(_splitPane);
 		}
 
-		_sqlCombo.removeActionListener(_sqlComboListener);
-		_sqlCombo.dispose();
-		_sqlExecPanel.removeSQLExecutionListener(_sqlExecutorHistoryAdapter);
+		_sqlHistoryComboBox.removeActionListener(_sqlComboListener);
+		_sqlHistoryComboBox.dispose();
+		_sqlListenerService.getSqlExecutionListeners().forEach(l -> _sqlExecPanel.removeSQLExecutionListener(l));
 
 		_changeTracker.close();
 
@@ -453,7 +430,7 @@ public class SQLPanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> sql passed.
 	 */
-	public void addSQLToHistory(SQLHistoryItem sql)
+	private void addSQLToHistoryComboBox(SQLHistoryItem sql)
 	{
 		if (sql == null)
 		{
@@ -463,11 +440,11 @@ public class SQLPanel extends JPanel
 		_sqlComboListener.stopListening();
 		try
 		{
-			_sqlCombo.removeItem(sql);
-			_sqlCombo.insertItemAt(sql, 0);
-			_sqlCombo.setSelectedIndex(0);
+			_sqlHistoryComboBox.removeItem(sql);
+			_sqlHistoryComboBox.insertItemAt(sql, 0);
+			_sqlHistoryComboBox.setSelectedIndex(0);
 
-         _sqlCombo.repaint();
+         _sqlHistoryComboBox.repaint();
 		}
 		finally
 		{
@@ -527,7 +504,7 @@ public class SQLPanel extends JPanel
 
 	private void copySelectedItemToEntryArea()
 	{
-		SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
+		SQLHistoryItem item = (SQLHistoryItem) _sqlHistoryComboBox.getSelectedItem();
 		if (item != null)
 		{
 			appendSQL(item.getSQL());
@@ -537,7 +514,7 @@ public class SQLPanel extends JPanel
 	@SuppressWarnings("unused")
 	private void openSQLHistory()
 	{
-      new SQLHistoryController(_session, getSQLPanelAPI(), ((SQLHistoryComboBoxModel)_sqlCombo.getModel()).getItems());
+      new SQLHistoryController(_session, getSQLPanelAPI(), ((SQLHistoryComboBoxModel) _sqlHistoryComboBox.getModel()).getItems());
    }
 
 	private void propertiesHaveChanged(String propName)
@@ -545,7 +522,7 @@ public class SQLPanel extends JPanel
 		final SessionProperties props = _session.getProperties();
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_SHARE_HISTORY))
 		{
-			_sqlCombo.setUseSharedModel(props.getSQLShareHistory());
+			_sqlHistoryComboBox.setUseSharedModel(props.getSQLShareHistory());
 		}
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT))
@@ -595,11 +572,11 @@ public class SQLPanel extends JPanel
 		{
 			if (props.getLimitSQLEntryHistorySize())
 			{
-				_sqlCombo.setMaxMemoryCount(props.getSQLEntryHistorySize());
+				_sqlHistoryComboBox.setMaxMemoryCount(props.getSQLEntryHistorySize());
 			}
 			else
 			{
-				_sqlCombo.setMaxMemoryCount(MemoryComboBox.NO_MAX);
+				_sqlHistoryComboBox.setMaxMemoryCount(MemoryComboBox.NO_MAX);
 			}
 		}
 
@@ -607,7 +584,7 @@ public class SQLPanel extends JPanel
 
    public ArrayList<SQLHistoryItem> getSQLHistoryItems()
    {
-      return ((SQLHistoryComboBoxModel)_sqlCombo.getModel()).getItems();
+      return ((SQLHistoryComboBoxModel) _sqlHistoryComboBox.getModel()).getItems();
    }
 
 	public void toggleMinimizeResults()
@@ -636,17 +613,17 @@ public class SQLPanel extends JPanel
 
 
 		final SessionProperties props = _session.getProperties();
-		_sqlCombo = new SQLHistoryComboBox(props.getSQLShareHistory());
-		_sqlCombo.setEditable(false);
-		if (_sqlCombo.getItemCount() > 0)
+		_sqlHistoryComboBox = new SQLHistoryComboBox(props.getSQLShareHistory());
+		_sqlHistoryComboBox.setEditable(false);
+		if (_sqlHistoryComboBox.getItemCount() > 0)
 		{
-			_sqlCombo.setSelectedIndex(0);
+			_sqlHistoryComboBox.setSelectedIndex(0);
 		}
 
 		{
 			JPanel pnl = new JPanel();
 			pnl.setLayout(new BorderLayout());
-			pnl.add(_sqlCombo, BorderLayout.CENTER);
+			pnl.add(_sqlHistoryComboBox, BorderLayout.CENTER);
 
 			Box box = Box.createHorizontalBox();
 			box.add(new CopyLastButton(app));
@@ -673,7 +650,7 @@ public class SQLPanel extends JPanel
 
 		add(_splitPane, BorderLayout.CENTER);
 
-		_sqlCombo.addActionListener(_sqlComboListener);
+		_sqlHistoryComboBox.addActionListener(_sqlComboListener);
 
 		SwingUtilities.invokeLater(() -> _sqlEntry.getTextComponent().requestFocus());
 	}

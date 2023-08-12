@@ -63,7 +63,7 @@ public class StringUtilities
 	 */
 	public static String cleanString(String str)
 	{
-		final StringBuffer buf = new StringBuffer(str.length());
+		final StringBuilder buf = new StringBuilder(str.length());
 		char prevCh = ' ';
 
 		for (int i = 0, limit = str.length(); i < limit; ++i)
@@ -83,7 +83,7 @@ public class StringUtilities
 			prevCh = ch;
 		}
 
-		return buf.toString();
+		return buf.toString().trim();
 	}
 
    /**

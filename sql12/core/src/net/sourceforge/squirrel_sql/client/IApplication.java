@@ -251,7 +251,7 @@ public interface IApplication
      * @param preferenceType the enumerated type that indicates what category
      *                       of preferences to be persisted. 
      */
-    public void savePreferences(PreferenceType preferenceType);
+    void savePreferences(PreferenceType preferenceType);
     
 
    void addApplicationListener(ApplicationListener l);

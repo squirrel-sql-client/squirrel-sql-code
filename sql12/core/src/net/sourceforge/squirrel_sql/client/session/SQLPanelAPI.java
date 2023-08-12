@@ -25,7 +25,6 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
-import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
@@ -547,22 +546,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
 	 */
-	public void addSQLToHistory(String sql)
-	{
-		if (sql == null)
-		{
-			throw new IllegalArgumentException("sql == null");
-		}
-
-      final ISession session = _panel.getSession();
-		final SQLHistoryItem shi = new SQLHistoryItem(sql, session.getAlias().getName());
-		if (session.getProperties().getSQLShareHistory())
-		{
-			session.getApplication().getSQLHistory().add(shi);
-			session.getApplication().savePreferences(PreferenceType.SQLHISTORY);
-		}
-		_panel.addSQLToHistory(shi);
-	}
 
 	/**
 	 * Add a hierarchical menu to the SQL Entry Area popup menu.
