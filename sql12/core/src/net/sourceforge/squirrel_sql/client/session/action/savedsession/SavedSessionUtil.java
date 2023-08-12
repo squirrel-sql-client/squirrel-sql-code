@@ -27,6 +27,11 @@ public class SavedSessionUtil
    {
       List<SQLPanelSaveInfo> ret = new ArrayList<>();
 
+      if(session.isClosed())
+      {
+         return ret;
+      }
+
       final SQLPanelSaveInfo mainSqlPanelSaveInfo = new SQLPanelSaveInfo(session.getSessionPanel().getMainSQLPanel(), SqlPanelType.MAIN_SQL_TAB);
       ret.add(mainSqlPanelSaveInfo);
       if(session.getSessionPanel().getMainSQLPanel().getSQLPanelAPI() == session.getSQLPanelAPIOfActiveSessionWindow())
