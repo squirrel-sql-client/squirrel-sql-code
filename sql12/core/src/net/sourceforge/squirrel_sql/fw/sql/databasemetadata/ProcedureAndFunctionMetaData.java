@@ -3,11 +3,7 @@ package net.sourceforge.squirrel_sql.fw.sql.databasemetadata;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
-import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -22,10 +18,32 @@ public class ProcedureAndFunctionMetaData
 {
    private final static ILogger s_log = LoggerController.createLogger(SQLDatabaseMetaData.class);
 
-   static List<IProcedureInfo> getProcedureInfos(String catalog, String schemaPattern, String procedureNamePattern, ProgressCallBack progressCallBack, SQLDatabaseMetaData md) throws SQLException
+   static List<IProcedureInfo> getProcedureInfos(String[] catalogs, String schemaPattern, String procedureNamePattern, ProgressCallBack progressCallBack, SQLDatabaseMetaData md) throws SQLException
+   {
+
+      if (null != catalogs && 0 < catalogs.length)
+      {
+         ArrayList<IProcedureInfo> ret = new ArrayList<>();
+
+         for (String catalog : catalogs)
+         {
+            ret.addAll(_getProcedureInfos(progressCallBack, catalog, schemaPattern, procedureNamePattern, md));
+         }
+
+         return ret;
+      }
+      else
+      {
+         return _getProcedureInfos(progressCallBack, null, schemaPattern, procedureNamePattern, md);
+      }
+   }
+
+   private static ArrayList<IProcedureInfo> _getProcedureInfos(ProgressCallBack progressCallBack, String catalog, String schemaPattern, String procedureNamePattern, SQLDatabaseMetaData md) throws SQLException
    {
       ArrayList<IProcedureInfo> list = new ArrayList<>();
+
       ResultSet rs = md.getJDBCMetaData().getProcedures(catalog, schemaPattern, procedureNamePattern);
+
       if (rs == null)
       {
          return list;
@@ -88,11 +106,25 @@ public class ProcedureAndFunctionMetaData
       return list;
    }
 
-   static List<IProcedureInfo> getFunctionInfos(String catalog, String schemaPattern, String funtionNamePattern, ProgressCallBack progressCallBack, SQLDatabaseMetaData md) throws SQLException
+   static List<IProcedureInfo> getFunctionInfos(String[] catalogs, String schemaPattern, String funtionNamePattern, ProgressCallBack progressCallBack, SQLDatabaseMetaData md) throws SQLException
    {
       try
       {
-         return _getFunctionInfos(catalog, schemaPattern, funtionNamePattern, progressCallBack, md);
+         if (null != catalogs && 0 < catalogs.length)
+         {
+            ArrayList<IProcedureInfo> ret = new ArrayList<>();
+
+            for (String catalog : catalogs)
+            {
+               ret.addAll(_getFunctionInfos(catalog, schemaPattern, funtionNamePattern, progressCallBack, md));
+            }
+
+            return ret;
+         }
+         else
+         {
+            return _getFunctionInfos(null, schemaPattern, funtionNamePattern, progressCallBack, md);
+         }
       }
       catch (Exception e)
       {

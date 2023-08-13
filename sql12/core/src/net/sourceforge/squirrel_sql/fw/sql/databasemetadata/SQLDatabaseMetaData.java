@@ -19,54 +19,18 @@ package net.sourceforge.squirrel_sql.fw.sql.databasemetadata;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
-import net.sourceforge.squirrel_sql.fw.sql.ResultSetColumnReader;
-import net.sourceforge.squirrel_sql.fw.sql.ResultSetDataSetDB2AIX64MetadataWrapper;
-import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
-import net.sourceforge.squirrel_sql.fw.sql.UDTInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.sql.*;
+import java.util.*;
 
 /**
  * This class represents the metadata for a database. It is essentially a wrapper around
@@ -728,16 +692,12 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return list.toArray(new DataTypeInfo[list.size()]);
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedures(java.lang.String,
-	 *      java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
-	 */
-	public IProcedureInfo[] getProcedures(String catalog, String schemaPattern, String procedureNamePattern, ProgressCallBack progressCallBack)
+	public IProcedureInfo[] getProcedures(String[] catalogs, String schemaPattern, String procedureNamePattern, ProgressCallBack progressCallBack)
 			throws SQLException
 	{
 		List<IProcedureInfo> procedureAndFunctionInfos = new ArrayList<>();
-		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getProcedureInfos(catalog, schemaPattern, procedureNamePattern, progressCallBack, this));
-		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getFunctionInfos(catalog, schemaPattern, procedureNamePattern, progressCallBack, this));
+		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getProcedureInfos(catalogs, schemaPattern, procedureNamePattern, progressCallBack, this));
+		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getFunctionInfos(catalogs, schemaPattern, procedureNamePattern, progressCallBack, this));
 
 		return procedureAndFunctionInfos.toArray(new IProcedureInfo[0]);
 	}
@@ -1019,7 +979,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getUDTs(java.lang.String,
 	 *      java.lang.String, java.lang.String, int[])
 	 */
-	public synchronized IUDTInfo[] getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types, ProgressCallBack progressCallBack) throws SQLException
+	public IUDTInfo[] getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types, ProgressCallBack progressCallBack) throws SQLException
 	{
 		DatabaseMetaData md = privateGetJDBCMetaData();
 		ArrayList<UDTInfo> list = new ArrayList<>();
