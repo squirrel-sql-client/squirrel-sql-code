@@ -18,7 +18,26 @@ public class IntraVmConnectionFactory
          FactoryWrapper factoryWrapper;
 
          String persistenceUnitName = cfg.getPersistenceUnitName();
-         Class<?> persistenceClass = cl.loadClass("javax.persistence.Persistence");
+         Class<?> persistenceClass;
+
+         String jpaRootPackage;
+         try
+         {
+            persistenceClass = cl.loadClass("javax.persistence.Persistence");
+            jpaRootPackage = "javax";
+         }
+         catch(ClassNotFoundException e)
+         {
+            try
+            {
+               persistenceClass = cl.loadClass("jakarta.persistence.Persistence");
+               jpaRootPackage = "jakarta";
+            }
+            catch(ClassNotFoundException ex)
+            {
+               throw new IllegalStateException("Failed to load class javax.persistence.Persistence as well as jakarta.persistence.Persistence", ex);
+            }
+         }
 
          Method createMeth = persistenceClass.getMethod("createEntityManagerFactory", String.class);
          Object entityManagerFactory = createMeth.invoke(persistenceClass, persistenceUnitName);
@@ -32,7 +51,7 @@ public class IntraVmConnectionFactory
 
          Thread.currentThread().setContextClassLoader(null);
 
-         return new HibernateServerConnectionImpl(factoryWrapper, cl, isServer);
+         return new HibernateServerConnectionImpl(factoryWrapper, cl, jpaRootPackage, isServer);
       }
       catch (Exception e)
       {

@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class MappedClassInfoLoader
 {
 
-   public static HashMap<String, MappedClassInfoData> getMappedClassInfos(FactoryWrapper factoryWrapper, ClassLoader cl, boolean server)
+   public static HashMap<String, MappedClassInfoData> getMappedClassInfos(FactoryWrapper factoryWrapper, ClassLoader cl, String jpaRootPackage, boolean server)
    {
       HashMap<String, MappedClassInfoData> infoDataByClassName = new HashMap();
 
@@ -39,10 +39,10 @@ public class MappedClassInfoLoader
          String identifierPropertyClassName = (String) pkSingularAttribute.callMethod("getJavaType").callMethod("getName").getCallee();
 
 
-         String tableName = getTableName(cl, entityType);
+         String tableName = getTableName(cl, jpaRootPackage, entityType);
 
 
-         String identifierColumnName = getMappedColumnName(cl, entityType, identifierPropertyName);
+         String identifierColumnName = getMappedColumnName(cl, jpaRootPackage, entityType, identifierPropertyName);
 
          HibernatePropertyInfo identifierPropInfo =
                new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, tableName, new String[]{identifierColumnName});
@@ -55,11 +55,11 @@ public class MappedClassInfoLoader
          {
             String propertyName = (String) attr.callMethod("getJavaMember").callMethod("getName").getCallee();
             Class propertyClass = (Class) attr.callMethod("getJavaType").getCallee();
-            String[] propertyColumnNames = new String[]{getMappedColumnName(cl, entityType, propertyName)};
+            String[] propertyColumnNames = new String[]{getMappedColumnName(cl, jpaRootPackage, entityType, propertyName)};
 
             HibernatePropertyInfo hibernatePropertyInfo = null;
 
-            if (ReflectionCaller.getClassPlain("javax.persistence.metamodel.PluralAttribute", cl).isAssignableFrom(attr.getCalleeClass()))
+            if (ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.metamodel.PluralAttribute", cl).isAssignableFrom(attr.getCalleeClass()))
             {
                propertyClass = (Class) attr.callMethod("getElementType").callMethod("getJavaType").getCallee();
 
@@ -85,7 +85,7 @@ public class MappedClassInfoLoader
       return infoDataByClassName;
    }
 
-   private static String getMappedColumnName(ClassLoader cl, ReflectionCaller entity, String propertyName)
+   private static String getMappedColumnName(ClassLoader cl, String jpaRootPackage, ReflectionCaller entity, String propertyName)
    {
       Class entityClass = (Class) entity.callMethod("getJavaType").getCallee();
 
@@ -94,9 +94,9 @@ public class MappedClassInfoLoader
       if(null != getDeclaredField(entityClass, propertyName))
       {
          Field identifiereField = getDeclaredField(entityClass, propertyName);
-         if(identifiereField.isAnnotationPresent(ReflectionCaller.getClassPlain("javax.persistence.Column", cl)))
+         if(identifiereField.isAnnotationPresent(ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.Column", cl)))
          {
-            ReflectionCaller columnAnno = new ReflectionCaller(identifiereField.getAnnotation(ReflectionCaller.getClassPlain("javax.persistence.Column", cl)), false);
+            ReflectionCaller columnAnno = new ReflectionCaller(identifiereField.getAnnotation(ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.Column", cl)), false);
             String columnName = (String) columnAnno.callMethod("name").getCallee();
 
             if (null != columnName)
@@ -109,9 +109,9 @@ public class MappedClassInfoLoader
       {
          Method identifierMethod = getDeclaredMethod(entityClass, propertyName);
 
-         if(identifierMethod.isAnnotationPresent(ReflectionCaller.getClassPlain("javax.persistence.Column", cl)))
+         if(identifierMethod.isAnnotationPresent(ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.Column", cl)))
          {
-            ReflectionCaller columnAnno = new ReflectionCaller(identifierMethod.getAnnotation(ReflectionCaller.getClassPlain("javax.persistence.Column", cl)), false);
+            ReflectionCaller columnAnno = new ReflectionCaller(identifierMethod.getAnnotation(ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.Column", cl)), false);
             String columnName = (String) columnAnno.callMethod("name").getCallee();
 
             if (null != columnName)
@@ -151,13 +151,13 @@ public class MappedClassInfoLoader
    }
 
 
-   private static String getTableName(ClassLoader cl, ReflectionCaller entityType)
+   private static String getTableName(ClassLoader cl, String jpaRootPackage, ReflectionCaller entityType)
    {
       String tableName = (String) entityType.callMethod("getName").getCallee();
       Class entityJavaType = (Class) entityType.callMethod("getJavaType").getCallee();
-      if(entityJavaType.isAnnotationPresent(ReflectionCaller.getClassPlain("javax.persistence.Table", cl)))
+      if(entityJavaType.isAnnotationPresent(ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.Table", cl)))
       {
-         ReflectionCaller tableAnno = new ReflectionCaller(entityJavaType.getAnnotation(ReflectionCaller.getClassPlain("javax.persistence.Table", cl)));
+         ReflectionCaller tableAnno = new ReflectionCaller(entityJavaType.getAnnotation(ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.Table", cl)));
          if(null != tableAnno.callMethod("name"))
          {
             tableName = (String) tableAnno.callMethod("name").getCallee();

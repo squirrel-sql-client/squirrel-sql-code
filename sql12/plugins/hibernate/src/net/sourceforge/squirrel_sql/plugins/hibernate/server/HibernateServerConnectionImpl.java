@@ -2,12 +2,18 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
 import java.rmi.RemoteException;
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+import java.util.TreeMap;
 
 public class HibernateServerConnectionImpl implements HibernateServerConnection
 {
    private FactoryWrapper _sessionFactoryImpl;
    private ClassLoader _cl;
+   private final String _jpaRootPackage;
    private boolean _server;
 
    private HashMap<String, MappedClassInfoData> _infoDataByClassName;
@@ -20,10 +26,11 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    private String _password;
 
 
-   HibernateServerConnectionImpl(FactoryWrapper sessionFactoryImpl, ClassLoader cl, boolean isServer) throws RemoteException
+   HibernateServerConnectionImpl(FactoryWrapper sessionFactoryImpl, ClassLoader cl, String jpaRootPackage, boolean isServer) throws RemoteException
    {
       _sessionFactoryImpl = sessionFactoryImpl;
       _cl = cl;
+      _jpaRootPackage = jpaRootPackage;
       _server = isServer;
    }
 
@@ -76,7 +83,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
          return;
       }
 
-      _infoDataByClassName = MappedClassInfoLoader.getMappedClassInfos(_sessionFactoryImpl, _cl, _server);
+      _infoDataByClassName = MappedClassInfoLoader.getMappedClassInfos(_sessionFactoryImpl, _cl, _jpaRootPackage, _server);
    }
 
 
