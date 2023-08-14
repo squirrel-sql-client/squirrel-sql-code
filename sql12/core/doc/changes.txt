@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Hibernate Plugin: Now supports Hibernate 6 and Jakarta Persistence.
+
 Query connection pool:
   When a "SET ISOLATION LEVEL ..."-statement is executed
   it is automatically executed on all existing query pool connections, too.

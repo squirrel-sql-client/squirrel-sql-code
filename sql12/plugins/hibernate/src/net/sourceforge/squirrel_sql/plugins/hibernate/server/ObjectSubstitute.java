@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ObjectSubstitute implements Serializable
@@ -36,12 +37,12 @@ public class ObjectSubstitute implements Serializable
                   + ", values: " + primitiveOrUnknownObjectCollectionAsString(primitiveOrUnknownObjectCollection, cl);
 
 
-      Optional<Object> any = primitiveOrUnknownObjectCollection.stream().findAny();
+      Optional<Object> any = primitiveOrUnknownObjectCollection.stream().filter(Objects::nonNull).findAny();
       String className = any.isEmpty() ? "<unknown>" : any.get().getClass().getName();
       String propertyName = "value " + (1);
       HibernatePropertyInfo indentifierHibernatePropertyInfo = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
-      _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(any.orElse("<unknown>"), cl), indentifierHibernatePropertyInfo));
+      _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(any.orElse(null), cl), indentifierHibernatePropertyInfo));
 
       HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[primitiveOrUnknownObjectCollection.size() - 1];
 

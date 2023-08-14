@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.sql.SQLWarning;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -19,13 +24,9 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.sql.SQLWarning;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class is the handler for the execution of sql against the SQLExecuterPanel
@@ -379,7 +380,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
             }
             break;
       }
-      if (_largeScript)
+      if ( _largeScript || StringUtilities.isEmpty(msg, true) )
       {
          return;
       }
