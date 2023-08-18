@@ -34,11 +34,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFrame
 {
@@ -51,7 +48,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 
 	public SQLInternalFrame(ISession session)
 	{
-		super(session.getTitle(), true, true, true, true, session);
+		super(session.getTitleModificationAware(), true, true, true, true, session);
 		setVisible(false);
 		createGUI(session);
 	}

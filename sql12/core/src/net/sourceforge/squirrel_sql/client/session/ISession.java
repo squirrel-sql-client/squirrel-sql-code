@@ -45,7 +45,7 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
-import javax.swing.Action;
+import javax.swing.*;
 import java.sql.SQLException;
 
 /**
@@ -216,6 +216,8 @@ public interface ISession extends IHasIdentifier
     * @return		The descriptive title of this session.
     */
    String getTitle();
+
+   ModificationAwareSessionTitle getTitleModificationAware();
 
 
    /**

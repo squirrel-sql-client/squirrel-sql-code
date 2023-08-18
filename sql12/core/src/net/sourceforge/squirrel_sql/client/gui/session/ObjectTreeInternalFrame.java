@@ -39,12 +39,8 @@ import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 
 /* Object Tree frame class*/
@@ -63,7 +59,7 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
     
 	public ObjectTreeInternalFrame(ISession session)
 	{
-		super(session.getTitle(), true, true, true, true, session);
+		super(session.getTitleModificationAware(), true, true, true, true, session);
 		setVisible(false);
 		createGUI(session);
 	}

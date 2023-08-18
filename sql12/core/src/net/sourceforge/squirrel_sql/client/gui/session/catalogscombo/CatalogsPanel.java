@@ -10,13 +10,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
@@ -41,7 +36,7 @@ public class CatalogsPanel extends JPanel
 
 		setVisible(false);
 
-		initInBackground();
+		init();
 	}
 
 	private void onConnectionPropertyChanged(PropertyChangeEvent evt)
@@ -49,8 +44,7 @@ public class CatalogsPanel extends JPanel
 		try
 		{
 			final String propName = evt.getPropertyName();
-			if (propName == null ||
-				propName.equals(ISQLConnection.IPropertyNames.CATALOG))
+			if (propName == null || propName.equals(ISQLConnection.IPropertyNames.CATALOG))
 			{
 				if (_catalogsCmb != null)
 				{
@@ -69,7 +63,7 @@ public class CatalogsPanel extends JPanel
 	}
 
 
-	private void initInBackground()
+	private void init()
 	{
 		try
 		{
@@ -140,7 +134,7 @@ public class CatalogsPanel extends JPanel
 	{
 		removeAll();
 
-		_session.getApplication().getThreadPool().addTask(() -> initInBackground());
+		_session.getApplication().getThreadPool().addTask(() -> init());
 	}
 
 	public String getSelectedCatalog()

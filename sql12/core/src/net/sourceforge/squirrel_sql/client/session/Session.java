@@ -167,6 +167,7 @@ class Session implements ISession
 
    private SavedSessionJsonBean _savedSession;
    private CurrentSchemaModel _currentSchemaModel;
+   private ModificationAwareSessionTitle _modificationAwareSessionTitle = new ModificationAwareSessionTitle();
 
    /**
     * Create a new session.
@@ -763,12 +764,18 @@ class Session implements ISession
     */
    public String getTitle()
    {
-      return _title;
+      return getTitleModificationAware().getTitle();
+   }
+
+   @Override
+   public ModificationAwareSessionTitle getTitleModificationAware()
+   {
+      return _modificationAwareSessionTitle;
    }
 
    public void setTitle(String newTitle)
    {
-      _title = newTitle;
+      _modificationAwareSessionTitle.setTitle(newTitle);
    }
 
    public String toString()
@@ -818,7 +825,7 @@ class Session implements ISession
          title = s_stringMgr.getString("Session.title0", args);
       }
 
-      _title = _id + " - " + title;
+      _modificationAwareSessionTitle.setTitle(_id + " - " + title);
    }
 
 

@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -548,7 +549,10 @@ class ObjectTree extends JTree
 			{
 				Action action = it.next();
 				JMenuItem menuItem = pop.add(action);
-				System.out.println("ObjectTree.getPopup " + menuItem);
+				if (StringUtilities.isEmpty(menuItem.getText(), true))
+				{
+					s_log.warn("Object tree popup menu item for Action " + (null == action ? "null" : action.getClass().getName()) + " has not menu title.");
+				}
 			}
 		}
 		return pop;

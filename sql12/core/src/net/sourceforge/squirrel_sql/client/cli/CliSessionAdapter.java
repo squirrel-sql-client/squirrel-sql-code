@@ -7,10 +7,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.CurrentSchemaModel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
@@ -191,6 +188,12 @@ public class CliSessionAdapter implements ISession
    public String getTitle()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public ModificationAwareSessionTitle getTitleModificationAware()
+   {
+      return null;
    }
 
    @Override
