@@ -143,12 +143,7 @@ class ObjectTree extends JTree
 			addToPopup(actions.get(CopySimpleObjectNameAction.class));
 			addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
 
-			JMenu dbDiffMenu = DBDiffObjectTreeMenuFactory.createMenu();
-			addToPopup(DBDiffObjectTreeMenuFactory.createMenu());
-			addToPopup(DatabaseObjectType.CATALOG, dbDiffMenu);
-			addToPopup(DatabaseObjectType.SCHEMA, dbDiffMenu);
-			addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, dbDiffMenu);
-			addToPopup(DatabaseObjectType.TABLE, dbDiffMenu);
+			addToPopup(DatabaseObjectType.TABLE, DBDiffObjectTreeMenuFactory.createMenu());
 
 			addMouseListener(new ObjectTreeMouseListener());
 			setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
@@ -551,7 +546,9 @@ class ObjectTree extends JTree
 			_popups.put(key, pop);
 			for (Iterator<Action> it = _globalActions.iterator(); it.hasNext();)
 			{
-				pop.add(it.next());
+				Action action = it.next();
+				JMenuItem menuItem = pop.add(action);
+				System.out.println("ObjectTree.getPopup " + menuItem);
 			}
 		}
 		return pop;
