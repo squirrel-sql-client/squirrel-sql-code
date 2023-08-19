@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.gui.session.catalogscombo.CatalogsPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.CatalogsPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.gui.session.catalogscombo;
+package net.sourceforge.squirrel_sql.client.gui.session.catalogspanel;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
