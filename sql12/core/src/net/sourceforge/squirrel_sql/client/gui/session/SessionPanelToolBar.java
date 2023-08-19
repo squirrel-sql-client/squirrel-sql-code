@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.CatalogsPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.CatalogsPanelController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.action.file.*;
@@ -16,7 +16,7 @@ import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 class SessionPanelToolBar extends ToolBar
 {
    private IObjectTreeListener _lis;
-   private CatalogsPanel _catalogsPanel;
+   private CatalogsPanelController _catalogsPanelController;
    private ObjectTreePanel _objectTreePanel;
 
    SessionPanelToolBar(ISession session, ObjectTreePanel objectTreePanel)
@@ -38,8 +38,8 @@ class SessionPanelToolBar extends ToolBar
 
    private void createGUI(ISession session)
    {
-      _catalogsPanel = new CatalogsPanel(session, this);
-      add(_catalogsPanel);
+      _catalogsPanelController = new CatalogsPanelController(session, this);
+      add(_catalogsPanelController.getPanel());
 
       ActionCollection actions = session.getApplication().getActionCollection();
       setUseRolloverButtons(true);
@@ -83,8 +83,8 @@ class SessionPanelToolBar extends ToolBar
       addToggleAction((IToggleAction) actions.get(ToggleObjectTreeBesidesEditorAction.class), session);
    }
 
-   public CatalogsPanel getCatalogsPanel()
+   public CatalogsPanelController getCatalogsPanelController()
    {
-      return _catalogsPanel;
+      return _catalogsPanelController;
    }
 }

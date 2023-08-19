@@ -33,11 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.PropertyChangeListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeoutException;
@@ -399,8 +395,7 @@ public class SQLConnection implements ISQLConnection
 			setGenericDbCatalog(catalogName);
 			break;
 		}
-		;
-	}
+   }
 
 	/**
 	 * @param catalogName

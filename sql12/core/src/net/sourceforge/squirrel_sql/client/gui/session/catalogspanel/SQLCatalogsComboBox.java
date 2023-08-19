@@ -18,13 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui.session.catalogspanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
 import javax.swing.*;
-import java.util.Map;
-import java.util.TreeMap;
 /**
  * This <TT>JComboBox</TT> will display all the catalogs
  * in an SQL connection.
@@ -33,109 +27,4 @@ import java.util.TreeMap;
  */
 public class SQLCatalogsComboBox extends JComboBox
 {
-
- 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLCatalogsComboBox.class);
-
-	public SQLCatalogsComboBox()
-	{
-	}
-
-   /**
-	 * Sets the catalogs that should appear in the catalog drop-down menu. Clear control and places all the
-	 * catalog names from the list in it in alphabetic sequence. Selects the specified catalog; If the
-	 * selectedCatalog is null, then selects the first catalog.
-	 * 
-	 * @param catalogs
-	 *           an array of catalogs names that should in the catalogs drop-down menu.
-	 * @param selectedCatalog
-	 *           the catalog for the current connection that should be selected.
-	 */
-   public void setCatalogs(String[] catalogs, String selectedCatalog)
-	{
-		super.removeAllItems();
-		if (catalogs != null)
-		{
-			final Map<String, String> map = new TreeMap<String, String>();
-			for (String catalog : catalogs)
-			{
-				if (!StringUtilities.isEmpty(catalog))
-				{
-					map.put(catalog, catalog);
-				}
-			}
-			if (StringUtilities.isEmpty(selectedCatalog))
-			{
-				addItem(NoCatalogPlaceHolder.s_instance);
-			}
-			for (String catalog : map.values())
-			{
-				addItem(catalog);
-			}
-			if (!StringUtilities.isEmpty(selectedCatalog))
-			{
-				setSelectedCatalog(selectedCatalog);
-			}
-		}
-		setMaximumSize(getPreferredSize());
-	}
-
-	public String getSelectedCatalog()
-	{
-		return "" + getSelectedItem();
-	}
-		
-	public void setSelectedCatalog(String selectedCatalog)
-	{
-		if (selectedCatalog != null)
-		{
-			getModel().setSelectedItem(selectedCatalog);
-		}
-	}
-	
-	@Override
-	public void setSelectedItem(Object o)
-	{
-		super.setSelectedItem(o);
-		// If the "None" place-holder is in the list in the first position, remove it.  It is not possible to
-		// select the "None" place-holder upon startup, because it is already selected in the list if it is
-		// present.
-		if (super.getItemAt(0) instanceof NoCatalogPlaceHolder)
-		{
-			super.removeItemAt(0);
-			validate();
-		}
-	}
-
-	/**
-	 * A place holder for the label "None" which is only intended to appear at startup if: 
-	 * 
-	 * 	1) the database uses catalogs and 
-	 *    2) it supports connections where the catalog is not specified.  
-	 * 
-	 * We want to allow the user to switch to any other catalog when in this state. The selected catalog by
-	 * default is the first item in the list. However, it is confusing to have that be an actual catalog, when
-	 * in fact the user did not specify one in the connection URL. So, when we connect, if the driver says that
-	 * the catalog is null, this place-holder is created to take the first position in the combobox to allow
-	 * the user to choose any other "real" catalog, and when they do, this place-holder gets removed, since it
-	 * is no longer needed at that point.
-	 * 
-	 * Note: This placeholder allows us to do instanceof instead of a string comparison, which would prevent 
-	 * the user from ever having and using a catalog called "None" (or whatever the equivalent i18n message 
-	 * label is for their internationalized strings)
-	 * 
-	 * @author manningr
-	 */
-	private static class NoCatalogPlaceHolder
-	{
-		private static final NoCatalogPlaceHolder s_instance = new NoCatalogPlaceHolder();
-
-		private NoCatalogPlaceHolder()
-		{
-		}
-
-		public String toString()
-		{
-			return s_stringMgr.getString("SQLCatalogsComboBox.noneLabel");
-		}
-	}
 }

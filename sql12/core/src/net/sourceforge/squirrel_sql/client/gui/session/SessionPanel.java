@@ -43,12 +43,10 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.Action;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -289,7 +287,7 @@ public class SessionPanel extends JPanel
          return null;
       }
 
-      return _sessionPanelToolBar.getCatalogsPanel().getSelectedCatalog();
+      return _sessionPanelToolBar.getCatalogsPanelController().getSelectedCatalog();
    }
 
    public IMainPanelTab getMainPanelTabAt(int tabIndex)

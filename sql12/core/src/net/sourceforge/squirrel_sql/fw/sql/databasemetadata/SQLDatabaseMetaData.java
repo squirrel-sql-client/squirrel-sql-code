@@ -228,7 +228,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		boolean hasGuest = false;
 		boolean hasSysFun = false;
 
-		final boolean isMSSQLorSYBASE = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+		final boolean isMSSQLorSYBASE = isMSSQLServerOrSybase();
 
 		final boolean isDB2 = DialectFactory.isDB2(this);
 
@@ -300,7 +300,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (Exception ex)
 		{
-			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+			boolean isSQLServer = isMSSQLServerOrSybase();
 
 			if (isSQLServer)
 			{
@@ -313,6 +313,11 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		_cache.put(key, value);
 
 		return value.booleanValue();
+	}
+
+	public boolean isMSSQLServerOrSybase()
+	{
+		return DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 	}
 
 	/**
@@ -330,7 +335,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (Exception ex)
 		{
-			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+			boolean isSQLServer = isMSSQLServerOrSybase();
 			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
@@ -536,7 +541,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+			boolean isSQLServer = isMSSQLServerOrSybase();
 
 			if (isSQLServer)
 			{
@@ -566,7 +571,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+			boolean isSQLServer = isMSSQLServerOrSybase();
 
 			if (isSQLServer)
 			{
@@ -600,7 +605,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+			boolean isSQLServer = isMSSQLServerOrSybase();
 
 			if (isSQLServer)
 			{

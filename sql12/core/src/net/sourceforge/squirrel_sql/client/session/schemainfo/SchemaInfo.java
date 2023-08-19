@@ -264,7 +264,8 @@ public class SchemaInfo
             }
          }
 
-         _loadAllObjects(new String[]{"gerdtest", "SaraTest"});
+         //_loadAllObjects(new String[]{"gerdtest", "SaraTest"});
+         _loadAllObjects(new String[]{catalog});
       }
       finally
       {

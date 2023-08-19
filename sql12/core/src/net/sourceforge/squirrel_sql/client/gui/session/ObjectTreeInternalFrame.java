@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.CatalogsPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -144,8 +143,6 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
    /** The class representing the toolbar at the top of a sql internal frame*/
 	private static class ObjectTreeToolBar extends ToolBar
 	{
-      private CatalogsPanel _catalogsPanel;
-
       ObjectTreeToolBar(ISession session, ObjectTreePanel panel)
       {
          createGUI(session, panel);
@@ -154,8 +151,8 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
 
 		private void createGUI(ISession session, ObjectTreePanel panel)
 		{
-         _catalogsPanel = new CatalogsPanel(session, this);
-         add(_catalogsPanel);
+			// In case needed back, needs proper synchronization with the Session tab's catalogs combo.
+         //add(new CatalogsPanelController(session, this).getPanel());
 
          ActionCollection actions = session.getApplication()
 					.getActionCollection();
