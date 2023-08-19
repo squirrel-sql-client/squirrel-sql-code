@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.client.gui.session.catalogscombo;
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -20,8 +20,9 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.JComboBox;
+import javax.swing.*;
 import java.util.Map;
 import java.util.TreeMap;
 /**
@@ -33,21 +34,10 @@ import java.util.TreeMap;
 public class SQLCatalogsComboBox extends JComboBox
 {
 
-	/** Internationalized strings for this class. */
- 	private static final StringManager s_stringMgr =
- 		StringManagerFactory.getStringManager(SQLCatalogsComboBox.class);
- 	
- 	private interface i18n {
- 		// i18n[SQLCatalogsComboBox.noneLabel=None]
- 		String NONE_LABEL = s_stringMgr.getString("SQLCatalogsComboBox.noneLabel");
- 	}
- 	
-    /**
-	 * Default ctor. Builds an empty combo box.
-	 */
+ 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLCatalogsComboBox.class);
+
 	public SQLCatalogsComboBox()
 	{
-		super();
 	}
 
    /**
@@ -68,34 +58,30 @@ public class SQLCatalogsComboBox extends JComboBox
 			final Map<String, String> map = new TreeMap<String, String>();
 			for (String catalog : catalogs)
 			{
-				if (!isEmptyCatalog(catalog))
+				if (!StringUtilities.isEmpty(catalog))
 				{
 					map.put(catalog, catalog);
 				}
 			}
-			if (isEmptyCatalog(selectedCatalog))
+			if (StringUtilities.isEmpty(selectedCatalog))
 			{
-				addItem(new NoCatalogPlaceHolder());
+				addItem(NoCatalogPlaceHolder.s_instance);
 			}
 			for (String catalog : map.values())
 			{
 				addItem(catalog);
 			}
-			if (!isEmptyCatalog(selectedCatalog))
+			if (!StringUtilities.isEmpty(selectedCatalog))
 			{
 				setSelectedCatalog(selectedCatalog);
 			}
 		}
 		setMaximumSize(getPreferredSize());
 	}
-    
-    private boolean isEmptyCatalog(String catalog) {
-   	 return catalog == null || "".equals(catalog);
-    }
 
 	public String getSelectedCatalog()
 	{
-		return getSelectedItem().toString();
+		return "" + getSelectedItem();
 	}
 		
 	public void setSelectedCatalog(String selectedCatalog)
@@ -106,21 +92,20 @@ public class SQLCatalogsComboBox extends JComboBox
 		}
 	}
 	
-	/**
-	 * @see javax.swing.JComboBox#setSelectedItem(java.lang.Object)
-	 */
 	@Override
-	public void setSelectedItem(Object o) {
+	public void setSelectedItem(Object o)
+	{
 		super.setSelectedItem(o);
-		// If the "None" place-holder is in the list in the first position, remove it.  It is not possible to 
-		// select the "None" place-holder upon startup, because it is already selected in the list if it is 
+		// If the "None" place-holder is in the list in the first position, remove it.  It is not possible to
+		// select the "None" place-holder upon startup, because it is already selected in the list if it is
 		// present.
-		if (super.getItemAt(0) instanceof NoCatalogPlaceHolder) {
+		if (super.getItemAt(0) instanceof NoCatalogPlaceHolder)
+		{
 			super.removeItemAt(0);
 			validate();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * A place holder for the label "None" which is only intended to appear at startup if: 
 	 * 
@@ -140,9 +125,17 @@ public class SQLCatalogsComboBox extends JComboBox
 	 * 
 	 * @author manningr
 	 */
-	private class NoCatalogPlaceHolder {
-		public String toString() { 
-			return i18n.NONE_LABEL; 
+	private static class NoCatalogPlaceHolder
+	{
+		private static final NoCatalogPlaceHolder s_instance = new NoCatalogPlaceHolder();
+
+		private NoCatalogPlaceHolder()
+		{
+		}
+
+		public String toString()
+		{
+			return s_stringMgr.getString("SQLCatalogsComboBox.noneLabel");
 		}
 	}
 }

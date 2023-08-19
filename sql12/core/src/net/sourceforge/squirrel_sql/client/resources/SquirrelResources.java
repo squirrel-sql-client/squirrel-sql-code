@@ -187,6 +187,8 @@ public class SquirrelResources extends Resources
 		String EDIT = "edit";
 		String EDIT_RED_DOT = "editRedDot";
 
+		String THREE_DOTS = "threedots";
+
 		String DELETE = "delete";
 
 		String ALIAS_CONNECT = "aliasConnect";

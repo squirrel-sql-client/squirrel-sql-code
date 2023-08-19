@@ -1,8 +1,9 @@
 package net.sourceforge.squirrel_sql.client.gui.session.catalogscombo;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -26,6 +27,7 @@ public class CatalogsPanel extends JPanel
 	private JComponent _parent;
 	private SQLCatalogsComboBox _catalogsCmb;
 	private PropertyChangeListener _connectionPropetryListener;
+	private JButton _btnConfiCataloLoading;
 
 	public CatalogsPanel(ISession session, JComponent parent)
 	{
@@ -111,15 +113,21 @@ public class CatalogsPanel extends JPanel
 
 
 		_catalogsCmb = new SQLCatalogsComboBox();
-		gbc = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+		gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,2),0,0);
 		add(_catalogsCmb, gbc);
-
 		_catalogsCmb.setCatalogs(catalogs, selected);
 
-		Dimension prefSize = getPreferredSize();
-		prefSize.width = lblCatalogs.getPreferredSize().width + _catalogsCmb.getPreferredSize().width + 20;
-		setPreferredSize(prefSize);
-		setMaximumSize(prefSize);
+		gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,10),0,0);
+		_btnConfiCataloLoading = GUIUtils.styleAsToolbarButton(new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.THREE_DOTS)));
+		Dimension configButtonSize = new Dimension(_catalogsCmb.getPreferredSize().height + 1, _catalogsCmb.getPreferredSize().height + 1);
+		_btnConfiCataloLoading.setPreferredSize(configButtonSize);
+		_btnConfiCataloLoading.setToolTipText(s_stringMgr.getString("CatalogsPanel.configure.catalogs.to.load"));
+		add(_btnConfiCataloLoading, gbc);
+
+		int preferredWidth = lblCatalogs.getPreferredSize().width + _catalogsCmb.getPreferredSize().width + _btnConfiCataloLoading.getPreferredSize().width + 20;
+		GUIUtils.setPreferredWidth(this, preferredWidth);
+		GUIUtils.setMinimumWidth(this, preferredWidth);
+		GUIUtils.setMaximumWidth(this, preferredWidth);
 
 		GUIUtils.inheritBackground(this);
 

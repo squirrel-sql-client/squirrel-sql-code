@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessorDummy;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
@@ -1024,7 +1025,7 @@ class Session implements ISession
          final String propName = evt.getPropertyName();
          if (propName == null || ISQLConnection.IPropertyNames.CATALOG.equalsIgnoreCase(propName) )
          {
-            setupTitle();
+            GUIUtils.processOnSwingEventThread(() -> setupTitle());
          }
       }
    }
