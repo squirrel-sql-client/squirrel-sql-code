@@ -494,4 +494,8 @@ public class ApplicationFiles
       return new File(_userSettingsDir + File.separator + "dbDiffPrefs.json");
    }
 
+   public File getCatalogLoadModelJsonFile()
+   {
+      return new File(_userSettingsDir + File.separator + "catalogLoadModel.json");
+   }
 }

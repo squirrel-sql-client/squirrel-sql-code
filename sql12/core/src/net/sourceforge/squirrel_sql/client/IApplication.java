@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
+import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.CatalogLoadModelManager;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
@@ -92,6 +93,8 @@ public interface IApplication
 	SQLDriverManager getSQLDriverManager();
 
 	AliasesAndDriversManager getAliasesAndDriversManager();
+
+	CatalogLoadModelManager getCatalogLoadModelManager();
 
 	SquirrelPreferences getSquirrelPreferences();
 

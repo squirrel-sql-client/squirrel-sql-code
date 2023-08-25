@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeSearchResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -136,7 +137,7 @@ public class CatalogsPanelController
       api.refreshTree(true);
 
       String schema = null;
-      if (_session.getSQLConnection().getSQLMetaData().isMSSQLServerOrSybase())
+      if (DialectFactory.isMSSQLServer(_session.getSQLConnection().getSQLMetaData()) || DialectFactory.isSyBase(_session.getSQLConnection().getSQLMetaData()))
       {
          schema = "dbo";
       }

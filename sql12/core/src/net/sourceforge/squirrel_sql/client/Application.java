@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
+import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.CatalogLoadModelManager;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.startupconnect.AppStartupSessionStarter;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
@@ -93,7 +94,13 @@ import java.util.*;
  * @author Lynn Pye
  */
 public class Application implements IApplication
-{	
+{
+	/**
+	 * + 1 to prevent
+	 * IllegalStateException: Programmer: Please increase _maxNumberOffCallsToWriteUpperLine to make the Progressbar work right
+	 */
+	public static final int NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 18 + 1;
+
 	private static ILogger s_log = LoggerController.createLogger(Application.class);
 
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Application.class);
@@ -190,6 +197,7 @@ public class Application implements IApplication
 	private MultipleSqlResultExportChannel _multipleSqlResultExportChannel = new MultipleSqlResultExportChannel();
 
 	private DBDiffState _DBDiffState = new DBDiffState();
+	private CatalogLoadModelManager _catalogLoadModelManager = new CatalogLoadModelManager();
 
 	public Application()
 	{
@@ -222,7 +230,7 @@ public class Application implements IApplication
 		SquirrelSplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SquirrelSplashScreen(_globalPreferences, 18);
+			splash = new SquirrelSplashScreen(_globalPreferences, NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK);
 		}
 
       executeStartupTasks(splash, args);
@@ -335,6 +343,10 @@ public class Application implements IApplication
       // Save user specific WIKI configurations
       saveUserSpecificWikiConfigurations();
       s_log.info("saveApplicationState: saveUserSpecificWikiConfigurations() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      // Save user specific WIKI configurations
+      _catalogLoadModelManager.save();
+      s_log.info("saveApplicationState: _catalogLoadModelManager.save() ELAPSED: " + (System.currentTimeMillis() - begin));
 
 		_globalPreferences.setFirstRun(false);
 		_globalPreferences.save();
@@ -566,6 +578,12 @@ public class Application implements IApplication
 	{
 		return _aliasesAndDriversManager;
 	}
+
+   @Override
+   public CatalogLoadModelManager getCatalogLoadModelManager()
+   {
+      return _catalogLoadModelManager;
+   }
 
 	@Override
 	public IPlugin getDummyAppPlugin()
@@ -809,20 +827,23 @@ public class Application implements IApplication
 	{
 		if (args == null) { throw new IllegalArgumentException("ApplicationArguments == null"); }
 
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 1
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createSessionManager"));
-		// AliasMaintSheetFactory.initialize(this);
-		// DriverMaintSheetFactory.initialize(this);
+
 		_sessionManager = new SessionManager();
 
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 2
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingprefs"));
 
 		final boolean loadPlugins = args.getLoadPlugins();
 		if (loadPlugins)
 		{
+			// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 3
 			indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingplugins"));
 		}
 		else
 		{
+			// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 3
 			indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.notloadingplugins"));
 		}
 
@@ -849,16 +870,19 @@ public class Application implements IApplication
       // Final argument validation after all plugins have been loaded.  This will exit if there is an unrecognized argument in the list.
       args.validateArgs(true);
 
-      indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingactions"));
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 4
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingactions"));
 		_actionRegistry = new ActionRegistry();
 
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 5
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadinguseracc"));
 		_actionRegistry.loadActionKeys(_globalPreferences.getActionKeys());
 
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 6
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createjdbcmgr"));
 		initDriverManager();
 
-		// TODO: pass in a message handler so user gets error msgs.
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 7
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingjdbc"));
 		initAppFiles();
 
@@ -871,19 +895,18 @@ public class Application implements IApplication
 		}
 
 		initDataCache();
-
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 8
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createWindowManager"));
 		_windowManager = new WindowManager(args.getUserInterfaceDebugEnabled());
 
-		// _mainFrame = new MainFrame(this);
-
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 9
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
-		// AliasMaintSheetFactory.initialize(this);
-		// DriverMaintSheetFactory.initialize(this);
 
 		String initializingPlugins = s_stringMgr.getString("Application.splash.initializingplugins");
 		String notloadingplugins = s_stringMgr.getString("Application.splash.notloadingplugins");
 		String task = (loadPlugins ? initializingPlugins : notloadingplugins);
+
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 10
 		indicateNewStartupTask(splash, task);
 		if (loadPlugins)
 		{
@@ -900,33 +923,37 @@ public class Application implements IApplication
 			}
 		}
 
-		// i18n[Application.splash.loadsqlhistory=Loading SQL history...]
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 11
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.recentfiles"));
 		loadRecentFileHistory();
 
-
-		// i18n[Application.splash.loadsqlhistory=Loading SQL history...]
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 12
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadsqlhistory"));
 		loadSQLHistory();
 
-		// i18n[Application.splash.loadcellselections=Loading Cell Import/Export selections...]
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 13
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadcellselections"));
 		loadCellImportExportInfo();
 
-		// i18n[Application.splash.loadeditselections=Loading Edit 'Where' Columns selections...]
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 14
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadeditselections"));
 		loadEditWhereColsInfo();
 
-		// i18n[Application.splash.loaddatatypeprops=Loading Data Type Properties...]
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 15
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loaddatatypeprops"));
 		loadDTProperties();
-		
-		// i18n[Application.splash.loadsqlhistory=Loading user specific WIKI configurations...]
+
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 16
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadUserSpecificWikiConfiguration"));
 		loadUserSpecificWikiTableConfigurations();
 
-		// i18n[Application.splash.showmainwindow=Showing main window...]
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 17
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadCatalogLoadModel"));
+		_catalogLoadModelManager.load();
+
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 18
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.showmainwindow"));
+
 		_windowManager.moveToFront(_windowManager.getMainFrame());
 		_threadPool.setParentForMessages(_windowManager.getMainFrame());
 
@@ -939,7 +966,6 @@ public class Application implements IApplication
 			}
 			catch (BaseException ex)
 			{
-				// i18n[Application.error.showhelpwindow=Error showing help window]
 				s_log.error(s_stringMgr.getString("Application.error.showhelpwindow"), ex);
 			}
 		}

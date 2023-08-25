@@ -228,7 +228,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		boolean hasGuest = false;
 		boolean hasSysFun = false;
 
-		final boolean isMSSQLorSYBASE = isMSSQLServerOrSybase();
+		final boolean isMSSQLorSYBASE = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 
 		final boolean isDB2 = DialectFactory.isDB2(this);
 
@@ -300,7 +300,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (Exception ex)
 		{
-			boolean isSQLServer = isMSSQLServerOrSybase();
+			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 
 			if (isSQLServer)
 			{
@@ -313,11 +313,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		_cache.put(key, value);
 
 		return value.booleanValue();
-	}
-
-	public boolean isMSSQLServerOrSybase()
-	{
-		return DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 	}
 
 	/**
@@ -335,7 +330,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (Exception ex)
 		{
-			boolean isSQLServer = isMSSQLServerOrSybase();
+			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
@@ -541,7 +536,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			boolean isSQLServer = isMSSQLServerOrSybase();
+			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 
 			if (isSQLServer)
 			{
@@ -571,7 +566,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			boolean isSQLServer = isMSSQLServerOrSybase();
+			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 
 			if (isSQLServer)
 			{
@@ -605,7 +600,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			boolean isSQLServer = isMSSQLServerOrSybase();
+			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 
 			if (isSQLServer)
 			{
@@ -697,12 +692,16 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return list.toArray(new DataTypeInfo[list.size()]);
 	}
 
-	public IProcedureInfo[] getProcedures(String[] catalogs, String schemaPattern, String procedureNamePattern, ProgressCallBack progressCallBack)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedures(java.lang.String,
+	 *      java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
+	 */
+	public IProcedureInfo[] getProcedures(String catalog, String schemaPattern, String procedureNamePattern, ProgressCallBack progressCallBack)
 			throws SQLException
 	{
 		List<IProcedureInfo> procedureAndFunctionInfos = new ArrayList<>();
-		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getProcedureInfos(catalogs, schemaPattern, procedureNamePattern, progressCallBack, this));
-		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getFunctionInfos(catalogs, schemaPattern, procedureNamePattern, progressCallBack, this));
+		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getProcedureInfos(catalog, schemaPattern, procedureNamePattern, progressCallBack, this));
+		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getFunctionInfos(catalog, schemaPattern, procedureNamePattern, progressCallBack, this));
 
 		return procedureAndFunctionInfos.toArray(new IProcedureInfo[0]);
 	}
@@ -984,7 +983,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getUDTs(java.lang.String,
 	 *      java.lang.String, java.lang.String, int[])
 	 */
-	public IUDTInfo[] getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types, ProgressCallBack progressCallBack) throws SQLException
+	public synchronized IUDTInfo[] getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types, ProgressCallBack progressCallBack) throws SQLException
 	{
 		DatabaseMetaData md = privateGetJDBCMetaData();
 		ArrayList<UDTInfo> list = new ArrayList<>();
