@@ -15,7 +15,7 @@ public class CatalogsPanel extends JPanel
 	JLabel lblCatalogs;
 
 	JComboBox catalogsCmb;
-	JButton btnConfiCataloLoading;
+	JButton btnConfiCatalogLoading;
 
 	public CatalogsPanel()
 	{
@@ -32,16 +32,16 @@ public class CatalogsPanel extends JPanel
 		add(catalogsCmb, gbc);
 
 		gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,10),0,0);
-		btnConfiCataloLoading = GUIUtils.styleAsToolbarButton(new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.THREE_DOTS)));
+		btnConfiCatalogLoading = GUIUtils.styleAsToolbarButton(new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.THREE_DOTS)));
 		Dimension configButtonSize = new Dimension(catalogsCmb.getPreferredSize().height + 1, catalogsCmb.getPreferredSize().height + 1);
-		btnConfiCataloLoading.setPreferredSize(configButtonSize);
-		btnConfiCataloLoading.setToolTipText(s_stringMgr.getString("CatalogsPanel.configure.catalogs.to.load"));
-		add(btnConfiCataloLoading, gbc);
+		btnConfiCatalogLoading.setPreferredSize(configButtonSize);
+		btnConfiCatalogLoading.setToolTipText(s_stringMgr.getString("CatalogsPanel.configure.catalogs.to.load"));
+		add(btnConfiCatalogLoading, gbc);
 	}
 
 	public void initSizeAndBackgroundAfterCatalogsComboFilled()
 	{
-		int preferredWidth = lblCatalogs.getPreferredSize().width + catalogsCmb.getPreferredSize().width + btnConfiCataloLoading.getPreferredSize().width + 20;
+		int preferredWidth = lblCatalogs.getPreferredSize().width + catalogsCmb.getPreferredSize().width + btnConfiCatalogLoading.getPreferredSize().width + 20;
 		GUIUtils.setPreferredWidth(this, preferredWidth);
 		GUIUtils.setMinimumWidth(this, preferredWidth);
 		GUIUtils.setMaximumWidth(this, preferredWidth);

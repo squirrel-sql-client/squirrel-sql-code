@@ -5,27 +5,15 @@ import java.util.List;
 
 public class AliasCatalogLoadModelJsonBean
 {
-   private boolean _loadAllCatalogs = false;
+   private List<String> _additionalUserChosenCatalogs = new ArrayList<>();
 
-   private List<String> _catalogsToLoad = new ArrayList<>();
-
-   public boolean isLoadAllCatalogs()
+   public List<String> getAdditionalUserChosenCatalogs()
    {
-      return _loadAllCatalogs;
+      return _additionalUserChosenCatalogs;
    }
 
-   public void setLoadAllCatalogs(boolean loadAllCatalogs)
+   public void setAdditionalUserChosenCatalogs(List<String> additionalUserChosenCatalogs)
    {
-      _loadAllCatalogs = loadAllCatalogs;
-   }
-
-   public List<String> getCatalogsToLoad()
-   {
-      return _catalogsToLoad;
-   }
-
-   public void setCatalogsToLoad(List<String> catalogsToLoad)
-   {
-      _catalogsToLoad = catalogsToLoad;
+      _additionalUserChosenCatalogs = additionalUserChosenCatalogs;
    }
 }
