@@ -105,11 +105,14 @@ public class AliasCatalogLoadModel
    /**
     * Just to represent a simple caller given catalog name.
     * Maybe if one day complexity grows this class will become an interface with two implementations.
+    *
+    * The catalogName parameter is null regularly, especially for databases that don't support schemas.
     */
    public static AliasCatalogLoadModel of(String catalogName)
    {
       AliasCatalogLoadModel ret = new AliasCatalogLoadModel();
-      ret._catalogNamesToLoad = List.of(catalogName);
+      ret._catalogNamesToLoad = new ArrayList<>();
+      ret._catalogNamesToLoad.add(catalogName);
       return ret;
    }
 }

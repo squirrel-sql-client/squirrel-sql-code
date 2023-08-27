@@ -148,8 +148,9 @@ public class CatalogsPanelController
       api.refreshTree(true);
 
       String schema = null;
-      if (DialectFactory.isMSSQLServer(_session.getSQLConnection().getSQLMetaData()) || DialectFactory.isSyBase(_session.getSQLConnection().getSQLMetaData()))
+      if (DialectFactory.isMSSQLServer(_session.getSQLConnection().getSQLMetaData()))
       {
+         // dbo is MSSQL's default schema.
          schema = "dbo";
       }
 
