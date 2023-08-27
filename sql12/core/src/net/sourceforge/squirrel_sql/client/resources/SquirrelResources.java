@@ -188,6 +188,7 @@ public class SquirrelResources extends Resources
 		String EDIT_RED_DOT = "editRedDot";
 
 		String THREE_DOTS = "threedots";
+		String THREE_DOTS_CHECKED = "threedots_checked";
 
 		String DELETE = "delete";
 

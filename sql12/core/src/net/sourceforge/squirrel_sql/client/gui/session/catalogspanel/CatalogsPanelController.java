@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.session.catalogspanel;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
@@ -43,11 +44,19 @@ public class CatalogsPanelController
       _session = session;
       _parentComponent = parentComponent;
       _catalogsPanel = new CatalogsPanel();
+      updateAdditionalCatalogsIcon();
+
 
       _catalogsComboListener = e -> onCatalogSelected();
       _connectionPropetryListener = evt -> GUIUtils.processOnSwingEventThread(() -> onConnectionPropertyChanged(evt));
 
       init();
+   }
+
+   private void updateAdditionalCatalogsIcon()
+   {
+      boolean hasAdditionalCatalogs = !Main.getApplication().getCatalogLoadModelManager().getAliasCatalogLoadModelJsonBean(_session.getAlias()).getAdditionalUserChosenCatalogs().isEmpty();
+      _catalogsPanel.setHasAdditionalCatalogs(hasAdditionalCatalogs);
    }
 
    private void init()
@@ -95,6 +104,7 @@ public class CatalogsPanelController
    {
       if(new AdditionalCatalogsController(_session).isOk())
       {
+         updateAdditionalCatalogsIcon();
          refreshSchemaAndTree();
       }
    }

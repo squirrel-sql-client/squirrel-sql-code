@@ -48,4 +48,15 @@ public class CatalogsPanel extends JPanel
 		GUIUtils.inheritBackground(this);
 	}
 
+	public void setHasAdditionalCatalogs(boolean hasAdditionalCatalogs)
+	{
+		if(hasAdditionalCatalogs)
+		{
+			btnConfiCatalogLoading.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.THREE_DOTS_CHECKED));
+		}
+		else
+		{
+			btnConfiCatalogLoading.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.THREE_DOTS));
+		}
+	}
 }

@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/17
+   For databases that support catalogs SQuirreL now allows to specify additional catalogs to load.
+   See the new toolbar button with the three dots icon next to the
+   catalogs combo box at the upper left of a Session panel.
+
 Hibernate Plugin: Now supports Hibernate 6 and Jakarta Persistence.
 
 Query connection pool:
@@ -459,7 +464,7 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/1
   For Oracle databases right mouse click on table in Object tree --> Scripts --> Create Table Script
   scripted columns of type number as decimal.
 
-#1508 MS SQL Server: When the catalog was switched by SQuirreL's catalogs combobox
+#1508 MS SQL Server: When the catalog was switched by SQuirreL's catalogs combo box
   the subsequent Object tree reload didn't work.
   The reason is a bug of the MSSQL JDBC driver (https://github.com/microsoft/mssql-jdbc).
   The logged message of the bug is:

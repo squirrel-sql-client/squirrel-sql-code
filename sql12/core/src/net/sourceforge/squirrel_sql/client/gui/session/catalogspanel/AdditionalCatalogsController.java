@@ -11,8 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class AdditionalCatalogsController
 {
@@ -31,7 +29,10 @@ public class AdditionalCatalogsController
          AliasCatalogLoadModelJsonBean bean = Main.getApplication().getCatalogLoadModelManager().getAliasCatalogLoadModelJsonBean(session.getAlias());
 
          DefaultListModel<CatalogChecked> listModel = new DefaultListModel<>();
-         listModel.addAll(List.of(catalogs).stream().map(c -> createCatalogChecked(c, bean)).collect(Collectors.toList()));
+         for (String catalog : catalogs)
+         {
+            listModel.addElement(createCatalogChecked(catalog, bean));
+         }
 
          _dlg.chkLstCatalogs.setModel(listModel);
 
@@ -47,6 +48,9 @@ public class AdditionalCatalogsController
             }
          });
 
+
+         _dlg.btnSelectAll.addActionListener(e -> onSelectAll());
+         _dlg.btnInvertSelection.addActionListener(e -> onInvertSelection());
          _dlg.btnOk.addActionListener(e -> onOk(session));
 
          GUIUtils.initLocation(_dlg, 400, 600);
@@ -62,10 +66,31 @@ public class AdditionalCatalogsController
       }
    }
 
+   private void onInvertSelection()
+   {
+      for (int i = 0; i < _dlg.chkLstCatalogs.getModel().getSize(); i++)
+      {
+         CatalogChecked catalogChecked = _dlg.chkLstCatalogs.getModel().getElementAt(i);
+         catalogChecked.setChecked(!catalogChecked.isChecked());
+      }
+      _dlg.chkLstCatalogs.repaint();
+   }
+
+   private void onSelectAll()
+   {
+      for (int i = 0; i < _dlg.chkLstCatalogs.getModel().getSize(); i++)
+      {
+          _dlg.chkLstCatalogs.getModel().getElementAt(i).setChecked(true);
+      }
+      _dlg.chkLstCatalogs.repaint();
+   }
+
    private void onMouseClicked(MouseEvent event)
    {
       int index = _dlg.chkLstCatalogs.locationToIndex(event.getPoint());
-      if (index >= 0 && index < _dlg.chkLstCatalogs.getModel().getSize())
+      if (    index >= 0
+           && index < _dlg.chkLstCatalogs.getModel().getSize()
+           && _dlg.chkLstCatalogs.getCellBounds(index, index).contains(event.getPoint()))
       {
          CatalogChecked catalogChecked = _dlg.chkLstCatalogs.getModel().getElementAt(index);
          catalogChecked.setChecked(!catalogChecked.isChecked());
