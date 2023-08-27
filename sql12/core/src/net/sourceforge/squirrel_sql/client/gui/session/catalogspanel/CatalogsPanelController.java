@@ -76,6 +76,9 @@ public class CatalogsPanelController
          setCatalogs(catalogs, selected);
          _catalogsPanel.catalogsCmb.addActionListener(_catalogsComboListener);
 
+         _catalogsPanel.btnConfiCatalogLoading.addActionListener(e -> onConfigureCatalogLoading());
+
+
          _catalogsPanel.initSizeAndBackgroundAfterCatalogsComboFilled();
          _catalogsPanel.setVisible(true);
          _parentComponent.validate();
@@ -85,6 +88,14 @@ public class CatalogsPanelController
       catch (SQLException e)
       {
          throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   private void onConfigureCatalogLoading()
+   {
+      if(new AdditionalCatalogsController(_session).isOk())
+      {
+         refreshSchemaAndTree();
       }
    }
 
