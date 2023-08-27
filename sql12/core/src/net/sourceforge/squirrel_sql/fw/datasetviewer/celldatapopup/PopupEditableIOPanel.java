@@ -64,7 +64,7 @@ public class PopupEditableIOPanel extends JPanel
 	public static final String ACTION_IMPORT = "import";
 
 	// The text area displaying the object contents
-	private final JTextArea _ta;
+	private final JTextArea _textArea;
 
 	// the scroll pane that holds the text area
 	private final JScrollPane _scrollPane;
@@ -110,7 +110,7 @@ public class PopupEditableIOPanel extends JPanel
 			else if (previousRadixListItem.equals("Octal")) base = 8;
 			else if (previousRadixListItem.equals("Binary")) base = 2;
 
-			Byte[] bytes = BinaryDisplayConverter.convertToBytes(_ta.getText(),
+			Byte[] bytes = BinaryDisplayConverter.convertToBytes(_textArea.getText(),
 				base, previousShowAscii);
 
 			// return the expected format for this data
@@ -119,7 +119,7 @@ public class PopupEditableIOPanel extends JPanel
 			else if (radixList.getSelectedItem().equals("Octal")) base = 8;
 			else if (radixList.getSelectedItem().equals("Binary")) base = 2;
 
-			((RestorableJTextArea)_ta).updateText(
+			((RestorableJTextArea) _textArea).updateText(
 				BinaryDisplayConverter.convertToString(bytes,
 				base, showAscii.isSelected()));
 
@@ -151,28 +151,28 @@ public class PopupEditableIOPanel extends JPanel
 		_popupMenu = new TextPopupMenu();
 
 		_colDef = colDef;
-		_ta = CellComponentFactory.getJTextArea(colDef, value);
+		_textArea = CellComponentFactory.getJTextArea(colDef, value);
 
 		if (isEditable)
 		{
-			_ta.setEditable(true);
-			_ta.setBackground(SquirrelConstants.CELL_EDITABLE_COLOR);	// tell user it is editable
+			_textArea.setEditable(true);
+			_textArea.setBackground(SquirrelConstants.CELL_EDITABLE_COLOR);	// tell user it is editable
 		}
 		else
 		{
-			_ta.setEditable(false);
+			_textArea.setEditable(false);
 		}
 
 
-		_ta.setLineWrap(true);
-		_ta.setWrapStyleWord(true);
+		_textArea.setLineWrap(true);
+		_textArea.setWrapStyleWord(true);
 
 		setLayout(new BorderLayout());
 
 		// add a panel containing binary data editing options, if needed
 		JPanel displayPanel = new JPanel();
 		displayPanel.setLayout(new BorderLayout());
-		_scrollPane = new JScrollPane(_ta);
+		_scrollPane = new JScrollPane(_textArea);
 		/*
 		 * TODO: When 1.4 is the earliest version supported, include
 		 * the following line here:
@@ -181,7 +181,7 @@ public class PopupEditableIOPanel extends JPanel
 		 * setWheelScrollingEnabled function is not available in java 1.3.
 		 */
 
-		_textFindCtrl = new TextFindCtrl(_ta, _scrollPane);
+		_textFindCtrl = new TextFindCtrl(_textArea, _scrollPane);
 		displayPanel.add(_textFindCtrl.getContainerPanel(), BorderLayout.CENTER);
 		if (CellComponentFactory.useBinaryEditingPanel(colDef))
 		{
@@ -219,16 +219,16 @@ public class PopupEditableIOPanel extends JPanel
 		}
 
 		_chkMnuLineWrap = new JCheckBoxMenuItem(new LineWrapAction());
-		_chkMnuLineWrap.setSelected(_ta.getLineWrap());
+		_chkMnuLineWrap.setSelected(_textArea.getLineWrap());
 		_popupMenu.add(_chkMnuLineWrap);
 
 		_chkMnuWordWrap = new JCheckBoxMenuItem(new WordWrapAction());
-		_chkMnuWordWrap.setSelected(_ta.getWrapStyleWord());
+		_chkMnuWordWrap.setSelected(_textArea.getWrapStyleWord());
 		_popupMenu.add(_chkMnuWordWrap);
 
 		_popupMenu.add(new XMLReformatAction());
 		_popupMenu.add(new CompareToClipAction()).setToolTipText(s_stringMgr.getString("popupEditableIoPanel.compare.to.clip.tooltip"));
-		_popupMenu.setTextComponent(_ta);
+		_popupMenu.setTextComponent(_textArea);
 	}
 
 	/**
@@ -424,7 +424,7 @@ public class PopupEditableIOPanel extends JPanel
 	 * on to the text area.
 	 */
 	public void requestFocus() {
-		_ta.requestFocus();
+		_textArea.requestFocus();
 	}
 
 	/**
@@ -979,7 +979,7 @@ public class PopupEditableIOPanel extends JPanel
 					base, showAscii.isSelected());
 			}
 
-			((RestorableJTextArea)_ta).updateText(replacementText);
+			((RestorableJTextArea) _textArea).updateText(replacementText);
 		}
 		catch (Exception ex) {
 
@@ -1081,7 +1081,7 @@ public class PopupEditableIOPanel extends JPanel
 					}
 				}
 			};
-			_ta.addMouseListener(_lis);
+			_textArea.addMouseListener(_lis);
 		}
 	}
 
@@ -1090,7 +1090,7 @@ public class PopupEditableIOPanel extends JPanel
 		super.removeNotify();
 		if (_lis != null)
 		{
-			_ta.removeMouseListener(_lis);
+			_textArea.removeMouseListener(_lis);
 			_lis = null;
 		}
 	}
@@ -1105,7 +1105,7 @@ public class PopupEditableIOPanel extends JPanel
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_ta != null)
+			if (_textArea != null)
 			{
 				lineWrapWordWrapChanged(false);
 			}
@@ -1123,7 +1123,7 @@ public class PopupEditableIOPanel extends JPanel
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_ta != null)
+			if (_textArea != null)
 			{
 				lineWrapWordWrapChanged(true);
 			}
@@ -1134,25 +1134,25 @@ public class PopupEditableIOPanel extends JPanel
 	{
 		if(wordWrapChanged)
 		{
-			_ta.setWrapStyleWord(!_ta.getWrapStyleWord());
-			if(_ta.getWrapStyleWord())
+			_textArea.setWrapStyleWord(!_textArea.getWrapStyleWord());
+			if(_textArea.getWrapStyleWord())
 			{
 				// Word wrap requires line wrap.
-				_ta.setLineWrap(true);
+				_textArea.setLineWrap(true);
 			}
 		}
 		else
 		{
-			_ta.setLineWrap(!_ta.getLineWrap());
-			if(_ta.getWrapStyleWord())
+			_textArea.setLineWrap(!_textArea.getLineWrap());
+			if(_textArea.getWrapStyleWord())
 			{
 				// Word wrap requires line wrap.
-				_ta.setWrapStyleWord(false);
+				_textArea.setWrapStyleWord(false);
 			}
 		}
 
-		_chkMnuLineWrap.setSelected(_ta.getLineWrap());
-		_chkMnuWordWrap.setSelected(_ta.getWrapStyleWord());
+		_chkMnuLineWrap.setSelected(_textArea.getLineWrap());
+		_chkMnuWordWrap.setSelected(_textArea.getWrapStyleWord());
 	}
 
 
@@ -1196,11 +1196,11 @@ public class PopupEditableIOPanel extends JPanel
 		}
 
 
-		String cellText = _ta.getSelectedText();
+		String cellText = _textArea.getSelectedText();
 
 		if(StringUtilities.isEmpty(cellText, true))
 		{
-			cellText = _ta.getText();
+			cellText = _textArea.getText();
 		}
 
 		if(StringUtilities.isEmpty(cellText, true))
@@ -1214,12 +1214,12 @@ public class PopupEditableIOPanel extends JPanel
 		Path rightCellTextTempFile = TableSelectionDiffUtil.createRightTempFile(cellText);
 
 		String title = s_stringMgr.getString("popupEditableIoPanel.clipboard.vs.cell.data");
-		DBDIffService.showDiff(leftClipboardTempFile, rightCellTextTempFile, title, GUIUtils.getOwningWindow(_ta));
+		DBDIffService.showDiff(leftClipboardTempFile, rightCellTextTempFile, title, GUIUtils.getOwningWindow(_textArea));
 	}
 
 	private void reformat(Window owningWindow)
 	{
-		_ta.setText(CellDataPopupFormatter.format(_ta.getText()));
+		_textArea.setText(CellDataPopupFormatter.format(_textArea.getText()));
 	}
 
 
@@ -1236,17 +1236,17 @@ public class PopupEditableIOPanel extends JPanel
 	 */
 	private String getTextAreaCannonicalForm() {
 		// handle null
-		if (_ta.getText() == null ||
-			_ta.getText().equals(StringUtilities.NULL_AS_STRING) ||
-			_ta.getText().length() == 0)
-			return _ta.getText();
+		if (_textArea.getText() == null ||
+			_textArea.getText().equals(StringUtilities.NULL_AS_STRING) ||
+			_textArea.getText().length() == 0)
+			return _textArea.getText();
 
 		// if the data is not binary, then there is no need for conversion.
 		// if the data is Hex with ASCII not shown as chars, then no conversion needed.
 		if (radixList == null ||
 			(radixList.getSelectedItem().equals("Hex") && ! showAscii.isSelected()) ) {
 			// no need for conversion
-			return _ta.getText();
+			return _textArea.getText();
 		}
 
 		// The field is binary and not in the format expected by the DataType
@@ -1256,7 +1256,7 @@ public class PopupEditableIOPanel extends JPanel
 		else if (radixList.getSelectedItem().equals("Binary")) base = 2;
 
 		// the following can cause and exception if the text is not formatted correctly
-		Byte[] bytes = BinaryDisplayConverter.convertToBytes(_ta.getText(),
+		Byte[] bytes = BinaryDisplayConverter.convertToBytes(_textArea.getText(),
 			base, showAscii.isSelected());
 
 		// return the expected format for this data
