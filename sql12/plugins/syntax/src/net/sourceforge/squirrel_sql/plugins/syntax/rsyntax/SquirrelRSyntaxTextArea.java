@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.PrioritizedCaretMouseListener;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
@@ -59,6 +60,10 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 
       _rSyntaxHighlightTokenMatcherProxy.setDelegate(_propertiesWrapper.getSyntaxHighlightTokenMatcher(session, this, sqlEntryPanelIdentifier));
 
+      SquirrelRSyntaxCaretWithPrioritizedMouseListener caret = new SquirrelRSyntaxCaretWithPrioritizedMouseListener();
+      caret.setBlinkRate(getCaret().getBlinkRate());
+      getCaret().deinstall(this);
+      setCaret(caret);
 
       modifyKeystrokesFromPreferences(prefs);
 
@@ -342,4 +347,8 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       super.replaceSelection(StringUtilities.replaceNonBreakingSpacesBySpaces(text));
    }
 
+   public void setPrioritizedCaretMouseListener(PrioritizedCaretMouseListener prioritizedCaretMouseListener)
+   {
+      ((SquirrelRSyntaxCaretWithPrioritizedMouseListener)getCaret()).setPrioritizedCaretMouseListener(prioritizedCaretMouseListener);
+   }
 }

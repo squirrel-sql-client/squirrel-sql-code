@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL editor: Improvements of multiple caret/cursor editing:
+  With ctrl and alt keys down additional can be added by mouse click.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/17
    For databases that support catalogs SQuirreL now allows to specify additional catalogs to load.
    See the new toolbar button with the three dots icon next to the

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.session.defaultentry;
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -19,19 +19,19 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoManager;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 
@@ -53,7 +53,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	
 	public DefaultSQLEntryPanel(ISession session)
 	{
-		super(session.getApplication());
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
@@ -98,7 +97,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
    }
 
 
-   /**
+	/**
 	 * If the component returned by <TT>getTextComponent</TT> contains
 	 * its own scroll bars return <TT>true</TT> other wise this component
 	 * will be wrapped in the scroll pane when added to the SQL panel.
@@ -387,5 +386,10 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	public void setUndoManager(UndoManager manager)
 	{
 		_defaultTextArea.getDocument().addUndoableEditListener(manager);
+	}
+
+	public void setPrioritizedCaretMouseListener(PrioritizedCaretMouseListener prioritizedCaretMouseListener)
+	{
+		_defaultTextArea.setPrioritizedCaretMouseListener(prioritizedCaretMouseListener);
 	}
 }

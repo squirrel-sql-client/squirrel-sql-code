@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret;
 
-import net.sourceforge.squirrel_sql.client.session.SquirrelDefaultTextArea;
+import net.sourceforge.squirrel_sql.client.session.defaultentry.SquirrelDefaultTextArea;
 
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 public class EditorSpecifics
 {

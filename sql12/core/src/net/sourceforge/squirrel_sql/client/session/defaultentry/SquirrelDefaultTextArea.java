@@ -1,5 +1,7 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.session.defaultentry;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.PrioritizedCaretMouseListener;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.EditorPaintService;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
@@ -25,6 +27,10 @@ public class SquirrelDefaultTextArea extends JTextArea
 
       _textAreaPaintHandler = new TextAreaPaintHandler(this, EditorPaintService.EMPTY, session);
 
+      SquirrelDefaultCaretWithPrioritizedMouseListener caret = new SquirrelDefaultCaretWithPrioritizedMouseListener();
+      caret.setBlinkRate(getCaret().getBlinkRate());
+      getCaret().deinstall(this);
+      setCaret(caret);
 
       /////////////////////////////////////////////////////////////////////
       // To prevent the caret from being hidden by the current SQL mark
@@ -74,5 +80,10 @@ public class SquirrelDefaultTextArea extends JTextArea
    public void replaceSelection(String text)
    {
       super.replaceSelection(StringUtilities.replaceNonBreakingSpacesBySpaces(text));
+   }
+
+   public void setPrioritizedCaretMouseListener(PrioritizedCaretMouseListener prioritizedCaretMouseListener)
+   {
+      ((SquirrelDefaultCaretWithPrioritizedMouseListener)getCaret()).setPrioritizedCaretMouseListener(prioritizedCaretMouseListener);
    }
 }

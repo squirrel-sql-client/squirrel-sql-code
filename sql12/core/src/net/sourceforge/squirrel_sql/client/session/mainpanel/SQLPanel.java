@@ -380,8 +380,6 @@ public class SQLPanel extends JPanel
 		_changeTracker.close();
 
 		_sqlPanelListenerManager.fireSQLPanelParentClosing();
-
-		_sqlEntry.dispose();
    }
 
 
