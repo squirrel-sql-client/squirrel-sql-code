@@ -1,27 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextActionUtil;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextBeginAction;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextBeginLineAction;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextCopyAction;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextCutAction;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextEndAction;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextEndLineAction;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPasteAction;
-import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextSelectAllAction;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaDefaultInputMap;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaUI;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextAreaEditorKit;
 
-import javax.swing.Action;
-import javax.swing.InputMap;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.InputMapUIResource;
 import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
@@ -37,6 +25,8 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 
    private static final KeyStroke RS_KEY_STROKE_LINE_UP = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
    private static final KeyStroke RS_KEY_STROKE_LINE_DOWN = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+
+   private static final KeyStroke RS_KEY_STROKE_SELECT_WORD = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK);
 
    private static final EditorKit _squirrel_defaultKit =
       new RSyntaxTextAreaEditorKit()
@@ -118,6 +108,7 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 
       sharedIM.put(getLineUpKeyStroke(), RTextAreaEditorKit.rtaLineUpAction);
       sharedIM.put(getLineDownKeyStroke(), RTextAreaEditorKit.rtaLineDownAction);
+      sharedIM.put(getSelectWordStroke(), RTextAreaEditorKit.selectWordAction);
 
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
@@ -207,6 +198,10 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
    {
       return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLineDownAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_LINE_DOWN));
    }
+   public static KeyStroke getSelectWordStroke()
+   {
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.selectWordAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_SELECT_WORD));
+   }
 
    @Override
    public EditorKit getEditorKit(JTextComponent tc)
@@ -214,17 +209,6 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       return _squirrel_defaultKit;
    }
 
-
-
-   private static class SQuirrelSelectWordAction extends RSyntaxTextAreaEditorKit.SelectWordAction
-   {
-      public void actionPerformedImpl(ActionEvent e, RTextArea textArea)
-      {
-         int[] wordBoundsAtCursor = SQLEntryPanelUtil.getWordBoundsAtCursor(textArea, false);
-         textArea.setSelectionStart(wordBoundsAtCursor[0]);
-         textArea.setSelectionEnd(wordBoundsAtCursor[1]);
-      }
-   }
 
    private static class SQuirrelCopyAction extends RSyntaxTextAreaEditorKit.CopyAction
    {
