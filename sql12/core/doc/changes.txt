@@ -25,7 +25,7 @@ Query connection pool:
   When a "SET ISOLATION LEVEL ..."-statement is executed
   it is automatically executed on all existing query pool connections, too.
 
-Graph Plugin: Columns in be hidden.
+Graph Plugin: Columns can be hidden.
   Tables with hidden columns are recognizable by the
   checked the hide-config icon in the tables title bar.
 
