@@ -1,0 +1,7 @@
+Nimbus Dark Theme Plugin Change Log
+===============================
+
+1.0.0
+===
+- Initial release, 23 May 2023
+
