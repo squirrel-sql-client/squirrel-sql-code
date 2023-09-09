@@ -327,7 +327,7 @@ public class QueryTokenizer implements IQueryTokenizer
        for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
        {
           QueryHolder sql = iter.next();
-          if (sql.getQuery().startsWith(scriptIncludePrefix) && false == SqlScriptPluginAccessor.startsWithSqlToFileMarker(sql))
+          if (sql.getQuery().startsWith(scriptIncludePrefix) && false == SqlScriptPluginAccessor.handledBySqlToFileHandler(sql))
           {
              try
              {

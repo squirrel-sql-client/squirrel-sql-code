@@ -1,9 +1,8 @@
-package net.sourceforge.squirrel_sql.plugins.sqlscript;
+package net.sourceforge.squirrel_sql.plugins.sqlscript.sqltofile;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportFileWriter;
@@ -19,6 +18,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ProgressAbortFactoryCallbackImpl;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.sql.Connection;
@@ -26,44 +26,38 @@ import java.sql.Statement;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SQLToFileHandler implements ISQLExecutionListener
+public class ExportToFileHandler
 {
-   private final static ILogger s_log = LoggerController.createLogger(SQLToFileHandler.class);
+   private final static ILogger s_log = LoggerController.createLogger(ExportToFileHandler.class);
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLToFileHandler.class);
-   private ISession _session;
-   private ISQLPanelAPI _sqlPaneAPI;
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportToFileHandler.class);
+
+
+   private final ISession _session;
+   private final ISQLPanelAPI _sqlPaneAPI;
 
    private boolean _abortExecution = false;
 
 
-   public SQLToFileHandler(ISession session, ISQLPanelAPI sqlPaneAPI)
+   public ExportToFileHandler(ISession session, ISQLPanelAPI sqlPaneAPI)
    {
       _session = session;
       _sqlPaneAPI = sqlPaneAPI;
    }
 
-   @Override
-   public String statementExecuting(String initialSql)
+   public String exportToFile(String initialSql)
    {
-      if(-1 == initialSql.toUpperCase().indexOf("@FILE"))
-      {
-         return initialSql;
-      }
-
-
       IQueryTokenizer queryTokenizer = _session.getQueryTokenizer();
 
       queryTokenizer.setScriptToTokenize(initialSql);
 
       StringBuilder sqlsNotToWriteToFile = new StringBuilder();
 
-
       while(queryTokenizer.hasQuery())
       {
-         String query = queryTokenizer.nextQuery().getQuery();
+         QueryHolder query = queryTokenizer.nextQuery();
 
-         if(false == startsWithSqlToFileMarker(query))
+         if(false == willBeHandledByMe(query))
          {
             sqlsNotToWriteToFile.append(query);
 
@@ -81,39 +75,25 @@ public class SQLToFileHandler implements ISQLExecutionListener
 
 
 
-         String sqlWithFilePrefix = query.trim();
+         String sqlWithFilePrefix = query.getQuery().trim();
 
          int fileBeginMarkerPos = sqlWithFilePrefix.indexOf('\'');
          if(-1 == fileBeginMarkerPos)
          {
-            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("SQLToFileHandler.noFileBeginMarker"));
+            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToFileHandler.noFileBeginMarker"));
             continue;
          }
 
          int fileEndMarkerPos = sqlWithFilePrefix.indexOf('\'', fileBeginMarkerPos + 1);
          if(-1 == fileEndMarkerPos)
          {
-            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("SQLToFileHandler.noFileEndMarker"));
+            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToFileHandler.noFileEndMarker"));
             continue;
          }
 
          String fileName = sqlWithFilePrefix.substring(fileBeginMarkerPos + 1, fileEndMarkerPos).trim();
 
          File file = new File(fileName);
-
-
-//         if(false == file.canWrite())
-//         {
-//            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("SQLToFileHandler.notAValidFile", fileName));
-//         }
-//         try
-//         {
-//            file.getCanonicalPath();
-//         }
-//         catch (IOException e)
-//         {
-//            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("SQLToFileHandler.notAValidFile", fileName));
-//         }
 
          String sqlToWriteToFile = sqlWithFilePrefix.substring(fileEndMarkerPos + 1).trim();
 
@@ -143,13 +123,18 @@ public class SQLToFileHandler implements ISQLExecutionListener
       }
    }
 
+   public static boolean containsMyMarker(String initialSqlString)
+   {
+      return null != initialSqlString && StringUtils.containsIgnoreCase(initialSqlString.trim(), "@file");
+   }
+
    /**
     * Used in {@link QueryTokenizer#expandFileIncludes(String)} to
     * prevent conflict with {{@link net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer#ORACLE_SCRIPT_INCLUDE_PREFIX}}
     */
-   public static boolean startsWithSqlToFileMarker(String query)
+   public static boolean willBeHandledByMe(QueryHolder sql)
    {
-      return null != query && query.trim().toUpperCase().startsWith("@FILE");
+      return null != sql && StringUtils.startsWithIgnoreCase(sql.getQuery().trim(), "@file");
    }
 
    private void callResultSetExport(TableExportPreferences prefs, File file, String sqlToWriteToFile)
@@ -157,7 +142,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
       try
       {
 
-         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLToFileHandler.writing.file", file.getPath()));
+         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ExportToFileHandler.writing.file", file.getPath()));
          DialectType dialectType = DialectFactory.getDialectType(_session.getMetaData());
          final Connection con = _session.getSQLConnection().getConnection();
          ProgressAbortFactoryCallbackImpl progressControllerFactory = new ProgressAbortFactoryCallbackImpl(_session, sqlToWriteToFile, () -> file);
@@ -184,12 +169,12 @@ public class SQLToFileHandler implements ISQLExecutionListener
       {
          final Statement stat = SQLUtilities.createStatementForStreamingResults(con, dialectType);
          ExportFileWriter.writeFile(new ResultSetExportData(stat, sqlToWriteToFile ,dialectType), prefs, progressControllerFactory.getOrCreate());
-         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLToFileHandler.wrote.file", file.getPath()));
+         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ExportToFileHandler.wrote.file", file.getPath()));
       }
       catch (Throwable e)
       {
          s_log.error(e);
-         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("SQLToFileHandler.error.writing.file", file.getPath(), e));
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToFileHandler.error.writing.file", file.getPath(), e));
 
          _abortExecution = _session.getProperties().getAbortOnError();
       }
@@ -199,10 +184,4 @@ public class SQLToFileHandler implements ISQLExecutionListener
       }
    }
 
-
-   @Override
-   public void statementExecuted(QueryHolder sql) {}
-
-   @Override
-   public void executionFinished() {}
 }

@@ -24,11 +24,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -39,18 +35,10 @@ import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesTab;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataFileOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateFileOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateSelectScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTemplateDataScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.DropTableScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.sqltofile.SQLToFileHandler;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.*;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 
 /**
  * The SQL Script plugin class.

@@ -153,9 +153,6 @@ public class Exporter
          }
          else
          {
-            // i18n[TableExportCsvCommand.writeFileSuccess=Export to file
-            // "{0}" is complete.]
-            ExportController finalCtrl = ctrl;
             GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(ctrl.getOwningWindow(), writtenRows, firstExportedFile), true);
          }
       }

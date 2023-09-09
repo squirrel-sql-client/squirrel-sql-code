@@ -3,6 +3,9 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.sqltofile.ExportToFileHandler;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.sqltofile.ExportToMultiSheetMsExcelHandler;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptCommand;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ScriptUtil;
 
@@ -21,9 +24,9 @@ public class SQLScriptExternalService
       new CreateTableScriptCommand(sess.getObjectTreeAPIOfActiveSessionWindow(), _sqlScriptPlugin).scriptTablesToSQLEntryArea(tis);
    }
 
-   public boolean startsWithSqlToFileMarker(String sql)
+   public boolean handledBySqlToFileHandler(QueryHolder sql)
    {
-      return SQLToFileHandler.startsWithSqlToFileMarker(sql);
+      return ExportToFileHandler.willBeHandledByMe(sql) || ExportToMultiSheetMsExcelHandler.willBeHandledByMe(sql);
    }
 
    public String formatTableName(ITableInfo tableInfo)

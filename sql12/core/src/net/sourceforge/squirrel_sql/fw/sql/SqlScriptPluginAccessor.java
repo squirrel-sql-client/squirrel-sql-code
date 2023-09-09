@@ -10,7 +10,7 @@ public class SqlScriptPluginAccessor
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SqlScriptPluginAccessor.class);
 
-   public static boolean startsWithSqlToFileMarker(QueryHolder sql)
+   public static boolean handledBySqlToFileHandler(QueryHolder sql)
    {
       ScriptPluginInterface si = (ScriptPluginInterface) Main.getApplication().getPluginManager().bindExternalPluginService("sqlscript", ScriptPluginInterface.class);
 
@@ -20,7 +20,7 @@ public class SqlScriptPluginAccessor
          return false;
       }
 
-      return si.startsWithSqlToFileMarker(sql.getQuery());
+      return si.handledBySqlToFileHandler(sql);
    }
 
    public static String formatTableName(ITableInfo tInfo)

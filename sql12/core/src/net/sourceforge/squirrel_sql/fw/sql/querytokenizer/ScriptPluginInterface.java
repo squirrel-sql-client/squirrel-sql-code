@@ -6,7 +6,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 public interface ScriptPluginInterface
 {
-   boolean startsWithSqlToFileMarker(String sql);
+   boolean handledBySqlToFileHandler(QueryHolder sql);
 
    String formatTableName(ITableInfo tInfo);
 
