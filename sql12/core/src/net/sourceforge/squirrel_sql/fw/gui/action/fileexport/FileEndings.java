@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 public enum FileEndings
 {
@@ -26,13 +27,18 @@ public enum FileEndings
 
       for (FileEndings fileEnding : values())
       {
-         if(fileNameToTest.toLowerCase().endsWith("." + fileEnding._ending.toLowerCase()))
+         if (fileEnding.fileEndsWith(fileNameToTest))
          {
             return true;
          }
       }
 
       return false;
+   }
+
+   public boolean fileEndsWith(String fileNameToTest)
+   {
+      return StringUtils.endsWithIgnoreCase(fileNameToTest, "." + _ending);
    }
 
    public static String getByTableExportPreferences(TableExportPreferences prefs)

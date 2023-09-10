@@ -3,12 +3,16 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.sqltofile;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.*;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ProgressAbortFactoryCallbackImpl;
 import org.apache.commons.lang3.StringUtils;
 
 public class ExportToMultiSheetMsExcelHandler
@@ -63,7 +67,7 @@ public class ExportToMultiSheetMsExcelHandler
 
       StringBuilder sqlsNotToWriteToFile = new StringBuilder();
 
-      String currentWorkbook = null;
+      MsExcelWorkbookList workbooks = new MsExcelWorkbookList();
 
       while (queryTokenizer.hasQuery())
       {
@@ -123,10 +127,18 @@ public class ExportToMultiSheetMsExcelHandler
             continue;
          }
 
-         String sheetName;
          if (isWorkbookPrefixed(query))
          {
-            currentWorkbook = sqlWithPrefix.substring(contentBeginMarkerPos + 1, contentEndMarkerPos).trim();
+            String workbook = sqlWithPrefix.substring(contentBeginMarkerPos + 1, contentEndMarkerPos).trim();
+            if(FileEndings.XLS.fileEndsWith(workbook) || FileEndings.XLSX.fileEndsWith(workbook))
+            {
+               workbooks.addCurrentWorkbook(workbook);
+            }
+            else
+            {
+               workbooks.addCurrentWorkbook(workbook + "." + FileEndings.XLSX.get());
+            }
+
             if (sqlWithPrefix.length() <= contentEndMarkerPos)
             {
                Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.missingSheetNameForWorkbook"));
@@ -153,22 +165,35 @@ public class ExportToMultiSheetMsExcelHandler
                Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.noSheetNameEndMarker"));
                continue;
             }
-            sheetName = sqlWithPrefix.substring(sheetBeginMarkerPos + 1, sheetEndMarkerPos).trim();
+
+            String sheetName = sqlWithPrefix.substring(sheetBeginMarkerPos + 1, sheetEndMarkerPos).trim();
+            String sheetSql = sqlWithPrefix.substring(sheetEndMarkerPos + 1).trim();
+            workbooks.addSheetToCurrentWorkbook(sheetName, sheetSql);
          }
          else if (isSheetPrefixed(query))
          {
-            sheetName = sqlWithPrefix.substring(contentBeginMarkerPos + 1, contentEndMarkerPos).trim();
+            String sheetName = sqlWithPrefix.substring(contentBeginMarkerPos + 1, contentEndMarkerPos).trim();
+            String sheetSql = sqlWithPrefix.substring(contentEndMarkerPos + 1).trim();
+            workbooks.addSheetToCurrentWorkbook(sheetName, sheetSql);
          }
 
-         //TableExportPreferences prefs = TableExportPreferencesDAO.createExportPreferencesForFile(fileName);
-         //
-         //callResultSetExport(prefs, file, sqlToWriteToFile);
+         if (workbooks.hasExportReadyWorkbook())
+         {
+            callExportWorkbook(workbooks.checkoutExportReadyWorkbook());
+         }
 
          if (_abortExecution)
          {
             _abortExecution = false;
             break;
          }
+      }
+
+      MsExcelWorkbook workbook = workbooks.checkoutCurrentWorkbook();
+
+      if(null != workbook)
+      {
+         callExportWorkbook(workbook);
       }
 
       if (0 == sqlsNotToWriteToFile.length())
@@ -179,5 +204,32 @@ public class ExportToMultiSheetMsExcelHandler
       {
          return sqlsNotToWriteToFile.toString();
       }
+   }
+
+   private void callExportWorkbook(MsExcelWorkbook workbook)
+   {
+      ////////////////////////////////////////////////////////////
+      // Preparations to call exporter
+      final String sqlsJoined;
+      if(1 == _session.getProperties().getSQLStatementSeparator().length())
+      {
+         sqlsJoined = String.join(_session.getProperties().getSQLStatementSeparator() + "\n", workbook.getSqlList());
+      }
+      else
+      {
+         sqlsJoined = String.join(" " + _session.getProperties().getSQLStatementSeparator() + "\n", workbook.getSqlList());
+      }
+
+      DialectType dialectType = DialectFactory.getDialectType(_session.getMetaData());
+
+      //ResultSetExport[] refResultSetExport = new ResultSetExport[1];
+      ProgressAbortFactoryCallbackImpl progressAbortCallback = new ProgressAbortFactoryCallbackImpl(_session, sqlsJoined, () -> workbook.getWorkbookFile());
+      //refResultSetExport[0] = new ResultSetExport(_session.getSQLConnection().getConnection(), workbook.getSqlList(), dialectType, progressAbortCallback, _sqlPaneAPI.getOwningFrame());
+      //
+      ////////////////////////////////////////////////////////////
+
+      Exporter exporter = new Exporter(() -> progressAbortCallback.getOrCreate(), new ExportControllerProxy(_sqlPaneAPI.getOwningFrame(), workbook));
+      exporter.export();
+
    }
 }

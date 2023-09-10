@@ -18,14 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import java.io.File;
-import java.sql.Connection;
-import java.util.List;
-import javax.swing.JFrame;
-
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
+
+import java.awt.*;
+import java.io.File;
+import java.sql.Connection;
+import java.util.List;
 
 /**
  * Command for exporting a result set to a file.
@@ -36,7 +36,7 @@ public class ResultSetExport
 {
    private final Exporter _exporter;
 
-   public ResultSetExport(Connection con, List<String> sqls, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory, JFrame owner)
+   public ResultSetExport(Connection con, List<String> sqls, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory, Window owner)
    {
       final ExporterCallback exporterCallback = () -> progressControllerFactory.getOrCreate();
 
@@ -49,7 +49,7 @@ public class ResultSetExport
                                             exportControllerRef[0].showDialog();
                                          }, true);
 
-      _exporter = new Exporter(exporterCallback, exportControllerRef[0]);
+      _exporter = new Exporter(exporterCallback, new ExportControllerProxy(exportControllerRef[0]));
    }
 
    public void export()

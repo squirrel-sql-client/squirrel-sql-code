@@ -84,7 +84,7 @@ public class TableExportPreferencesDAO
 
       prefs.setFile(fileName);
 
-      if(fileName.toUpperCase().endsWith("CSV"))
+      if(FileEndings.CSV.fileEndsWith(fileName))
       {
          prefs.setFormatCSV(true);
          prefs.setFormatXLSOld(false);
@@ -92,7 +92,7 @@ public class TableExportPreferencesDAO
          prefs.setFormatXML(false);
          prefs.setFormatJSON(false);
       }
-      else if(fileName.toUpperCase().endsWith("XLS"))
+      else if(FileEndings.XLS.fileEndsWith(fileName))
       {
          prefs.setFormatCSV(false);
          prefs.setFormatXLSOld(true);
@@ -100,7 +100,7 @@ public class TableExportPreferencesDAO
          prefs.setFormatXML(false);
          prefs.setFormatJSON(false);
       }
-      else if(fileName.toUpperCase().endsWith("XLSX"))
+      else if(FileEndings.XLSX.fileEndsWith(fileName))
       {
          prefs.setFormatCSV(false);
          prefs.setFormatXLSOld(false);
@@ -108,7 +108,7 @@ public class TableExportPreferencesDAO
          prefs.setFormatXML(false);
          prefs.setFormatJSON(false);
       }
-      else if(fileName.toUpperCase().endsWith("XML"))
+      else if(FileEndings.XML.fileEndsWith(fileName))
       {
          prefs.setFormatCSV(false);
          prefs.setFormatXLSOld(false);
@@ -116,7 +116,7 @@ public class TableExportPreferencesDAO
          prefs.setFormatXML(true);
          prefs.setFormatJSON(false);
       }
-      else if(fileName.toUpperCase().endsWith("JSON"))
+      else if(FileEndings.JSON.fileEndsWith(fileName))
       {
          prefs.setFormatCSV(false);
          prefs.setFormatXLSOld(false);

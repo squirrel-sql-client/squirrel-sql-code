@@ -56,7 +56,7 @@ public class Exporter
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Exporter.class);
    private static ILogger s_log = LoggerController.createLogger(Exporter.class);
-   private final ExportController _exportController;
+   private final ExportControllerProxy _exportController;
 
    private ProgressAbortCallback _progressController = null;
    private File _singleExportTargetFile;
@@ -64,7 +64,7 @@ public class Exporter
    private long writtenRows = -1;
    private ExporterCallback _exporterCallback;
 
-   public Exporter(ExporterCallback exporterCallback, ExportController exportController)
+   public Exporter(ExporterCallback exporterCallback, ExportControllerProxy exportController)
    {
       _exporterCallback = exporterCallback;
       _exportController = exportController;
@@ -75,7 +75,7 @@ public class Exporter
       exportDialogClosed(_exportController);
    }
 
-   private void exportDialogClosed(ExportController ctrl)
+   private void exportDialogClosed(ExportControllerProxy ctrl)
    {
       try
       {
@@ -103,15 +103,14 @@ public class Exporter
       }
    }
 
-   private void export(ExportController ctrl) throws ExportDataException
+   private void export(ExportControllerProxy ctrl) throws ExportDataException
    {
       this._progressController = _exporterCallback.createProgressController();
 
       File firstExportedFile;
       try
       {
-         //final ExportDataInfoList exportDataInfoList = _exporterCallback.createExportData(ctrl);
-         final ExportDataInfoList exportDataInfoList = ctrl.getExportSourceAccess().createExportData(_progressController);
+         final ExportDataInfoList exportDataInfoList = ctrl.createExportData(_progressController);
 
          if(exportDataInfoList.isEmpty())
          {
@@ -134,11 +133,20 @@ public class Exporter
       }
       catch (Exception e)
       {
-         // Show an error and re-throw the exception.
-         s_log.error(s_stringMgr.getString("AbstractExportCommand.failed"));
-
-         Runnable runnable = () -> JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed"));
+         Runnable runnable = () -> JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed.new"));
          GUIUtils.processOnSwingEventThread(runnable);
+         if (null != _progressController)
+         {
+            try
+            {
+               _progressController.setVisible(false);
+               _progressController.dispose();
+            }
+            catch (Exception ex)
+            {
+               s_log.error("Failed to close progress display.", e);
+            }
+         }
 
          throw e;
       }
@@ -158,13 +166,13 @@ public class Exporter
       }
       else
       {
-         s_log.info(s_stringMgr.getString("AbstractExportCommand.failed"));
+         s_log.info("Probably failed to export the result of the SQL Select statement into a file. No rows were written.");
 
          Runnable runnable = new Runnable()
          {
             public void run()
             {
-               JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed"));
+               JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed.no.rows.written"));
             }
          };
 
@@ -181,9 +189,9 @@ public class Exporter
     * @param exportDataInfoList The data to export
     * @return the number of written data rows or a negative value, if not the whole data are exported.
     */
-   private long writeExport(final ExportController ctrl, ExportDataInfoList exportDataInfoList)
+   private long writeExport(final ExportControllerProxy ctrl, ExportDataInfoList exportDataInfoList)
    {
-      return ExportFileWriter.export(exportDataInfoList, ctrl.getExportSourceAccess().getPreferences(), _progressController, ctrl.getOwningWindow());
+      return ExportFileWriter.export(exportDataInfoList, ctrl.getPreferences(), _progressController, ctrl.getOwningWindow());
    }
 
 

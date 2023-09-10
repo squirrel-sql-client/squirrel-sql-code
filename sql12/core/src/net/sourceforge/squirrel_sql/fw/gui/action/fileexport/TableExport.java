@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 /**
  * Command for exporting a {@link JTable} into a file.
@@ -19,7 +18,7 @@ public class TableExport
    {
       final ExportController exportController = new ExportController(new ExportSourceAccess(table) , SwingUtilities.windowForComponent(table), ExportDialogType.UI_TABLE_EXPORT);
       exportController.showDialog();
-      _exporter = new Exporter(() -> null, exportController);
+      _exporter = new Exporter(() -> null, new ExportControllerProxy(exportController));
    }
 
    public void export()
