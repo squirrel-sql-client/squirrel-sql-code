@@ -12,28 +12,16 @@ import net.sourceforge.squirrel_sql.plugins.laf.DefaultLookAndFeelController;
 import net.sourceforge.squirrel_sql.plugins.laf.LAFPlugin;
 import net.sourceforge.squirrel_sql.plugins.laf.LAFRegister;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
 
 public class FlatLookAndFeelController extends DefaultLookAndFeelController
 {
    private final static ILogger s_log = LoggerController.createLogger(FlatLookAndFeelController.class);
 
    public static final String FLAT_LAF_PLACEHOLDER_CLASS_NAME = new FlatLafPlaceholder().getClass().getName();
-
-   private static ILogger log = LoggerController.createLogger(FlatLookAndFeelController.class);
 
    private FlatThemePreference selectedTheme;
 
@@ -64,7 +52,7 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
          }
          catch (DuplicateObjectException e)
          {
-            log.warn("FlatTheme object already in XMLObjectCache", e);
+            s_log.warn("FlatTheme object already in XMLObjectCache", e);
          }
       }
    }
@@ -94,10 +82,7 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
          }
          catch (IOException e)
          {
-            if (log.isDebugEnabled())
-               log.warn("Could not read: " + json.getAbsolutePath(), e);
-            else
-               log.warn("Could not read: " + json.getAbsolutePath() + "\n\t" + e);
+            s_log.error("Could not read: " + json.getAbsolutePath(), e);
          }
       }
       // FlatLaf .properties
@@ -105,7 +90,7 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
       {
          if (props.getName().equals("extralafs.properties"))
          {
-            log.debug("FlatLaf theme: extralafs.properties skipped");
+            s_log.debug("FlatLaf theme: extralafs.properties skipped");
             continue;
          }
 
@@ -114,17 +99,14 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
          {
             theme.load(in);
             if (theme.getProperty("@baseTheme") == null) {
-               log.info("Properties file doesn't appear to be a FlatLaf theme: " + props);
+               s_log.info("Properties file doesn't appear to be a FlatLaf theme: " + props);
                continue;
             }
             themes.put(props.getName().replaceFirst(".properties$", ""), theme);
          }
          catch (IOException e)
          {
-            if (log.isDebugEnabled())
-               log.warn("Could not read: " + props.getAbsolutePath(), e);
-            else
-               log.warn("Could not read: " + props.getAbsolutePath() + "\n\t" + e);
+            s_log.error("Could not read: " + props.getAbsolutePath(), e);
          }
       }
       return themes;
@@ -166,7 +148,7 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
       }
       catch (Exception e)
       {
-         log.error("Problem setting look and feel: " + theme, e);
+         s_log.error("Problem setting look and feel: " + theme, e);
       }
    }
 
@@ -201,7 +183,6 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
    }
 
 
-   @SuppressWarnings("serial")
    private static class ThemePrefsPanel extends BaseLAFPreferencesPanelComponent
    {
       private FlatLookAndFeelController ctrl;

@@ -3,13 +3,14 @@ package net.sourceforge.squirrel_sql.client.session.filemanager;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import java.util.HashMap;
 
 public class FileChooserManager
 {
 
    private static final String PREF_PRE_SELECTED_FILE_FILTER = "Squirrel.filechoosermanager.preselfilefilter";
+   private static final String PREF_FILE_CHOOSER_VIEW_TYPE = "Squirrel.filechoosermanager.fileChooserViewType";
    public static final String FILE_ENDING_TXT = ".txt";
    public static final String FILE_ENDING_SQL = ".sql";
    public static final String FILE_ENDING_NONE = "FILE_ENDING_NONE";
@@ -56,9 +57,18 @@ public class FileChooserManager
          _currentFileChooser.setFileFilter(_txtFilter);
       }
 
+      String viewTypeName = Props.getString(PREF_FILE_CHOOSER_VIEW_TYPE, FileChooserViewType.DETAILS.name());
+      FileChooserViewType.valueOf(viewTypeName).tryApplyViewType(_currentFileChooser);
+
       return _currentFileChooser;
    }
 
+   public void saveDisplayPrefs()
+   {
+      FileChooserViewType fileChooserViewType = FileChooserViewType.tryExtractChooserViewType(_currentFileChooser);
+
+      Props.putString(PREF_FILE_CHOOSER_VIEW_TYPE, fileChooserViewType.name());
+   }
 
    public void saveWasApproved()
    {
@@ -76,20 +86,13 @@ public class FileChooserManager
       {
          Props.putString(PREF_PRE_SELECTED_FILE_FILTER, FILE_ENDING_NONE);
       }
+
+      saveDisplayPrefs();
    }
 
-   public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter, String fileEndingWithDot)
+   public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter)
    {
       _sqlFilter = fileExtensionFilter;
-
-
-//      _fileChooser.removeChoosableFileFilter(_sqlFilter);
-//      _fileChooser.addChoosableFileFilter(fileExtensionFilter);
-//      _fileChooser.setFileFilter(fileExtensionFilter);
-//
-//      _fileAppenixes.remove(_sqlFilter);
-//      _fileAppenixes.put(fileExtensionFilter, fileEndingWithDot);
-
       _saveFileFilterProps = false;
 
    }

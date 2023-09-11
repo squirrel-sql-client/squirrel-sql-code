@@ -35,24 +35,12 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRootPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -122,7 +110,7 @@ public class ConnectionInternalFrame extends DialogWidget
 	private JLabel _driverName = new JLabel();
 	private JLabel _url = new JLabel();
 	private JTextField _user = new JTextField();
-	private JTextField _password = new JPasswordField();
+	private JPasswordField _password = new JPasswordField();
 	private OkClosePanel _btnsPnl = new OkClosePanel(s_stringMgr.getString("ConnectionInternalFrame.connect"));
 
 	private boolean _driverPropertiesLoaded = false;
@@ -177,6 +165,15 @@ public class ConnectionInternalFrame extends DialogWidget
 		createGUI();
 		loadData();
 		pack();
+
+		if(StringUtilities.isEmpty(_user.getText()))
+		{
+			GUIUtils.forceFocus(_user);
+		}
+		else if(null == _password.getPassword() || 0 == _password.getPassword().length)
+		{
+			GUIUtils.forceFocus(_password);
+		}
 	}
 
 	public void executed(final boolean connected)
@@ -398,26 +395,33 @@ public class ConnectionInternalFrame extends DialogWidget
 
 
 		gbc = new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
-		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.password")), gbc);
+		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.user")), gbc);
 
 		gbc = new GridBagConstraints(1, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(_user, gbc);
+
+
+		gbc = new GridBagConstraints(0, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.password")), gbc);
+
+		gbc = new GridBagConstraints(1, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
 		ret.add(_password, gbc);
 
 
-		gbc = new GridBagConstraints(1, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		gbc = new GridBagConstraints(1, 6, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
 		_aliasPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
 		ret.add(_aliasPropsBtn, gbc);
 
 
-		gbc = new GridBagConstraints(0, 6, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		gbc = new GridBagConstraints(0, 7, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
 		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.warningcapslock")), gbc);
 
 
-		gbc = new GridBagConstraints(0, 7, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
+		gbc = new GridBagConstraints(0, 8, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
 		ret.add(GUIUtils.createHorizontalSeparatorPanel(), gbc);
 
 
-		gbc = new GridBagConstraints(0, 8, 2, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		gbc = new GridBagConstraints(0, 9, 2, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
 		ret.add(_btnsPnl, gbc);
 
 

@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.Preference
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlConfigPrefsTab;
 import net.sourceforge.squirrel_sql.client.preferences.shortcut.ShortcutPrefsTab;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.prefs.DBDiffPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -34,17 +35,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -316,6 +308,7 @@ public class GlobalPreferencesSheet extends DialogWidget
       _globalPreferencesPanels.add(new WikiTablePreferencesTab());
       _globalPreferencesPanels.add(new FormatSqlConfigPrefsTab(Main.getApplication()));
       _globalPreferencesPanels.add(new ShortcutPrefsTab());
+      _globalPreferencesPanels.add(new DBDiffPreferencesPanel());
 
       // Go thru all loaded plugins asking for panels.
       PluginInfo[] plugins = Main.getApplication().getPluginManager().getPluginInformation();

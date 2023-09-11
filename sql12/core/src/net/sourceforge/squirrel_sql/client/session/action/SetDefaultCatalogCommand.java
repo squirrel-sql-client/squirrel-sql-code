@@ -63,7 +63,6 @@ public class SetDefaultCatalogCommand implements ICommand
 	{
 		try
 		{
-			//_session.getSQLConnection().setCatalog(_catalog);
 			_session.getConnectionPool().setSessionCatalog(_catalog);
 		}
 		catch (Exception ex)

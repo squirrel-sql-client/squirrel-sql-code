@@ -21,17 +21,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionColoringUtil;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
-import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
-import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
-import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
-import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
-import net.sourceforge.squirrel_sql.client.session.action.FindColumnsInObjectTreeNodesAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
-import net.sourceforge.squirrel_sql.client.session.action.ShowTableReferencesAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffObjectTreeMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.menuattic.AtticHandler;
 import net.sourceforge.squirrel_sql.client.session.menuattic.MenuOrigin;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -40,34 +31,23 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.sql.SQLException;
+import java.util.*;
 /**
  * This is the tree showing the structure of objects in the database.
  *
@@ -119,119 +99,114 @@ class ObjectTree extends JTree
     * @throws	IllegalArgumentException
     * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
     */
-   ObjectTree(ISession session)
+   ObjectTree(final ISession session)
    {
-      super(new ObjectTreeModel(session));
-      if (session == null)
-      {
-         throw new IllegalArgumentException("ISession == null");
-      }
-      setRowHeight(getFontMetrics(getFont()).getHeight());
-      _session = session;
-      _model = (ObjectTreeModel)getModel();
-      setModel(_model);
-
-      addTreeExpansionListener(new NodeExpansionListener());
-
-      addTreeSelectionListener(new TreeSelectionListener()
-      {
-         public void valueChanged(TreeSelectionEvent e)
-         {
-            if(null != e.getNewLeadSelectionPath())
-            {
-               scrollPathToVisible(e.getNewLeadSelectionPath());
-            }
-         }
-      });
-
-      setShowsRootHandles(true);
-
-      // Add actions to the popup menu.
-      final ActionCollection actions = session.getApplication().getActionCollection();
-
-      // Options for global popup menu.
-      addToPopup(actions.get(RefreshSchemaInfoAction.class));
-      addToPopup(actions.get(RefreshObjectTreeItemAction.class));
-
-		addToPopup(actions.get(FindColumnsInObjectTreeNodesAction.class));
-
-		addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
-
-      addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
-      addToPopup(DatabaseObjectType.VIEW, actions.get(SQLFilterAction.class));
-
-      addToPopup(DatabaseObjectType.TABLE, actions.get(DeleteSelectedTablesAction.class));
-      addToPopup(DatabaseObjectType.TABLE, actions.get(ShowTableReferencesAction.class));
-
-      addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
-
+		super(new ObjectTreeModel(session));
 
 		try
 		{
-			// Option to select default catalog only applies to sessions
-			// that support catalogs.
+
+			setRowHeight(getFontMetrics(getFont()).getHeight());
+			_session = session;
+			_model = (ObjectTreeModel)getModel();
+			setModel(_model);
+
+			addTreeExpansionListener(new NodeExpansionListener());
+
+			addTreeSelectionListener(e -> onTreeSelectionChanged(e));
+
+			setShowsRootHandles(true);
+
+			// Add actions to the popup menu.
+			final ActionCollection actions = session.getApplication().getActionCollection();
+
+			// Options for global popup menu.
+			addToPopup(actions.get(RefreshSchemaInfoAction.class));
+			addToPopup(actions.get(RefreshObjectTreeItemAction.class));
+
+			addToPopup(actions.get(FindColumnsInObjectTreeNodesAction.class));
+
+			addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
+
+			addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
+			addToPopup(DatabaseObjectType.VIEW, actions.get(SQLFilterAction.class));
+
+			addToPopup(DatabaseObjectType.TABLE, actions.get(DeleteSelectedTablesAction.class));
+			addToPopup(DatabaseObjectType.TABLE, actions.get(ShowTableReferencesAction.class));
+
+			addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
+
 			if (_session.getSQLConnection().getSQLMetaData().supportsCatalogs())
 			{
-				SwingUtilities.invokeLater(() -> addToPopup(DatabaseObjectType.CATALOG,actions.get(SetDefaultCatalogAction.class)));
+				addToPopup(DatabaseObjectType.CATALOG,actions.get(SetDefaultCatalogAction.class));
 			}
-		}
-		catch (Throwable th)
-		{
-			// Assume DBMS doesn't support catalogs.
-			s_log.warn("Error calling Connection.getSQLMetaData().supportsCatalogs()", th);
-		}
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
+			addToPopup(actions.get(CopySimpleObjectNameAction.class));
+			addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
+
+			addToPopup(DatabaseObjectType.TABLE, DBDiffObjectTreeMenuFactory.createMenu());
+
+			addMouseListener(new ObjectTreeMouseListener());
+			setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
+
+			SwingUtilities.invokeLater(() ->
 			{
-				addToPopup(actions.get(CopySimpleObjectNameAction.class));
-				addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
-
-
-				addMouseListener(new ObjectTreeMouseListener());
-				setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
 				ObjectTree.this.refresh(false);
 				ObjectTree.this.setSelectionPath(ObjectTree.this.getPathForRow(0));
-			}
-		});
+				SessionColoringUtil.colorTree(session, this);
+			});
+		}
+		catch (SQLException e)
+		{
+			throw Utilities.wrapRuntime(e);
+		}
+	}
 
-      SessionColoringUtil.colorTree(session, this);
-   }
+	private void onTreeSelectionChanged(TreeSelectionEvent e)
+	{
+		if(null != e.getNewLeadSelectionPath())
+		{
+			scrollPathToVisible(e.getNewLeadSelectionPath());
+		}
+	}
 
-   // Mouse listener used to display popup menu.
+	// Mouse listener used to display popup menu.
    private class ObjectTreeMouseListener extends MouseAdapter {
       public void mousePressed(MouseEvent evt)
       {
-
          checkSelectAndPopUp(evt);
       }
 
-      private void checkSelectAndPopUp(MouseEvent evt)
-      {
-         if (evt.isPopupTrigger())
-         {
-            // If the user wants to select for Right mouse clicks then change the selection before popup
-           // appears
-            if (_session.getApplication().getSquirrelPreferences().getSelectOnRightMouseClick()) {
-               TreePath path = ObjectTree.this.getPathForLocation(evt.getX(), evt.getY());
-               boolean alreadySelected = false;
-               TreePath[] selectedPaths = ObjectTree.this.getSelectionPaths();
-               if (selectedPaths != null) {
-                  for (TreePath selectedPath : selectedPaths) {
-                     if (path != null && path.equals(selectedPath)) {
-                        alreadySelected = true;
-                        break;
-                     }
-                  }
-               }
-               if (!alreadySelected) {
-                  ObjectTree.this.setSelectionPath(path);
-               }
-            }
-            showPopup(evt.getX(), evt.getY());
-         }
-      }
+		private void checkSelectAndPopUp(MouseEvent evt)
+		{
+			if (evt.isPopupTrigger())
+			{
+				// If the user wants to select for Right mouse clicks then change the selection before popup
+				// appears
+				if (_session.getApplication().getSquirrelPreferences().getSelectOnRightMouseClick())
+				{
+					TreePath path = ObjectTree.this.getPathForLocation(evt.getX(), evt.getY());
+					boolean alreadySelected = false;
+					TreePath[] selectedPaths = ObjectTree.this.getSelectionPaths();
+					if (selectedPaths != null)
+					{
+						for (TreePath selectedPath : selectedPaths)
+						{
+							if (path != null && path.equals(selectedPath))
+							{
+								alreadySelected = true;
+								break;
+							}
+						}
+					}
+					if (!alreadySelected)
+					{
+						ObjectTree.this.setSelectionPath(path);
+					}
+				}
+				showPopup(evt.getX(), evt.getY());
+			}
+		}
 
       public void mouseReleased(MouseEvent evt)
       {
@@ -572,7 +547,12 @@ class ObjectTree extends JTree
 			_popups.put(key, pop);
 			for (Iterator<Action> it = _globalActions.iterator(); it.hasNext();)
 			{
-				pop.add(it.next());
+				Action action = it.next();
+				JMenuItem menuItem = pop.add(action);
+				if (StringUtilities.isEmpty(menuItem.getText(), true))
+				{
+					s_log.warn("Object tree popup menu item for Action " + (null == action ? "null" : action.getClass().getName()) + " has not menu title.");
+				}
 			}
 		}
 		return pop;

@@ -61,6 +61,9 @@ public class SquirrelResources extends Resources
 		String PERFORMANCE_WARNING = "PerformanceWarning";
 		String PLUGINS = "Plugins";
 		String SPLASH_SCREEN = "SplashScreen";
+		String SPLASH_SCREEN_LESS_HIGH = "SplashScreenLessHigh";
+
+
 		String VIEW = "View";
 
 		String TRASH = "trash";
@@ -182,6 +185,10 @@ public class SquirrelResources extends Resources
 		String SMALL_SHOW_PASSWORD = "small_show_password";
 
 		String EDIT = "edit";
+		String EDIT_RED_DOT = "editRedDot";
+
+		String THREE_DOTS = "threedots";
+		String THREE_DOTS_CHECKED = "threedots_checked";
 
 		String DELETE = "delete";
 

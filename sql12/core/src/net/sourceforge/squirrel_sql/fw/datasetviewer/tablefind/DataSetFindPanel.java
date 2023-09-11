@@ -1,17 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 public class DataSetFindPanel extends JPanel
 {
@@ -51,7 +46,7 @@ public class DataSetFindPanel extends JPanel
       add(cboString, gbc);
 
 
-      LibraryResources rsrc = new LibraryResources();
+      LibraryResources rsrc = Main.getApplication().getResourcesFw();
 
 
       gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);

@@ -19,19 +19,20 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Component;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import javax.swing.JScrollPane;
-import javax.swing.text.JTextComponent;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFindCtrl;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public abstract class BaseSourceTab extends BaseObjectTab
 {
@@ -64,6 +65,7 @@ public abstract class BaseSourceTab extends BaseObjectTab
     * Scrolling pane for <TT>_comp.
     */
    private JScrollPane _scroller;
+   private TextFindCtrl _textFindCtrl;
 
    public BaseSourceTab(String hint)
    {
@@ -111,8 +113,6 @@ public abstract class BaseSourceTab extends BaseObjectTab
 
    public Component getComponent()
    {
-
-
       if (_scroller == null)
       {
          if (_comp == null)
@@ -123,8 +123,10 @@ public abstract class BaseSourceTab extends BaseObjectTab
          LineNumber lineNumber = new LineNumber(_comp);
          _scroller.setRowHeaderView(lineNumber);
          _scroller.getVerticalScrollBar().setUnitIncrement(10);
+
+         _textFindCtrl = new TextFindCtrl(_comp.getTextArea(), _scroller, true);
       }
-      return _scroller;
+      return _textFindCtrl.getContainerPanel();
    }
 
    protected void refreshComponent()

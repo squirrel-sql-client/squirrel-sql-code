@@ -1,56 +1,58 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.LayoutManager;
-import java.awt.Rectangle;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
+
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JScrollPane;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
 
 
 public class TableFrame extends JInternalFrame
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableFrame.class);
+
    GraphTextAreaFactory txtColumsFactory;
    JScrollPane scrollPane;
    private MyUI _myUI;
    private GraphPlugin _plugin;
    private ModeManager _modeManager;
    private SortColumnsListener _sortColumnsListener;
+   private ColumnHideConfigListener _columnHideConfigListener;
    private ModeManagerListener _modeManagerListener;
    private ZoomerListener _zoomerListener;
 
 
-   public TableFrame(ISession session, GraphPlugin plugin, String tableName, TableFrameXmlBean xmlBean, TableToolTipProvider toolTipProvider, ModeManager modeManager, DndCallback dndCallback, SortColumnsListener sortColumnsListener)
+   public TableFrame(ISession session,
+                     GraphPlugin plugin,
+                     String tableName,
+                     TableFrameXmlBean xmlBean,
+                     TableToolTipProvider toolTipProvider,
+                     ModeManager modeManager,
+                     DndCallback dndCallback,
+                     SortColumnsListener sortColumnsListener,
+                     ColumnHideConfigListener columnHideConfigListener,
+                     ColumnHiddenListener columnHiddenListener)
    {
       _plugin = plugin;
       _modeManager = modeManager;
       _sortColumnsListener = sortColumnsListener;
+      _columnHideConfigListener = columnHideConfigListener;
 
       scrollPane = new JScrollPane();
       scrollPane.setBorder(null);
 
       getContentPane().add(scrollPane);
 
-      setMaximizable(false);
+      setMaximizable(true);
       setTitleBarIconsVisible(true);
 
       setTitle(tableName);
@@ -71,7 +73,7 @@ public class TableFrame extends JInternalFrame
       _myUI = new MyUI(this);
       setUI(_myUI);
 
-      txtColumsFactory = new GraphTextAreaFactory(tableName, session, plugin, toolTipProvider, modeManager, dndCallback);
+      txtColumsFactory = new GraphTextAreaFactory(tableName, session, plugin, toolTipProvider, modeManager, dndCallback, columnHiddenListener);
       scrollPane.setViewportView(txtColumsFactory.getComponent(modeManager.getMode()));
       
       if(null != xmlBean)
@@ -247,8 +249,11 @@ public class TableFrame extends JInternalFrame
 
          closeIcon = rsc.getIcon(GraphPluginResources.IKeys.TABLE_FRAME_CLOSE);
 
-         // Iconify is abused for sort
-         iconIcon = rsc.getIcon(GraphPluginResources.IKeys.SORT_NONE);
+         // Maximize is used for sorting popup menu
+         maxIcon = rsc.getIcon(GraphPluginResources.IKeys.SORT_NONE);
+
+         // Iconify is used for open column hide dialog
+         //iconIcon = rsc.getIcon(GraphPluginResources.IKeys.EYE_CONFIG);
 
          groupTitleColor = GraphColoring.getGroupTitleColor();
          selectedTitleColor = GraphColoring.getInternalFrameTitleSelectedColor(selectedTitleColor);
@@ -265,15 +270,44 @@ public class TableFrame extends JInternalFrame
       {
          super.createActions();
 
-         // Iconify is abused for sort
+         // Maximize is used for sorting popup menu
+         maximizeAction = new AbstractAction()
+         {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+               _sortColumnsListener.sortButtonClicked(maxButton);
+            }
+         };
+
+         // Iconify is used for open column hide dialog
          iconifyAction = new AbstractAction()
          {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-               _sortColumnsListener.sortButtonClicked(iconButton);
+               _columnHideConfigListener.showColumnHideConfig();
             }
          };
+
+      }
+
+      private void onConfigureColumnHiding()
+      {
+         System.out.println("MyTitlePaneUI.onConfigureColumnHiding");
+      }
+
+      @Override
+      protected void createButtons()
+      {
+         super.createButtons();
+
+         // Maximize is used for sorting popup menu
+         super.maxButton.setToolTipText(s_stringMgr.getString("TableFrame.change.sorting"));
+
+         // Iconify is used for open column hide dialog
+         super.iconButton.setToolTipText(s_stringMgr.getString("TableFrame.configure.column.hiding"));
+
       }
 
       protected void paintTitleBackground(Graphics g)
@@ -379,6 +413,21 @@ public class TableFrame extends JInternalFrame
          menuBar.setSize(0,0);
          menuBar.setBounds(0,0,0,0);
          return menuBar;
+      }
+
+      public void setHideIconChecked(boolean b)
+      {
+         if (b)
+         {
+            super.iconIcon = new GraphPluginResources(_plugin).getIcon(GraphPluginResources.IKeys.EYE_CONFIG_CHECKED);
+         }
+         else
+         {
+            super.iconIcon = new GraphPluginResources(_plugin).getIcon(GraphPluginResources.IKeys.EYE_CONFIG);
+
+         }
+         super.iconButton.setIcon(super.iconIcon);
+         repaint();
       }
 
       class MyTitlePaneLayout extends BasicInternalFrameTitlePane.TitlePaneLayout

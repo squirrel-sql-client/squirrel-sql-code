@@ -3,12 +3,8 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 
-import javax.swing.JPanel;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -23,15 +19,17 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
 
    private DndCallback _dndCallback;
    private ISession _session;
+   private final ColumnHiddenListener _columnHiddenListener;
    private int _lastColumnHeightBeforeSetColums;
 
 
-   public QueryTextArea(String tableName, GraphPlugin plugin, DndCallback dndCallback, ISession session)
+   public QueryTextArea(String tableName, GraphPlugin plugin, DndCallback dndCallback, ISession session, ColumnHiddenListener columnHiddenListener)
    {
       _tableName = tableName;
       _plugin = plugin;
       _dndCallback = dndCallback;
       _session = session;
+      _columnHiddenListener = columnHiddenListener;
 
       setLayout(new GridBagLayout());
 
@@ -78,12 +76,18 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
 
       GraphColoring.setTableFrameBackground(this);
 
+      int gridY = 0;
       for (int i = 0; i < _columnInfoModel.getColCount(); i++)
       {
          ColumnInfo columnInfo = _columnInfoModel.getOrderedColAt(i);
 
-         gbc = new GridBagConstraints(0, i, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
-         add(new QueryColumnPanel(_plugin, _tableName, columnInfo, _dndCallback, _session), gbc);
+         if(columnInfo.isHidden())
+         {
+            continue;
+         }
+
+         gbc = new GridBagConstraints(0, gridY++, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+         add(new QueryColumnPanel(_plugin, _tableName, columnInfo, _dndCallback, _session, colPnl -> onHideColumn(colPnl)), gbc);
       }
 
       gbc = new GridBagConstraints(0, _columnInfoModel.getColCount(), 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
@@ -97,6 +101,14 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
 
       addToAllKidComponents(_mouseListenerPx);
 
+   }
+
+   private void onHideColumn(QueryColumnPanel colPnl)
+   {
+      colPnl.setHidden();
+      remove(colPnl);
+      doLayout();
+      _columnHiddenListener.columnHidden();
    }
 
    @Override
@@ -117,7 +129,15 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
    @Override
    public int getMaxWidth()
    {
-      return ((QueryColumnPanel) getComponent(0)).getMaxWidth(_columnInfoModel.getAll());
+      if (0 == getComponents().length || false == getComponent(0) instanceof QueryColumnPanel)
+      {
+         // Happens when all columns are hidden.
+         return 50;
+      }
+      else
+      {
+         return ((QueryColumnPanel) getComponent(0)).getMaxWidth(_columnInfoModel.getAll());
+      }
    }
 
 

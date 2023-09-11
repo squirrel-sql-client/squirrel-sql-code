@@ -1,26 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.nio.charset.Charset;
 
 public class ExportDlg extends JDialog
@@ -263,7 +251,7 @@ public class ExportDlg extends JDialog
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5), 0, 0);
       ret.add(cboCommand, gbc);
 
-      LibraryResources rsrc = new LibraryResources();
+      LibraryResources rsrc = Main.getApplication().getResourcesFw();
       btnCommandFile = new JButton(rsrc.getIcon(LibraryResources.IImageNames.OPEN));
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
       ret.add(btnCommandFile, gbc);
@@ -345,7 +333,7 @@ public class ExportDlg extends JDialog
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5), 0, 0);
       ret.add(cboFile, gbc);
 
-      LibraryResources rsrc = new LibraryResources();
+      LibraryResources rsrc = Main.getApplication().getResourcesFw();
 
       btnFile = new JButton(rsrc.getIcon(LibraryResources.IImageNames.OPEN));
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);

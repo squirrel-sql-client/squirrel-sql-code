@@ -19,11 +19,6 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.util.ArrayList;
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
 import net.sourceforge.squirrel_sql.client.session.action.UndoRedoActionContext;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -34,6 +29,9 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
+
+import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  * This interface defines the API through which plugins can work with the SQL
@@ -241,16 +239,6 @@ public interface ISQLPanelAPI extends IFileEditorAPI
 	 * Display the previous tab in the SQL results.
 	 */
 	void gotoPreviousResultsTab();
-
-	/**
-	 * The passed SQL should be added to the SQL history.
-	 *
-	 * @param	sql		SQL to be added to history.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
-	 */
-	void addSQLToHistory(String sql);
 
 	/**
 	 * Add a hierarchical menu to the SQL Entry Area popup menu.

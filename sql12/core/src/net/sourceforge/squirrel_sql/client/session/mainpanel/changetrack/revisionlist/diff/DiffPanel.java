@@ -1,16 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff;
 
-import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldConfigPanel;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.gui.ConfigurableMeldPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 public class DiffPanel extends JPanel
 {
@@ -21,14 +16,14 @@ public class DiffPanel extends JPanel
    JLabel lblLeftTitle = new JLabel();
    JLabel lblRightTitle = new JLabel();
 
-   public DiffPanel(JMeldConfigPanel meldConfigPanel)
+   public DiffPanel(ConfigurableMeldPanel configurableMeldPanel)
    {
       setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,10,0,10), 1,1);
-      add(meldConfigPanel, gbc);
+      add(configurableMeldPanel.getMeldConfigCtrl().getPanel(), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,10,0,10), 1,1);
       add(createDiffTitlePanel(), gbc);

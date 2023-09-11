@@ -8,7 +8,7 @@
         <tstamp/> <!-- Needed to initialize DSTAMP and TSTAMP variables-->
 
         <!-- DEFINE VERSION HERE ONLY-->
-        <!--<property name="squirrelsql.version" value="4.5.1"/>-->
+        <!--<property name="squirrelsql.version" value="4.6.0"/>-->
         <property name="squirrelsql.version" value="snapshot-${DSTAMP}_${TSTAMP}"/>
 
         <delete dir="output"/>
@@ -181,7 +181,6 @@
     <target name="compileStandardPlugins" description="compileStandardPlugins">
         <antcall target="doCompilePlugin"><param name="pluginName" value="codecompletion"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="dbcopy"/></antcall>
-        <antcall target="doCompilePlugin"><param name="pluginName" value="dbdiff"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="graph"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="laf"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="refactoring"/></antcall>
@@ -195,7 +194,6 @@
     <target name="compileOptionalPlugins" description="compileOptionalPlugins">
         <antcall target="doCompilePlugin"><param name="pluginName" value="codecompletion"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="dbcopy"/></antcall>
-        <antcall target="doCompilePlugin"><param name="pluginName" value="dbdiff"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="graph"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="laf"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="refactoring"/></antcall>

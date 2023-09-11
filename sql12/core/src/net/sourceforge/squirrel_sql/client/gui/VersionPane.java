@@ -23,19 +23,10 @@ import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JTextPane;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.*;
+import javax.swing.text.*;
 import javax.swing.text.html.HTML;
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -70,14 +61,13 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
 
          if( Desktop.isDesktopSupported() )
          {
-            String content = text.toString();
+            String content;
+
+            content = text.toString();
             putClientProperty(HONOR_DISPLAY_PROPERTIES, true);
             setContentType("text/html");
             StyledDocument doc = getStyledDocument();
-            SimpleAttributeSet s = new SimpleAttributeSet();
-            StyleConstants.setAlignment(s, StyleConstants.ALIGN_CENTER);
-            StyleConstants.setBold(s, true);
-            doc.setParagraphAttributes(0, content.length(), s, false);
+            doc.setParagraphAttributes(0, content.length(), getDefaultStyleAttributeSet(), true);
             doc.insertString(0, content, null);
 
             appendWebsiteLink(doc, Version.getWebSite());
@@ -87,6 +77,24 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
             appendWebsiteLink(doc, Version.getWebSite3());
             doc.insertString(doc.getLength(), "\n", null);
             appendWebsiteLink(doc, Version.getWebSite4());
+            doc.insertString(doc.getLength(), "\n\n", null);
+
+            content = "Check for stable versions at\n";
+            doc.setParagraphAttributes(doc.getLength(), content.length(), getDefaultStyleAttributeSet(), true);
+            doc.insertString(doc.getLength(), content, null);
+
+            appendWebsiteLink(doc, Version.getSourceforgeStableVersions());
+            doc.insertString(doc.getLength(), "\n", null);
+            appendWebsiteLink(doc, Version.getGitHubStableVersions());
+            doc.insertString(doc.getLength(), "\n\n", null);
+
+            content = "Check for snapshot versions at\n";
+            doc.setParagraphAttributes(doc.getLength(), content.length(), getDefaultStyleAttributeSet(), true);
+            doc.insertString(doc.getLength(), content, null);
+
+            appendWebsiteLink(doc, Version.getSourceforgeSnapshotVersions());
+            doc.insertString(doc.getLength(), "\n", null);
+            appendWebsiteLink(doc, Version.getGitHubSnapshotVersions());
 
             addMouseListener(this);
             addMouseMotionListener(this);
@@ -98,14 +106,21 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
             text.append(Version.getWebSite3() + "\n");
             text.append(Version.getWebSite4());
 
+            text.append("\n\nCheck for stable versions at\n");
+            text.append(Version.getSourceforgeStableVersions() + "\n");
+            text.append(Version.getGitHubStableVersions() + "\n");
+
+            text.append("\n\nCheck for snapshot versions at\n");
+
+            text.append(Version.getSourceforgeSnapshotVersions() + "\n");
+            text.append(Version.getGitHubSnapshotVersions() + "\n");
+
+
             String content = text.toString();
             putClientProperty(HONOR_DISPLAY_PROPERTIES, true);
             setContentType("text/html");
             StyledDocument doc = getStyledDocument();
-            SimpleAttributeSet s = new SimpleAttributeSet();
-            StyleConstants.setAlignment(s, StyleConstants.ALIGN_CENTER);
-            StyleConstants.setBold(s, true);
-            doc.setParagraphAttributes(0, content.length(), s, false);
+            doc.setParagraphAttributes(0, content.length(), getDefaultStyleAttributeSet(), true);
             doc.insertString(0, content, null);
 
          }
@@ -119,6 +134,14 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
       {
          s_log.error(e);
       }
+   }
+
+   private static SimpleAttributeSet getDefaultStyleAttributeSet()
+   {
+      SimpleAttributeSet s = new SimpleAttributeSet();
+      StyleConstants.setAlignment(s, StyleConstants.ALIGN_CENTER);
+      StyleConstants.setBold(s, true);
+      return s;
    }
 
    private void appendWebsiteLink(StyledDocument doc, String webContent) throws BadLocationException

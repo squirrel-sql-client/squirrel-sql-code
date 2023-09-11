@@ -2,8 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret;
 
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.BadLocationException;
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class DocumentMultiEditor
          for (SingleEdit singleEdit : _multiEdits.allButInitial())
          {
             ++ancestorCount;
-            singleEdit.adjustByAnchestorShift(ancestorCount * insertString.length());
+            singleEdit.adjustByAncestorShift(ancestorCount * insertString.length());
             //final int thisEditsCaretPos = singleEdit.getStart() + relativeCaretPosition;
             final int editsInsertStart = singleEdit.getStart() + (e.getOffset() - _multiEdits.initial().getStart());
 
@@ -89,7 +88,7 @@ public class DocumentMultiEditor
          for (SingleEdit singleEdit : _multiEdits.allButInitial())
          {
             ++ancestorCount;
-            singleEdit.adjustByAnchestorShift(- ancestorCount * e.getLength());
+            singleEdit.adjustByAncestorShift(- ancestorCount * e.getLength());
             final int editsRemoveStart = singleEdit.getStart() + (e.getOffset() - _multiEdits.initial().getStart()) + lenOfIntermediatelyDoneInsertsOnPrimaryEdit;
 
             //System.out.println("editsRemoveStart = " + editsRemoveStart);

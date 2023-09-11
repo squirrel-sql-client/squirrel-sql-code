@@ -21,16 +21,12 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JOptionPane;
-import java.awt.Desktop;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -220,37 +216,29 @@ public class Exporter
 
    private void showExportSuccessMessage(Window owner, long writtenRows, File exportFile)
    {
-      try
+      String[] selectionValues =
+            {
+                  s_stringMgr.getString("TableExportCsvCommand.export.completed.ok"),
+                  s_stringMgr.getString("TableExportCsvCommand.export.completed.ok.show.in.file.manager"),
+            };
+
+      String formattedWrittenRows = NumberFormat.getIntegerInstance().format(writtenRows);
+
+      String fileName = StringUtilities.shortenBegin(exportFile.getAbsolutePath(), 300, "...");
+
+      int selectIndex = JOptionPane.showOptionDialog(
+            owner,
+            s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, fileName),
+            s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess.title"),
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.INFORMATION_MESSAGE,
+            null,
+            selectionValues,
+            selectionValues[0]);
+
+      if(selectIndex == 1)
       {
-         String[] selectionValues =
-               {
-                     s_stringMgr.getString("TableExportCsvCommand.export.completed.ok"),
-                     s_stringMgr.getString("TableExportCsvCommand.export.completed.ok.show.in.file.manager"),
-               };
-
-         String formattedWrittenRows = NumberFormat.getIntegerInstance().format(writtenRows);
-
-         String fileName = StringUtilities.shortenBegin(exportFile.getAbsolutePath(), 300, "...");
-
-         int selectIndex = JOptionPane.showOptionDialog(
-               owner,
-               s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, fileName),
-               s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess.title"),
-               JOptionPane.DEFAULT_OPTION,
-               JOptionPane.INFORMATION_MESSAGE,
-               null,
-               selectionValues,
-               selectionValues[0]);
-
-         if(selectIndex == 1)
-         {
-            Desktop desktop = Desktop.getDesktop();
-            desktop.open(exportFile.getParentFile());
-         }
-      }
-      catch (IOException e)
-      {
-         s_log.error("Failed to open path to file " + exportFile.getAbsolutePath(), e);
+         DesktopUtil.openInFileManager(exportFile);
       }
    }
 

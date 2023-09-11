@@ -1,26 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.awt.BorderLayout;
-import java.awt.FontMetrics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Utilities;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -29,6 +8,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterController;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterListener;
+
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Utilities;
+import java.awt.*;
+import java.awt.event.*;
 
 class QueryColumnPanel extends JPanel
 {
@@ -41,6 +26,7 @@ class QueryColumnPanel extends JPanel
    private JButton btnAggFct;
    private JButton btnFilter;
    private JButton btnSorting;
+   private JButton btnHideColumn;
    private QueryColumnTextField txtColumn;
    private String _tableName;
    private ColumnInfo _columnInfo;
@@ -53,7 +39,7 @@ class QueryColumnPanel extends JPanel
    private JPopupMenu _popUpSorting;
    private JPanel _pnlButtons;
 
-   QueryColumnPanel(final GraphPlugin graphPlugin, String tableName, ColumnInfo columnInfo, DndCallback dndCallback, ISession session)
+   QueryColumnPanel(final GraphPlugin graphPlugin, String tableName, ColumnInfo columnInfo, DndCallback dndCallback, ISession session, HideColumnListener hideColumnListener)
    {
       super(new BorderLayout());
       _tableName = tableName;
@@ -90,6 +76,8 @@ class QueryColumnPanel extends JPanel
       initFilter(graphPlugin, _pnlButtons, ++xPos);
 
       initSorting(_pnlButtons, ++xPos);
+
+      initHideColumn(_pnlButtons, ++xPos, hideColumnListener);
 
       add(_pnlButtons, BorderLayout.WEST);
 
@@ -236,6 +224,20 @@ class QueryColumnPanel extends JPanel
       }
    }
 
+   private void initHideColumn(JPanel pnlButtons, int xPos, HideColumnListener hideColumnListener)
+   {
+      GridBagConstraints gbc;
+      btnHideColumn = new JButton();
+      btnHideColumn.setIcon(_graphPluginResources.getIcon(GraphPluginResources.IKeys.EYE_CROSSED));
+      btnHideColumn.setToolTipText(s_stringMgr.getString("QueryColumnPanel.hide.column"));
+      GraphColoring.setTableFrameBackground(btnHideColumn);
+      btnHideColumn.setBorder(BorderFactory.createEmptyBorder());
+      gbc = new GridBagConstraints(xPos,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,3), 0,0);
+      pnlButtons.add(btnHideColumn, gbc);
+      btnHideColumn.addActionListener(e -> hideColumnListener.hideColumn(this));
+   }
+
+
    private void onBtnSorting(ActionEvent e)
    {
       _popUpSorting.show(btnSorting, 0, 0);
@@ -333,5 +335,10 @@ class QueryColumnPanel extends JPanel
    public void addColumnMouseListener(MouseListener mouseListener)
    {
       txtColumn.addMouseListener(mouseListener);
+   }
+
+   public void setHidden()
+   {
+      _columnInfo.setHidden(true);
    }
 }

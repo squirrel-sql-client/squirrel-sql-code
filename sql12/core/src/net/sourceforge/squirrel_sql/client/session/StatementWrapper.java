@@ -47,7 +47,9 @@ public class StatementWrapper implements StatementCallback
          _maxRowsWasSet = true;
          try
          {
-            _statement.setMaxRows(_session.getProperties().getSQLNbrRowsToShow());
+            // + 1 because we wish to be able to see if the last row we read was the last exiting row,
+            // see ResultSetWrapper.closeIfContinueReadIsNotActive()
+            _statement.setMaxRows(_session.getProperties().getSQLNbrRowsToShow() + 1);
          }
          catch (Exception e)
          {
@@ -67,6 +69,12 @@ public class StatementWrapper implements StatementCallback
    public int getMaxRowsCount()
    {
       return _session.getProperties().getSQLNbrRowsToShow();
+   }
+
+   @Override
+   public ISession getSession()
+   {
+      return _session;
    }
 
    public void setFetchSize()
@@ -234,6 +242,4 @@ public class StatementWrapper implements StatementCallback
          _statement = null;
       }
    }
-
-
 }

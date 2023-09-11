@@ -5,18 +5,15 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.DesktopUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import java.awt.Desktop;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
-import java.io.IOException;
 
 public class TitleFilePathHandler
 {
@@ -180,17 +177,9 @@ public class TitleFilePathHandler
 
    private void onOpenFilePath()
    {
-      try
+      if(hasFile())
       {
-         if(hasFile())
-         {
-            Desktop desktop = Desktop.getDesktop();
-            desktop.open(_sqlFile.getParentFile());
-         }
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
+         DesktopUtil.openInFileManager(_sqlFile);
       }
    }
 

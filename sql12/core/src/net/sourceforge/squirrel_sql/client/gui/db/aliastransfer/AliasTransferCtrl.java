@@ -1,33 +1,18 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliastransfer;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasFolderState;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
-import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
-import net.sourceforge.squirrel_sql.client.gui.db.Java8CloseableFix;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.*;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import java.awt.Desktop;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.awt.*;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -229,8 +214,7 @@ public class AliasTransferCtrl
 
          if (selectIndex == 1)
          {
-            Desktop desktop = Desktop.getDesktop();
-            desktop.open(exportFile.getParentFile());
+            DesktopUtil.openInFileManager(exportFile);
          }
       }
       catch (Exception e)

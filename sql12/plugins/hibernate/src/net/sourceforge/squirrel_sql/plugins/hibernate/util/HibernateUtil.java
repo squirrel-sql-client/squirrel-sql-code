@@ -18,12 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.hibernate.util;
 
-import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -155,13 +150,4 @@ public class HibernateUtil
 		HibernateUtil.fileWrapperFactory = fileWrapperFactory;
 	}
 
-	/**
-	 * @param ioutils the ioutils to set
-	 */
-	public static void setIoutils(IOUtilities ioutils)
-	{
-		HibernateUtil.ioutils = ioutils;
-	}
-
-   
 }

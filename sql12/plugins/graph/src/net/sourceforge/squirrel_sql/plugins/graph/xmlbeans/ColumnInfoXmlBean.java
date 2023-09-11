@@ -14,6 +14,7 @@ public class ColumnInfoXmlBean
    private String constraintName;
    private int decimalDigits;
    private QueryDataXmlBean _queryDataXmlBean;
+   private boolean _hidden;
 
    public String getColumnName()
    {
@@ -135,5 +136,15 @@ public class ColumnInfoXmlBean
    public QueryDataXmlBean getQueryDataXmlBean()
    {
       return _queryDataXmlBean;
+   }
+
+   public void setHidden(boolean hidden)
+   {
+      _hidden = hidden;
+   }
+
+   public boolean isHidden()
+   {
+      return _hidden;
    }
 }

@@ -20,10 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
-import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
@@ -34,16 +31,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
 import javax.swing.undo.UndoManager;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -69,7 +64,6 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 
    RSyntaxSQLEntryPanel(ISession session, SyntaxPreferences prefs, HashMap<String, Object> props)
 	{
-		super(session.getApplication());
 		if (session == null)
 		{
 			throw new IllegalArgumentException("Null ISession passed");
@@ -332,6 +326,12 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
    public TextAreaPaintHandler getTextAreaPaintHandler()
    {
       return _textArea.getTextAreaPaintHandler();
+   }
+
+   @Override
+   public void setPrioritizedCaretMouseListener(PrioritizedCaretMouseListener prioritizedCaretMouseListener)
+   {
+   	_textArea.setPrioritizedCaretMouseListener(prioritizedCaretMouseListener);
    }
 
    /**

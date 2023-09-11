@@ -6,6 +6,133 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL editor: Keyboard shortcut ctrl+w
+   on first stoke selects the current word,
+   on second stoke selects the end of the current line starting from the current word,
+   on third stoke selects the whole current line.
+
+SQL editor: Improvements of multiple caret/cursor editing:
+  With ctrl and alt keys down additional can be added by mouse click.
+
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/17
+   For databases that support catalogs SQuirreL now allows to specify additional catalogs to load.
+   See the new toolbar button with the three dots icon next to the
+   catalogs combo box at the upper left of a Session panel.
+
+Hibernate Plugin: Now supports Hibernate 6 and Jakarta Persistence.
+
+Query connection pool:
+  When a "SET ISOLATION LEVEL ..."-statement is executed
+  it is automatically executed on all existing query pool connections, too.
+
+Graph Plugin: Columns in be hidden.
+  Tables with hidden columns are recognizable by the
+  checked the hide-config icon in the tables title bar.
+
+When data is copied to a new window, the window now offers the usual data find column function.
+
+Table cell data popup: File export creates parent directories when needed
+  and the export finished dialog offers to open the export file's directory.
+
+When data is copied to a new window, the window now offers the usual data find function.
+
+Minor UI improvements:
+  - Added menu item File --> Open Saved Session
+  - The About-dialog links to update locations
+
+SQL result tab edit toggle button:
+  Fix: Switching back to uneditable used to redisplay the data from before editing was switched on.
+  Improvement: When editing is switched on the message panel hints to the current auto commit state.
+
+The SQL result tab now has an edit toggle button.
+
+When a file is opened in the operating system's file manager the file is now selected.
+  This works only if Java's OS specific Desktop API supports it.
+  Otherwise the file manager just opens the file's directory.
+
+The file chooser remembers the last selected view type (list view or details view).
+
+Look and Feel Plugin: Dark theme for the Nimbus look and feel.
+  The theme is based on Wayne Zhang's pull request
+  https://github.com/squirrel-sql-client/squirrel-sql-code/pull/12
+  and was integrated into SQuirreL's Look and Feel Plugin.
+  Thanks to Wayne Zhang for the theme.
+
+#156 The table cell data popup and the Object tree source tabs support searching.
+  See the find button at the lower right of the table cell data popup.
+  See the find bar at the bottom of the Object tree source tabs.
+
+Table cell data popup: The right mouse menu entries "Wrap Lines on/off" and "Wrap Word on/off"
+  are now checked menu items and their dependence is respected.
+
+Table cell data popup: New right mouse menu which offers to compare
+  selected text or the complete cell content to clipboard.
+
+Table cell data popup: Replaced legacy XML formatting by standard XML library formatting.
+  Replaced formatting error dialogs by message panel and logging.
+
+Data compare: "Compare selected cells" function of result tables now offers to
+  compare raw data instead of markdown format if cells from single columns were selected.
+  This is may be useful when cells contain multiple lines.
+  Hint: SQuirreL allows to configure if table cells render line feeds by "\n".
+  See menu File --> Global Preferences --> tab "Data Type Controls"
+  --> sections "CHAR, VARCHAR, ..." and "CLOB ..."
+
+SQL editor offers to compare selected text or complete editor content to clipboard.
+  See the editor's right mouse menu or tolls popup (ctrl+t).
+
+Data compare: New submenu in SQL result's "Compare selected cells" menu
+  which allows to compare cells to clipboard.
+
+Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
+  The DBDiff-Plugin won't be shipped anymore
+  and in case it is still found it is programmatically kept from being loaded.
+
+Bug fixes:
+
+When long Session tab titles are displayed the titles now reflect changes to the default catalog.
+  See File --> Global Preferences --> tab general --> check box "Use short Session tab title ...".
+
+SQL history changes are now immediately reflected in all open SQL panels.
+
+SQL result tables: Copy as markdown and comparing table data failed when row numbers were displayed.
+
+When non-breaking space where pasted into SQuirreL's editor
+  they broke SQL reformatting and probably caused other problems, too.
+  Now when text is pasted into SQuirreL's editor
+  non-breaking space are replaced by ordinary spaces.
+
+Find in preferences/configurations dialog: Fixed UI refresh problem of "Details" panel.
+
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/15
+  SQL result: The display of the result row limit was corrected
+  in case the number of rows read matched the number of rows in the result.
+
+Compare functions: Refactoring including some bug fixes.
+
+Improved title of cells compare dialog and corrected the diffs left/right display.
+
+Saved Sessions: Fixed restoring the active editor
+  when a Saved Sessions was saved (ctrl+alt+shift+s) or committed to GIT (ctrl+alt+shift+k).
+
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/14
+  The DB login dialog was missing the user name text field.
+  The DB login dialog is shown when an Alias without auto logon is connected.
+
+Fixed inconsistencies in DBDiff preferences tab,
+  see menu Files --> Global Preferences --> tab "DB diff"
+
+
+
+4.6.0 (06/04/2023)
+==================
+
+Enhancements:
+
+Changed default of the "Quote identifiers in scripts" check box from checked to unchecked.
+  See Global Preferences --> tab SQL Scripts
+  This change concerns new installations only. For reference see discussion in bug #1506.
+
 Change tracking: GIT revision dialog now offers to compare GIT revisions
   or to compare a GIT revisions to the local SQL editor.
   To open the GIT revisions dialog right click the SQL editor's left gutter.
@@ -115,6 +242,9 @@ Export of multiple SQL results.
   Then right click one of the UI result tables to open the file export dialog.
 
 Bug fixes:
+
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/13
+  Java version check in plain zip scripts didn't allow Java versions 18 19 20.
 
 Prevented SQuirreL from failing to start when an erroneous Json configuration exists.
   Such an error will now be logged and a default/empty configuration will be used.
@@ -342,7 +472,7 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/1
   For Oracle databases right mouse click on table in Object tree --> Scripts --> Create Table Script
   scripted columns of type number as decimal.
 
-#1508 MS SQL Server: When the catalog was switched by SQuirreL's catalogs combobox
+#1508 MS SQL Server: When the catalog was switched by SQuirreL's catalogs combo box
   the subsequent Object tree reload didn't work.
   The reason is a bug of the MSSQL JDBC driver (https://github.com/microsoft/mssql-jdbc).
   The logged message of the bug is:

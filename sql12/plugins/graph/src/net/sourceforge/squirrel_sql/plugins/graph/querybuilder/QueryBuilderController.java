@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -59,35 +60,35 @@ public class QueryBuilderController
       GridBagConstraints gbc;
 
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _panel.add(startButtonHandler.getButton(), gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,0,5),0,0);
-      _btnSQL = new JToggleButton(s_stringMgr.getString("QueryBuilderController.SQL"));
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5),0,0);
+      _btnSQL = fixWidth(new JToggleButton(s_stringMgr.getString("QueryBuilderController.SQL")));
       _panel.add(_btnSQL, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,20),0,0);
-      _btnResult = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Result"));
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,20),0,0);
+      _btnResult = fixWidth(new JToggleButton(s_stringMgr.getString("QueryBuilderController.Result")));
       _panel.add(_btnResult, gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      _btnSelect = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Select"));
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      _btnSelect = fixWidth(new JToggleButton(s_stringMgr.getString("QueryBuilderController.Select")));
       _panel.add(_btnSelect, gbc);
 
-      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      _btnWhere = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Where"));
+      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      _btnWhere = fixWidth(new JToggleButton(s_stringMgr.getString("QueryBuilderController.Where")));
       _panel.add(_btnWhere, gbc);
 
-      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      _btnOrder = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Order"));
+      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      _btnOrder = fixWidth(new JToggleButton(s_stringMgr.getString("QueryBuilderController.Order")));
       _panel.add(_btnOrder, gbc);
 
-      gbc = new GridBagConstraints(6,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      gbc = new GridBagConstraints(6,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _chkHideNoJoins = new TrippleStateCheckBox(s_stringMgr.getString("QueryBuilderController.HideNoJoins"));
       _panel.add(_chkHideNoJoins, gbc);
       _chkHideNoJoins.setSelected(queryHideNoJoins);
 
-      gbc = new GridBagConstraints(7,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      gbc = new GridBagConstraints(6,0,1,1,1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0);
       _panel.add(new JPanel(), gbc);
 
       GraphPluginResources rsrc = new GraphPluginResources(plugin);
@@ -129,7 +130,14 @@ public class QueryBuilderController
       });
    }
 
-
+   /**
+    * So sad this is needed.
+    */
+   private JToggleButton fixWidth(JToggleButton btn)
+   {
+      int width = btn.getFontMetrics(btn.getFont()).stringWidth(btn.getText()) + 50;
+      return GUIUtils.setPreferredWidth(btn, width);
+   }
 
    private void onNoJoin()
    {

@@ -13,7 +13,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import java.io.File;
@@ -376,9 +376,9 @@ public class FileHandler
       _fileManagementCore.displayUnsavedEditsInTabComponent(b);
    }
 
-   public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter, String fileEndingWithDot)
+   public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter)
    {
-      _fileManagementCore.replaceSqlFileExtensionFilterBy(fileExtensionFilter, fileEndingWithDot);
+      _fileManagementCore.replaceSqlFileExtensionFilterBy(fileExtensionFilter);
    }
 
    /**

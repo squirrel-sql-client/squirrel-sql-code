@@ -15,7 +15,6 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.DefaultGraphXmlSerial
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -246,15 +245,7 @@ public class LinkGraphController
 
    private void onExplore()
    {
-      try
-      {
-         Desktop desktop = Desktop.getDesktop();
-         desktop.open(new File(_linkGraphDialog.txtDir.getText()));
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
+      DesktopUtil.openInFileManager(new File(_linkGraphDialog.txtDir.getText()));
    }
 
 

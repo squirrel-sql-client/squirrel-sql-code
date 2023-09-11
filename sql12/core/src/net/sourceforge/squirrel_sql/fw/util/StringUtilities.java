@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+
 /**
  * String handling utilities.
  * 
@@ -61,7 +63,7 @@ public class StringUtilities
 	 */
 	public static String cleanString(String str)
 	{
-		final StringBuffer buf = new StringBuffer(str.length());
+		final StringBuilder buf = new StringBuilder(str.length());
 		char prevCh = ' ';
 
 		for (int i = 0, limit = str.length(); i < limit; ++i)
@@ -81,7 +83,7 @@ public class StringUtilities
 			prevCh = ch;
 		}
 
-		return buf.toString();
+		return buf.toString().trim();
 	}
 
    /**
@@ -465,6 +467,16 @@ public class StringUtilities
       return text.replaceAll("\r","");
    }
 
+   public static String removeNewLine(String text)
+   {
+      if(null == text)
+      {
+         return null;
+      }
+
+      return removeCarriageReturn(text).replaceAll("\n","");
+   }
+
    public static String prefixNulls(int toPrefix, int digitCount)
    {
       String ret = "" + toPrefix;
@@ -485,5 +497,50 @@ public class StringUtilities
       }
 
       return StringUtils.strip(possiblyQuotedString, "\"");
+   }
+
+   public static String pad(int width, char padChar)
+   {
+      return new String(new char[width]).replace('\0', padChar);
+   }
+
+   public static String removeEmptyLines(String text)
+   {
+      return removeEmptyLines(text, s -> false);
+   }
+   public static String removeEmptyLines(String text, Predicate<String> previousLineVeto)
+   {
+      String[] lines = text.split("\n");
+
+      StringBuilder builder = new StringBuilder();
+      for (int i = 0; i < lines.length; i++)
+      {
+
+         boolean append = false;
+         if (false == lines[i].trim().isEmpty())
+         {
+            append = true;
+         }
+         else if (previousLineVeto.test(lines[i - 1]))
+         {
+            append = true;
+         }
+
+         if (append)
+         {
+            if (0 < builder.length())
+            {
+               builder.append("\n");
+            }
+            builder.append(lines[i]);
+         }
+
+      }
+      return builder.toString();
+   }
+
+   public static String replaceNonBreakingSpacesBySpaces(String text)
+   {
+      return StringUtils.replaceChars(text, "\u00A0\u1680\u180e\u2000\u200a\u202f\u205f\u3000", " ");
    }
 }

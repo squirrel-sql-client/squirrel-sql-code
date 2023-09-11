@@ -22,38 +22,22 @@ package net.sourceforge.squirrel_sql.plugins.laf;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelURLClassLoader;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.laf.flatlaf.FlatLookAndFeelController;
 import net.sourceforge.squirrel_sql.plugins.laf.jtattoo.JTattooLookAndFeelController;
+import net.sourceforge.squirrel_sql.plugins.laf.nimbus.NimbusLookAndFeelController;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
-import java.awt.Frame;
+import java.awt.*;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Register of Look and Feels.
@@ -411,6 +395,7 @@ public class LAFRegister
 		{
 			s_log.error("Error installing SkinLookAndFeelController", ex);
 		}
+
 		try
 		{
 			PlasticLookAndFeelController ctrl = new PlasticLookAndFeelController(plugin, this);
@@ -424,6 +409,7 @@ public class LAFRegister
 		{
 			s_log.error("Error installing PlasticLookAndFeelController", ex);
 		}
+
 		try
 		{
 			MetalLookAndFeelController ctrl = new MetalLookAndFeelController(plugin, this);
@@ -433,6 +419,17 @@ public class LAFRegister
 		{
 			s_log.error("Error installing PlasticLookAndFeelController", ex);
 		}
+
+		try
+		{
+			NimbusLookAndFeelController ctrl = new NimbusLookAndFeelController(plugin, this);
+			_lafControllers.put(NimbusLookAndFeelController.NIMBUS_LAF_CLASS_NAME, ctrl);
+		}
+		catch (Throwable ex)
+		{
+			s_log.error("Error installing PlasticLookAndFeelController", ex);
+		}
+
 		try
 		{
 			_lafControllers.put(TonicLookAndFeelController.TONIC_LAF_CLASS_NAME, new TonicLookAndFeelController(
@@ -442,6 +439,7 @@ public class LAFRegister
 		{
 			s_log.error("Error installing SkinLookAndFeelController", ex);
 		}
+
 		try
 		{
 			_lafControllers.put(RadianceLookAndFeelController.RADIANCE_LAF_PLACEHOLDER_CLASS_NAME,
@@ -451,6 +449,7 @@ public class LAFRegister
 		{
 			s_log.error("Error installing SubstanceLookAndFeelController", ex);
 		}
+
 		try
 		{
 			_lafControllers.put(JTattooLookAndFeelController.JTATTOO_LAF_PLACEHOLDER_CLASS_NAME,
@@ -460,6 +459,7 @@ public class LAFRegister
 		{
 			s_log.error("Error installing JTattooLookAndFeelController", ex);
 		}
+
 		try
 		{
 			_lafControllers.put(FlatLookAndFeelController.FLAT_LAF_PLACEHOLDER_CLASS_NAME,

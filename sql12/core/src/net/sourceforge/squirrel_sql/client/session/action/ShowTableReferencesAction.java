@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
-import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
 import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ReferencesFrameStarter;
 import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.RootTable;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -39,7 +38,7 @@ public class ShowTableReferencesAction extends SquirrelAction implements IObject
 
 
             ResultMetaDataTable table = new ResultMetaDataTable(tableInfo.getCatalogName(), tableInfo.getSchemaName(), tableInfo.getSimpleName());
-            RootTable rootTable = new RootTable(table, new ArrayList<InStatColumnInfo>());
+            RootTable rootTable = new RootTable(table, new ArrayList<>());
             ReferencesFrameStarter.showReferences(rootTable, _tree.getSession(), getApplication().getMainFrame());
          }
       }

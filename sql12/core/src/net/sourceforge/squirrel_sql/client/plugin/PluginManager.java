@@ -37,11 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelURLClassLoader;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -51,14 +47,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Manages plugins for the application.
@@ -834,7 +823,7 @@ public class PluginManager implements IPluginManager
 
 	private void addToPlugins(PluginInfo pi)
 	{
-		if (isRemovedEditExtrasPlugin(pi.getPlugin()))
+		if (isRemovedPlugin(pi.getPlugin()))
 		{
 			return;
 		}
@@ -845,7 +834,7 @@ public class PluginManager implements IPluginManager
 
 	private void addToSessionPlugins(PluginInfo pi)
 	{
-		if (isRemovedEditExtrasPlugin(pi.getPlugin()))
+		if (isRemovedPlugin(pi.getPlugin()))
 		{
 			return;
 		}
@@ -855,7 +844,7 @@ public class PluginManager implements IPluginManager
 
 	private void addToLoadedPlugins(IPlugin plugin)
 	{
-		if (isRemovedEditExtrasPlugin(plugin))
+		if (isRemovedPlugin(plugin))
 		{
 			return;
 		}
@@ -863,9 +852,10 @@ public class PluginManager implements IPluginManager
 		_loadedPlugins.put(plugin.getInternalName(), plugin);
 	}
 
-	private boolean isRemovedEditExtrasPlugin(IPlugin plugin)
+	private boolean isRemovedPlugin(IPlugin plugin)
 	{
-		return plugin.getPluginJarFilePath().toLowerCase().endsWith("editextras.jar");
+		return    plugin.getPluginJarFilePath().toLowerCase().endsWith("editextras.jar")
+		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("dbdiff.jar");
 	}
 
 

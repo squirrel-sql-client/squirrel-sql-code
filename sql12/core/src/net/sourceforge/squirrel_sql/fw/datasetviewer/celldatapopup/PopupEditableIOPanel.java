@@ -18,50 +18,30 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDIffService;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.TableSelectionDiffUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.JsonFormatter;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.XmlRefomatter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFindCtrl;
+import net.sourceforge.squirrel_sql.fw.util.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.*;
+import java.nio.file.Path;
 
 /**
  * @author gwg
@@ -78,18 +58,24 @@ public class PopupEditableIOPanel extends JPanel
 	public static final String ACTION_BROWSE = "browse";
 	public static final String ACTION_EXPORT = "export";
 	public static final String ACTION_REFORMAT = "reformat";
+	public static final String ACTION_FIND = "find";
 	public static final String ACTION_EXECUTE = "execute";
 	public static final String ACTION_APPLY = "apply";
 	public static final String ACTION_IMPORT = "import";
 
 	// The text area displaying the object contents
-	private final JTextArea _ta;
+	private final JTextArea _textArea;
 
 	// the scroll pane that holds the text area
-	private final JScrollPane scrollPane;
+	private final JScrollPane _scrollPane;
+
+	private final TextFindCtrl _textFindCtrl;
+
 
 	// Description needed to handle conversion of data to/from Object
 	transient private final ColumnDisplayDefinition _colDef;
+	private final JCheckBoxMenuItem _chkMnuLineWrap;
+	private final JCheckBoxMenuItem _chkMnuWordWrap;
 
 	transient private MouseAdapter _lis;
 
@@ -124,7 +110,7 @@ public class PopupEditableIOPanel extends JPanel
 			else if (previousRadixListItem.equals("Octal")) base = 8;
 			else if (previousRadixListItem.equals("Binary")) base = 2;
 
-			Byte[] bytes = BinaryDisplayConverter.convertToBytes(_ta.getText(),
+			Byte[] bytes = BinaryDisplayConverter.convertToBytes(_textArea.getText(),
 				base, previousShowAscii);
 
 			// return the expected format for this data
@@ -133,7 +119,7 @@ public class PopupEditableIOPanel extends JPanel
 			else if (radixList.getSelectedItem().equals("Octal")) base = 8;
 			else if (radixList.getSelectedItem().equals("Binary")) base = 2;
 
-			((RestorableJTextArea)_ta).updateText(
+			((RestorableJTextArea) _textArea).updateText(
 				BinaryDisplayConverter.convertToString(bytes,
 				base, showAscii.isSelected()));
 
@@ -165,26 +151,28 @@ public class PopupEditableIOPanel extends JPanel
 		_popupMenu = new TextPopupMenu();
 
 		_colDef = colDef;
-		_ta = CellComponentFactory.getJTextArea(colDef, value);
+		_textArea = CellComponentFactory.getJTextArea(colDef, value);
 
-		if (isEditable) {
-			_ta.setEditable(true);
-			_ta.setBackground(SquirrelConstants.CELL_EDITABLE_COLOR);	// tell user it is editable
+		if (isEditable)
+		{
+			_textArea.setEditable(true);
+			_textArea.setBackground(SquirrelConstants.CELL_EDITABLE_COLOR);	// tell user it is editable
 		}
-		else {
-			_ta.setEditable(false);
+		else
+		{
+			_textArea.setEditable(false);
 		}
 
 
-		_ta.setLineWrap(true);
-		_ta.setWrapStyleWord(true);
+		_textArea.setLineWrap(true);
+		_textArea.setWrapStyleWord(true);
 
 		setLayout(new BorderLayout());
 
 		// add a panel containing binary data editing options, if needed
 		JPanel displayPanel = new JPanel();
 		displayPanel.setLayout(new BorderLayout());
-		scrollPane = new JScrollPane(_ta);
+		_scrollPane = new JScrollPane(_textArea);
 		/*
 		 * TODO: When 1.4 is the earliest version supported, include
 		 * the following line here:
@@ -193,8 +181,10 @@ public class PopupEditableIOPanel extends JPanel
 		 * setWheelScrollingEnabled function is not available in java 1.3.
 		 */
 
-		displayPanel.add(scrollPane, BorderLayout.CENTER);
-		if (CellComponentFactory.useBinaryEditingPanel(colDef)) {
+		_textFindCtrl = new TextFindCtrl(_textArea, _scrollPane);
+		displayPanel.add(_textFindCtrl.getContainerPanel(), BorderLayout.CENTER);
+		if (CellComponentFactory.useBinaryEditingPanel(colDef))
+		{
 			// this is a binary field, so allow for multiple viewing options
 
 			String[] radixListData = { "Hex", "Decimal", "Octal", "Binary" };
@@ -222,15 +212,23 @@ public class PopupEditableIOPanel extends JPanel
 
 		// add controls for file handling, but only if DataType
 		// can do File operations
-		if (CellComponentFactory.canDoFileIO(colDef)) {
+		if (CellComponentFactory.canDoFileIO(colDef))
+		{
 			// yes it can, so add controls
 			add(exportImportPanel(isEditable), BorderLayout.SOUTH);
 		}
 
-		_popupMenu.add(new LineWrapAction());
-		_popupMenu.add(new WordWrapAction());
+		_chkMnuLineWrap = new JCheckBoxMenuItem(new LineWrapAction());
+		_chkMnuLineWrap.setSelected(_textArea.getLineWrap());
+		_popupMenu.add(_chkMnuLineWrap);
+
+		_chkMnuWordWrap = new JCheckBoxMenuItem(new WordWrapAction());
+		_chkMnuWordWrap.setSelected(_textArea.getWrapStyleWord());
+		_popupMenu.add(_chkMnuWordWrap);
+
 		_popupMenu.add(new XMLReformatAction());
-		_popupMenu.setTextComponent(_ta);
+		_popupMenu.add(new CompareToClipAction()).setToolTipText(s_stringMgr.getString("popupEditableIoPanel.compare.to.clip.tooltip"));
+		_popupMenu.setTextComponent(_textArea);
 	}
 
 	/**
@@ -295,6 +293,7 @@ public class PopupEditableIOPanel extends JPanel
 		if ( isEditable == false)
 		{
 			addReformatButton(eiPanel, gbc);
+			addFindButton(eiPanel, gbc);
 
 			return eiPanel;
 		}
@@ -309,6 +308,7 @@ public class PopupEditableIOPanel extends JPanel
 		eiPanel.add(importButton, gbc);
 
 		addReformatButton(eiPanel, gbc);
+		addFindButton(eiPanel, gbc);
 
 
 		// add external processing command field and button
@@ -388,6 +388,16 @@ public class PopupEditableIOPanel extends JPanel
 		eiPanel.add(reformatButton, gbc);
 	}
 
+	private void addFindButton(JPanel eiPanel, GridBagConstraints gbc)
+	{
+		JButton findButton = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND));
+		findButton.setActionCommand(ACTION_FIND);
+		findButton.addActionListener(e -> onActionPerformed(e));
+
+		gbc.gridx++;
+		eiPanel.add(findButton, gbc);
+	}
+
 
 	/**
 	 * Return the contents of the editable text area as an Object
@@ -395,18 +405,18 @@ public class PopupEditableIOPanel extends JPanel
 	 * from the text form into the Object are reported
 	 * through the messageBuffer.
 	 */
-	public Object getObject(StringBuffer messageBuffer) {
-		String text = null;
-		try {
-			text = getTextAreaCannonicalForm();
+	public Object getObject(StringBuffer messageBuffer)
+	{
+		try
+		{
+			String text = getTextAreaCannonicalForm();
+			return CellComponentFactory.validateAndConvertInPopup(_colDef, originalValue, text, messageBuffer);
 		}
-		catch (Exception e) {
-			messageBuffer.append(
-				"Failed to convert binary text; error was:\n"+e.getMessage());
+		catch (Exception e)
+		{
+			messageBuffer.append("Failed to convert binary text; error was:\n" + e.getMessage());
 			return null;
 		}
-		return CellComponentFactory.validateAndConvertInPopup(_colDef,
-					originalValue, text, messageBuffer);
 	}
 
 	/**
@@ -414,7 +424,7 @@ public class PopupEditableIOPanel extends JPanel
 	 * on to the text area.
 	 */
 	public void requestFocus() {
-		_ta.requestFocus();
+		_textArea.requestFocus();
 	}
 
 	/**
@@ -434,6 +444,10 @@ public class PopupEditableIOPanel extends JPanel
 		else if(e.getActionCommand().equals(ACTION_REFORMAT))
 		{
 			reformat(GUIUtils.getOwningWindow(this));
+		}
+		else if(e.getActionCommand().equals(ACTION_FIND))
+		{
+			_textFindCtrl.toggleFind();
 		}
 		else
 		{
@@ -485,11 +499,25 @@ public class PopupEditableIOPanel extends JPanel
 			// that was used if they selected the automatic temp file
 			// operation, or they may not know what directory the file
 			// was actually put into, so this tells them the full file path.
-			JOptionPane.showMessageDialog(this,
-													// i18n[popupeditableIoPanel.exportedToFile=Data Successfully exported to file {0}]
-													s_stringMgr.getString("popupeditableIoPanel.exportedToFile", result.canonicalFilePathName),
-													// i18n[popupeditableIoPanel.exportSuccess=Export Success]
-													s_stringMgr.getString("popupeditableIoPanel.exportSuccess"), JOptionPane.INFORMATION_MESSAGE);
+			Object[] options = {
+					s_stringMgr.getString("popupeditableIoPanel.ok"),
+					s_stringMgr.getString("popupeditableIoPanel.ok.open.in.file.manager")
+			};
+
+			int selectIndex = JOptionPane.showOptionDialog(this,
+					s_stringMgr.getString("popupeditableIoPanel.exportedToFile", result.canonicalFilePathName),
+					s_stringMgr.getString("popupeditableIoPanel.exportSuccess"),
+					JOptionPane.OK_OPTION,
+					JOptionPane.INFORMATION_MESSAGE,
+					null,
+					options,
+					options[0]
+			);
+
+			if(1 == selectIndex)
+			{
+				DesktopUtil.openInFileManager(result.file);
+			}
 		}
 	}
 
@@ -585,12 +613,10 @@ public class PopupEditableIOPanel extends JPanel
 			// file does not already exist, so try to create it
 			try
 			{
-				if(!file.createNewFile())
+				if( false == createNewFileInclNeededDirs(file) )
 				{
 					JOptionPane.showMessageDialog(this,
-															// i18n[popupeditableIoPanel.createFileError=Failed to create file {0}.\nChange file name or select a differnt file for export.]
 															s_stringMgr.getString("popupeditableIoPanel.createFileError", canonicalFilePathName),
-															// i18n[popupeditableIoPanel.exportError6=Export Error]
 															s_stringMgr.getString("popupeditableIoPanel.exportError6"), JOptionPane.ERROR_MESSAGE);
 					return null;
 				}
@@ -600,9 +626,7 @@ public class PopupEditableIOPanel extends JPanel
 
 				Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
 				JOptionPane.showMessageDialog(this,
-														// i18n[popupeditableIoPanel.cannotOpenFile=Cannot open file {0}.\nError was:{1}]
 														s_stringMgr.getString("popupeditableIoPanel.cannotOpenFile", args),
-														// i18n[popupeditableIoPanel.exportError7=Export Error]
 														s_stringMgr.getString("popupeditableIoPanel.exportError7"), JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
@@ -633,6 +657,16 @@ public class PopupEditableIOPanel extends JPanel
 		}
 		FileResult result = new FileResult(canonicalFilePathName, file);
 		return result;
+	}
+
+	private static boolean createNewFileInclNeededDirs(File file) throws IOException
+	{
+		if(null != file.getParentFile())
+		{
+			file.getParentFile().mkdirs();
+		}
+
+		return file.createNewFile();
 	}
 
 	// at this point we have an actual file that we can output to,
@@ -945,7 +979,7 @@ public class PopupEditableIOPanel extends JPanel
 					base, showAscii.isSelected());
 			}
 
-			((RestorableJTextArea)_ta).updateText(replacementText);
+			((RestorableJTextArea) _textArea).updateText(replacementText);
 		}
 		catch (Exception ex) {
 
@@ -1047,7 +1081,7 @@ public class PopupEditableIOPanel extends JPanel
 					}
 				}
 			};
-			_ta.addMouseListener(_lis);
+			_textArea.addMouseListener(_lis);
 		}
 	}
 
@@ -1056,12 +1090,11 @@ public class PopupEditableIOPanel extends JPanel
 		super.removeNotify();
 		if (_lis != null)
 		{
-			_ta.removeMouseListener(_lis);
+			_textArea.removeMouseListener(_lis);
 			_lis = null;
 		}
 	}
 
-	@SuppressWarnings("serial")
 	private class LineWrapAction extends BaseAction
 	{
 		LineWrapAction()
@@ -1072,9 +1105,9 @@ public class PopupEditableIOPanel extends JPanel
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_ta != null)
+			if (_textArea != null)
 			{
-				_ta.setLineWrap(!_ta.getLineWrap());
+				lineWrapWordWrapChanged(false);
 			}
 		}
 	}
@@ -1090,12 +1123,38 @@ public class PopupEditableIOPanel extends JPanel
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_ta != null)
+			if (_textArea != null)
 			{
-				_ta.setWrapStyleWord(!_ta.getWrapStyleWord());
+				lineWrapWordWrapChanged(true);
 			}
 		}
 	}
+
+	private void lineWrapWordWrapChanged(boolean wordWrapChanged)
+	{
+		if(wordWrapChanged)
+		{
+			_textArea.setWrapStyleWord(!_textArea.getWrapStyleWord());
+			if(_textArea.getWrapStyleWord())
+			{
+				// Word wrap requires line wrap.
+				_textArea.setLineWrap(true);
+			}
+		}
+		else
+		{
+			_textArea.setLineWrap(!_textArea.getLineWrap());
+			if(_textArea.getWrapStyleWord())
+			{
+				// Word wrap requires line wrap.
+				_textArea.setWrapStyleWord(false);
+			}
+		}
+
+		_chkMnuLineWrap.setSelected(_textArea.getLineWrap());
+		_chkMnuWordWrap.setSelected(_textArea.getWrapStyleWord());
+	}
+
 
 	private class XMLReformatAction extends BaseAction
 	{
@@ -1111,16 +1170,56 @@ public class PopupEditableIOPanel extends JPanel
 		}
 	}
 
-	private void reformat(Window owningWindow)
+	private class CompareToClipAction extends BaseAction
 	{
-		JsonFormatter jsonFormatter = new JsonFormatter(_ta.getText());
-		if(jsonFormatter.success())
+		CompareToClipAction()
 		{
-			_ta.setText(jsonFormatter.getFormattedJson());
+			// i18n[popupEditableIoPanel.reformatXml=Reformat XML]
+			super(s_stringMgr.getString("popupEditableIoPanel.compare.to.clip"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			compareToClip();
+		}
+	}
+
+	private void compareToClip()
+	{
+
+		String clipboardAsString = ClipboardUtil.getClipboardAsString();
+
+		if(StringUtilities.isEmpty(clipboardAsString, true))
+		{
+			Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("popupEditableIoPanel.clipboard.empty.warn"));
 			return;
 		}
 
-		_ta.setText(XmlRefomatter.reformatXml(owningWindow, _ta.getText()));
+
+		String cellText = _textArea.getSelectedText();
+
+		if(StringUtilities.isEmpty(cellText, true))
+		{
+			cellText = _textArea.getText();
+		}
+
+		if(StringUtilities.isEmpty(cellText, true))
+		{
+			Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("popupEditableIoPanel.cell.empty.warn"));
+			return;
+		}
+
+		Path leftClipboardTempFile = TableSelectionDiffUtil.createLeftTempFile(clipboardAsString);
+
+		Path rightCellTextTempFile = TableSelectionDiffUtil.createRightTempFile(cellText);
+
+		String title = s_stringMgr.getString("popupEditableIoPanel.clipboard.vs.cell.data");
+		DBDIffService.showDiff(leftClipboardTempFile, rightCellTextTempFile, title, GUIUtils.getOwningWindow(_textArea));
+	}
+
+	private void reformat(Window owningWindow)
+	{
+		_textArea.setText(CellDataPopupFormatter.format(_textArea.getText()));
 	}
 
 
@@ -1137,17 +1236,17 @@ public class PopupEditableIOPanel extends JPanel
 	 */
 	private String getTextAreaCannonicalForm() {
 		// handle null
-		if (_ta.getText() == null ||
-			_ta.getText().equals(StringUtilities.NULL_AS_STRING) ||
-			_ta.getText().length() == 0)
-			return _ta.getText();
+		if (_textArea.getText() == null ||
+			_textArea.getText().equals(StringUtilities.NULL_AS_STRING) ||
+			_textArea.getText().length() == 0)
+			return _textArea.getText();
 
 		// if the data is not binary, then there is no need for conversion.
 		// if the data is Hex with ASCII not shown as chars, then no conversion needed.
 		if (radixList == null ||
 			(radixList.getSelectedItem().equals("Hex") && ! showAscii.isSelected()) ) {
 			// no need for conversion
-			return _ta.getText();
+			return _textArea.getText();
 		}
 
 		// The field is binary and not in the format expected by the DataType
@@ -1157,7 +1256,7 @@ public class PopupEditableIOPanel extends JPanel
 		else if (radixList.getSelectedItem().equals("Binary")) base = 2;
 
 		// the following can cause and exception if the text is not formatted correctly
-		Byte[] bytes = BinaryDisplayConverter.convertToBytes(_ta.getText(),
+		Byte[] bytes = BinaryDisplayConverter.convertToBytes(_textArea.getText(),
 			base, showAscii.isSelected());
 
 		// return the expected format for this data

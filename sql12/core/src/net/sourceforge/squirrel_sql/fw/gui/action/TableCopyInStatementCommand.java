@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.util.ArrayList;
 
@@ -84,12 +84,31 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
 
    public ArrayList<InStatColumnInfo> getInStatColumnInfos()
    {
+      return getInStatColumnInfos(false);
+   }
+
+   public ArrayList<InStatColumnInfo> getInStatColumnInfos(boolean firstLineAllColumns)
+   {
       ArrayList<InStatColumnInfo> ret = new ArrayList<>();
 
       int nbrSelRows = _table.getSelectedRowCount();
       int nbrSelCols = _table.getSelectedColumnCount();
       int[] selRows = _table.getSelectedRows();
       int[] selCols = _table.getSelectedColumns();
+
+      if(firstLineAllColumns && 0 < _table.getRowCount())
+      {
+         nbrSelRows = 1;
+         nbrSelCols = 1;
+         selRows = new int[]{0};
+         selCols = new int[_table.getColumnModel().getColumnCount()];
+
+         for (int i = 0; i < selCols.length; i++)
+         {
+            selCols[i] = i;
+         }
+      }
+
       if (selRows.length != 0 && selCols.length != 0)
       {
          for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)

@@ -23,13 +23,10 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.util.Timer;
@@ -70,7 +67,6 @@ public class DBOutputPanel extends JPanel
     */
    public DBOutputPanel(ISession session, int autoRefeshPeriod)
    {
-      super();
       _session = session;
       _refreshPeriod = autoRefeshPeriod;
       createGUI();

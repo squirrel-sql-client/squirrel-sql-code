@@ -20,22 +20,15 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
+
+import javax.swing.*;
 
 public class SessionInternalFrame extends SessionTabWidget implements ISQLInternalFrame, IObjectTreeInternalFrame
 {
@@ -46,7 +39,7 @@ public class SessionInternalFrame extends SessionTabWidget implements ISQLIntern
     
 	public SessionInternalFrame(ISession session)
 	{
-		super(session.getTitle(), true, true, true, true, session);
+		super(session.getTitleModificationAware(), true, true, true, true, session);
 		_app = session.getApplication();
 		setVisible(false);
 		createGUI(session);

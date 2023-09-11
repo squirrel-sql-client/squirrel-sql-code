@@ -59,7 +59,10 @@ public interface IDataSetUpdateableModel
 	 * to go into editing mode.
 	 */
 	public void forceEditMode(boolean mode);
-	
+
+	void addListener(DataSetUpdateableTableModelListener l);
+	void removeListener(DataSetUpdateableTableModelListener l);
+
 	/**
 	 * The fw gui may need to query the application on whether it is in "forced edit" mode
 	 * or not.

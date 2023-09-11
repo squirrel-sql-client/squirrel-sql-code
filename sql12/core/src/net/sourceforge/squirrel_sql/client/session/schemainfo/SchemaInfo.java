@@ -22,27 +22,17 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
+import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.AliasCatalogLoadModel;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBackAdaptor;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.UDTInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.DriverMatch;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -50,16 +40,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class SchemaInfo
 {
@@ -257,31 +241,10 @@ public class SchemaInfo
          _dmd.clearCache();
 
 
-         String catalog = null;
+         AliasCatalogLoadModel aliasCatalogLoadModel =
+               Main.getApplication().getCatalogLoadModelManager().createAliasCatalogLoadModel(_session);
 
-         if(DialectFactory.isMSSQLServer(_dmd))
-         {
-            // This code is a workaround for bug #1508 (Sourceforge):
-            // After switching catalogs using the catalogs combobox (see CatalogsComboListener.actionPerformed())
-            // the MSSQL-Server JDBC driver (https://github.com/microsoft/mssql-jdbc)
-            // throws a "SQLServerException: The prepared statement handle 1 is not valid in this context ..."
-            // when SchemaInfo is reloaded.
-            // The problem doesn't occur, when the reloading is done with the current catalog specified.
-            //
-            // Note: Without switching catalog the MSSQL-Server JDBC driver loads SchemaInfo fine with catalog = null, too.
-            // It then loads the current catalog's objects. So setting the current catalog here makes no difference except from
-            // preventing the JDBC driver's bug.
-            try
-            {
-               catalog = _session.getSQLConnection().getCatalog();
-            }
-            catch (Exception e)
-            {
-               s_log.error("Error getting the current catalog from MSSQL-Server to workaround Sourceforge bug #1508.", e);
-            }
-         }
-
-         _loadAllObjects(catalog);
+         _loadAllObjects(aliasCatalogLoadModel);
       }
       finally
       {
@@ -295,7 +258,7 @@ public class SchemaInfo
       }
    }
 
-   private void _loadAllObjects(String catalog)
+   private void _loadAllObjects(AliasCatalogLoadModel aliasCatalogLoadModel)
    {
       int progress = 0;
 
@@ -340,7 +303,7 @@ public class SchemaInfo
 
       try
       {
-         progress = loadTables(catalog, null, null, null, progress);
+         progress = loadTables(aliasCatalogLoadModel, null, null, null, progress);
          notifyTablesLoaded();
       }
       catch (Exception ex)
@@ -351,7 +314,7 @@ public class SchemaInfo
 
       try
       {
-         progress = loadStoredProcedures(catalog, null, null, progress);
+         progress = loadStoredProcedures(aliasCatalogLoadModel, null, null, progress);
          notifyStoredProceduresLoaded();
       }
       catch (Exception ex)
@@ -361,7 +324,7 @@ public class SchemaInfo
 
       try
       {
-         progress = loadUDTs(catalog, null, null, progress);
+         progress = loadUDTs(aliasCatalogLoadModel, null, null, progress);
          notifyUDTsLoaded();
       }
       catch (Exception ex)
@@ -407,13 +370,13 @@ public class SchemaInfo
    }
 
 
-   private int loadStoredProcedures(String catalog, String schema, String procNamePattern, int progress)
+   private int loadStoredProcedures(AliasCatalogLoadModel aliasCatalogLoadModel, String schema, String procNamePattern, int progress)
    {
       try
       {
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_PROCS_MSG, beginProgress);
-         privateLoadStoredProcedures(catalog, 
+         privateLoadStoredProcedures(aliasCatalogLoadModel,
                                      schema, 
                                      procNamePattern, 
                                      i18n.LOADING_PROCS_MSG, 
@@ -426,13 +389,13 @@ public class SchemaInfo
       return progress;
    }
 
-   private int loadUDTs(String catalog, String schema, String udtNamePattern, int progress)
+   private int loadUDTs(AliasCatalogLoadModel aliasCatalogLoadModel, String schema, String udtNamePattern, int progress)
    {
       try
       {
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_UDTS_MSG, beginProgress);
-         privateLoadUDTs(catalog,
+         privateLoadUDTs(aliasCatalogLoadModel,
                          schema,
                          udtNamePattern,
                          i18n.LOADING_UDTS_MSG,
@@ -446,7 +409,7 @@ public class SchemaInfo
       return progress;
    }
 
-   private int loadTables(String catalog,
+   private int loadTables(AliasCatalogLoadModel aliasCatalogLoadModel,
                           String schema, 
                           String tableNamePattern, 
                           String[] types, 
@@ -456,7 +419,7 @@ public class SchemaInfo
       {
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_TABLES_MSG, beginProgress);
-         privateLoadTables(catalog, 
+         privateLoadTables(aliasCatalogLoadModel,
                            schema, 
                            tableNamePattern, 
                            types, 
@@ -554,7 +517,7 @@ public class SchemaInfo
       }
    }
 
-   private void privateLoadStoredProcedures(String catalog, String schema, String procNamePattern, final String msg, final int beginProgress)
+   private void privateLoadStoredProcedures(AliasCatalogLoadModel aliasCatalogLoadModel, String schema, String procNamePattern, final String msg, final int beginProgress)
    {
       try
       {
@@ -574,11 +537,14 @@ public class SchemaInfo
          {
             if(schemaLoadInfos[i].isLoadProcedures())
             {
-               IProcedureInfo[] procedures = _dmd.getProcedures(catalog, schemaLoadInfos[i].getSchemaName(), procNamePattern, pcb);
-
-               for (int j = 0; j < procedures.length; j++)
+               for (String catalog : aliasCatalogLoadModel.getCatalogStringsToLoad())
                {
-                  _schemaInfoCache.writeToProcedureCache(procedures[j]);
+                  IProcedureInfo[] procedures = _dmd.getProcedures(catalog, schemaLoadInfos[i].getSchemaName(), procNamePattern, pcb);
+
+                  for (IProcedureInfo procedure : procedures)
+                  {
+                     _schemaInfoCache.writeToProcedureCache(procedure);
+                  }
                }
             }
          }
@@ -590,7 +556,7 @@ public class SchemaInfo
 
    }
 
-   private void privateLoadUDTs(String catalog, String schema, String udtNamePattern, final String msg, final int beginProgress)
+   private void privateLoadUDTs(AliasCatalogLoadModel aliasCatalogLoadModel, String schema, String udtNamePattern, final String msg, final int beginProgress)
    {
       try
       {
@@ -603,18 +569,19 @@ public class SchemaInfo
             }
          };
 
-
          SchemaLoadInfo[] schemaLoadInfos = _schemaInfoCache.getMatchingSchemaLoadInfos(schema);
 
-         for (int i = 0; i < schemaLoadInfos.length; i++)
+         for (SchemaLoadInfo schemaLoadInfo : schemaLoadInfos)
          {
-            if(schemaLoadInfos[i].isLoadUDTs())
+            if (schemaLoadInfo.isLoadUDTs())
             {
-               IUDTInfo[] udts = _dmd.getUDTs(catalog, schemaLoadInfos[i].getSchemaName(), udtNamePattern, null, pcb);
-
-               for (int j = 0; j < udts.length; j++)
+               for (String catalog : aliasCatalogLoadModel.getCatalogStringsToLoad())
                {
-                  _schemaInfoCache.writeToUDTCache(udts[j]);
+                  IUDTInfo[] udts = _dmd.getUDTs(catalog, schemaLoadInfo.getSchemaName(), udtNamePattern, null, pcb);
+                  for (IUDTInfo udt : udts)
+                  {
+                     _schemaInfoCache.writeToUDTCache(udt);
+                  }
                }
             }
          }
@@ -1225,7 +1192,7 @@ public class SchemaInfo
       return _loaded;
    }
 
-   private void privateLoadTables(String catalog,
+   private void privateLoadTables(AliasCatalogLoadModel aliasCatalogLoadModel,
                                   String schema,
                                   String tableNamePattern,
                                   String[] types,
@@ -1244,19 +1211,22 @@ public class SchemaInfo
          };
 
          SchemaLoadInfo[] schemaLoadInfos = _schemaInfoCache.getMatchingSchemaLoadInfos(schema, types);
-         
-         for (int i = 0; i < schemaLoadInfos.length; i++)
-         {
-            ITableInfo[] infos = new ITableInfo[0];
 
-            if (null == schemaLoadInfos[i].getTableTypes() || 0 < schemaLoadInfos[i].getTableTypes().length)
+         for (SchemaLoadInfo schemaLoadInfo : schemaLoadInfos)
+         {
+            List<ITableInfo> infos = new ArrayList<>();
+
+            if (null == schemaLoadInfo.getTableTypes() || 0 < schemaLoadInfo.getTableTypes().length)
             {
                // With Oracle this takes quite a lot of time if schemaLoadInfos[i].tableTypes has length 0
                // that's why this if is here
-               infos = _dmd.getTables(catalog, schemaLoadInfos[i].getSchemaName(), tableNamePattern, schemaLoadInfos[i].getTableTypes(), pcb);
+               for (String catalog : aliasCatalogLoadModel.getCatalogStringsToLoad())
+               {
+                  infos.addAll(List.of(_dmd.getTables(catalog, schemaLoadInfo.getSchemaName(), tableNamePattern, schemaLoadInfo.getTableTypes(), pcb)));
+               }
             }
 
-            _schemaInfoCache.writeToTableCache(infos);
+            _schemaInfoCache.writeToTableCache(infos.toArray(new ITableInfo[0]));
          }
       }
       catch (Throwable th)
@@ -1443,50 +1413,50 @@ public class SchemaInfo
             ITableInfo ti = (ITableInfo) doi;
 
             _schemaInfoCache.clearTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), null);
-            loadTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), null, 1);
+            loadTables(AliasCatalogLoadModel.of(ti.getCatalogName()), ti.getSchemaName(), ti.getSimpleName(), null, 1);
 
-            loadUDTs(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), 1);
+            loadUDTs(AliasCatalogLoadModel.of(ti.getCatalogName()), ti.getSchemaName(), ti.getSimpleName(), 1);
 
          }
          else if(doi instanceof IProcedureInfo)
          {
             IProcedureInfo pi = (IProcedureInfo) doi;
             _schemaInfoCache.clearStoredProcedures(pi.getCatalogName(), pi.getSchemaName(), pi.getSimpleName());
-            loadStoredProcedures(pi.getCatalogName(), pi.getSchemaName(), pi.getSimpleName(), 1);
+            loadStoredProcedures(AliasCatalogLoadModel.of(pi.getCatalogName()), pi.getSchemaName(), pi.getSimpleName(), 1);
          }
          else if(doi instanceof IUDTInfo)
          {
             IUDTInfo udtInfo = (IUDTInfo) doi;
             _schemaInfoCache.clearUDTs(udtInfo.getCatalogName(), udtInfo.getSchemaName(), udtInfo.getSimpleName());
-            loadUDTs(udtInfo.getCatalogName(), udtInfo.getSchemaName(), udtInfo.getSimpleName(), 1);
+            loadUDTs(AliasCatalogLoadModel.of(udtInfo.getCatalogName()), udtInfo.getSchemaName(), udtInfo.getSimpleName(), 1);
          }
          else if(DatabaseObjectType.TABLE_TYPE_DBO == doi.getDatabaseObjectType())
          {
             // load all table types with catalog = doi.getCatalog() and schema = doi.getSchema()
             _schemaInfoCache.clearTables(doi.getCatalogName(), doi.getSchemaName(), null, null);
-            loadTables(doi.getCatalogName(), doi.getSchemaName(), null, null, 0);
+            loadTables(AliasCatalogLoadModel.of(doi.getCatalogName()), doi.getSchemaName(), null, null, 0);
          }
          else if(DatabaseObjectType.TABLE == doi.getDatabaseObjectType())
          {
             // load tables with catalog = doi.getCatalog() and schema = doi.getSchema()
             _schemaInfoCache.clearTables(doi.getCatalogName(), doi.getSchemaName(), null, new String[]{"TABLE"});
-            loadTables(doi.getCatalogName(), doi.getSchemaName(), null, new String[]{"TABLE"}, 1);
+            loadTables(AliasCatalogLoadModel.of(doi.getCatalogName()), doi.getSchemaName(), null, new String[]{"TABLE"}, 1);
          }
          else if(DatabaseObjectType.VIEW == doi.getDatabaseObjectType())
          {
             // load views with catalog = doi.getCatalog() and schema = doi.getSchema()
             _schemaInfoCache.clearTables(doi.getCatalogName(), doi.getSchemaName(), null, new String[]{"VIEW"});
-            loadTables(doi.getCatalogName(), doi.getSchemaName(), null, new String[]{"VIEW"}, 1);
+            loadTables(AliasCatalogLoadModel.of(doi.getCatalogName()), doi.getSchemaName(), null, new String[]{"VIEW"}, 1);
          }
          else if(DatabaseObjectType.PROCEDURE == doi.getDatabaseObjectType() || DatabaseObjectType.PROC_TYPE_DBO == doi.getDatabaseObjectType())
          {
             _schemaInfoCache.clearStoredProcedures(doi.getCatalogName(), doi.getSchemaName(), null);
-            loadStoredProcedures(doi.getCatalogName(), doi.getSchemaName(), null, 1);
+            loadStoredProcedures(AliasCatalogLoadModel.of(doi.getCatalogName()), doi.getSchemaName(), null, 1);
          }
          else if(DatabaseObjectType.UDT == doi.getDatabaseObjectType() || DatabaseObjectType.UDF_TYPE_DBO == doi.getDatabaseObjectType())
          {
             _schemaInfoCache.clearUDTs(doi.getCatalogName(), doi.getSchemaName(), null);
-            loadUDTs(doi.getCatalogName(), doi.getSchemaName(), null, 1);
+            loadUDTs(AliasCatalogLoadModel.of(doi.getCatalogName()), doi.getSchemaName(), null, 1);
          }
          else if(DatabaseObjectType.SCHEMA == doi.getDatabaseObjectType())
          {
@@ -1508,15 +1478,15 @@ public class SchemaInfo
             //int progress = loadCatalogs(1);
             // load tables with schema = null
             _schemaInfoCache.clearTables(doi.getCatalogName(), null, null, null);
-            int progress = loadTables(doi.getCatalogName(), null, null, null, 1);
+            int progress = loadTables(AliasCatalogLoadModel.of(doi.getCatalogName()), null, null, null, 1);
 
             // load procedures with schema = null
             _schemaInfoCache.clearStoredProcedures(doi.getCatalogName(), null, null);
-            loadStoredProcedures(doi.getCatalogName(), null, null, progress);
+            loadStoredProcedures(AliasCatalogLoadModel.of(doi.getCatalogName()), null, null, progress);
 
             // load UDTs with schema = null
             _schemaInfoCache.clearUDTs(doi.getCatalogName(), null, null);
-            loadUDTs(doi.getCatalogName(), null, null, progress);
+            loadUDTs(AliasCatalogLoadModel.of(doi.getCatalogName()), null, null, progress);
          }
          else if(DatabaseObjectType.SESSION == doi.getDatabaseObjectType())
          {

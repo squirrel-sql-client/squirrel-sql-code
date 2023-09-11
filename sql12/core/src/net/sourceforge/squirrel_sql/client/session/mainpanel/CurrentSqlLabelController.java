@@ -5,12 +5,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.JEditorPane;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -113,12 +110,12 @@ public class CurrentSqlLabelController
       }
    }
 
-   public void reInit(int rowCount, boolean areAllPossibleResultsOfSQLRead)
+   public void reInit(int rowCount, boolean isResultLimitedByMaxRowsCount)
    {
-      reInit(rowCount, areAllPossibleResultsOfSQLRead, null, null);
+      reInit(rowCount, isResultLimitedByMaxRowsCount, null, null);
    }
 
-   public void reInit(int rowCount, boolean areAllPossibleResultsOfSQLRead, String normalizedSQL, String rawSQL)
+   public void reInit(int rowCount, boolean isResultLimitedByMaxRowsCount, String normalizedSQL, String rawSQL)
    {
       if(null != normalizedSQL)
       {
@@ -134,17 +131,15 @@ public class CurrentSqlLabelController
 
       String escapedSql = Utilities.escapeHtmlChars(_normalizedSQL);
 
-      if (areAllPossibleResultsOfSQLRead)
+      if (isResultLimitedByMaxRowsCount)
       {
-         // i18n[ResultTab.rowsMessage=Rows {0}]
-         String rowsMsg = s_stringMgr.getString("ResultTab.rowsMessage", Integer.valueOf(rowCount));
-         _textPaneLabel.setText("<html><pre>" + rowsMsg + ";&nbsp;&nbsp;" + escapedSql + "</pre></html>");
+         String limitMsg = s_stringMgr.getString("ResultTab.limitMessage", Integer.valueOf(rowCount));
+         _textPaneLabel.setText("<html><pre>" + limitMsg + ";&nbsp;&nbsp;" + escapedSql + "</pre></html>");
       }
       else
       {
-         // i18n[ResultTab.limitMessage=Limited to <font color='red'> {0} </font> rows]
-         String limitMsg = s_stringMgr.getString("ResultTab.limitMessage", Integer.valueOf(rowCount));
-         _textPaneLabel.setText("<html><pre>" + limitMsg + ";&nbsp;&nbsp;" + escapedSql + "</pre></html>");
+         String rowsMsg = s_stringMgr.getString("ResultTab.rowsMessage", Integer.valueOf(rowCount));
+         _textPaneLabel.setText("<html><pre>" + rowsMsg + ";&nbsp;&nbsp;" + escapedSql + "</pre></html>");
       }
    }
 

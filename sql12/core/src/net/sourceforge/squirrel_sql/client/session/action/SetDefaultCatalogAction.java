@@ -19,26 +19,24 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.awt.event.ActionEvent;
 /**
  * This <CODE>Action</CODE> will set the default catalog for the session.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SetDefaultCatalogAction extends SquirrelAction
-										implements IObjectTreeAction
+public class SetDefaultCatalogAction extends SquirrelAction implements IObjectTreeAction
 {
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(SetDefaultCatalogAction.class);
+	private final static ILogger s_log = LoggerController.createLogger(SetDefaultCatalogAction.class);
 
 	private IObjectTreeAPI _tree;
 
@@ -88,17 +86,5 @@ public class SetDefaultCatalogAction extends SquirrelAction
 		{
 			_tree.getSession().getApplication().showErrorDialog("Must select a single catalog");
 		}
-
-//		IApplication app = getApplication();
-//		CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
-//		cursorChg.show();
-//		try
-//		{
-//			new ShowNativeSQLCommand(_session).execute();
-//		}
-//		finally
-//		{
-//			cursorChg.restore();
-//		}
 	}
 }

@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
+import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.CatalogLoadModelManager;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
@@ -35,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffState;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
@@ -44,16 +46,14 @@ import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
-import net.sourceforge.squirrel_sql.fw.gui.tableselectiondiff.TableSelectionDiffStore;
 import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
+import javax.swing.*;
 /**
  * Defines the API to do callbacks on the application.
  */
@@ -94,11 +94,15 @@ public interface IApplication
 
 	AliasesAndDriversManager getAliasesAndDriversManager();
 
+	CatalogLoadModelManager getCatalogLoadModelManager();
+
 	SquirrelPreferences getSquirrelPreferences();
 
    DesktopStyle getDesktopStyle();
 
 	SquirrelResources getResources();
+
+	LibraryResources getResourcesFw();
 
 	ShortcutManager getShortcutManager();
 
@@ -250,7 +254,7 @@ public interface IApplication
      * @param preferenceType the enumerated type that indicates what category
      *                       of preferences to be persisted. 
      */
-    public void savePreferences(PreferenceType preferenceType);
+    void savePreferences(PreferenceType preferenceType);
     
 
    void addApplicationListener(ApplicationListener l);
@@ -289,5 +293,5 @@ public interface IApplication
 
 	MultipleSqlResultExportChannel getMultipleSqlResultExportChannel();
 
-	TableSelectionDiffStore getTableSelectionDiffStore();
+	DBDiffState getDBDiffState();
 }

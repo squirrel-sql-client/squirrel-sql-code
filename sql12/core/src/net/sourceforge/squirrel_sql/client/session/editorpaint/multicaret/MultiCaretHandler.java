@@ -5,12 +5,11 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -71,6 +70,11 @@ public class MultiCaretHandler
          @Override
          public void mousePressed(MouseEvent e)
          {
+            if(MultiCaretUtil.isAdditionalCaretMouseClickModifier(e))
+            {
+               return;
+            }
+
             clearMultiEdits();
          }
       });
@@ -143,7 +147,7 @@ public class MultiCaretHandler
    }
 
 
-   public void onKeyPressed(KeyEvent e)
+   private void onKeyPressed(KeyEvent e)
    {
 //      if(isAddNextTrigger(e))
 //      {
@@ -276,19 +280,6 @@ public class MultiCaretHandler
       }
    }
 
-   private boolean isAddNextTrigger(KeyEvent e)
-   {
-      return e.getModifiersEx() == KeyEvent.ALT_DOWN_MASK && e.getKeyCode() == KeyEvent.VK_J;
-   }
-
-   private boolean isRemovePreviousTrigger(KeyEvent e)
-   {
-      return    (e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) == KeyEvent.ALT_DOWN_MASK
-             && (e.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK) == KeyEvent.SHIFT_DOWN_MASK
-             && e.getKeyCode() == KeyEvent.VK_J;
-   }
-
-
    private SingleEdit getNextEdit()
    {
       if(_multiEdits.isEmpty())
@@ -350,5 +341,23 @@ public class MultiCaretHandler
    public void onPaintComponent(Graphics g)
    {
       _multiCaretPainter.paintAdditionalCarets(g);
+   }
+
+   public void createNextCaretAtPoint(Point mousePoint)
+   {
+      if(_multiEdits.isEmpty())
+      {
+         final SingleEdit singleEdit = new SingleEdit(null, _textArea.getCaretPosition(), _textArea.getCaretPosition());
+         singleEdit.setInitialEdit(true);
+         _multiEdits.add(singleEdit);
+      }
+
+      int editorPosition = _textArea.viewToModel2D(mousePoint);
+
+      final SingleEdit singleEdit = new SingleEdit(null, editorPosition, editorPosition);
+      singleEdit.setInitialEdit(false);
+      _multiEdits.add(singleEdit);
+
+      SwingUtilities.invokeLater(() -> _textArea.repaint());
    }
 }

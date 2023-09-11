@@ -2,7 +2,8 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandlerUtil;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ModificationAwareSessionTitle;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -14,22 +15,18 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
 
 
    private ISession _session;
-   private String _titleWithoutFile = "";
+   private ModificationAwareSessionTitle _titleWithoutFile;
    private TitleFilePathHandler _titleFileHandler;
 
-   public SessionTabWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, ISession session)
+   public SessionTabWidget(ModificationAwareSessionTitle title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, ISession session)
    {
-      super(title, resizeable, closeable, maximizeable, iconifiable, session.getApplication());
+      super(title.getTitle(), resizeable, closeable, maximizeable, iconifiable, session.getApplication());
       _session = session;
       _titleWithoutFile = title;
       setupSheet();
 
-      _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile));
-   }
-
-   public SessionTabWidget(String title, boolean resizeable, ISession session)
-   {
-      this(title, resizeable, true, false, false, session);
+      _titleWithoutFile.setListener((oldTitle, newTitle) -> setTitle(_titleWithoutFile.getTitle()));
+      _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile.getTitle()));
    }
 
    public ISession getSession()
@@ -66,9 +63,8 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
    @Override
    public void setTitle(String title)
    {
-      _titleWithoutFile = title;
-
-      TitleFilePathHandlerUtil.setTitle(_titleWithoutFile, _titleFileHandler, this, super::setTitle);
+      _titleWithoutFile.setTitle(title);
+      TitleFilePathHandlerUtil.setTitle(_titleWithoutFile.getTitle(), _titleFileHandler, this, super::setTitle);
    }
 
 

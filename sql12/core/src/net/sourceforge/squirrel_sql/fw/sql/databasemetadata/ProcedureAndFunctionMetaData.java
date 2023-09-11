@@ -3,11 +3,7 @@ package net.sourceforge.squirrel_sql.fw.sql.databasemetadata;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
-import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 

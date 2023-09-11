@@ -7,17 +7,8 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 final class GeneralSessionPropertiesUIPanel extends JPanel
 {
@@ -384,11 +375,11 @@ final class GeneralSessionPropertiesUIPanel extends JPanel
       OutputTypeCombo(boolean possiblyEditable)
       {
          super();
-         addItem(OutputType.TABLE);
-         addItem(OutputType.TEXT);
+         addItem(DataSetViewerType.TABLE);
+         addItem(DataSetViewerType.TEXT);
          if (possiblyEditable)
          {
-            addItem(OutputType.EDITABLE_TABLE);
+            addItem(DataSetViewerType.EDITABLE_TABLE);
          }
       }
 
@@ -396,21 +387,21 @@ final class GeneralSessionPropertiesUIPanel extends JPanel
       {
          if (className.equals(DataSetViewerTablePanel.class.getName()))
          {
-            setSelectedItem(OutputType.TABLE);
+            setSelectedItem(DataSetViewerType.TABLE);
          }
          else if (className.equals(DataSetViewerTextPanel.class.getName()))
          {
-            setSelectedItem(OutputType.TEXT);
+            setSelectedItem(DataSetViewerType.TEXT);
          }
          else if (className.equals(DataSetViewerEditableTablePanel.class.getName()))
          {
-            setSelectedItem(OutputType.EDITABLE_TABLE);
+            setSelectedItem(DataSetViewerType.EDITABLE_TABLE);
          }
       }
 
       String getSelectedClassName()
       {
-         return ((OutputType) getSelectedItem()).getPanelClassName();
+         return ((DataSetViewerType) getSelectedItem()).getDataSetViewerClassName();
       }
    }
 
@@ -443,31 +434,6 @@ final class GeneralSessionPropertiesUIPanel extends JPanel
       int getValue()
       {
          return _value;
-      }
-   }
-
-   private final static class OutputType
-   {
-      static final OutputType TEXT = new OutputType(GeneralSessionPropertiesPanelI18n.TEXT, DataSetViewerTextPanel.class.getName());
-      static final OutputType TABLE = new OutputType(GeneralSessionPropertiesPanelI18n.TABLE, DataSetViewerTablePanel.class.getName());
-      static final OutputType EDITABLE_TABLE = new OutputType(GeneralSessionPropertiesPanelI18n.EDITABLE_TABLE, DataSetViewerEditableTablePanel.class.getName());
-      private final String _name;
-      private final String _className;
-
-      OutputType(String name, String className)
-      {
-         _name = name;
-         _className = className;
-      }
-
-      public String toString()
-      {
-         return _name;
-      }
-
-      String getPanelClassName()
-      {
-         return _className;
       }
    }
 

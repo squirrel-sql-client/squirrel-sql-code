@@ -60,7 +60,7 @@ public class SingleEdit
       _initialEdit = initialEdit;
    }
 
-   public void adjustByAnchestorShift(int shiftLen)
+   public void adjustByAncestorShift(int shiftLen)
    {
       _start += shiftLen;
       _end += shiftLen;

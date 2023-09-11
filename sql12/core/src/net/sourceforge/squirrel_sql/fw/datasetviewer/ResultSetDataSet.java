@@ -30,11 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -687,10 +683,19 @@ public class ResultSetDataSet implements IDataSet
       return _rdr.areAllPossibleResultsOfSQLRead();
    }
 
+   public boolean isResultLimitedByMaxRowsCount()
+   {
+      return _rdr.isResultLimitedByMaxRowsCount();
+   }
 
    public void closeStatementAndResultSet()
    {
       _rdr.closeStatementAndResultSet();
    }
 
+   public void replaceDataOnUserEdits(ArrayList<Object[]> updatedRows)
+   {
+      resetCursor();
+      _alData = updatedRows;
+   }
 }

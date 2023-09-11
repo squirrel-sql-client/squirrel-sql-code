@@ -1,8 +1,5 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
-import java.sql.SQLException;
-import javax.swing.Action;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
@@ -10,10 +7,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.CurrentSchemaModel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
@@ -31,8 +25,15 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
+import javax.swing.*;
+import java.sql.SQLException;
+import java.util.HashMap;
+
 public class CliSessionAdapter implements ISession
 {
+   private HashMap<Object, Object> _sessionLocales = new HashMap<>();
+
+
    @Override
    public boolean isClosed()
    {
@@ -187,6 +188,12 @@ public class CliSessionAdapter implements ISession
    public String getTitle()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public ModificationAwareSessionTitle getTitleModificationAware()
+   {
+      return null;
    }
 
    @Override
@@ -366,13 +373,13 @@ public class CliSessionAdapter implements ISession
    @Override
    public Object getSessionLocal(Object key)
    {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
+      return _sessionLocales.get(key);
    }
 
    @Override
    public void putSessionLocal(Object key, Object value)
    {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
+      _sessionLocales.put(key, value);
    }
 
    @Override

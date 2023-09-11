@@ -8,9 +8,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -18,7 +16,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -279,6 +277,7 @@ public class FindInPreferencesCtrl
 
    private void onTreeSelectionChanged(TreeSelectionEvent e)
    {
+      _dlg.txtDetails.setText("");
       if(null == e.getNewLeadSelectionPath())
       {
          return;
@@ -291,7 +290,6 @@ public class FindInPreferencesCtrl
 
       final String detailsText = _model.getDetailsText(selectedNode);
 
-      _dlg.txtDetails.setText("");
       if(null == getFilterText())
       {
          _dlg.txtDetails.setText(detailsText);

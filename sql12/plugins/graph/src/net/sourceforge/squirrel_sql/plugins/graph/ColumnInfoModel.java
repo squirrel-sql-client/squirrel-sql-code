@@ -114,6 +114,7 @@ public class ColumnInfoModel
             if(colInfoNew.getColumnName().equalsIgnoreCase(colInfoOld.getColumnName()))
             {
                colInfoNew.setQueryData(colInfoOld.getQueryData());
+               colInfoNew.setHidden(colInfoOld.isHidden());
             }
          }
 

@@ -1,26 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.TabButton;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 public class FindResultColumnDlg extends JDialog
 {
@@ -29,25 +17,26 @@ public class FindResultColumnDlg extends JDialog
 
    JTextField txtFilter = new JTextField();
    JCheckBox chkFindInTableNames;
-   TabButton btnSortAsc = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.SORT_ASC));
-   TabButton btnSortDesc = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.SORT_DESC));
+   TabButton btnSortAsc = new TabButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.SORT_ASC));
+   TabButton btnSortDesc = new TabButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.SORT_DESC));
 
    JList<FindColumnColWrapper> lstLeft = new JList<>();
 
-   TabButton btnRight = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.RIGHT_ARROW));
-   TabButton btnLeft = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.LEFT_ARROW));
+   TabButton btnRight = new TabButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.RIGHT_ARROW));
+   TabButton btnLeft = new TabButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.LEFT_ARROW));
 
    JList<FindColumnColWrapper> lstRight = new JList<>();
    JButton btnToTableBegin = new JButton(s_stringMgr.getString("FindColumnDlg.moveto.table.begin"));
 
-   TabButton btnUp = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.TABLE_ASCENDING));
-   TabButton btnDown = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.TABLE_DESCENDING));
+   TabButton btnUp = new TabButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.TABLE_ASCENDING));
+   TabButton btnDown = new TabButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.TABLE_DESCENDING));
 
 
 
-   public FindResultColumnDlg(Frame owner)
+   public FindResultColumnDlg(Window owner)
    {
-      super(owner, true);
+      super(owner);
+      setModal(true);
 
 
       getContentPane().setLayout(new GridBagLayout());

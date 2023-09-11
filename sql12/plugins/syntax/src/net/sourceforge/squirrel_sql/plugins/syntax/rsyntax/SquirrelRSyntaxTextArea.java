@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.PrioritizedCaretMouseListener;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
@@ -12,6 +13,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
@@ -22,16 +24,13 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rtextarea.RTextAreaUI;
 
-import javax.swing.InputMap;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
@@ -61,6 +60,10 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 
       _rSyntaxHighlightTokenMatcherProxy.setDelegate(_propertiesWrapper.getSyntaxHighlightTokenMatcher(session, this, sqlEntryPanelIdentifier));
 
+      SquirrelRSyntaxCaretWithPrioritizedMouseListener caret = new SquirrelRSyntaxCaretWithPrioritizedMouseListener();
+      caret.setBlinkRate(getCaret().getBlinkRate());
+      getCaret().deinstall(this);
+      setCaret(caret);
 
       modifyKeystrokesFromPreferences(prefs);
 
@@ -328,5 +331,24 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    public TextAreaPaintHandler getTextAreaPaintHandler()
    {
       return _textAreaPaintHandler;
+   }
+
+   /**
+    * This method is called, when text is pasted to the editor.
+    * We replace non-breaking spaces by ordinary spaces because
+    * non-breaking spaces keep reformatting from working.
+    * See https://stackoverflow.com/questions/28295504/how-to-trim-no-break-space-in-java
+    *
+    * To reproduce the problem: Libre Office Writer allows to edit non-breaking spaces be ctrl+shift+space.
+    */
+   @Override
+   public void replaceSelection(String text)
+   {
+      super.replaceSelection(StringUtilities.replaceNonBreakingSpacesBySpaces(text));
+   }
+
+   public void setPrioritizedCaretMouseListener(PrioritizedCaretMouseListener prioritizedCaretMouseListener)
+   {
+      ((SquirrelRSyntaxCaretWithPrioritizedMouseListener)getCaret()).setPrioritizedCaretMouseListener(prioritizedCaretMouseListener);
    }
 }

@@ -17,14 +17,15 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
+
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * An interface that describes public API of SQLDatabaseMetaData.  
@@ -310,15 +311,6 @@ public interface ISQLDatabaseMetaData {
      * @throws  SQLException    Thrown if an SQL error occurs.
      */
     DataTypeInfo[] getDataTypes() throws SQLException;
-
-    /**
-     * NOTE: This method should only be used by SchemaInfo since this class should not and does not cache.
-     *
-     * Retrieve information about the procedures in the system.
-     */
-    IProcedureInfo[] getProcedures(String catalog, String schemaPattern,
-            String procedureNamePattern, ProgressCallBack progressCallBack)
-            throws SQLException;
 
     /**
      * Return a string array containing the different types of tables in this

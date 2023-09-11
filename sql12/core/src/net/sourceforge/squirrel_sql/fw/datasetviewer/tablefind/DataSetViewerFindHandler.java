@@ -5,12 +5,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import java.awt.Component;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -18,6 +14,7 @@ public class DataSetViewerFindHandler
 {
    private IDataSetViewer _dataSetViewer;
    private ISession _session;
+   private Window _parent;
    private final JSplitPane _split;
    private boolean _findPanelOpen;
 
@@ -27,8 +24,14 @@ public class DataSetViewerFindHandler
 
    public DataSetViewerFindHandler(IDataSetViewer dataSetViewer, ISession session)
    {
+      this(dataSetViewer, session, null);
+   }
+
+   public DataSetViewerFindHandler(IDataSetViewer dataSetViewer, ISession session, Window parent)
+   {
       _dataSetViewer = dataSetViewer;
       _session = session;
+      _parent = parent;
 
       _split = new JSplitPane();
       _split.setDividerSize(0);
@@ -90,19 +93,31 @@ public class DataSetViewerFindHandler
          _split.setDividerLocation(0);
          _dataSetFindPanelController.wasHidden();
 
-         ISQLPanelAPI sqlPanelAPI = _session.getSQLPanelAPIOfActiveSessionWindow(true);
-
-         if(null != sqlPanelAPI)
+         if (null == _parent)
          {
-            sqlPanelAPI.getSQLEntryPanel().requestFocus();
+            ISQLPanelAPI sqlPanelAPI = _session.getSQLPanelAPIOfActiveSessionWindow(true);
+
+            if(null != sqlPanelAPI)
+            {
+               sqlPanelAPI.getSQLEntryPanel().requestFocus();
+            }
+         }
+         else
+         {
+            _parent.requestFocus();
          }
       }
 
       return true;
    }
 
-   public void replaceDataSetViewer(IDataSetViewer dataSetViewer)
+   /**
+    * @return The replaced {@link IDataSetViewer}
+    */
+   public IDataSetViewer replaceDataSetViewer(IDataSetViewer dataSetViewer)
    {
+      IDataSetViewer previousDataSetViewer = _dataSetViewer;
+
       if(null != _dataSetViewer)
       {
          _dataSetViewer.disableContinueRead();
@@ -121,6 +136,8 @@ public class DataSetViewerFindHandler
       {
          _dataSetFindPanelController.setDataSetViewerTablePanel(null);
       }
+
+      return previousDataSetViewer;
    }
 
    public void resetFind()
@@ -131,6 +148,16 @@ public class DataSetViewerFindHandler
    public IDataSetViewer getDataSetViewer()
    {
       return _dataSetViewer;
+   }
+
+   public void setParentWindow(Window parent)
+   {
+      _parent = parent;
+   }
+
+   public void clearParentWindow()
+   {
+      _parent = null;
    }
 
    private static class NullPanel extends JPanel

@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
@@ -15,49 +16,22 @@ import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndEvent;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 
 
 public class TableFrameController
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(TableFrameController.class);
-
-    /** Logger for this class. */
-    private final static ILogger s_log =
-        LoggerController.createLogger(TableFrameController.class);
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableFrameController.class);
+   private final static ILogger s_log = LoggerController.createLogger(TableFrameController.class);
 
    ////////////////////////////////////////
    // Serialized attributes
@@ -76,17 +50,12 @@ public class TableFrameController
    private ISession _session;
    private Rectangle _startSize;
    private GraphDesktopController _desktopController;
-   private Vector<TableFrameControllerListener> _listeners = new Vector<TableFrameControllerListener>();
-   private Vector<TableFrameController> _openFramesConnectedToMe = new Vector<TableFrameController>();
-   private Hashtable<TableFrameController, ComponentAdapter> _compListenersToOtherFramesByFrameCtrlr = 
-       new Hashtable<TableFrameController, ComponentAdapter>();
-   private Hashtable<TableFrameController, AdjustmentListener> _scrollListenersToOtherFramesByFrameCtrlr = 
-       new Hashtable<TableFrameController, AdjustmentListener>();
-   private Hashtable<TableFrameController, ColumnSortListener> _columnSortListenersToOtherFramesByFrameCtrlr = 
-       new Hashtable<TableFrameController, ColumnSortListener>();
-
-   private Vector<ColumnSortListener> _mySortListeners = 
-       new Vector<ColumnSortListener>();
+   private Vector<TableFrameControllerListener> _listeners = new Vector<>();
+   private Vector<TableFrameController> _openFramesConnectedToMe = new Vector<>();
+   private Hashtable<TableFrameController, ComponentAdapter> _compListenersToOtherFramesByFrameCtrlr = new Hashtable<>();
+   private Hashtable<TableFrameController, AdjustmentListener> _scrollListenersToOtherFramesByFrameCtrlr = new Hashtable<>();
+   private Hashtable<TableFrameController, ColumnSortListener> _columnSortListenersToOtherFramesByFrameCtrlr = new Hashtable<>();
+   private Vector<ColumnSortListener> _mySortListeners =  new Vector<>();
 
    private JMenuItem _mnuAddTableForForeignKey;
    private JMenuItem _mnuAddChildTables;
@@ -137,20 +106,22 @@ public class TableFrameController
          _desktopController = desktopController;
          _addTablelRequestListener = listener;
 
-         TableToolTipProvider toolTipProvider = new TableToolTipProvider()
-         {
-            public String getToolTipText(MouseEvent event)
-            {
-               return onGetToolTipText(event);
-            }
-         };
 
          if(null == xmlBean)
          {
             _catalog = catalogName;
             _schema = schemaName;
             _tableName = tableName;
-            _frame = new TableFrame(_session, plugin, getDisplayName(), null, toolTipProvider, _desktopController.getModeManager(), createDndCallback(), createSortColumnsListener());
+            _frame = new TableFrame(_session,
+                  plugin,
+                  getDisplayName(),
+                  null,
+                  event -> onGetToolTipText(event),
+                  _desktopController.getModeManager(),
+                  createDndCallback(),
+                  sortButton -> onSortButtonClicked(sortButton),
+                  () -> onColumnHideConfig(),
+                  () -> initColumnHideIcon(_colInfoModel));
 
 
             initFromDB();
@@ -161,7 +132,18 @@ public class TableFrameController
             _catalog = xmlBean.getCatalog();
             _schema = xmlBean.getSchema();
             _tableName = xmlBean.getTablename();
-            _frame = new TableFrame(_session, plugin, getDisplayName(), xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getModeManager(), createDndCallback(), createSortColumnsListener());
+
+            _frame = new TableFrame(_session,
+                  plugin,
+                  getDisplayName(),
+                  xmlBean.getTableFrameXmlBean(),
+                  event -> onGetToolTipText(event),
+                  _desktopController.getModeManager(),
+                  createDndCallback(),
+                  sortButton -> onSortButtonClicked(sortButton),
+                  () -> onColumnHideConfig(),
+                  () -> initColumnHideIcon(_colInfoModel));
+
             _columnOrderType = OrderType.getByIx(xmlBean.getColumOrder());
             ColumnInfo[] colInfos = new ColumnInfo[xmlBean.getColumnIfoXmlBeans().length];
             for (int i = 0; i < colInfos.length; i++)
@@ -175,6 +157,7 @@ public class TableFrameController
          }
          _frame.txtColumsFactory.setColumnInfoModel(_colInfoModel);
 
+         initColumnHideIcon(_colInfoModel);
 
 
          _constraintViewListener = new ConstraintViewListener()
@@ -283,16 +266,17 @@ public class TableFrameController
       }
    }
 
-   private SortColumnsListener createSortColumnsListener()
+   private void initColumnHideIcon(ColumnInfoModel colInfoModel)
    {
-      return new SortColumnsListener()
+      if (Arrays.stream(colInfoModel.getAll()).anyMatch(c -> c.isHidden()))
       {
-         @Override
-         public void sortButtonClicked(JButton sortButton)
-         {
-            onSortButtonClicked(sortButton);
-         }
-      };
+         _frame.getTitlePane().setHideIconChecked(true);
+      }
+      else
+      {
+         _frame.getTitlePane().setHideIconChecked(false);
+      }
+
    }
 
    private void onSortButtonClicked(JButton sortButton)
@@ -301,6 +285,17 @@ public class TableFrameController
       addColumnOrderMenuItems(popupMenu);
       popupMenu.show(sortButton, 0,0);
    }
+
+   private void onColumnHideConfig()
+   {
+      if(new TableColumnHideConfigCtrl(GUIUtils.getOwningWindow(_frame), _colInfoModel, _frame.getTitle()).columnHidingChanged())
+      {
+         _frame.txtColumsFactory.setColumnInfoModel(_colInfoModel);
+         initColumnHideIcon(_colInfoModel);
+      }
+   }
+
+
 
    private void onTableFramesModelChanged(TableFramesModelChangeType changeType)
    {

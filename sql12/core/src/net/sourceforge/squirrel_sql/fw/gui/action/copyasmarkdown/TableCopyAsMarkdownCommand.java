@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.JTable;
+import javax.swing.*;
 
 public class TableCopyAsMarkdownCommand
 {

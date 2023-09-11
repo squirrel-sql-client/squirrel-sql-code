@@ -5,22 +5,22 @@ import net.sourceforge.squirrel_sql.client.session.menuattic.AtticHandler;
 import net.sourceforge.squirrel_sql.client.session.menuattic.MenuOrigin;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 
 public class TablePopupMenuHandler
 {
    private final boolean _allowUpdate;
-   private final IDataSetUpdateableModel _updateableObject;
+   private final IDataSetUpdateableModel _dataSetUpdateableModel;
    private final DataSetViewerTablePanel _dataSetViewerTablePanel;
    private final ISession _session;
    private TablePopupMenu _tablePopupMenu;
    private boolean _currentRowNumberMenuItemState;
 
-   public TablePopupMenuHandler(boolean allowUpdate, IDataSetUpdateableModel updateableObject, DataSetViewerTablePanel dataSetViewerTablePanel, ISession session)
+   public TablePopupMenuHandler(boolean allowUpdate, IDataSetUpdateableModel dataSetUpdateableModel, DataSetViewerTablePanel dataSetViewerTablePanel, ISession session)
    {
       _allowUpdate = allowUpdate;
-      _updateableObject = updateableObject;
+      _dataSetUpdateableModel = dataSetUpdateableModel;
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
       _session = session;
 
@@ -52,7 +52,7 @@ public class TablePopupMenuHandler
       }
       else
       {
-         _tablePopupMenu = new TablePopupMenu(_allowUpdate, _updateableObject, _dataSetViewerTablePanel, _session);
+         _tablePopupMenu = new TablePopupMenu(_allowUpdate, _dataSetUpdateableModel, _dataSetViewerTablePanel, _session);
       }
    }
 

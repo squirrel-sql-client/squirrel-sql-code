@@ -17,11 +17,12 @@ public class ReferencesFrameStarter
 
       References references = ShowReferencesUtil.getReferences(rootTable.getGlobalDbTable(), session);
 
-      if(references.isEmpty())
-      {
-         JOptionPane.showMessageDialog(owningFrame, s_stringMgr.getString("ReferencesFrameStarter.noForeignKeyReferences", rootTable.getGlobalDbTable().getQualifiedName()));
-         return;
-      }
+      // May still be good to open the dialog to allow editing data.
+      //if(references.isEmpty())
+      //{
+      //   JOptionPane.showMessageDialog(owningFrame, s_stringMgr.getString("ReferencesFrameStarter.noForeignKeyReferences", rootTable.getGlobalDbTable().getQualifiedName()));
+      //   return;
+      //}
 
       new ShowReferencesCtrl(session, owningFrame, rootTable, references);
    }

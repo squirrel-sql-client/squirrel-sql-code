@@ -1,24 +1,21 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret.MultiCaretUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.menuattic.AtticHandler;
 import net.sourceforge.squirrel_sql.client.session.menuattic.MenuOrigin;
 import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 /*
  * Copyright (C) 2001-2003 Colin Bell
@@ -48,18 +45,14 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
    private IIdentifier _entryPanelIdentifier;
 
 	private TextPopupMenu _textPopupMenu = new TextPopupMenu();
-	private IApplication _app;
-
-	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
    private BoundsOfSqlHandler _boundsOfSqlHandler;
 
 	private LastEditLocationHandler _lastEditLocationHandler;
 
 
-	protected BaseSQLEntryPanel(IApplication app)
+	protected BaseSQLEntryPanel()
 	{
 		_entryPanelIdentifier = ENTRY_PANEL_IDENTIFIER_FACTORY.createIdentifier();
-		_app = app;
 
 		SwingUtilities.invokeLater(() -> initLater());
 
@@ -67,13 +60,54 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
    private void initLater()
    {
-      getTextComponent().addMouseListener(_sqlEntryMouseListener);
+      getTextComponent().addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseClicked(MouseEvent e)
+			{
+				onMouseClicked(e);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				onMousePressed(e);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				onMouseReleased(e);
+			}
+		});
+
+		setPrioritizedCaretMouseListener(new PrioritizedCaretMouseListener(){
+			@Override
+			public boolean mouseClicked(MouseEvent e)
+			{
+				return onPrioritizedMouseClicked(e);
+			}
+
+			@Override
+			public boolean mousePressed(MouseEvent e)
+			{
+				return onPrioritizedMousePressed(e);
+			}
+
+			@Override
+			public boolean mouseReleased(MouseEvent e)
+			{
+				return onPrioritizedMouseReleased(e);
+			}
+		});
+
+
       _boundsOfSqlHandler = new BoundsOfSqlHandler(getTextComponent(), getSession());
 
 		_lastEditLocationHandler = new LastEditLocationHandler(getTextComponent());
    }
 
-   public IIdentifier getIdentifier()
+	public IIdentifier getIdentifier()
    {
       return _entryPanelIdentifier;
    }
@@ -221,10 +255,10 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 		JMenuItem buf;
 
 		buf = addToSQLEntryAreaMenu(undo);
-		_app.getResources().configureMenuItem(undo, buf);
+		Main.getApplication().getResources().configureMenuItem(undo, buf);
 
 		buf = addToSQLEntryAreaMenu(redo);
-		_app.getResources().configureMenuItem(redo, buf);
+		Main.getApplication().getResources().configureMenuItem(redo, buf);
 
 		_textPopupMenu.addSeparator();
 	}
@@ -242,11 +276,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
    }
 
 
-	public void dispose()
-	{
-	}
-
-   @Override
+	@Override
    public String getWordAtCursor()
    {
       int[] beginAndEndPos = SQLEntryPanelUtil.getWordBoundsAtCursor(getTextComponent(), true);
@@ -264,55 +294,74 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
       _lastEditLocationHandler.goToLastEditLocation();
    }
 
-   private final class MyMouseListener extends MouseAdapter
+	private void onMousePressed(MouseEvent evt)
 	{
-		public void mousePressed(MouseEvent evt)
+		if (evt.isPopupTrigger())
 		{
-			if (evt.isPopupTrigger())
-			{
-				displayPopupMenu(evt);
-			}
+			displayPopupMenu(evt);
+		}
+	}
+
+	private void onMouseReleased(MouseEvent evt)
+	{
+		if (evt.isPopupTrigger())
+		{
+			displayPopupMenu(evt);
+		}
+	}
+
+	/**
+	 * This provides the feature which is like in Eclipse when you control
+	 * click on an identifier it takes you to the file that contains the
+	 * identifier (method, class, etc) definition.  Similarly, ctrl-clicking
+	 * on an identifier in the SQL editor will invoke the view object at
+	 * cursor in object tree action.
+	 */
+	private void onMouseClicked(MouseEvent e)
+	{
+		if (e.isControlDown() && !e.isAltDown() && !e.isShiftDown() && e.getClickCount() == 1)
+		{
+			final Action a = Main.getApplication().getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
+			a.actionPerformed(new ActionEvent(this, 1, ViewObjectAtCursorInObjectTreeAction.VIEW_OBJECT_AT_CURSOR_INOBJECT_TREE_ACTION_BY_CTRL_MOUSECLICK));
+		}
+	}
+
+	private boolean onPrioritizedMouseReleased(MouseEvent e)
+	{
+		if(MultiCaretUtil.isAdditionalCaretMouseClickModifier(e))
+		{
+			return true;
 		}
 
-		public void mouseReleased(MouseEvent evt)
+		return false;
+	}
+
+	private boolean onPrioritizedMousePressed(MouseEvent e)
+	{
+		if(MultiCaretUtil.isAdditionalCaretMouseClickModifier(e))
 		{
-			if (evt.isPopupTrigger())
-			{
-				displayPopupMenu(evt);
-			}
+			return true;
 		}
+		return false;
+	}
 
-		/**
-		 * This provides the feature which is like in Eclipse when you control
-		 * click on an identifier it takes you to the file that contains the
-		 * identifier (method, class, etc) definition.  Similarly, ctrl-clicking
-		 * on an identifier in the SQL editor will invoke the view object at
-		 * cursor in object tree action.
-		 */
-		@Override
-		public void mouseClicked(MouseEvent e)
+	private boolean onPrioritizedMouseClicked(MouseEvent e)
+	{
+		if(MultiCaretUtil.isAdditionalCaretMouseClickModifier(e))
 		{
-			if (e.isControlDown() && e.getClickCount() == 1)
-			{
-
-				final Action a = _app.getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
-				GUIUtils.processOnSwingEventThread(new Runnable()
-				{
-					public void run()
-					{
-						a.actionPerformed(new ActionEvent(this, 1, ViewObjectAtCursorInObjectTreeAction.VIEW_OBJECT_AT_CURSOR_INOBJECT_TREE_ACTION_BY_CTRL_MOUSECLICK));
-					}
-				});
-			}
+			getTextAreaPaintHandler().getMultiCaretHandler().createNextCaretAtPoint(new Point(e.getX(), e.getY()));
+			return true;
 		}
+		return false;
+	}
 
-		private void displayPopupMenu(MouseEvent evt)
-		{
-			_textPopupMenu.setTextComponent(getTextComponent());
 
-			AtticHandler.initAtticForMenu(_textPopupMenu, MenuOrigin.SQL_EDITOR);
+	private void displayPopupMenu(MouseEvent evt)
+	{
+		_textPopupMenu.setTextComponent(getTextComponent());
 
-			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-		}
+		AtticHandler.initAtticForMenu(_textPopupMenu, MenuOrigin.SQL_EDITOR);
+
+		_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 	}
 }

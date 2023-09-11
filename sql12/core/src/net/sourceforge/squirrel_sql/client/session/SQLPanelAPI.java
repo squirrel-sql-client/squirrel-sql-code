@@ -25,24 +25,9 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
-import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.action.ConvertToStringBuilderAction;
-import net.sourceforge.squirrel_sql.client.session.action.CopySqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.CutSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.DeleteCurrentLineAction;
-import net.sourceforge.squirrel_sql.client.session.action.DeleteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
-import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
-import net.sourceforge.squirrel_sql.client.session.action.InQuotesAction;
-import net.sourceforge.squirrel_sql.client.session.action.PasteFromHistoryAction;
-import net.sourceforge.squirrel_sql.client.session.action.PasteFromHistoryAltAcceleratorAction;
-import net.sourceforge.squirrel_sql.client.session.action.RemoveNewLinesAction;
-import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleMinimizeResultsAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
-import net.sourceforge.squirrel_sql.client.session.action.UndoRedoActionContext;
-import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
@@ -57,11 +42,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSpli
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
-import java.awt.Frame;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -129,6 +111,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(formatSqlAction);
       resources.configureMenuItem(formatSqlAction, item);
 
+      Action compareToClipboardAction = ac.get(CompareToClipboardAction.class);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(compareToClipboardAction);
+      resources.configureMenuItem(compareToClipboardAction, item);
 
 		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
 
@@ -561,22 +546,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
 	 */
-	public void addSQLToHistory(String sql)
-	{
-		if (sql == null)
-		{
-			throw new IllegalArgumentException("sql == null");
-		}
-
-      final ISession session = _panel.getSession();
-		final SQLHistoryItem shi = new SQLHistoryItem(sql, session.getAlias().getName());
-		if (session.getProperties().getSQLShareHistory())
-		{
-			session.getApplication().getSQLHistory().add(shi);
-			session.getApplication().savePreferences(PreferenceType.SQLHISTORY);
-		}
-		_panel.addSQLToHistory(shi);
-	}
 
 	/**
 	 * Add a hierarchical menu to the SQL Entry Area popup menu.
