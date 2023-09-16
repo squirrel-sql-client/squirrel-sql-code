@@ -9,11 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -224,7 +220,7 @@ public class TableExportSelectionPanelController
 
       final SqlResultListEntry selEntry = _pnl.lstSQLResultsToExport.getSelectedValue();
 
-      if(null == selEntry)
+      if(null == selEntry || null == selEntry.getHandle())
       {
          return;
       }

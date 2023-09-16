@@ -7,13 +7,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.Toolkit;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -86,6 +83,7 @@ public class ExportController
 
       _dlg.getRootPane().setDefaultButton(_dlg.btnOk);
       GUIUtils.enableCloseByEscape(_dlg);
+      GUIUtils.initLocation(_dlg, 500, 880);
    }
 
    private void updateDestinationInfo()
@@ -95,8 +93,6 @@ public class ExportController
 
    public void showDialog()
    {
-      _dlg.pack();
-      GUIUtils.centerWithinParent(_dlg);
       _dlg.setVisible(true);
    }
 
