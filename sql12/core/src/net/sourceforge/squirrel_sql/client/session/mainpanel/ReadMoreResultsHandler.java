@@ -3,8 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -32,7 +32,7 @@ public class ReadMoreResultsHandler
       _lblLoading = new JLabel(_loadingGif);
       _lblLoading.setVisible(false);
 
-      _executorService = Executors.newFixedThreadPool(1);
+      _executorService = Executors.newSingleThreadExecutor();
 
    }
 
