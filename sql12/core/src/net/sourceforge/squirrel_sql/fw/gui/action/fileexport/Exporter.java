@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
@@ -161,22 +162,23 @@ public class Exporter
          }
          else
          {
-            GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(ctrl.getOwningWindow(), writtenRows, firstExportedFile), true);
+            GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(ctrl.getOwningWindow(), writtenRows, firstExportedFile, ctrl.isShowExportCompleteAsDialog() ), true);
          }
       }
       else
       {
          s_log.info("Probably failed to export the result of the SQL Select statement into a file. No rows were written.");
 
-         Runnable runnable = new Runnable()
+         String noRowsMessage = s_stringMgr.getString("AbstractExportCommand.failed.no.rows.written");
+         if (ctrl.isShowExportCompleteAsDialog())
          {
-            public void run()
-            {
-               JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed.no.rows.written"));
-            }
-         };
-
-         GUIUtils.processOnSwingEventThread(runnable, true);
+            Runnable runnable = () -> JOptionPane.showMessageDialog(ctrl.getOwningWindow(), noRowsMessage);
+            GUIUtils.processOnSwingEventThread(runnable, true);
+         }
+         else
+         {
+            Main.getApplication().getMessageHandler().showWarningMessage(noRowsMessage);
+         }
 
       }
    }
@@ -219,21 +221,28 @@ public class Exporter
       }
    }
 
-   private void showExportSuccessMessage(Window owner, long writtenRows, File exportFile)
+   private void showExportSuccessMessage(Window owner, long writtenRows, File exportFile, boolean showExportSuccessAsDialog)
    {
+      String formattedWrittenRows = NumberFormat.getIntegerInstance().format(writtenRows);
+      String fileName = StringUtilities.shortenBegin(exportFile.getAbsolutePath(), 300, "...");
+      String exportSuccessMessage = s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, fileName);
+
+      if(false == showExportSuccessAsDialog)
+      {
+         Main.getApplication().getMessageHandler().showMessage(exportSuccessMessage);
+         return;
+      }
+
       String[] selectionValues =
             {
                   s_stringMgr.getString("TableExportCsvCommand.export.completed.ok"),
                   s_stringMgr.getString("TableExportCsvCommand.export.completed.ok.show.in.file.manager"),
             };
 
-      String formattedWrittenRows = NumberFormat.getIntegerInstance().format(writtenRows);
-
-      String fileName = StringUtilities.shortenBegin(exportFile.getAbsolutePath(), 300, "...");
 
       int selectIndex = JOptionPane.showOptionDialog(
             owner,
-            s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, fileName),
+            exportSuccessMessage,
             s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess.title"),
             JOptionPane.DEFAULT_OPTION,
             JOptionPane.INFORMATION_MESSAGE,

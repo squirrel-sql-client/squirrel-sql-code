@@ -172,14 +172,13 @@ public class SquirrelCli
     */
    private static void outputFormatted(String sql, String outputFile)
    {
-      try
+      _cliConnectionData.ensureCliSessionCreated();
+
+      final ISQLConnection sqlConnection = _cliConnectionData.getCliSession().getSQLConnection();
+      final DialectType dialectType = DialectFactory.getDialectType(sqlConnection.getSQLMetaData());
+
+      try(Statement stat = SQLUtilities.createStatementForStreamingResults(sqlConnection.getConnection(), dialectType))
       {
-         _cliConnectionData.ensureCliSessionCreated();
-
-         final ISQLConnection sqlConnection = _cliConnectionData.getCliSession().getSQLConnection();
-         final DialectType dialectType = DialectFactory.getDialectType(sqlConnection.getSQLMetaData());
-         final Statement stat = SQLUtilities.createStatementForStreamingResults(sqlConnection.getConnection(), dialectType);
-
          TableExportPreferences exportPrefs = TableExportPreferencesDAO.createExportPreferencesForFile(outputFile);
 
          ExportFileWriter.writeFile(new ResultSetExportData(stat, sql, dialectType), exportPrefs, new CliProgressAbortCallback());

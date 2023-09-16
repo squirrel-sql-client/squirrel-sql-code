@@ -165,9 +165,8 @@ public class ExportToFileHandler
 
    private void doWriteFile(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
    {
-      try
+      try(Statement stat = SQLUtilities.createStatementForStreamingResults(con, dialectType))
       {
-         final Statement stat = SQLUtilities.createStatementForStreamingResults(con, dialectType);
          ExportFileWriter.writeFile(new ResultSetExportData(stat, sqlToWriteToFile ,dialectType), prefs, progressControllerFactory.getOrCreate());
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ExportToFileHandler.wrote.file", file.getPath()));
       }

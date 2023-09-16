@@ -5,17 +5,23 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import java.awt.*;
 import java.io.File;
 
+
+/**
+ * Represents either an {@link ExportController} or a {@link MsExcelWorkbook}.
+ */
 public class ExportControllerProxy
 {
    private ExportController _exportController;
 
    private Window _owningWindow;
-   private MsExcelWorkbook _firstExcelWorkbook;
+   private MsExcelWorkbook _excelWorkbook;
+   private MsExcelExportDataCreator _msExcelExportDataCreator;
 
-   public ExportControllerProxy(Window owningWindow, MsExcelWorkbook firstExcelWorkbook)
+   public ExportControllerProxy(Window owningWindow, MsExcelWorkbook excelWorkbook, MsExcelExportDataCreator msExcelExportDataCreator)
    {
       _owningWindow = owningWindow;
-      _firstExcelWorkbook = firstExcelWorkbook;
+      _excelWorkbook = excelWorkbook;
+      _msExcelExportDataCreator = msExcelExportDataCreator;
    }
 
    public ExportControllerProxy(ExportController exportController)
@@ -67,7 +73,7 @@ public class ExportControllerProxy
       }
       else
       {
-         return _firstExcelWorkbook.getWorkbookFile();
+         return _excelWorkbook.getWorkbookFile();
       }
    }
 
@@ -79,7 +85,7 @@ public class ExportControllerProxy
       }
       else
       {
-         throw new UnsupportedOperationException("NYI");
+         return _msExcelExportDataCreator.createExportData(_excelWorkbook, progressController);
       }
    }
 
@@ -107,5 +113,10 @@ public class ExportControllerProxy
          prefs.setUseColoring(false);
          return prefs;
       }
+   }
+
+   public boolean isShowExportCompleteAsDialog()
+   {
+      return null !=_exportController;
    }
 }

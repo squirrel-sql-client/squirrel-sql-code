@@ -6,14 +6,22 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.*;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ProgressAbortFactoryCallbackImpl;
 import org.apache.commons.lang3.StringUtils;
+
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExportToMultiSheetMsExcelHandler
 {
@@ -152,22 +160,22 @@ public class ExportToMultiSheetMsExcelHandler
                continue;
             }
 
-            int sheetBeginMarkerPos = sqlWithPrefix.indexOf('\'');
+            int sheetBeginMarkerPos = afterWorkbookSql.indexOf('\'');
             if (-1 == sheetBeginMarkerPos)
             {
                Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.noSheetNameBeginMarker"));
                continue;
             }
 
-            int sheetEndMarkerPos = sqlWithPrefix.indexOf('\'', sheetBeginMarkerPos + 1);
+            int sheetEndMarkerPos = afterWorkbookSql.indexOf('\'', sheetBeginMarkerPos + 1);
             if (-1 == sheetEndMarkerPos)
             {
                Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.noSheetNameEndMarker"));
                continue;
             }
 
-            String sheetName = sqlWithPrefix.substring(sheetBeginMarkerPos + 1, sheetEndMarkerPos).trim();
-            String sheetSql = sqlWithPrefix.substring(sheetEndMarkerPos + 1).trim();
+            String sheetName = afterWorkbookSql.substring(sheetBeginMarkerPos + 1, sheetEndMarkerPos).trim();
+            String sheetSql = afterWorkbookSql.substring(sheetEndMarkerPos + 1).trim();
             workbooks.addSheetToCurrentWorkbook(sheetName, sheetSql);
          }
          else if (isSheetPrefixed(query))
@@ -220,16 +228,63 @@ public class ExportToMultiSheetMsExcelHandler
          sqlsJoined = String.join(" " + _session.getProperties().getSQLStatementSeparator() + "\n", workbook.getSqlList());
       }
 
-      DialectType dialectType = DialectFactory.getDialectType(_session.getMetaData());
-
       //ResultSetExport[] refResultSetExport = new ResultSetExport[1];
       ProgressAbortFactoryCallbackImpl progressAbortCallback = new ProgressAbortFactoryCallbackImpl(_session, sqlsJoined, () -> workbook.getWorkbookFile());
       //refResultSetExport[0] = new ResultSetExport(_session.getSQLConnection().getConnection(), workbook.getSqlList(), dialectType, progressAbortCallback, _sqlPaneAPI.getOwningFrame());
       //
       ////////////////////////////////////////////////////////////
 
-      Exporter exporter = new Exporter(() -> progressAbortCallback.getOrCreate(), new ExportControllerProxy(_sqlPaneAPI.getOwningFrame(), workbook));
+      ExportControllerProxy proxy = new ExportControllerProxy(_sqlPaneAPI.getOwningFrame(), workbook, (wb, prog) -> onCreateExportData(wb, prog));
+      ProgressAbortCallback callback = progressAbortCallback.getOrCreate();
+      Exporter exporter = new Exporter(() -> callback, proxy);
       exporter.export();
-
+      callback.setFinished();
+      callback.setVisible(false);
    }
+
+   private ExportDataInfoList onCreateExportData(MsExcelWorkbook wb, ProgressAbortCallback prog)
+   {
+      MultipleSqlResultExportDestinationInfo excelExportFile = MultipleSqlResultExportDestinationInfo.createExcelExportFile(wb.getWorkbookFile());
+
+      List<ExportDataInfo> buf = new ArrayList<>();
+
+      DialectType dialect = DialectFactory.getDialectType(_session.getMetaData());
+      TableExportPreferences exportPreferencesForFile = TableExportPreferencesDAO.createExportPreferencesForFile(wb.getWorkbookFile().getName());
+
+      for (int i = 0; i < wb.getSheets().size(); i++)
+      {
+         MsExcelSheet msExcelSheet = wb.getSheets().get(i);
+         progress(prog, s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.executingQuery.n.of.m", i + 1, wb.getSheets().size()));
+
+         ExportSqlNamed exportSqlNamed = new ExportSqlNamed(msExcelSheet.getSheetSql(), msExcelSheet.getSheetName());
+         final ResultSetExportData resultSetExportData = createResultSetExportData(exportSqlNamed.getSql(), dialect, exportPreferencesForFile);
+         buf.add(new ExportDataInfo(resultSetExportData, exportSqlNamed.getExportNameFileNormalized()));
+      }
+
+      return new ExportDataInfoList(buf, excelExportFile);
+   }
+
+   public void progress(ProgressAbortCallback progressController, String task)
+   {
+      progressController.currentlyLoading(task);
+   }
+
+   private ResultSetExportData createResultSetExportData(String sql, DialectType dialect, TableExportPreferences prefs)
+   {
+      try
+      {
+         Statement stat = SQLUtilities.createStatementForStreamingResults(_session.getSQLConnection().getConnection(), dialect);
+         if (prefs.isLimitRowsChecked() && false == StringUtilities.isEmpty(prefs.getRowsLimit()))
+         {
+            stat.setMaxRows(Integer.parseInt(prefs.getRowsLimit()));
+         }
+         return new ResultSetExportData(stat, sql, dialect);
+      }
+      catch (Exception e)
+      {
+         s_log.error("An error was encountered while attempting to build the data set for export. See logs for details.", e);
+         throw Utilities.wrapRuntime(new ExportDataException("An error was encountered while attempting to build the data set for export. See logs for details.", e));
+      }
+   }
+
 }
