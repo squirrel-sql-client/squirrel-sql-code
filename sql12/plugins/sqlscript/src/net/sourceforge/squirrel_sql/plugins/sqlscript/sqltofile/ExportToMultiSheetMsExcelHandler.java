@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ExportToMultiSheetMsExcelHandler
 {
@@ -35,6 +37,8 @@ public class ExportToMultiSheetMsExcelHandler
    private final ISQLPanelAPI _sqlPaneAPI;
 
    private boolean _abortExecution = false;
+
+   private ExecutorService _executorService = Executors.newSingleThreadExecutor();
 
    public ExportToMultiSheetMsExcelHandler(ISession session, ISQLPanelAPI sqlPaneAPI)
    {
@@ -83,7 +87,7 @@ public class ExportToMultiSheetMsExcelHandler
 
          if (false == willBeHandledByMe(query))
          {
-            sqlsNotToWriteToFile.append(query);
+            sqlsNotToWriteToFile.append(query.getQuery());
 
             if (1 == queryTokenizer.getSQLStatementSeparator().length())
             {
@@ -216,8 +220,6 @@ public class ExportToMultiSheetMsExcelHandler
 
    private void callExportWorkbook(MsExcelWorkbook workbook)
    {
-      ////////////////////////////////////////////////////////////
-      // Preparations to call exporter
       final String sqlsJoined;
       if(1 == _session.getProperties().getSQLStatementSeparator().length())
       {
@@ -228,18 +230,36 @@ public class ExportToMultiSheetMsExcelHandler
          sqlsJoined = String.join(" " + _session.getProperties().getSQLStatementSeparator() + "\n", workbook.getSqlList());
       }
 
-      //ResultSetExport[] refResultSetExport = new ResultSetExport[1];
       ProgressAbortFactoryCallbackImpl progressAbortCallback = new ProgressAbortFactoryCallbackImpl(_session, sqlsJoined, () -> workbook.getWorkbookFile());
-      //refResultSetExport[0] = new ResultSetExport(_session.getSQLConnection().getConnection(), workbook.getSqlList(), dialectType, progressAbortCallback, _sqlPaneAPI.getOwningFrame());
-      //
-      ////////////////////////////////////////////////////////////
+      progressAbortCallback.getOrCreate(() -> onModalProgressDialogIsDisplaying(progressAbortCallback, workbook));
+   }
 
-      ExportControllerProxy proxy = new ExportControllerProxy(_sqlPaneAPI.getOwningFrame(), workbook, (wb, prog) -> onCreateExportData(wb, prog));
-      ProgressAbortCallback callback = progressAbortCallback.getOrCreate();
-      Exporter exporter = new Exporter(() -> callback, proxy);
-      exporter.export();
-      callback.setFinished();
-      callback.setVisible(false);
+   private void onModalProgressDialogIsDisplaying(ProgressAbortFactoryCallbackImpl progressAbortCallback, MsExcelWorkbook workbook)
+   {
+      _executorService.submit(() -> doWriteFile(progressAbortCallback, workbook));
+   }
+
+   private void doWriteFile(ProgressAbortFactoryCallbackImpl progressAbortCallback, MsExcelWorkbook workbook)
+   {
+      try
+      {
+         ExportControllerProxy proxy = new ExportControllerProxy(_sqlPaneAPI.getOwningFrame(), workbook, (wb, prog) -> onCreateExportData(wb, prog));
+         Exporter exporter = new Exporter(() -> progressAbortCallback.getOrCreate(), proxy);
+         exporter.export();
+         progressAbortCallback.hideProgressMonitor();
+      }
+      catch (Exception e)
+      {
+         s_log.error(e);
+         String msg = s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.error.writing.msexcel.workbook", workbook.getWorkbookFileName(), e);
+         Main.getApplication().getMessageHandler().showErrorMessage(msg);
+
+         _abortExecution = _session.getProperties().getAbortOnError();
+      }
+      finally
+      {
+         progressAbortCallback.hideProgressMonitor();
+      }
    }
 
    private ExportDataInfoList onCreateExportData(MsExcelWorkbook wb, ProgressAbortCallback prog)
@@ -254,11 +274,17 @@ public class ExportToMultiSheetMsExcelHandler
       for (int i = 0; i < wb.getSheets().size(); i++)
       {
          MsExcelSheet msExcelSheet = wb.getSheets().get(i);
-         progress(prog, s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.executingQuery.n.of.m", i + 1, wb.getSheets().size()));
+         progress(prog, s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.executingQuery.n.of.m.for.sheet.named", (i + 1), wb.getSheets().size(), msExcelSheet.getSheetName()));
 
          ExportSqlNamed exportSqlNamed = new ExportSqlNamed(msExcelSheet.getSheetSql(), msExcelSheet.getSheetName());
          final ResultSetExportData resultSetExportData = createResultSetExportData(exportSqlNamed.getSql(), dialect, exportPreferencesForFile);
          buf.add(new ExportDataInfo(resultSetExportData, exportSqlNamed.getExportNameFileNormalized()));
+
+         if(_abortExecution)
+         {
+            _abortExecution = false;
+            break;
+         }
       }
 
       return new ExportDataInfoList(buf, excelExportFile);

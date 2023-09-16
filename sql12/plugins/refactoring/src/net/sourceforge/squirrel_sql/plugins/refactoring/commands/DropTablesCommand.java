@@ -21,20 +21,12 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -399,7 +391,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		{
 			if (s_log.isDebugEnabled())
 			{
-				s_log.debug("Statement to be executed: " + queryHolder);
+				s_log.debug("Statement to be executed: " + queryHolder.getQuery());
 			}
 
 			if (queryHolder.getQuery().startsWith("ALTER"))

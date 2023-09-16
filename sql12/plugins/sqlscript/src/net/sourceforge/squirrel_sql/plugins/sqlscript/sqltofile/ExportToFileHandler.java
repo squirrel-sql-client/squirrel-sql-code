@@ -33,6 +33,8 @@ public class ExportToFileHandler
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportToFileHandler.class);
 
 
+   private ExecutorService _executorService = Executors.newSingleThreadExecutor();
+
    private final ISession _session;
    private final ISQLPanelAPI _sqlPaneAPI;
 
@@ -59,7 +61,7 @@ public class ExportToFileHandler
 
          if(false == willBeHandledByMe(query))
          {
-            sqlsNotToWriteToFile.append(query);
+            sqlsNotToWriteToFile.append(query.getQuery());
 
             if(1 == queryTokenizer.getSQLStatementSeparator().length())
             {
@@ -159,8 +161,7 @@ public class ExportToFileHandler
 
    private void onModalProgressDialogIsDisplaying(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
    {
-      ExecutorService executorService = Executors.newSingleThreadExecutor();
-      executorService.submit(() -> doWriteFile(prefs, file, sqlToWriteToFile, con, dialectType, progressControllerFactory));
+      _executorService.submit(() -> doWriteFile(prefs, file, sqlToWriteToFile, con, dialectType, progressControllerFactory));
    }
 
    private void doWriteFile(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
