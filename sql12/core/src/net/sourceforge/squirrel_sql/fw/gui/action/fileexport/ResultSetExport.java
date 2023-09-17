@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 
 import java.awt.*;
 import java.io.File;
@@ -36,9 +35,9 @@ public class ResultSetExport
 {
    private final Exporter _exporter;
 
-   public ResultSetExport(Connection con, List<String> sqls, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory, Window owner)
+   public ResultSetExport(Connection con, List<String> sqls, DialectType dialect, FileExportProgressManager fileExportProgressManager, Window owner)
    {
-      final ExporterCallback exporterCallback = () -> progressControllerFactory.getOrCreate();
+      final ExporterCallback exporterCallback = () -> fileExportProgressManager.getOrCreateProgressCallback();
 
       ExportController exportControllerRef[] = new ExportController[1];
 

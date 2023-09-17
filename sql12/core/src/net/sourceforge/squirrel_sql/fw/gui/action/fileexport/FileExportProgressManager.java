@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -6,32 +6,30 @@ import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class ProgressAbortFactoryCallbackImpl implements ProgressAbortFactoryCallback
+public class FileExportProgressManager
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ProgressAbortFactoryCallbackImpl.class);
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FileExportProgressManager.class);
 
    private final ISession _session;
    private final String _sqlsJoined;
    private final ExportFileProvider _exportFileProvider;
-   private ProgressAbortCallback progressDialog;
+   private ProgressAbortDialog progressDialog;
 
-   public ProgressAbortFactoryCallbackImpl(ISession session, String sqlsJoined, ExportFileProvider exportFileProvider)
+   public FileExportProgressManager(ISession session, String sqlsJoined, ExportFileProvider exportFileProvider)
    {
       _session = session;
       _sqlsJoined = sqlsJoined;
       _exportFileProvider = exportFileProvider;
    }
 
-   public ProgressAbortCallback getOrCreate()
+   public ProgressAbortCallback getOrCreateProgressCallback()
    {
-      return getOrCreate(null);
+      return getOrCreateProgressCallback(null);
    }
-   public ProgressAbortCallback getOrCreate(DisplayReachedCallBack displayReachedCallBack)
+   public ProgressAbortCallback getOrCreateProgressCallback(DisplayReachedCallBack displayReachedCallBack)
    {
       if (null == progressDialog)
       {

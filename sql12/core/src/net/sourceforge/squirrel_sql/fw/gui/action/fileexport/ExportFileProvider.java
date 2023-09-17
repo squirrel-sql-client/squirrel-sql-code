@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import java.io.File;
 

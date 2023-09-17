@@ -16,16 +16,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.sql;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 /**
- * Callback to create instances of {@link ProgressAbortCallback}.
- * Thin interface is a part between the connection of the framework classes and the GUI.
+ * Interface, to handle a cancel event of a {@link ProgressAbortDialog}
  * @author Stefan Willinger
- * @see ProgressCallBack
- * @see IAbortController
+ *
  */
-public interface ProgressAbortFactoryCallback
-{
-	ProgressAbortCallback getOrCreate();
+public interface IAbortEventHandler {
+	
+	/**
+	 * Called, if a cancel of the operation was requested
+	 */
+	void cancel();
 }

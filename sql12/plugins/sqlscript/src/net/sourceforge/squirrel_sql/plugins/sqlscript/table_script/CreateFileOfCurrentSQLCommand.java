@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDlg;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.FileExportProgressManager;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ProgressAbortDialog;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExport;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
@@ -36,9 +38,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import org.apache.commons.lang3.time.StopWatch;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -70,7 +70,7 @@ public class CreateFileOfCurrentSQLCommand
    private ResultSetExport _resultSetExport;
 
 
-   private ProgressAbortFactoryCallbackImpl _progressAbortCallback;
+   private FileExportProgressManager _fileExportProgressManager;
 
 
    /**
@@ -124,7 +124,7 @@ public class CreateFileOfCurrentSQLCommand
             {
                sqlsJoined = String.join(" " + session.getProperties().getSQLStatementSeparator() + "\n", sqls);
             }
-            _progressAbortCallback = new ProgressAbortFactoryCallbackImpl(getSession(), sqlsJoined, () -> _resultSetExport.getTargetFile());
+            _fileExportProgressManager = new FileExportProgressManager(getSession(), sqlsJoined, () -> _resultSetExport.getTargetFile());
 
 
             StopWatch stopWatch = new StopWatch();
@@ -133,14 +133,14 @@ public class CreateFileOfCurrentSQLCommand
             DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
 
             // Opens the modal export dialog ...
-            _resultSetExport = new ResultSetExport(con, sqls, dialectType, _progressAbortCallback, owner);
+            _resultSetExport = new ResultSetExport(con, sqls, dialectType, _fileExportProgressManager, owner);
 
             // ... called after the  modal export dialog was closed.
             _resultSetExport.export();
 
             stopWatch.stop();
 
-            if (_progressAbortCallback.isAborted())
+            if (_fileExportProgressManager.isAborted())
             {
                return;
             }
@@ -175,9 +175,9 @@ public class CreateFileOfCurrentSQLCommand
       finally
       {
          SwingUtilities.invokeLater(() -> {
-            if (null != _progressAbortCallback)
+            if (null != _fileExportProgressManager)
             {
-               _progressAbortCallback.hideProgressMonitor();
+               _fileExportProgressManager.hideProgressMonitor();
             }
          });
       }

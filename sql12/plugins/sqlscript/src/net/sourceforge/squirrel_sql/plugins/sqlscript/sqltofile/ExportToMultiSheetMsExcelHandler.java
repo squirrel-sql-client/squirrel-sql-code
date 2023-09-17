@@ -16,7 +16,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ProgressAbortFactoryCallbackImpl;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Statement;
@@ -230,23 +229,23 @@ public class ExportToMultiSheetMsExcelHandler
          sqlsJoined = String.join(" " + _session.getProperties().getSQLStatementSeparator() + "\n", workbook.getSqlList());
       }
 
-      ProgressAbortFactoryCallbackImpl progressAbortCallback = new ProgressAbortFactoryCallbackImpl(_session, sqlsJoined, () -> workbook.getWorkbookFile());
-      progressAbortCallback.getOrCreate(() -> onModalProgressDialogIsDisplaying(progressAbortCallback, workbook));
+      FileExportProgressManager fileExportProgressManager = new FileExportProgressManager(_session, sqlsJoined, () -> workbook.getWorkbookFile());
+      fileExportProgressManager.getOrCreateProgressCallback(() -> onModalProgressDialogIsDisplaying(fileExportProgressManager, workbook));
    }
 
-   private void onModalProgressDialogIsDisplaying(ProgressAbortFactoryCallbackImpl progressAbortCallback, MsExcelWorkbook workbook)
+   private void onModalProgressDialogIsDisplaying(FileExportProgressManager fileExportProgressManager, MsExcelWorkbook workbook)
    {
-      _executorService.submit(() -> doWriteFile(progressAbortCallback, workbook));
+      _executorService.submit(() -> doWriteFile(fileExportProgressManager, workbook));
    }
 
-   private void doWriteFile(ProgressAbortFactoryCallbackImpl progressAbortCallback, MsExcelWorkbook workbook)
+   private void doWriteFile(FileExportProgressManager fileExportProgressManager, MsExcelWorkbook workbook)
    {
       try
       {
          ExportControllerProxy proxy = new ExportControllerProxy(_sqlPaneAPI.getOwningFrame(), workbook, (wb, prog) -> onCreateExportData(wb, prog));
-         Exporter exporter = new Exporter(() -> progressAbortCallback.getOrCreate(), proxy);
+         Exporter exporter = new Exporter(() -> fileExportProgressManager.getOrCreateProgressCallback(), proxy);
          exporter.export();
-         progressAbortCallback.hideProgressMonitor();
+         fileExportProgressManager.hideProgressMonitor();
       }
       catch (Exception e)
       {
@@ -258,7 +257,7 @@ public class ExportToMultiSheetMsExcelHandler
       }
       finally
       {
-         progressAbortCallback.hideProgressMonitor();
+         fileExportProgressManager.hideProgressMonitor();
       }
    }
 

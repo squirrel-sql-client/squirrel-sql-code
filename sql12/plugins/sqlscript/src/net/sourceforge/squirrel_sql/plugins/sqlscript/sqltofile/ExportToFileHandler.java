@@ -5,10 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportFileWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportData;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferences;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferencesDAO;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.*;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
@@ -17,7 +14,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ProgressAbortFactoryCallbackImpl;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -147,10 +143,10 @@ public class ExportToFileHandler
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ExportToFileHandler.writing.file", file.getPath()));
          DialectType dialectType = DialectFactory.getDialectType(_session.getMetaData());
          final Connection con = _session.getSQLConnection().getConnection();
-         ProgressAbortFactoryCallbackImpl progressControllerFactory = new ProgressAbortFactoryCallbackImpl(_session, sqlToWriteToFile, () -> file);
+         FileExportProgressManager fileExportProgressManager = new FileExportProgressManager(_session, sqlToWriteToFile, () -> file);
 
          // Execution will stop at this point displaying a modal progress frame.
-         progressControllerFactory.getOrCreate(() -> onModalProgressDialogIsDisplaying(prefs, file, sqlToWriteToFile, con, dialectType, progressControllerFactory));
+         fileExportProgressManager.getOrCreateProgressCallback(() -> onModalProgressDialogIsDisplaying(prefs, file, sqlToWriteToFile, con, dialectType, fileExportProgressManager));
 
       }
       catch (Exception e)
@@ -159,16 +155,16 @@ public class ExportToFileHandler
       }
    }
 
-   private void onModalProgressDialogIsDisplaying(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
+   private void onModalProgressDialogIsDisplaying(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, FileExportProgressManager fileExportProgressManager)
    {
-      _executorService.submit(() -> doWriteFile(prefs, file, sqlToWriteToFile, con, dialectType, progressControllerFactory));
+      _executorService.submit(() -> doWriteFile(prefs, file, sqlToWriteToFile, con, dialectType, fileExportProgressManager));
    }
 
-   private void doWriteFile(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
+   private void doWriteFile(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, FileExportProgressManager fileExportProgressManager)
    {
       try(Statement stat = SQLUtilities.createStatementForStreamingResults(con, dialectType))
       {
-         ExportFileWriter.writeFile(new ResultSetExportData(stat, sqlToWriteToFile ,dialectType), prefs, progressControllerFactory.getOrCreate());
+         ExportFileWriter.writeFile(new ResultSetExportData(stat, sqlToWriteToFile ,dialectType), prefs, fileExportProgressManager.getOrCreateProgressCallback());
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ExportToFileHandler.wrote.file", file.getPath()));
       }
       catch (Throwable e)
@@ -180,7 +176,7 @@ public class ExportToFileHandler
       }
       finally
       {
-         progressControllerFactory.hideProgressMonitor();
+         fileExportProgressManager.hideProgressMonitor();
       }
    }
 
