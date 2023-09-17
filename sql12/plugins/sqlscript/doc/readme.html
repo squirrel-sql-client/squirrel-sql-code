@@ -77,7 +77,15 @@
 	This will write the result of 'SELECT * FROM customers' to the file '/tmp/customers.xlsx'.
 	The settings for the output will be taken from the export dialog shown above.<br>
 	Please note the single quotes around the file name.<br>
-	Also note: Existing files will be replaced.
+	Also note: Existing files will be replaced.<br><br>
+	To create an MS-Excel workbook file with multiple sheets use the following syntax:<br>
+	<code>
+	@msExcelWorkbook 'C:/tmp/out.xlsx'<br>
+	@sheet 'Orders' SELECT * FROM orders;<br>
+	@sheet 'Stores' SELECT * FROM stores;<br>
+	</code>
+	where the ";" may need to be replaced by the SQL separator in use.
+
 
 	<P STYLE="font-weight: medium">
 		<BR> <BR>
