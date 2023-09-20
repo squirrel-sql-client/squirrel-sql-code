@@ -82,7 +82,7 @@ cd "$UNIX_STYLE_HOME"
 # should be able to be run by that version or higher. The arguments to JavaVersionChecker below specify the 
 # minimum acceptable version (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should 
 # be all that is necessary for the version form. 
-"$JAVACMD" -cp "$UNIX_STYLE_HOME/../Resources/Java/lib/versioncheck.jar" JavaVersionChecker 11 12 13 14 15 16 17 18 19 20
+"$JAVACMD" -cp "$UNIX_STYLE_HOME/../Resources/Java/lib/versioncheck.jar" JavaVersionChecker 11 12 13 14 15 16 17 18 19 20 21
 if [ "$?" != "0" ]; then
 	exit
 fi

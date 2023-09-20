@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Introduced Java 21 compatibility.
+
 SQL Script Plugin: In analogy to the existing syntax to export a SQL result directly using the syntax
     @file '/tmp/customers.xlsx' SELECT * FROM customers
   one may now directly create an MS-Excel workbook file with multiple sheets using the following syntax:
