@@ -21,21 +21,16 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -228,7 +223,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// IMPORTANT: this dialog is SYNCHRONOUS (ie. we do not proceed until
 			// user gives a response).  This is critical since this function provides
 			// a return value to its caller that depends on the user input.
-			int option = JOptionPane.showConfirmDialog(getComponent(),
+			int option = JOptionPane.showConfirmDialog(GUIUtils.getOwningWindow(getComponent()),
 																	 message,
 																	 s_stringMgr.getString("baseDataSetViewerDestination.warning"),
 																	 JOptionPane.YES_NO_OPTION,

@@ -100,6 +100,9 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+The 'Show foreign key references' right mouse menu of SQL results
+  didn't work when the SQL result list contained sub selects.
+
 When long Session tab titles are displayed the titles now reflect changes to the default catalog.
   See File --> Global Preferences --> tab general --> check box "Use short Session tab title ...".
 

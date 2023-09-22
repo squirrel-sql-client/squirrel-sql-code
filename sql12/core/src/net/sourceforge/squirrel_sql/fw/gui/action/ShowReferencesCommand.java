@@ -34,44 +34,47 @@ public class ShowReferencesCommand
 
    public void execute()
    {
-      ResultMetaDataTable globalDbTable = null;
-
-      if(_updateableModel instanceof IDataSetUpdateableTableModel)
-      {
-         ITableInfo ti = ((IDataSetUpdateableTableModel)_updateableModel).getTableInfo();
-         if (null != ti)
-         {
-            globalDbTable = new ResultMetaDataTable(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
-         }
-      }
-
+      // Fallback for databases that don't implement ResultSetMetadata.getTableName().
+      ResultMetaDataTable fallbackTable = tryGetFallbackTableFromUpdatableTableModel(_updateableModel);
 
       ArrayList<InStatColumnInfo> inStatColumnInfos = new TableCopyInStatementCommand(_table, _session).getInStatColumnInfos();
+      List<ResultMetaDataTable> tablesOfSelectedCols = ShowReferencesUtil.findTables(inStatColumnInfos);
 
-
-      if (null == globalDbTable)
+      if(null == fallbackTable && tablesOfSelectedCols.isEmpty())
       {
-         List<ResultMetaDataTable> tables = ShowReferencesUtil.findTables(inStatColumnInfos);
-
-         if (0 == tables.size())
-         {
-            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noTable"));
-            return;
-         }
-         else if(1 < tables.size())
-         {
-            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.non.unique.table"));
-            return;
-         }
-
-
-         globalDbTable = tables.get(0);
+         JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noTable"));
+         return;
       }
 
+      if(1 < tablesOfSelectedCols.size())
+      {
+         JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.non.unique.table"));
+         return;
+      }
 
+      ResultMetaDataTable foreignKeysRefDialogRootTable = fallbackTable;
+      if(false == tablesOfSelectedCols.isEmpty())
+      {
+         foreignKeysRefDialogRootTable = tablesOfSelectedCols.get(0);
+      }
 
-      ReferencesFrameStarter.showReferences(new RootTable(globalDbTable, inStatColumnInfos), _session, _owningFrame);
+      ReferencesFrameStarter.showReferences(new RootTable(foreignKeysRefDialogRootTable, inStatColumnInfos), _session, _owningFrame);
 
+   }
+
+   private ResultMetaDataTable tryGetFallbackTableFromUpdatableTableModel(IDataSetUpdateableModel updateableModel)
+   {
+      ResultMetaDataTable ret = null;
+
+      if(updateableModel instanceof IDataSetUpdateableTableModel)
+      {
+         ITableInfo ti = ((IDataSetUpdateableTableModel) updateableModel).getTableInfo();
+         if (null != ti)
+         {
+            ret = new ResultMetaDataTable(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
+         }
+      }
+      return ret;
    }
 
 }

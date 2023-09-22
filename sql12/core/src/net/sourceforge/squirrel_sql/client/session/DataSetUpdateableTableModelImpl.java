@@ -8,11 +8,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -21,7 +17,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,21 +30,10 @@ import java.util.Vector;
 public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableModel
 {
 
-   /**
-    * Internationalized strings for this class.
-    */
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(DataSetUpdateableTableModelImpl.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataSetUpdateableTableModelImpl.class);
 
-   /**
-    * string to be passed to user when table name is not found or is ambiguous
-    */
-   // i18n[DataSetUpdateableTableModelImpl.error.tablenotfound=Cannot edit table because table cannot be found\nor table name is not unique in DB.]
    private final String TI_ERROR_MESSAGE = s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.tablenotfound");
 
-   /**
-    * Logger for this class.
-    */
    private static final ILogger s_log = LoggerController.createLogger(DataSetUpdateableTableModelImpl.class);
 
 
@@ -56,8 +41,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * This is the long name of the current table including everything that might be able to distinguish it
     * from another table of the same name in a different DB.
     */
-   private String fullTableName = null;
-   private ITableInfo ti;
+   private String _fullTableName = null;
+   private ITableInfo _tableInfo;
    private ISession _session;
 
    /**
@@ -94,9 +79,9 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
    public void setTableInfo(ITableInfo ti)
    {
-      this.ti = ti;
+      this._tableInfo = ti;
       // re-calculate fullTablename the next time it's requested.
-      fullTableName = null;
+      _fullTableName = null;
    }
 
    public void setSession(ISession session)
@@ -123,12 +108,12 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     */
    public String getFullTableName()
    {
-      if (fullTableName == null)
+      if (_fullTableName == null)
       {
          try
          {
-            final String name = ti.getQualifiedName();
-            fullTableName = getUnambiguousTableName(_session, name);
+            final String name = _tableInfo.getQualifiedName();
+            _fullTableName = getUnambiguousTableName(_session, name);
          }
          catch (Exception e)
          {
@@ -136,7 +121,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                   "getFullTableName: Unexpected exception - " + e.getMessage(), e);
          }
       }
-      return fullTableName;
+      return _fullTableName;
    }
 
    /**
@@ -211,7 +196,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    {
 
       // if we could not identify which table to edit, tell user
-      if(ti == null)
+      if(_tableInfo == null)
       {
          return TI_ERROR_MESSAGE;
       }
@@ -296,7 +281,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       {
          String whereClause;
          whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
-         countSql = "select count(*) from " + ti.getQualifiedName() + whereClause;
+         countSql = "select count(*) from " + _tableInfo.getQualifiedName() + whereClause;
          countResult.setSql(countSql);
          pstmt = conn.prepareStatement(countSql);
          whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, countResult);
@@ -334,7 +319,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       try
       {
          // if we could not identify which table to edit, tell user
-         if (ti == null)
+         if (_tableInfo == null)
             return TI_ERROR_MESSAGE;
 
          List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, newValue);
@@ -408,7 +393,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    {
 
       // if we could not identify which table to edit, tell user
-      if (ti == null)
+      if (_tableInfo == null)
       {
          LimitReadLengthFeatureUnstable.unknownTable();
          return TI_ERROR_MESSAGE;
@@ -435,7 +420,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       try
       {
          final String queryString =
-               "SELECT " + colDefs[col].getColumnName() + " FROM " + ti.getQualifiedName() +
+               "SELECT " + colDefs[col].getColumnName() + " FROM " + _tableInfo.getQualifiedName() +
                      whereClause;
 
          final PreparedStatement pstmt = conn.prepareStatement(queryString);
@@ -504,7 +489,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          Object newValue)
    {
       // if we could not identify which table to edit, tell user
-      if (ti == null)
+      if (_tableInfo == null)
          return TI_ERROR_MESSAGE;
 
       // get WHERE clause using original value
@@ -521,7 +506,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       int count = -1;
 
       final String sql = constructUpdateSql(
-            ti.getQualifiedName(), DialectUtils2.checkColumnDoubleQuotes(colDefs[col].getDialectType(), colDefs[col].getColumnName()), whereClause);
+            _tableInfo.getQualifiedName(), DialectUtils2.checkColumnDoubleQuotes(colDefs[col].getDialectType(), colDefs[col].getColumnName()), whereClause);
 
       if (s_log.isDebugEnabled())
       {
@@ -690,7 +675,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    {
 
       // if we could not identify which table to edit, tell user
-      if (ti == null)
+      if (_tableInfo == null)
          return TI_ERROR_MESSAGE;
 
       // get the SQL session
@@ -788,7 +773,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          {
             // do the delete and add the number of rows deleted to the count
             String sql = "DELETE FROM " +
-                  ti.getQualifiedName() + whereClause;
+                  _tableInfo.getQualifiedName() + whereClause;
             final PreparedStatement pstmt = conn.prepareStatement(sql);
             whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, null);
             try
@@ -822,7 +807,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       final String[] defaultValues = new String[colDefs.length];
 
       // if we could not identify which table to edit, just return
-      if (ti == null)
+      if (_tableInfo == null)
       {
          return defaultValues;
       }
@@ -833,7 +818,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       try
       {
          SQLDatabaseMetaData md = conn.getSQLMetaData();
-         TableColumnInfo[] infos = md.getColumnInfo(ti);
+         TableColumnInfo[] infos = md.getColumnInfo(_tableInfo);
 
          // read the DB MetaData info and fill in the value, if any
          // Note that the ResultSet info and the colDefs should be
@@ -897,7 +882,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    {
 
       // if we could not identify which table to edit, tell user
-      if (ti == null)
+      if (_tableInfo == null)
       {
          return TI_ERROR_MESSAGE;
       }
@@ -911,7 +896,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       {
          // start the string for use in the prepared statment
          StringBuilder buf = new StringBuilder("INSERT INTO ");
-         buf.append(ti.getQualifiedName());
+         buf.append(_tableInfo.getQualifiedName());
 
          // Add the list of column names we will be inserting into - be sure
          // to skip the rowId column and any auto increment columns.
@@ -1036,7 +1021,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    @Override
    public ITableInfo getTableInfo()
    {
-      return ti;
+      return _tableInfo;
    }
 
    @Override
