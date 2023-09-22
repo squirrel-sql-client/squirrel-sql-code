@@ -17,9 +17,9 @@ SQL Script Plugin: In analogy to the existing syntax to export a SQL result dire
   where the ";" may need to be replaced by the SQL separator in use.
 
 SQL editor: Keyboard shortcut ctrl+w
-   on first stoke selects the current word,
-   on second stoke selects the end of the current line starting from the current word,
-   on third stoke selects the whole current line.
+   on first stroke selects the current word,
+   on second stroke selects the end of the current line starting from the current word,
+   on third stroke selects the whole current line.
 
 SQL editor: Improvements of multiple caret/cursor editing:
   With ctrl and alt keys down additional can be added by mouse click.
