@@ -18,13 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.exception;
 
-import static net.sourceforge.squirrel_sql.fw.util.Utilities.checkNull;
-
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -34,13 +27,16 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import static net.sourceforge.squirrel_sql.fw.util.Utilities.checkNull;
 
 /**
  * An ExceptionFormatter for Oracle which adds the position of the syntax error and moves the caret position
@@ -230,18 +226,16 @@ public class OracleExceptionFormatter extends SessionAdapter implements ISession
 		try
 		{
 			stmt = con.createStatement();
-			if (s_log.isDebugEnabled())
-			{
-				s_log.debug("initOffsetFunction: Executing sql: " + OFFSET_FUNCTION);
-			}
+			String msg = "The following function is created in your database by the Oracle plugin. " +
+					"It allows  SQuirreL to position the SQL editor's caret/cursor at SQL error positions:\n   " + OFFSET_FUNCTION;
+			s_log.info(msg);
 
 			stmt.executeUpdate(OFFSET_FUNCTION);
 		}
 		catch (SQLException e)
 		{
 			result = false;
-			s_log.error("initOffsetFunction: Unexpected exception - " + e.getMessage(), e);
-
+			s_log.error("Failed to create the function " + OFFSET_FUNCTION_NAME, e);
 		}
 		finally
 		{

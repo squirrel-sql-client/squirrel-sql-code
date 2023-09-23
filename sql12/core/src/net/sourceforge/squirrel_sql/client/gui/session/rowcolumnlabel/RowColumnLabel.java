@@ -6,16 +6,18 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
 import javax.swing.border.Border;
+import javax.swing.event.CaretEvent;
 import java.awt.*;
 
 public class RowColumnLabel extends JLabel
 {
-	private RowColumnLabelSQLEntryPanelHandler _rowColumnLabelSqlEntryPanelHandler;
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RowColumnLabel.class);
+   public static final String IN_SQL_TEXT = " / " + s_stringMgr.getString("RowColumnLabel.inSQL") + " ";
+
+   private RowColumnLabelSQLEntryPanelHandler _rowColumnLabelSqlEntryPanelHandler;
 	private StringBuffer _msg = new StringBuffer();
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RowColumnLabel.class);
    private Dimension _dim;
 
 
@@ -35,7 +37,7 @@ public class RowColumnLabel extends JLabel
    {
       _rowColumnLabelSqlEntryPanelHandler = rowColumnLabelSqlEntryPanelHandler;
 
-      writePosition(0,0, 0);
+      writePosition(0,0, 0, null);
 
       setToolTipText(s_stringMgr.getString("RowColumnLabel.tooltip"));
    }
@@ -50,13 +52,19 @@ public class RowColumnLabel extends JLabel
          return;
       }
 
-      writePosition(caretPositionInfo.getCaretLineNumber(), caretPositionInfo.getCaretLinePosition(), caretPositionInfo.getCaretPosition());
+      writePosition(caretPositionInfo.getCaretLineNumber(), caretPositionInfo.getCaretLinePosition(), caretPositionInfo.getCaretPosition(), caretPositionInfo.getPositionInCurrentSQL());
 	}
 
-	private void writePosition(int caretLineNumber, int caretLinePosition, int caretPosition)
+	private void writePosition(int caretLineNumber, int caretLinePosition, int caretPosition, Integer positionInCurrentSQL)
 	{
 		_msg.setLength(0);
 		_msg.append(caretLineNumber + 1).append(",").append(caretLinePosition + 1).append(" / ").append(caretPosition + 1);
+
+      if(null != positionInCurrentSQL)
+      {
+         _msg.append(IN_SQL_TEXT + positionInCurrentSQL);
+      }
+
 		setText(_msg.toString());
 	}
 
@@ -78,7 +86,7 @@ public class RowColumnLabel extends JLabel
    {
       Dimension dim = super.getPreferredSize();
       FontMetrics fm = getFontMetrics(getFont());
-      dim.width = fm.stringWidth("000,000 / 00000000");
+      dim.width = fm.stringWidth("000,000 / 00000000" + IN_SQL_TEXT + "00000000");
       Border border = getBorder();
       if (border != null)
       {

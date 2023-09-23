@@ -67,7 +67,7 @@ public class RowColumnLabelSQLEntryPanelHandler
    {
       if (null != _sqlEntryPanel)
       {
-         return new CaretPositionInfo(_sqlEntryPanel.getCaretLineNumber(), _sqlEntryPanel.getCaretLinePosition(), _sqlEntryPanel.getCaretPosition());
+         return createPositionInfo(_sqlEntryPanel);
       }
       else
       {
@@ -79,7 +79,25 @@ public class RowColumnLabelSQLEntryPanelHandler
          }
 
          ISQLEntryPanel sqlEntryPanel = sqlPanel.getSQLEntryPanel();
-         return new CaretPositionInfo(sqlEntryPanel.getCaretLineNumber(), sqlEntryPanel.getCaretLinePosition(), sqlEntryPanel.getCaretPosition());
+         return createPositionInfo(sqlEntryPanel);
       }
+   }
+
+   private CaretPositionInfo createPositionInfo(ISQLEntryPanel sqlEntryPanel)
+   {
+      int[] boundsOfSQLToBeExecuted = sqlEntryPanel.getBoundsOfSQLToBeExecuted();
+      int caretPosition = sqlEntryPanel.getCaretPosition();
+
+      Integer positionInCurrentSQL = null;
+      if(sqlEntryPanel.getSelectionStart() < sqlEntryPanel.getSelectionEnd())
+      {
+         positionInCurrentSQL = caretPosition - sqlEntryPanel.getSelectionStart() + 1;
+      }
+      else if(boundsOfSQLToBeExecuted[0] < boundsOfSQLToBeExecuted[1])
+      {
+         positionInCurrentSQL = caretPosition - boundsOfSQLToBeExecuted[0] + 1;
+      }
+
+      return new CaretPositionInfo(sqlEntryPanel.getCaretLineNumber(), sqlEntryPanel.getCaretLinePosition(), caretPosition, positionInCurrentSQL);
    }
 }

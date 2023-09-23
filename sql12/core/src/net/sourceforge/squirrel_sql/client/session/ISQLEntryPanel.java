@@ -118,13 +118,17 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	/**
 	 * Return the zero-based line number that the caret is currently on.
-	 *
-	 * @return	the zero-based line number that the caret is currently on.
 	 */
 	int getCaretLineNumber();
 
+	/**
+	 * Return the zero based position in the current line.
+	 */
 	int getCaretLinePosition();
 
+	/**
+	 * Return the zero-based line number of the pos parameter.
+	 */
 	int getLineOfPosition(int pos);
 
 	boolean hasFocus();

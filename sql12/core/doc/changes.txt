@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#1519 (in bugs): The caret/cursor position indicator at the lower right of a Session panel
+  now also shows the caret/cursor's position in the current SQL if applicable.
+
 Introduced Java 21 compatibility.
 
 SQL Script Plugin: In analogy to the existing syntax to export a SQL result directly using the syntax
