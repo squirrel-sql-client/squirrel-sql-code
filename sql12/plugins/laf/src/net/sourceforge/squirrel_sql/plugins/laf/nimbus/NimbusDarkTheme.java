@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
+import java.net.URL;
 
 /**
  * Encapsulate Nimbus dark theme configuration logic
@@ -142,16 +143,17 @@ public class NimbusDarkTheme
       UIManager.getDefaults().remove("Tree.collapsedIcon");
       UIManager.getDefaults().remove("Tree.expandedIcon");
 
+      // open/close icon image files in the Java package are for dark mode only
       UIManager.put("Tree.collapsedIcon", loadImage("close.gif"));
       UIManager.put("Tree.expandedIcon", loadImage("open.gif"));
    }
 
    private static ImageIcon loadImage(String file)
    {
-      //URL fileUrl = NimbusDarkTheme.class.getResource(file);
-      //
-      //return new ImageIcon(fileUrl);
-
-      return new ImageIcon(file);
+      // load icon/image files that in the same package of this class,
+      // by Java classpath resource.
+      URL fileUrl = NimbusDarkTheme.class.getResource(file);
+      
+      return new ImageIcon(fileUrl);
    }
 }
