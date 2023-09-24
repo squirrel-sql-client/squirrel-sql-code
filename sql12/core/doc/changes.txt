@@ -103,6 +103,8 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+File export dialog: Fixed missing formatting radio buttons.
+
 Look and Feel Plugin / Nimbus look and feel:
   Merged pull request https://github.com/squirrel-sql-client/squirrel-sql-code/pull/21
   Fix for open/close icon's of trees for Nimbus dark mode.

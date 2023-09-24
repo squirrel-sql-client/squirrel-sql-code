@@ -77,7 +77,7 @@ public class ExportDlg extends JDialog
       getContentPane().add(getSeparatorPanel(), gbc);
 
 
-      gbc = new GridBagConstraints(0, 5, 1, 1, 0, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15, 5, 5, 5), 0, 0);
       //switch (exportDialogType)
       //{
       //   case UI_TABLE_EXPORT:
@@ -92,11 +92,9 @@ public class ExportDlg extends JDialog
       //}
       getContentPane().add(exportSelectionPanel, gbc);
 
-      gbc = new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 6, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(getFormattingPanel(), gbc);
 
-
-      // i18n[TableExportCsvDlg.executeCommand=Execute command (%file will be replaced by export file name)]
       chkExecCommand = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.executeCommand"));
       gbc = new GridBagConstraints(0, 7, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(chkExecCommand, gbc);
@@ -220,6 +218,7 @@ public class ExportDlg extends JDialog
       bg.add(radUseGlobalPrefsFormating);
       bg.add(radUseDefaultFormating);
 
+      ret.setBorder(BorderFactory.createEtchedBorder());
       return ret;
 
 
