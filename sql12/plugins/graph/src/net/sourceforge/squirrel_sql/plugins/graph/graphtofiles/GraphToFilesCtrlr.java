@@ -1,17 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.graph.graphtofiles;
 
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.ExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.ExtensionFilter;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class GraphToFilesCtrlr
 {
@@ -88,6 +92,7 @@ public class GraphToFilesCtrlr
 
             ExtensionFilter ef = new ExtensionFilter();
             // i18n[graphToFile.ImageFileSpec=JPG image format]
+            ef.addExtension(s_stringMgr.getString("graphToFile.ImageFileSpec.png"),"png");
             ef.addExtension(s_stringMgr.getString("graphToFile.ImageFileSpec"),"jpg");
             fc.setFileFilter(ef);
          }
@@ -99,11 +104,19 @@ public class GraphToFilesCtrlr
             {
                if (1 == _images.length)
                {
-                  if (false == selectedFile.getPath().toUpperCase().endsWith(".JPG"))
+                  if (StringUtils.endsWithIgnoreCase(selectedFile.getPath(), ".png"))
                   {
-                     selectedFile = new File(selectedFile.getPath() + ".jpg");
+                     ImageIO.write(_images[0], "png", selectedFile);
                   }
-                  ImageIO.write(_images[0], "jpg", selectedFile);
+                  else if (StringUtils.endsWithIgnoreCase(selectedFile.getPath(), ".jpg"))
+                  {
+                     ImageIO.write(_images[0], "jpg", selectedFile);
+                  }
+                  else
+                  {
+                     selectedFile = new File(selectedFile.getPath() + ".png");
+                     ImageIO.write(_images[0], "png", selectedFile);
+                  }
 
                   Props.putString(PREF_KEY_LAST_IMAGE_DIR, selectedFile.getParent());
 
@@ -114,8 +127,8 @@ public class GraphToFilesCtrlr
 
                   for (int i = 0; i < _images.length; i++)
                   {
-                     File f = new File(selectedFile, "Page_" + (i+1) + ".jpg");
-                     ImageIO.write(_images[i], "jpg", f);
+                     File f = new File(selectedFile, "Page_" + (i+1) + ".png");
+                     ImageIO.write(_images[i], "png", f);
                   }
                   Props.putString(PREF_KEY_LAST_IMAGE_DIR, selectedFile.getPath());
                }

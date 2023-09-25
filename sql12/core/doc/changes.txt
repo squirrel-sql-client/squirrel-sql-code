@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Graph Plugin: The standard format for saving Graphs (ER diagrams) as images is now PNG instead of JPG.
+
 Graph Plugin:
   When a Graph (ER diagram) is renamed (using the right mouse menu or start button on the lower left)
   the current name is now suggested.
