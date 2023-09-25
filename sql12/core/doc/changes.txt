@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Graph Plugin:
+  When a Graph (ER diagram) is renamed (using the right mouse menu or start button on the lower left)
+  the current name is now suggested.
+
 #1519 (in bugs): The caret/cursor position indicator at the lower right of a Session panel
   now also shows the caret/cursor's position in the current SQL if applicable.
 

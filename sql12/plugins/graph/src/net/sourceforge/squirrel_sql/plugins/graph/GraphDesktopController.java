@@ -1,5 +1,29 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import java.awt.Point;
+import java.awt.Window;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.List;
+import java.util.TooManyListenersException;
+import java.util.Vector;
+import java.util.stream.Collectors;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -12,22 +36,6 @@ import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionListener;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-import java.awt.*;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.util.List;
-import java.util.TooManyListenersException;
-import java.util.Vector;
-import java.util.stream.Collectors;
 
 
 public class GraphDesktopController
@@ -527,7 +535,7 @@ public class GraphDesktopController
 
 		// i18n[graph.newName=Please enter a new name]
       Window parent = SwingUtilities.windowForComponent(_desktopPane);
-		String newName = JOptionPane.showInputDialog(parent, s_stringMgr.getString("graph.newName"));
+		String newName = JOptionPane.showInputDialog(parent, s_stringMgr.getString("graph.newName"), _channel.getGraphName());
       if(null != newName && 0 != newName.trim().length())
       {
          _channel.renameRequest(newName);
