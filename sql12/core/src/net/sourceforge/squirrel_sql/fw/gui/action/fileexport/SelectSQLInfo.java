@@ -1,8 +1,6 @@
-package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportSqlNamed;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import java.util.ArrayList;

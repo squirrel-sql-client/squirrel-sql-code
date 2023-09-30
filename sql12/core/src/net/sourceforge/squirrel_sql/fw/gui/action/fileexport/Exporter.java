@@ -109,6 +109,7 @@ public class Exporter
       this._progressController = _exporterCallback.createProgressController();
 
       File firstExportedFile;
+      int numberOfFilesExported = 1;
       try
       {
          final ExportDataInfoList exportDataInfoList = ctrl.createExportData(_progressController);
@@ -130,7 +131,12 @@ public class Exporter
 
          writtenRows = writeExport(ctrl, exportDataInfoList);
 
-         firstExportedFile = exportDataInfoList.getFirstExportFile(TableExportPreferencesDAO.loadPreferences());
+         TableExportPreferences prefs = TableExportPreferencesDAO.loadPreferences();
+         firstExportedFile = exportDataInfoList.getFirstExportFile(prefs);
+         if (prefs.isExportMultipleSQLResults() && false == prefs.isFormatXLS() && false == prefs.isFormatXLSOld())
+         {
+            numberOfFilesExported = exportDataInfoList.getExportDataInfos().size();
+         }
       }
       catch (Exception e)
       {
@@ -162,7 +168,8 @@ public class Exporter
          }
          else
          {
-            GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(ctrl.getOwningWindow(), writtenRows, firstExportedFile, ctrl.isShowExportCompleteAsDialog() ), true);
+            int finalNumberOfFilesExported = numberOfFilesExported;
+            GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(ctrl.getOwningWindow(), writtenRows, firstExportedFile, finalNumberOfFilesExported, ctrl.isShowExportCompleteAsDialog() ), true);
          }
       }
       else
@@ -221,11 +228,20 @@ public class Exporter
       }
    }
 
-   private void showExportSuccessMessage(Window owner, long writtenRows, File exportFile, boolean showExportSuccessAsDialog)
+   private void showExportSuccessMessage(Window owner, long writtenRows, File exportFile, int numberOfFilesExported, boolean showExportSuccessAsDialog)
    {
       String formattedWrittenRows = NumberFormat.getIntegerInstance().format(writtenRows);
       String fileName = StringUtilities.shortenBegin(exportFile.getAbsolutePath(), 300, "...");
-      String exportSuccessMessage = s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, fileName);
+      String exportSuccessMessage;
+
+      if (1 < numberOfFilesExported)
+      {
+         exportSuccessMessage = s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess.multiple.files", formattedWrittenRows, fileName, (numberOfFilesExported-1));
+      }
+      else
+      {
+         exportSuccessMessage = s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, fileName);
+      }
 
       if(false == showExportSuccessAsDialog)
       {

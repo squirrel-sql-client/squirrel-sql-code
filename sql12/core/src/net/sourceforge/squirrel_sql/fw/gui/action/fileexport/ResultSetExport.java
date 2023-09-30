@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.SelectSQLInfo;
 
 import java.awt.*;
 import java.io.File;

@@ -8,7 +8,7 @@ public class ExportDataInfoList
 {
    public static final ExportDataInfoList EMPTY = new ExportDataInfoList(Collections.EMPTY_LIST);
 
-   private List<ExportDataInfo> _exportDataInfos;
+   private final List<ExportDataInfo> _exportDataInfos;
    private MultipleSqlResultExportDestinationInfo _multipleSqlResultExportDestinationInfo;
 
    public static ExportDataInfoList single(IExportData data)

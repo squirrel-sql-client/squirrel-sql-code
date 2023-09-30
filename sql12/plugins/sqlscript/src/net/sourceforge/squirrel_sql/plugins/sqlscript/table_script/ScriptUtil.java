@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.SelectSQLInfo;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;

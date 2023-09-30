@@ -7,13 +7,73 @@ import java.util.List;
 
 public class JDBCResultSetExportData
 {
-   public List<String> _originalSqlsToExport;
+   private List<String> _originalSqlsToExport;
 
-   public Connection _con;
-   public DialectType _dialect;
-   public boolean _limitRows;
+   private Connection _con;
+   private DialectType _dialect;
+   private boolean _limitRows;
 
-   List<ExportSqlNamed> _exportSqlsNamed;
-   public boolean _exportSingleFile;
-   public int _maxRows;
+   private List<ExportSqlNamed> _exportSqlsNamed;
+   private boolean _exportSingleFile;
+   private int _maxRows;
+
+
+   public JDBCResultSetExportData(List<String> originalSqlsToExport, List<ExportSqlNamed> exportSqlsNamed, Connection con, DialectType dialect)
+   {
+      _originalSqlsToExport = originalSqlsToExport;
+      _exportSqlsNamed = exportSqlsNamed;
+      _con = con;
+      _dialect = dialect;
+   }
+
+
+   public List<String> getOriginalSqlsToExport()
+   {
+      return _originalSqlsToExport;
+   }
+
+   public Connection getCon()
+   {
+      return _con;
+   }
+
+   public DialectType getDialect()
+   {
+      return _dialect;
+   }
+
+   public boolean isLimitRows()
+   {
+      return _limitRows;
+   }
+
+   public void setLimitRows(boolean limitRows)
+   {
+      _limitRows = limitRows;
+   }
+
+   public List<ExportSqlNamed> getExportSqlsNamed()
+   {
+      return _exportSqlsNamed;
+   }
+
+   public void setExportSqlsNamed(List<ExportSqlNamed> exportSqlsNamed)
+   {
+      _exportSqlsNamed = exportSqlsNamed;
+   }
+
+   public void setExportSingleFile(boolean exportSingleFile)
+   {
+      _exportSingleFile = exportSingleFile;
+   }
+
+   public int getMaxRows()
+   {
+      return _maxRows;
+   }
+
+   public void setMaxRows(int maxRows)
+   {
+      _maxRows = maxRows;
+   }
 }
