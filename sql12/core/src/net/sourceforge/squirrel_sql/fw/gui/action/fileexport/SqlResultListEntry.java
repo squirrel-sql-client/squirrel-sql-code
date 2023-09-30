@@ -8,6 +8,8 @@ public class SqlResultListEntry
    private String _sql;
    private int _index;
 
+   private ExportSqlNamed _sqlNamed;
+
    private String _userEnteredSqlResultNameFileNormalized;
 
    public SqlResultListEntry(SqlResultTabHandle handle, int index)
@@ -20,6 +22,11 @@ public class SqlResultListEntry
    {
       _sql = sql;
       _index = index;
+   }
+
+   public SqlResultListEntry(ExportSqlNamed sqlNamed)
+   {
+      _sqlNamed = sqlNamed;
    }
 
    @Override
@@ -35,7 +42,14 @@ public class SqlResultListEntry
 
    public String getSql()
    {
-      return _sql;
+      if (null != _sqlNamed)
+      {
+         return _sqlNamed.getSql();
+      }
+      else
+      {
+         return _sql;
+      }
    }
 
    public void setUserEnteredSqlResultNameFileNormalized(String userEnteredSqlResultNameFileNormalized)
@@ -45,13 +59,17 @@ public class SqlResultListEntry
 
    public String getExportNameFileNormalized()
    {
-      if(StringUtilities.isEmpty(_userEnteredSqlResultNameFileNormalized, true))
+      if(false == StringUtilities.isEmpty(_userEnteredSqlResultNameFileNormalized, true))
       {
-         return ExportUtil.createDefaultExportName(_index);
+         return _userEnteredSqlResultNameFileNormalized;
+      }
+      else if (null != _sqlNamed)
+      {
+         return _sqlNamed.getExportNameFileNormalized();
       }
       else
       {
-         return _userEnteredSqlResultNameFileNormalized;
+         return ExportUtil.createDefaultExportName(_index);
       }
    }
 

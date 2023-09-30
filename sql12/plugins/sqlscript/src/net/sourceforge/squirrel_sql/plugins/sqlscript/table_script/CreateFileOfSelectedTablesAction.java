@@ -20,14 +20,12 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionUtils;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
@@ -35,14 +33,14 @@ import java.awt.event.ActionEvent;
  *
  * @author Stefan Willinger
  */
-public class CreateFileOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction
+public class CreateFileOfSelectedTablesAction extends SquirrelAction implements IObjectTreeAction
 {
 
    private SQLScriptPlugin plugin;
 
-   private ISession session;
+   private IObjectTreeAPI _objectTreeAPI;
 
-   public CreateFileOfCurrentSQLAction(IResources rsrc, SQLScriptPlugin sqlScriptPlugin)
+   public CreateFileOfSelectedTablesAction(IResources rsrc, SQLScriptPlugin sqlScriptPlugin)
    {
       super(Main.getApplication(), rsrc);
       this.plugin = sqlScriptPlugin;
@@ -51,20 +49,20 @@ public class CreateFileOfCurrentSQLAction extends SquirrelAction implements ISQL
    @Override
    public void actionPerformed(ActionEvent e)
    {
-      new CreateFileOfCurrentSQLCommand(session, plugin).execute((JFrame) SessionUtils.getOwningFrame(session));
+      System.out.println("CreateFileOfSelectedTablesAction.actionPerformed " + _objectTreeAPI.getSelectedTables());
+
+      if(null == _objectTreeAPI)
+      {
+         return;
+      }
+
+      new CreateFileOfCurrentSQLCommand(_objectTreeAPI.getSession(), plugin).executeForSelectedTables(GUIUtils.getOwningWindow(_objectTreeAPI.getObjectTree()), _objectTreeAPI.getSelectedTables(), _objectTreeAPI);
    }
 
-   public void setSQLPanel(ISQLPanelAPI panel)
+   @Override
+   public void setObjectTree(IObjectTreeAPI objectTreeAPI)
    {
-      if (null != panel)
-      {
-         session = panel.getSession();
-      }
-      else
-      {
-         session = null;
-      }
-      setEnabled(null != session);
+      _objectTreeAPI = objectTreeAPI;
+      setEnabled(null != _objectTreeAPI);
    }
-
 }

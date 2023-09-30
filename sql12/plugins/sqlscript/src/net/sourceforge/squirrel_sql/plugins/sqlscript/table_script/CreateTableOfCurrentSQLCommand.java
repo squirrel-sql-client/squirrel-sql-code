@@ -19,11 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -36,8 +32,8 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.insert.InsertGenerator;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.StringScriptBuilder;
 
-import javax.swing.SwingUtilities;
-import java.awt.Frame;
+import javax.swing.*;
+import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -207,13 +203,11 @@ public class CreateTableOfCurrentSQLCommand
          sbCreate.append("\n\nCREATE TABLE ").append(sTable).append('\n');
          sbCreate.append("(\n");
 
-         ScriptUtil su = new ScriptUtil();
-
          String sColName = metaData.getColumnName(1);
          String sColType = metaData.getColumnTypeName(1);
          int colSize = metaData.getColumnDisplaySize(1);
          int decimalDigits =  metaData.getScale(1);
-         sbCreate.append("   ").append(su.getColumnDef(sColName, sColType, colSize, decimalDigits));
+         sbCreate.append("   ").append(ScriptUtil.getColumnDef(sColName, sColType, colSize, decimalDigits));
 
          for(int i=2; i <= metaData.getColumnCount(); ++i)
          {
@@ -223,7 +217,7 @@ public class CreateTableOfCurrentSQLCommand
             sColType = metaData.getColumnTypeName(i);
             colSize = metaData.getColumnDisplaySize(i);
             decimalDigits =  metaData.getScale(i);
-            sbCreate.append("   ").append(su.getColumnDef(sColName, sColType, colSize, decimalDigits));
+            sbCreate.append("   ").append(ScriptUtil.getColumnDef(sColName, sColType, colSize, decimalDigits));
          }
 
          sbCreate.append("\n)");

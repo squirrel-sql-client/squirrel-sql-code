@@ -173,9 +173,11 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		coll.add(new CreateDataScriptAction(app, _resources, this));
 		coll.add(new CreateTemplateDataScriptAction(app, _resources, this));
 		coll.add(new CreateDataScriptOfCurrentSQLAction(_resources, this));
-		coll.add(new CreateDataFileOfCurrentSQLAction(_resources));
 		coll.add(new CreateTableOfCurrentSQLAction(app, _resources, this));
-		coll.add(new CreateFileOfCurrentSQLAction(app, _resources, this));
+		coll.add(new CreateInsertStatementsFileOfCurrentSQLAction(_resources));
+		coll.add(new CreateFileOfCurrentSQLAction(_resources, this));
+		coll.add(new CreateInsertStatementsFileOfSelectedTablesSQLAction(_resources));
+		coll.add(new CreateFileOfSelectedTablesAction(_resources, this));
 		createMenu();
 
 		SQLScriptPreferencesManager.initialize(this);
@@ -243,9 +245,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 	private void addActionsToPopup(ISession session)
 	{
 		ActionCollection coll = getApplication().getActionCollection();
-		IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session);
+		IObjectTreeAPI objectTreeAPI = FrameWorkAcessor.getObjectTreeAPI(session);
 
-		initObjectTree(api);
+		initObjectTree(objectTreeAPI);
 
 		session.addSeparatorToToolbar();
 		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
@@ -278,7 +280,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		ActionCollection coll = Main.getApplication().getActionCollection();
 		sqlPanelAPI.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
 		sqlPanelAPI.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
-		sqlPanelAPI.addToToolsPopUp("sql2insfile", coll.get(CreateDataFileOfCurrentSQLAction.class));
+		sqlPanelAPI.addToToolsPopUp("sql2insfile", coll.get(CreateInsertStatementsFileOfCurrentSQLAction.class));
 		sqlPanelAPI.addToToolsPopUp("sql2file", coll.get(CreateFileOfCurrentSQLAction.class));
 
 		JMenuItem mnu;
@@ -290,8 +292,8 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class));
 		_resources.configureMenuItem(coll.get(CreateDataScriptOfCurrentSQLAction.class), mnu);
 
-		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CreateDataFileOfCurrentSQLAction.class));
-		_resources.configureMenuItem(coll.get(CreateDataFileOfCurrentSQLAction.class), mnu);
+		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CreateInsertStatementsFileOfCurrentSQLAction.class));
+		_resources.configureMenuItem(coll.get(CreateInsertStatementsFileOfCurrentSQLAction.class), mnu);
 
 		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CreateFileOfCurrentSQLAction.class));
 		_resources.configureMenuItem(coll.get(CreateFileOfCurrentSQLAction.class), mnu);
@@ -318,7 +320,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		_resources.addToMenu(coll.get(CreateSelectScriptAction.class), menu);
 		_resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
-		_resources.addToMenu(coll.get(CreateDataFileOfCurrentSQLAction.class), menu);
+		_resources.addToMenu(coll.get(CreateInsertStatementsFileOfCurrentSQLAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTableOfCurrentSQLAction.class), menu);
 		_resources.addToMenu(coll.get(CreateFileOfCurrentSQLAction.class), menu);
 		return menu;
@@ -334,6 +336,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		_resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateSelectScriptAction.class), menu);
+		_resources.addToMenu(coll.get(CreateFileOfSelectedTablesAction.class), menu);
+		_resources.addToMenu(coll.get(CreateInsertStatementsFileOfSelectedTablesSQLAction.class), menu);
+
 		if (includeDrop)
 		{
 			_resources.addToMenu(coll.get(DropTableScriptAction.class), menu);

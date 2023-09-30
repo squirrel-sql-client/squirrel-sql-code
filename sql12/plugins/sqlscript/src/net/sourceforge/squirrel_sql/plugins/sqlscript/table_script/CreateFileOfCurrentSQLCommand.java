@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -26,9 +27,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDlg;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.FileExportProgressManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ProgressAbortDialog;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExport;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -39,6 +38,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import org.apache.commons.lang3.time.StopWatch;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -86,17 +86,22 @@ public class CreateFileOfCurrentSQLCommand
    public void execute(final JFrame owner)
    {
       final List<String> sqls = getSelectedSelectStatements();
-      getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(sqls, owner));
+      getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(SelectSQLInfo.of(sqls), owner));
    }
 
+   public void executeForSelectedTables(Window owner, List<ITableInfo> selectedTables, IObjectTreeAPI objectTreeAPI)
+   {
+      final List<SelectSQLInfo> selectSQLs = ScriptUtil.createSelectSQLs(selectedTables.toArray(new IDatabaseObjectInfo[0]), objectTreeAPI);
+      getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(selectSQLs, owner));
+   }
 
    /**
     * Do the work.
     *
-    * @param sqls
+    * @param selectSQLInfos
     * @param owner
     */
-   private void doCreateFileOfCurrentSQL(List<String> sqls, JFrame owner)
+   private void doCreateFileOfCurrentSQL(List<SelectSQLInfo> selectSQLInfos, Window owner)
    {
       try
       {
@@ -115,16 +120,7 @@ public class CreateFileOfCurrentSQLCommand
                con = getSession().getSQLConnection().getConnection();
             }
 
-            final String sqlsJoined;
-            if(1 == session.getProperties().getSQLStatementSeparator().length())
-            {
-               sqlsJoined = String.join(session.getProperties().getSQLStatementSeparator() + "\n", sqls);
-            }
-            else
-            {
-               sqlsJoined = String.join(" " + session.getProperties().getSQLStatementSeparator() + "\n", sqls);
-            }
-            _fileExportProgressManager = new FileExportProgressManager(getSession(), sqlsJoined, () -> _resultSetExport.getTargetFile());
+            _fileExportProgressManager = new FileExportProgressManager(getSession(), SelectSQLInfo.toJoinedSQLs(getSession(), selectSQLInfos), () -> _resultSetExport.getTargetFile());
 
 
             StopWatch stopWatch = new StopWatch();
@@ -133,7 +129,7 @@ public class CreateFileOfCurrentSQLCommand
             DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
 
             // Opens the modal export dialog ...
-            _resultSetExport = new ResultSetExport(con, sqls, dialectType, _fileExportProgressManager, owner);
+            _resultSetExport = new ResultSetExport(con, selectSQLInfos, dialectType, _fileExportProgressManager, owner);
 
             // ... called after the  modal export dialog was closed.
             _resultSetExport.export();

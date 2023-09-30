@@ -77,7 +77,7 @@ public class ExportDlg extends JDialog
       getContentPane().add(getSeparatorPanel(), gbc);
 
 
-      gbc = new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 6, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15, 5, 5, 5), 0, 0);
       //switch (exportDialogType)
       //{
       //   case UI_TABLE_EXPORT:

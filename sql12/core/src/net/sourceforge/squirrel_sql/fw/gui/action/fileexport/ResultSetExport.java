@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.SelectSQLInfo;
 
 import java.awt.*;
 import java.io.File;
@@ -35,7 +36,8 @@ public class ResultSetExport
 {
    private final Exporter _exporter;
 
-   public ResultSetExport(Connection con, List<String> sqls, DialectType dialect, FileExportProgressManager fileExportProgressManager, Window owner)
+
+   public ResultSetExport(Connection con, List<SelectSQLInfo> selectSQLInfos, DialectType dialect, FileExportProgressManager fileExportProgressManager, Window owner)
    {
       final ExporterCallback exporterCallback = () -> fileExportProgressManager.getOrCreateProgressCallback();
 
@@ -44,7 +46,7 @@ public class ResultSetExport
       GUIUtils.processOnSwingEventThread(() ->
                                          {
                                             exportControllerRef[0] =
-                                                  new ExportController(new ExportSourceAccess(sqls, con, dialect), owner, ExportDialogType.RESULT_SET_EXPORT);
+                                                  new ExportController(new ExportSourceAccess(selectSQLInfos, con, dialect), owner, ExportDialogType.RESULT_SET_EXPORT);
                                             exportControllerRef[0].showDialog();
                                          }, true);
 

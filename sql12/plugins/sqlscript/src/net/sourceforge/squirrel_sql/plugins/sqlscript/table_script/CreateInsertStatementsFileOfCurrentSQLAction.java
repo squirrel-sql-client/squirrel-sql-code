@@ -11,21 +11,20 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.FileScriptBuilder;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
-public class CreateDataFileOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction
+public class CreateInsertStatementsFileOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction
 {
    private static final String PREF_LAST_FILE_FILTER = "sqlscript.CreateDataFileOfCurrentSQLAction.last.file";
 
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateDataFileOfCurrentSQLAction.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateInsertStatementsFileOfCurrentSQLAction.class);
 
    private ISQLPanelAPI _sqlPanel;
 
-   public CreateDataFileOfCurrentSQLAction(IResources resources)
+   public CreateInsertStatementsFileOfCurrentSQLAction(IResources resources)
    {
       super(Main.getApplication(), resources);
    }

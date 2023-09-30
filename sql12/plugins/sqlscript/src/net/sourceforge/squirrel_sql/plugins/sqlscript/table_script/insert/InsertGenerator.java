@@ -8,12 +8,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferences
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ScriptUtil;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.ScriptBuilder;
 
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 import java.util.Calendar;
 
 public class InsertGenerator
@@ -62,12 +57,10 @@ public class InsertGenerator
          StringBuilder sbValues = new StringBuilder();
          sbValues.append(" VALUES (");
 
-         ScriptUtil su = new ScriptUtil();
-
          for (int i = 0; i < iColumnCount; i++)
          {
             int iIndexPoint = colInfo[i].columnName.lastIndexOf('.');
-            sbColumns.append(ScriptUtil.getColumnName(su.makeColumnNameUnique(colInfo[i].columnName.substring(iIndexPoint + 1))));
+            sbColumns.append(ScriptUtil.getColumnName(ScriptUtil.makeColumnNameUnique(colInfo[i].columnName.substring(iIndexPoint + 1))));
 
             if (Types.TINYINT == colInfo[i].sqlType
                || Types.BIGINT == colInfo[i].sqlType

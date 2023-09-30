@@ -365,9 +365,16 @@ public class TableExportSelectionPanelController
             List<SqlResultTabHandle> sqlResultTabHandel = Main.getApplication().getMultipleSqlResultExportChannel().getSqlResultTabHandles();
             listEntries = sqlResultTabHandel.stream().map(h -> new SqlResultListEntry(h, ++indexCounter[0])).collect(Collectors.toList());
          }
-         else
+         else // if (_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
          {
-            listEntries = _exportSourceAccess.getOriginalSqlsToExport().stream().map(sql -> new SqlResultListEntry(sql, ++indexCounter[0])).collect(Collectors.toList());
+            if (_exportSourceAccess.hasNamedSqls())
+            {
+               listEntries = _exportSourceAccess.getExportSqlsNamed().stream().map(sqlNamed -> new SqlResultListEntry(sqlNamed)).collect(Collectors.toList());
+            }
+            else
+            {
+               listEntries = _exportSourceAccess.getOriginalSqlsToExport().stream().map(sql -> new SqlResultListEntry(sql, ++indexCounter[0])).collect(Collectors.toList());
+            }
          }
 
          final SqlResultListEntry selEntry = _pnl.lstSQLResultsToExport.getSelectedValue();

@@ -7,8 +7,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.SelectSQLInfo;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -33,10 +34,11 @@ public class ExportSourceAccess
       _uiTableExportData._tableExportDialogWasOpenedFor = table;
    }
 
-   public ExportSourceAccess(List<String> sqls, Connection con, DialectType dialect)
+   public ExportSourceAccess(List<SelectSQLInfo> selectSQLInfo, Connection con, DialectType dialect)
    {
       _jdbcResultSetExportData = new JDBCResultSetExportData();
-      _jdbcResultSetExportData._originalSqlsToExport = sqls;
+      _jdbcResultSetExportData._originalSqlsToExport = SelectSQLInfo.toSQLs(selectSQLInfo);
+      _jdbcResultSetExportData._exportSqlsNamed = SelectSQLInfo.toExportSqlsNamed(selectSQLInfo);
       _jdbcResultSetExportData._con = con;
       _jdbcResultSetExportData._dialect = dialect;
    }
@@ -196,9 +198,26 @@ public class ExportSourceAccess
    {
       if(false == isResultSetExport())
       {
-         throw new IllegalStateException("Not exporting SQL statement!!!");
+         throw new IllegalStateException("Not exporting SQL statement(s)!");
       }
 
       return _jdbcResultSetExportData._originalSqlsToExport;
    }
+
+   public boolean hasNamedSqls()
+   {
+      if(false == isResultSetExport())
+      {
+         throw new IllegalStateException("Not exporting SQL statement(s)!!!");
+      }
+
+      return null != _jdbcResultSetExportData._exportSqlsNamed && false == _jdbcResultSetExportData._exportSqlsNamed.isEmpty();
+   }
+
+   public List<ExportSqlNamed> getExportSqlsNamed()
+   {
+      return _jdbcResultSetExportData._exportSqlsNamed;
+   }
+
+
 }
