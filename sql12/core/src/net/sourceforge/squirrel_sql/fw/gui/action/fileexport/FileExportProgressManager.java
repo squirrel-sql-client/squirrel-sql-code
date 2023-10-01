@@ -99,7 +99,7 @@ public class FileExportProgressManager
     */
    public boolean isAborted()
    {
-      if (progressDialog != null && progressDialog.isStop())
+      if (progressDialog != null && progressDialog.isUserCanceled())
       {
          return true;
       }

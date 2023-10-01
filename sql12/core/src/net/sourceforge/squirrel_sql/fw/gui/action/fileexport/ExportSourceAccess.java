@@ -50,11 +50,11 @@ public class ExportSourceAccess
       }
    }
 
-   public ExportDataInfoList createExportData(ProgressAbortCallback progressController) throws ExportDataException
+   public ExportDataInfoList createExportData(ProgressAbortCallback progressAbortCallback) throws ExportDataException
    {
       if(isResultSetExport())
       {
-         return createResultSetExportDataInfoList(progressController);
+         return createResultSetExportDataInfoList(progressAbortCallback);
       }
       else
       {
@@ -67,7 +67,7 @@ public class ExportSourceAccess
       return null != _jdbcResultSetExportData;
    }
 
-   private ExportDataInfoList createResultSetExportDataInfoList(ProgressAbortCallback progressController) throws ExportDataException
+   private ExportDataInfoList createResultSetExportDataInfoList(ProgressAbortCallback progressAbortCallback) throws ExportDataException
    {
       if(_jdbcResultSetExportData.getExportSqlsNamed().isEmpty())
       {
@@ -78,7 +78,7 @@ public class ExportSourceAccess
          }
          else
          {
-            progress(progressController, s_stringMgr.getString("ResultSetExportCommand.executingQuery.n.of.m", 1, 1));
+            progress(progressAbortCallback, s_stringMgr.getString("ResultSetExportCommand.executingQuery.n.of.m", 1, 1));
             // This is the default behavior, i.e. export of single table.
             return ExportDataInfoList.single(createResultSetExportData(_jdbcResultSetExportData.getOriginalSqlsToExport().get(0)));
          }
@@ -90,7 +90,7 @@ public class ExportSourceAccess
          final List<ExportSqlNamed> exportSqlsNamed = _jdbcResultSetExportData.getExportSqlsNamed();
          for (int i = 0; i < exportSqlsNamed.size(); i++)
          {
-            progress(progressController, s_stringMgr.getString("ResultSetExportCommand.executingQuery.n.of.m", i + 1, exportSqlsNamed.size()));
+            progress(progressAbortCallback, s_stringMgr.getString("ResultSetExportCommand.executingQuery.n.of.m", i + 1, exportSqlsNamed.size()));
 
             ExportSqlNamed exportSqlNamed = exportSqlsNamed.get(i);
             final ResultSetExportData resultSetExportData = createResultSetExportData(exportSqlNamed.getSql());

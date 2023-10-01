@@ -77,15 +77,15 @@ public class ExportControllerProxy
       }
    }
 
-   public ExportDataInfoList createExportData(ProgressAbortCallback progressController) throws ExportDataException
+   public ExportDataInfoList createExportData(ProgressAbortCallback progressAbortCallback) throws ExportDataException
    {
       if (null != _exportController)
       {
-         return _exportController.getExportSourceAccess().createExportData(progressController);
+         return _exportController.getExportSourceAccess().createExportData(progressAbortCallback);
       }
       else
       {
-         return _msExcelExportDataCreator.createExportData(_excelWorkbook, progressController);
+         return _msExcelExportDataCreator.createExportData(_excelWorkbook, progressAbortCallback);
       }
    }
 

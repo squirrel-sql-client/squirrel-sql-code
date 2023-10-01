@@ -57,7 +57,7 @@ public class Exporter
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Exporter.class);
    private static ILogger s_log = LoggerController.createLogger(Exporter.class);
-   private final ExportControllerProxy _exportController;
+   private final ExportControllerProxy _exportControllerProxy;
 
    private ProgressAbortCallback _progressController = null;
    private File _singleExportTargetFile;
@@ -65,15 +65,15 @@ public class Exporter
    private long writtenRows = -1;
    private ExporterCallback _exporterCallback;
 
-   public Exporter(ExporterCallback exporterCallback, ExportControllerProxy exportController)
+   public Exporter(ExporterCallback exporterCallback, ExportControllerProxy exportControllerProxy)
    {
       _exporterCallback = exporterCallback;
-      _exportController = exportController;
+      _exportControllerProxy = exportControllerProxy;
    }
 
    public void export()
    {
-      exportDialogClosed(_exportController);
+      exportDialogClosed(_exportControllerProxy);
    }
 
    private void exportDialogClosed(ExportControllerProxy ctrl)

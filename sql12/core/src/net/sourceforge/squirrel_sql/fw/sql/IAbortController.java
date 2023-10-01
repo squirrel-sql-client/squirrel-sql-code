@@ -28,12 +28,12 @@ public interface IAbortController
 	/**
 	 * @return true if the user has indicated their desire to stop the long-running process; false otherwise. 
 	 */
-	boolean isStop();
+	boolean isUserCanceled();
 
 	/**
 	 * @return true if the widget has been displayed and is visible to the user.
 	 */
-	boolean isVisble();
+	boolean isVisible();
 
 	
 	/**

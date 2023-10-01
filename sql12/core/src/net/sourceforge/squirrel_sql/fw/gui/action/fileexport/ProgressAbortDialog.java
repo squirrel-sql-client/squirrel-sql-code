@@ -554,19 +554,19 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.sql.IAbortController#isStop()
+    * @see net.sourceforge.squirrel_sql.fw.sql.IAbortController#isUserCanceled()
     */
    @Override
-   public boolean isStop()
+   public boolean isUserCanceled()
    {
       return this.canceled;
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.sql.IAbortController#isVisble()
+    * @see net.sourceforge.squirrel_sql.fw.sql.IAbortController#isVisible()
     */
    @Override
-   public boolean isVisble()
+   public boolean isVisible()
    {
       return super.isVisible();
    }

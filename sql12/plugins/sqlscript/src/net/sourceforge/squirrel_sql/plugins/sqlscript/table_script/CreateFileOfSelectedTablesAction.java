@@ -49,7 +49,7 @@ public class CreateFileOfSelectedTablesAction extends SquirrelAction implements 
          return;
       }
 
-      new CreateFileOfCurrentSQLCommand(_objectTreeAPI.getSession(), plugin).executeForSelectedTables(GUIUtils.getOwningWindow(_objectTreeAPI.getObjectTree()), _objectTreeAPI.getSelectedTables(), _objectTreeAPI);
+      new CreateFileOfSQLCommand(_objectTreeAPI.getSession(), plugin).executeForSelectedTables(GUIUtils.getOwningWindow(_objectTreeAPI.getObjectTree()), _objectTreeAPI.getSelectedTables(), _objectTreeAPI);
    }
 
    @Override

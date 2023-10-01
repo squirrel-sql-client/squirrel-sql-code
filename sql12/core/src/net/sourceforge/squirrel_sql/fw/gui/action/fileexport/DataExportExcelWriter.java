@@ -24,12 +24,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -90,7 +85,7 @@ public class DataExportExcelWriter
 
       _fileExportService.setProgressFinished();
 
-      if (_fileExportService.isStop())
+      if (_fileExportService.isUserCanceled())
       {
          return -1;
       }
@@ -121,7 +116,7 @@ public class DataExportExcelWriter
       long rowsCount = 0;
 
       long begin = System.currentTimeMillis();
-      while (rows.hasNext() && _fileExportService.isStop() == false)
+      while (rows.hasNext() && _fileExportService.isUserCanceled() == false)
       {
          rowsCount++;
          ExportDataRow aRow = rows.next();

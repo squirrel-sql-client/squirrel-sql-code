@@ -87,7 +87,7 @@ public class FileExportService
       }
    }
 
-   public boolean isStop()
+   public boolean isUserCanceled()
    {
       if (_progressController == null)
       {
@@ -95,7 +95,7 @@ public class FileExportService
       }
       else
       {
-         return _progressController.isStop();
+         return _progressController.isUserCanceled();
       }
    }
 

@@ -17,13 +17,13 @@ public class CliProgressAbortCallback implements ProgressAbortCallback
    }
 
    @Override
-   public boolean isStop()
+   public boolean isUserCanceled()
    {
       return false;
    }
 
    @Override
-   public boolean isVisble()
+   public boolean isVisible()
    {
       return false;
    }

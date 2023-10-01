@@ -52,11 +52,11 @@ import java.util.List;
  * @see ResultSetExport
  * @see ProgressAbortCallback
  */
-public class CreateFileOfCurrentSQLCommand
+public class CreateFileOfSQLCommand
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateFileOfCurrentSQLCommand.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateFileOfSQLCommand.class);
 
-   private static ILogger s_log = LoggerController.createLogger(CreateFileOfCurrentSQLCommand.class);
+   private static ILogger s_log = LoggerController.createLogger(CreateFileOfSQLCommand.class);
    private final ISession session;
    private final SQLScriptPlugin plugin;
 
@@ -73,7 +73,7 @@ public class CreateFileOfCurrentSQLCommand
    /**
     * Ctor specifying the current session.
     */
-   public CreateFileOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin)
+   public CreateFileOfSQLCommand(ISession session, SQLScriptPlugin plugin)
    {
       this.session = session;
       this.plugin = plugin;
@@ -119,18 +119,15 @@ public class CreateFileOfCurrentSQLCommand
 
             _fileExportProgressManager = new FileExportProgressManager(getSession(), SelectSQLInfo.toJoinedSQLs(getSession(), selectSQLInfos), () -> _resultSetExport.getTargetFile());
 
-
-            StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-
             DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
 
             // Opens the modal export dialog ...
             _resultSetExport = new ResultSetExport(con, selectSQLInfos, dialectType, _fileExportProgressManager, owner);
 
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
             // ... called after the  modal export dialog was closed.
             _resultSetExport.export();
-
             stopWatch.stop();
 
             if (_fileExportProgressManager.isAborted())

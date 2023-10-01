@@ -54,11 +54,11 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     * @param file               The target file.
     * @param prefs              The controller to use
     * @param includeHeaders     Flag, if the header line should be exported
-    * @param progressController ProgressController to use.
+    * @param progressAbortCallback ProgressController to use.
     */
-   public AbstractDataExportFileWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
+   public AbstractDataExportFileWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressAbortCallback)
    {
-      _fileExportService = new FileExportService(file, prefs, progressController);
+      _fileExportService = new FileExportService(file, prefs, progressAbortCallback);
    }
 
    /**
@@ -94,7 +94,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
 
 
          long begin = System.currentTimeMillis();
-         while (rows.hasNext() && isStop() == false)
+         while (rows.hasNext() && isUserCanceled() == false)
          {
             rowsCount++;
             ExportDataRow aRow = rows.next();
@@ -120,7 +120,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
 
          progress(s_stringMgr.getString("AbstractDataExportFileWriter.done"));
 
-         if (isStop())
+         if (isUserCanceled())
          {
             return -1;
          }
@@ -280,9 +280,9 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     *
     * @return true, if the work should be stopped, otherwise false.
     */
-   protected boolean isStop()
+   protected boolean isUserCanceled()
    {
-      return _fileExportService.isStop();
+      return _fileExportService.isUserCanceled();
    }
 
    public Charset getCharset()

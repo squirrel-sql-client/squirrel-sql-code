@@ -51,7 +51,7 @@ public class CreateFileOfCurrentSQLAction extends SquirrelAction implements ISQL
    @Override
    public void actionPerformed(ActionEvent e)
    {
-      new CreateFileOfCurrentSQLCommand(session, plugin).execute((JFrame) SessionUtils.getOwningFrame(session));
+      new CreateFileOfSQLCommand(session, plugin).execute((JFrame) SessionUtils.getOwningFrame(session));
    }
 
    public void setSQLPanel(ISQLPanelAPI panel)
