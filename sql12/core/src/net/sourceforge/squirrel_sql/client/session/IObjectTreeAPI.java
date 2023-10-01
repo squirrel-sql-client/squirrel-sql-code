@@ -35,13 +35,11 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import java.awt.Component;
+import java.awt.*;
 import java.util.List;
 /**
  * This interface defines the API through which plugins can work with the object
@@ -296,4 +294,6 @@ public interface IObjectTreeAPI extends IHasIdentifier
 	JTree getObjectTree();
 
 	ObjectTreePosition getObjectTreePosition();
+
+   Frame getOwningFrame();
 }

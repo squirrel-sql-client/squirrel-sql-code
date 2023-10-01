@@ -28,11 +28,6 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 import java.awt.event.ActionEvent;
 
-/**
- * Action to store the result of the current SQL directly into a file.
- *
- * @author Stefan Willinger
- */
 public class CreateFileOfSelectedTablesAction extends SquirrelAction implements IObjectTreeAction
 {
 
@@ -49,8 +44,6 @@ public class CreateFileOfSelectedTablesAction extends SquirrelAction implements 
    @Override
    public void actionPerformed(ActionEvent e)
    {
-      System.out.println("CreateFileOfSelectedTablesAction.actionPerformed " + _objectTreeAPI.getSelectedTables());
-
       if(null == _objectTreeAPI)
       {
          return;

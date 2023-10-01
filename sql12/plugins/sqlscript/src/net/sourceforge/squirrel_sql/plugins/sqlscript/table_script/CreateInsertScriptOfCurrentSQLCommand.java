@@ -19,11 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.tablenamefind.TableNameFindService;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -32,8 +30,8 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.insert.InsertGenerator;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.ScriptBuilder;
 
-import javax.swing.SwingUtilities;
-import java.awt.Frame;
+import javax.swing.*;
+import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -58,17 +56,24 @@ public class CreateInsertScriptOfCurrentSQLCommand
       _session.getApplication().getThreadPool().addTask(() -> doGenerateInserts(sbRows, insertScriptFinishedCallBack));
    }
 
+   public void generateInserts(String script, ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
+   {
+      _abortController.show();
+      _session.getApplication().getThreadPool().addTask(() -> doGenerateInserts(script, sbRows, insertScriptFinishedCallBack));
+   }
+
    private void doGenerateInserts(ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
    {
+      String script = FrameWorkAcessor.getSQLPanelAPI(_session).getSQLScriptToBeExecuted();
+      doGenerateInserts(script, sbRows, insertScriptFinishedCallBack);
+   }
 
+   private void doGenerateInserts(String script, ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
+   {
       try
       {
-          ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(_session);
-
-          String scripts = api.getSQLScriptToBeExecuted();
-
          IQueryTokenizer qt = _session.getQueryTokenizer();
-         qt.setScriptToTokenize(scripts);
+         qt.setScriptToTokenize(script);
 
          if(false == qt.hasQuery())
          {
@@ -80,8 +85,7 @@ public class CreateInsertScriptOfCurrentSQLCommand
 
          while (qt.hasQuery())
          {
-            final Statement stmt = conn.createStatement();
-            try
+            try(Statement stmt = conn.createStatement())
             {
                String sql = qt.nextQuery().getQuery();
 
@@ -89,10 +93,6 @@ public class CreateInsertScriptOfCurrentSQLCommand
                String tableName = TableNameFindService.findTableNameBySqlOrResultMetaData(sql, srcResult, _session);
 
                new InsertGenerator(_session).genInserts(srcResult, tableName, sbRows, false, false, () -> _abortController.isStop());
-            }
-            finally
-            {
-               SQLUtilities.closeStatement(stmt);
             }
          }  // end while
       }

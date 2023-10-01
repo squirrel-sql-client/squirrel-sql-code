@@ -26,29 +26,9 @@ import net.sourceforge.squirrel_sql.client.session.ObjectTreePosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.CatalogsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.ConnectionStatusTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.DataTypesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.KeywordsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.MetaDataTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.NumericFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SchemasTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.StringFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SystemFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TableTypesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TimeDateFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.procedure.ProcedureColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnPriviligesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ExportedKeysTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ImportedKeysTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.IndexesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PrimaryKeyTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowCountTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowIDTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeSearchResultFuture;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -66,25 +46,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.activation.DataHandler;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTree;
-import javax.swing.TransferHandler;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.beans.PropertyChangeEvent;
@@ -125,12 +90,12 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	private final Map<IIdentifier, ObjectTreeTabbedPane> _tabbedPanes = new HashMap<>();
 
 	/** Listens to changes in session properties. */
-	private SessionPropertiesListener _propsListener;
+	private PropertyChangeListener _sessionPropsListener;
 
 	/** Listens to changes in each of the tabbed folders. */
-	private TabbedPaneListener _tabPnlListener;
+	private ChangeListener _tabbedPaneListener;
 
-	private transient ObjectTreeSelectionListener _objTreeSelLis = null;
+	private transient TreeSelectionListener _objTreeSelectionListener = null;
 
    private ObjectTreeTabbedPane _selectedObjTreeTabbedPane = null;
    
@@ -312,43 +277,41 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	public void addNotify()
 	{
 		super.addNotify();
-		_tabPnlListener = new TabbedPaneListener();
-		_propsListener = new SessionPropertiesListener();
-		_session.getProperties().addPropertyChangeListener(_propsListener);
+		_tabbedPaneListener = e -> onTabbedPaneStateChanged(e);
+		_sessionPropsListener = evt -> onSessionPropertyChanged(evt);
+		_session.getProperties().addPropertyChangeListener(_sessionPropsListener);
 
-		Iterator<ObjectTreeTabbedPane> it = _tabbedPanes.values().iterator();
-		while (it.hasNext())
-		{
-			//setupTabbedPane((ObjectTreeTabbedPane)it.next());
-			ObjectTreeTabbedPane ottp = it.next();
-			ottp.getTabbedPane().addChangeListener(_tabPnlListener);
-		}
+      for (ObjectTreeTabbedPane ottp : _tabbedPanes.values())
+      {
+         //setupTabbedPane((ObjectTreeTabbedPane)it.next());
+         ottp.getTabbedPane().addChangeListener(_tabbedPaneListener);
+      }
 
-		_objTreeSelLis = new ObjectTreeSelectionListener();
-		_tree.addTreeSelectionListener(_objTreeSelLis);
+		_objTreeSelectionListener = e -> onTreeSelectionChanged(e);
+		_tree.addTreeSelectionListener(_objTreeSelectionListener);
 	}
 
 	public void removeNotify()
 	{
 		super.removeNotify();
 
-		if (_propsListener != null)
+		if (_sessionPropsListener != null)
 		{
-			_session.getProperties().removePropertyChangeListener(_propsListener);
-			_propsListener = null;
+			_session.getProperties().removePropertyChangeListener(_sessionPropsListener);
+			_sessionPropsListener = null;
 		}
 
 		Iterator<ObjectTreeTabbedPane> it = _tabbedPanes.values().iterator();
 		while (it.hasNext())
 		{
 			ObjectTreeTabbedPane pane = it.next();
-			pane.getTabbedPane().removeChangeListener(_tabPnlListener);
+			pane.getTabbedPane().removeChangeListener(_tabbedPaneListener);
 		}
-		_tabPnlListener = null;
-		if (_objTreeSelLis != null)
+		_tabbedPaneListener = null;
+		if (_objTreeSelectionListener != null)
 		{
-			_tree.removeTreeSelectionListener(_objTreeSelLis);
-			_objTreeSelLis = null;
+			_tree.removeTreeSelectionListener(_objTreeSelectionListener);
+			_objTreeSelectionListener = null;
 		}
 	}
 
@@ -953,7 +916,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setContinuousLayout(true);
 
-      LeftPanel leftPanel = new LeftPanel(_findInObjectTreeController, _tree);
+      ObjectTreePanelLeft leftPanel = new ObjectTreePanelLeft(_findInObjectTreeController, _tree);
       _splitPane.setLeftComponent(leftPanel);
 		add(_splitPane, BorderLayout.CENTER);
 		_splitPane.setDividerLocation(200);
@@ -1012,7 +975,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		pane.rebuild();
 		final JTabbedPane p = pane.getTabbedPane();
 		p.setTabPlacement(props.getObjectTabPlacement());
-		p.addChangeListener(_tabPnlListener);
+		p.addChangeListener(_tabbedPaneListener);
 	}
 
 	public void sessionWindowClosing()
@@ -1044,77 +1007,60 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		return _objectTreePosition;
 	}
 
-	private static final class LeftPanel extends JPanel
+
+	@Override
+	public Frame getOwningFrame()
 	{
-		LeftPanel(FindInObjectTreeController findInObjectTreeController, ObjectTree tree)
-		{
-			super(new BorderLayout());
-         add(findInObjectTreeController.getFindInObjectTreePanel(), BorderLayout.NORTH);
-         JScrollPane sp = new JScrollPane();
-			sp.setBorder(BorderFactory.createEmptyBorder());
-			sp.setViewportView(tree);
-			sp.setPreferredSize(new Dimension(200, 200));
-			sp.setMinimumSize(new Dimension(0,0));
-			add(sp, BorderLayout.CENTER);
-		}
+		return GUIUtils.getOwningFrame(_tree);
 	}
 
 	/**
 	 * This class listens for changes in the node selected in the tree
 	 * and displays the appropriate detail panel for the node.
 	 */
-	private final class ObjectTreeSelectionListener implements TreeSelectionListener
+	public void onTreeSelectionChanged(TreeSelectionEvent evt)
 	{
-		public void valueChanged(TreeSelectionEvent evt)
-		{
-			setSelectedObjectPanel(evt.getNewLeadSelectionPath());
-		}
+		setSelectedObjectPanel(evt.getNewLeadSelectionPath());
 	}
 
 	/**
 	 * Listen for changes in session properties.
 	 */
-	private class SessionPropertiesListener implements PropertyChangeListener
+	public void onSessionPropertyChanged(PropertyChangeEvent evt)
 	{
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			propertiesHaveChanged(evt.getPropertyName());
-		}
+		propertiesHaveChanged(evt.getPropertyName());
 	}
 
 	/**
 	 * When a different tab is selected in one of the tabbed panels then
 	 * refresh the newly selected tab.
 	 */
-	private static class TabbedPaneListener implements ChangeListener
+	private void onTabbedPaneStateChanged(ChangeEvent evt)
 	{
-		public void stateChanged(ChangeEvent evt)
+		final Object src = evt.getSource();
+		if (!(src instanceof JTabbedPane))
 		{
-			final Object src = evt.getSource();
-			if (!(src instanceof JTabbedPane))
-			{
-				StringBuilder buf = new StringBuilder();
-				buf.append("Source object in TabbedPaneListener was not a JTabbedpane")
-					.append(" - it was ")
-					.append(src == null ? "null" : src.getClass().getName());
-				s_log.error(buf.toString());
-				return;
-			}
-			JTabbedPane tabPane = (JTabbedPane)src;
-
-			Object prop = tabPane.getClientProperty(ObjectTreeTabbedPane.IClientPropertiesKeys.TABBED_PANE_OBJ);
-			if (!(prop instanceof ObjectTreeTabbedPane))
-			{
-				StringBuilder buf = new StringBuilder();
-				buf.append("Client property in JTabbedPane was not an ObjectTreeTabbedPane")
-					.append(" - it was ")
-					.append(prop == null ? "null" : prop.getClass().getName());
-				s_log.error(buf.toString());
-				return;
-			}
-
-			((ObjectTreeTabbedPane)prop).selectCurrentTab();
+			StringBuilder buf = new StringBuilder();
+			buf.append("Source object in TabbedPaneListener was not a JTabbedpane")
+				.append(" - it was ")
+				.append(src == null ? "null" : src.getClass().getName());
+			s_log.error(buf.toString());
+			return;
 		}
+		JTabbedPane tabPane = (JTabbedPane)src;
+
+		Object prop = tabPane.getClientProperty(ObjectTreeTabbedPane.IClientPropertiesKeys.TABBED_PANE_OBJ);
+		if (!(prop instanceof ObjectTreeTabbedPane))
+		{
+			StringBuilder buf = new StringBuilder();
+			buf.append("Client property in JTabbedPane was not an ObjectTreeTabbedPane")
+				.append(" - it was ")
+				.append(prop == null ? "null" : prop.getClass().getName());
+			s_log.error(buf.toString());
+			return;
+		}
+
+		((ObjectTreeTabbedPane)prop).selectCurrentTab();
 	}
 
 	public void selectRoot()
