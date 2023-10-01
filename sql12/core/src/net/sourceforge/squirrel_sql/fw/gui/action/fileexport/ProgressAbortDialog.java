@@ -60,25 +60,6 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
    private String targetFile;
    private String sql;
 
-   static interface i18n
-   {
-      // i18n[ProgressAbortDialog.defaultLoadingPrefix=Loading:]
-      String DEFAULT_LOADING_PREFIX = s_stringMgr.getString("ProgressAbortDialog.defaultLoadingPrefix");
-
-      // i18n[ProgressAbortDialog.initialLoadingPrefix=Loading...]
-      String INITIAL_LOADING_PREFIX = s_stringMgr.getString("ProgressAbortDialog.initialLoadingPrefix");
-
-      // i18n[ProgressAbortDialog.confirmCancel=Should the export be
-      // canceled?]
-      String CONFIRM_CANCEL = s_stringMgr.getString("ProgressAbortDialog.confirmCancel");
-
-      String TITEL_PROGRESS = s_stringMgr.getString("ProgressAbortDialog.titelProgress");
-
-      String CANCEL = s_stringMgr.getString("ProgressAbortDialog.cancel");
-
-      String CANCEL_FEEDBACK = s_stringMgr.getString("ProgressAbortDialog.cancelFeedback");
-   }
-
    /**
     * Date format for the history area.
     */
@@ -104,7 +85,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    private JLabel additionalStatusLabel = null;
 
-   private String _loadingPrefix = i18n.DEFAULT_LOADING_PREFIX;
+   private String _loadingPrefix = s_stringMgr.getString("ProgressAbortDialog.defaultLoadingPrefix");
 
    /**
     * True, if we dont know, how many tasks are neccesary to complete the
@@ -447,7 +428,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
       c.weightx = 0.0;
       c.weighty = 0.0;
       c.insets = new Insets(4, 10, 4, 10);
-      statusLabel = new JLabel(i18n.INITIAL_LOADING_PREFIX);
+      statusLabel = new JLabel(s_stringMgr.getString("ProgressAbortDialog.initialLoadingPrefix"));
       progressPanel.add(statusLabel, c);
 
       c.gridy++;
@@ -608,7 +589,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 
       public CancelAction()
       {
-         super(i18n.CANCEL);
+         super(s_stringMgr.getString("ProgressAbortDialog.cancel"));
       }
 
       /**
@@ -625,10 +606,10 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
        */
       public void clickCancel()
       {
-         int ret = JOptionPane.showConfirmDialog(instance, i18n.CONFIRM_CANCEL);
+         int ret = JOptionPane.showConfirmDialog(instance, s_stringMgr.getString("ProgressAbortDialog.confirmCancel"));
          if (JOptionPane.YES_OPTION == ret)
          {
-            appendToHistory(i18n.CANCEL_FEEDBACK);
+            appendToHistory(s_stringMgr.getString("ProgressAbortDialog.cancelFeedback"));
             canceled = true;
             cancelButton.setEnabled(false);
             abortHandler.cancel();

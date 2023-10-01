@@ -19,8 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ProgressAbortDialog;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.tablenamefind.TableNameFindService;
@@ -28,7 +30,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.insert.InsertGenerator;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.FileScriptBuilder;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.ScriptBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,35 +44,41 @@ public class CreateInsertScriptOfCurrentSQLCommand
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateInsertScriptOfCurrentSQLCommand.class);
    private ISession _session;
-
-   private AbortController _abortController;
+   private ProgressAbortDialog _progressDialog;
 
    public CreateInsertScriptOfCurrentSQLCommand(ISession session)
    {
       _session = session;
-      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
-      _abortController = new AbortController(owningFrame);
    }
 
    public void generateInserts(ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
    {
-      _abortController.show();
-      _session.getApplication().getThreadPool().addTask(() -> doGenerateInserts(sbRows, insertScriptFinishedCallBack));
-   }
-
-   public void generateInserts(String script, ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
-   {
-      _abortController.show();
-      _session.getApplication().getThreadPool().addTask(() -> doGenerateInserts(script, sbRows, insertScriptFinishedCallBack));
-   }
-
-   private void doGenerateInserts(ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
-   {
       String script = FrameWorkAcessor.getSQLPanelAPI(_session).getSQLScriptToBeExecuted();
-      doGenerateInserts(script, sbRows, insertScriptFinishedCallBack);
+      generateInserts(script, sbRows, insertScriptFinishedCallBack);
    }
 
-   private void doGenerateInserts(String script, ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
+   public void generateInserts(String script, ScriptBuilder scriptBuilder, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
+   {
+
+      String fileName;
+
+      if(scriptBuilder instanceof FileScriptBuilder)
+      {
+         fileName = ((FileScriptBuilder)scriptBuilder).getFileName();
+      }
+      else
+      {
+         fileName = "<WritingToBuffer>";
+      }
+
+      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
+      _progressDialog = new ProgressAbortDialog(owningFrame, s_stringMgr.getString("CreateTableOfCurrentSQLCommand.generating.inserts"), fileName, script, 0, () -> onCancel(), null);
+
+      _session.getApplication().getThreadPool().addTask(() -> doGenerateInserts(script, scriptBuilder, insertScriptFinishedCallBack, _progressDialog));
+      _progressDialog.setVisible(true);
+   }
+
+   private void doGenerateInserts(String script, ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack, ProgressAbortDialog progressDialog)
    {
       try
       {
@@ -88,11 +98,12 @@ public class CreateInsertScriptOfCurrentSQLCommand
             try(Statement stmt = conn.createStatement())
             {
                String sql = qt.nextQuery().getQuery();
+               progressDialog.currentlyLoading(StringUtils.replace(sql, "\n", " "));
 
                ResultSet srcResult = stmt.executeQuery(sql);
                String tableName = TableNameFindService.findTableNameBySqlOrResultMetaData(sql, srcResult, _session);
 
-               new InsertGenerator(_session).genInserts(srcResult, tableName, sbRows, false, false, () -> _abortController.isStop());
+               new InsertGenerator(_session).genInserts(srcResult, tableName, sbRows, false, false, () -> _progressDialog.isUserCanceled());
             }
          }  // end while
       }
@@ -106,6 +117,12 @@ public class CreateInsertScriptOfCurrentSQLCommand
       }
    }
 
+   private void onCancel()
+   {
+      Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.user.canceled"));
+   }
+
+
    private void onScriptFinished(InsertScriptFinishedCallBack insertScriptFinishedCallBack)
    {
       try
@@ -114,9 +131,16 @@ public class CreateInsertScriptOfCurrentSQLCommand
       }
       finally
       {
-         _abortController.close();
+         closeProgress();
       }
    }
 
-
+   private void closeProgress()
+   {
+      if (null != _progressDialog)
+      {
+         _progressDialog.setVisible(false);
+         _progressDialog.dispose();
+      }
+   }
 }
