@@ -72,7 +72,7 @@ public class ParserThread
          catch (ParseTerminateRequestException e)
          {
             // Parsing was requested to finish. We just stop and do nothing.
-            System.out.println("################## FINISHED PARSING ON REQUEST #########################");
+            //System.out.println("################## FINISHED PARSING ON REQUEST #########################");
          }
       }
       catch (Throwable e)

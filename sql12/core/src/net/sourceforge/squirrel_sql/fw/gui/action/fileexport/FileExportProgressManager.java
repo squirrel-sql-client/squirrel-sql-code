@@ -63,20 +63,8 @@ public class FileExportProgressManager
 
    private void onCancel()
    {
-      // /*
-      //  * We need to cancel the statement at this point for the case, that we are waiting for the first rows.
-      //  */
-      // if (_stmt != null)
-      // {
-      //    try
-      //    {
-      //       _stmt.cancel();
-      //    }
-      //    catch (SQLException e1)
-      //    {
-      //       // nothing todo
-      //    }
-      // }
+      Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("FileExportProgressManager.file.export.user.canceled"));
+
    }
 
    /**

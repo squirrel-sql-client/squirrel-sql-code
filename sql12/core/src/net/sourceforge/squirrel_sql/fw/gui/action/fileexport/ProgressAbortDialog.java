@@ -50,9 +50,6 @@ import java.util.Date;
  */
 public class ProgressAbortDialog extends JDialog implements ProgressAbortCallback
 {
-
-   private final ProgressAbortDialog instance = this;
-
    public final static ILogger s_log = LoggerController.createLogger(ProgressAbortDialog.class);
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ProgressAbortDialog.class);
@@ -98,7 +95,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
    /**
     * A callback handler, if the user decided to abort the operation.
     */
-   private IAbortEventHandler abortHandler;
+   private UserCancelRequestListener _userCancelRequestListener;
 
    private JButton cancelButton;
 
@@ -122,10 +119,10 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    private boolean finished;
 
-   /**
-    * A simple description for this task
-    */
-   private String simpleTaskDescription = null;
+   public ProgressAbortDialog(Frame owningFrame, String title, UserCancelRequestListener userCancelRequestListener)
+   {
+      this(owningFrame, title, null, null, 0, userCancelRequestListener, null);
+   }
 
    /**
     * Constructor which accepts a Frame owner
@@ -137,17 +134,16 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     *                      this dialog has no owner
     * @param title         the String to display in the dialog's title bar
     * @param totalItems
-    * @param abortHandler  If the underlying tasks maybe aborted, then a abort Handler is
+    * @param userCancelRequestListener  If the underlying tasks maybe aborted, then a abort Handler is
     *                      needed. Otherwise null.
     * @see JProgressBar#setIndeterminate(boolean)
     */
-
-   public ProgressAbortDialog(Frame owner, String title, String targetFile, String sql, int totalItems, IAbortEventHandler abortHandler, DisplayReachedCallBack displayReachedCallBack)
+   public ProgressAbortDialog(Frame owningFrame, String title, String targetFile, String sql, int totalItems, UserCancelRequestListener userCancelRequestListener, DisplayReachedCallBack displayReachedCallBack)
    {
-      super(owner, title);
+      super(owningFrame, title);
 
-      setLocationRelativeTo(owner);
-      init(title, totalItems, abortHandler);
+      setLocationRelativeTo(owningFrame);
+      init(title, totalItems, userCancelRequestListener);
 
       setTargetFile(targetFile);
       setSql(sql);
@@ -166,17 +162,6 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
          });
       }
    }
-
-//	public ProgressAbortDialog(Frame owner, String title, String description, int totalItems, boolean indeterminate, IAbortEventHandler abortHandler, boolean modal)
-//	{
-//		super(owner, title, modal);
-//		setLocationRelativeTo(owner);
-//		init(description, totalItems, indeterminate, abortHandler);
-//
-//		setTargetFile(targetFile);
-//		setSql(sql);
-//		setLabelValues();
-//	}
 
    /**
     * @see net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack#setTotalItems(int)
@@ -387,12 +372,11 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
       super.setVisible(b);
    }
 
-   private void init(String description, int totalItems, IAbortEventHandler abortHandler)
+   private void init(String description, int totalItems, UserCancelRequestListener abortHandler)
    {
       itemCount = totalItems;
       this.indeterminate = totalItems <= 0;
-      this.abortHandler = abortHandler;
-      this.simpleTaskDescription = description;
+      this._userCancelRequestListener = abortHandler;
       final Window owner = super.getOwner();
       createGUI();
       setLocationRelativeTo(owner);
@@ -451,7 +435,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
       JScrollPane jScrollPane = new JScrollPane(historyArea);
       progressPanel.add(jScrollPane, c);
 
-      if (abortHandler != null)
+      if (_userCancelRequestListener != null)
       {
          cancelButton = new JButton(new CancelAction());
 
@@ -493,6 +477,13 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
       return taskDescription;
    }
 
+   public void closeProgressDialog()
+   {
+      setVisible(false);
+      dispose();
+   }
+
+
    /**
     * @return the targetFile
     */
@@ -506,10 +497,6 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    public void setTargetFile(String targetFile)
    {
-      if (StringUtils.isBlank(targetFile))
-      {
-         throw new IllegalArgumentException("targetFile must not be blank.");
-      }
       this.targetFile = targetFile;
    }
 
@@ -526,10 +513,6 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    public void setSql(String sql)
    {
-      if (StringUtils.isEmpty(sql))
-      {
-         throw new IllegalArgumentException("sql must not be blank");
-      }
       this.sql = sql;
    }
 
@@ -606,13 +589,13 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
        */
       public void clickCancel()
       {
-         int ret = JOptionPane.showConfirmDialog(instance, s_stringMgr.getString("ProgressAbortDialog.confirmCancel"));
+         int ret = JOptionPane.showConfirmDialog(ProgressAbortDialog.this, s_stringMgr.getString("ProgressAbortDialog.confirmCancel"));
          if (JOptionPane.YES_OPTION == ret)
          {
             appendToHistory(s_stringMgr.getString("ProgressAbortDialog.cancelFeedback"));
             canceled = true;
             cancelButton.setEnabled(false);
-            abortHandler.cancel();
+            _userCancelRequestListener.cancelButtonClicked();
          }
       }
    }

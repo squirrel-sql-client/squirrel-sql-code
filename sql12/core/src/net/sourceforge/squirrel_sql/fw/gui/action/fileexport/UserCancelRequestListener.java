@@ -18,15 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-/**
- * Interface, to handle a cancel event of a {@link ProgressAbortDialog}
- * @author Stefan Willinger
- *
- */
-public interface IAbortEventHandler {
-	
-	/**
-	 * Called, if a cancel of the operation was requested
-	 */
-	void cancel();
+@FunctionalInterface
+public interface UserCancelRequestListener
+{
+	void cancelButtonClicked();
 }

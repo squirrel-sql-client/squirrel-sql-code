@@ -139,8 +139,7 @@ public class CreateInsertScriptOfCurrentSQLCommand
    {
       if (null != _progressDialog)
       {
-         _progressDialog.setVisible(false);
-         _progressDialog.dispose();
+         _progressDialog.closeProgressDialog();
       }
    }
 }

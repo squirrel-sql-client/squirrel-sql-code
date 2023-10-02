@@ -19,15 +19,15 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ProgressAbortDialog;
+import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
@@ -35,7 +35,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferences
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.insert.InsertGenerator;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.StringScriptBuilder;
 
-import java.awt.Frame;
+import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,13 +44,15 @@ public class CreateDataScriptCommand
 {
    private static final ILogger s_log =  LoggerController.createLogger(CreateDataScriptCommand.class);
 
-   private AbortController _abortController;
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateDataScriptCommand.class);
 
-   protected ISession _session;
+
+   private ISession _session;
 
    private boolean _templateScriptOnly;
 
    private final IObjectTreeAPI _objectTreeAPI;
+   private ProgressAbortDialog _progressDialog;
 
    public CreateDataScriptCommand(IObjectTreeAPI objectTreeAPI, boolean templateScriptOnly)
    {
@@ -58,18 +60,17 @@ public class CreateDataScriptCommand
       _templateScriptOnly = templateScriptOnly;
 
       _session = _objectTreeAPI.getSession();
-
-      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
-      _abortController = new AbortController(owningFrame);
    }
 
    public void execute()
    {
-      _abortController.show();
-      _session.getApplication().getThreadPool().addTask(() -> onCreateScript());
+      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
+      _progressDialog = new ProgressAbortDialog(owningFrame, s_stringMgr.getString("CreateDataScriptCommand.generating.inserts"),() -> onCancel());
+      _session.getApplication().getThreadPool().addTask(() -> onCreateScript(_progressDialog));
+      _progressDialog.setVisible(true);
    }
 
-   private void onCreateScript()
+   private void onCreateScript(ProgressAbortDialog progressDialog)
    {
       StringScriptBuilder sbRows = new StringScriptBuilder();
 
@@ -82,15 +83,17 @@ public class CreateDataScriptCommand
          {
             if (dbObjs[k] instanceof ITableInfo)
             {
-               if (_abortController.isStop())
+               if (_progressDialog.isUserCanceled())
                {
                   break;
                }
                ITableInfo ti = (ITableInfo) dbObjs[k];
                String sTable = ScriptUtil.getTableName(ti);
 
+               progressDialog.currentlyLoading(s_stringMgr.getString("CreateDataScriptCommand.executing.select", ti.getSimpleName()));
                ResultSet srcResult = executeDataSelectSQL(stmt, ti);
-               new InsertGenerator(_session).genInserts(srcResult, sTable, sbRows, false, _templateScriptOnly, () -> _abortController.isStop());
+               progressDialog.currentlyLoading(s_stringMgr.getString("CreateDataScriptCommand.creating.inserts", ti.getSimpleName()));
+               new InsertGenerator(_session).genInserts(srcResult, sTable, sbRows, false, _templateScriptOnly, () -> _progressDialog.isUserCanceled());
             }
          }
 
@@ -117,7 +120,7 @@ public class CreateDataScriptCommand
       }
       finally
       {
-         _abortController.close();
+         _progressDialog.closeProgressDialog();
       }
    }
 
@@ -192,5 +195,8 @@ public class CreateDataScriptCommand
       return infos[0].getDataType();
    }
 
-
+   private void onCancel()
+   {
+      Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("CreateDataScriptCommand.user.canceled"));
+   }
 }
