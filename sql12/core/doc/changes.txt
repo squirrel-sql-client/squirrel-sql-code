@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Object tree: New right mouse menus in "Scripts" submenu:
+  "Store selected tables' data in files" and "Create INSERT statements file from selected tables"
+
 Graph Plugin: The standard format for saving Graphs (ER diagrams) as images is now PNG instead of JPG.
 
 Graph Plugin:
