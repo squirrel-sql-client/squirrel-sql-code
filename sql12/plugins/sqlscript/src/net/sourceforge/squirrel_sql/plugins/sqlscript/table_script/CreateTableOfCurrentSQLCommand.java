@@ -19,8 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ProgressAbortDialog;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
@@ -45,10 +47,10 @@ public class CreateTableOfCurrentSQLCommand
 
    private static final ILogger s_log =  LoggerController.createLogger(CreateTableOfCurrentSQLCommand.class);
 
-   private final AbortController _abortController;
 
 
    private ISession _session;
+   private ProgressAbortDialog _progressDialog;
 
    /**
     * Ctor specifying the current session.
@@ -56,10 +58,6 @@ public class CreateTableOfCurrentSQLCommand
    public CreateTableOfCurrentSQLCommand(ISession session)
    {
       _session = session;
-
-      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
-      _abortController = new AbortController(owningFrame);
-
    }
 
    /**
@@ -83,11 +81,12 @@ public class CreateTableOfCurrentSQLCommand
       ISQLPanelAPI api =  FrameWorkAcessor.getSQLPanelAPI(_session);
       String script = api.getSQLScriptToBeExecuted();
 
-      _abortController.show();
-      _session.getApplication().getThreadPool().addTask(() -> doCreateTableOfCurrentSQL(script, sTable, scriptOnly, dropTable));
+      _progressDialog = new ProgressAbortDialog(owningFrame, s_stringMgr.getString("CreateTableOfCurrentSQLCommand.generating.insert.table.script", sTable), () -> onCancel());
+      _session.getApplication().getThreadPool().addTask(() -> doCreateTableOfCurrentSQL(script, sTable, scriptOnly, dropTable, _progressDialog));
+      _progressDialog.setVisible(true);
    }
 
-   private void doCreateTableOfCurrentSQL(String script, String sTable, boolean scriptOnly, boolean dropTable)
+   private void doCreateTableOfCurrentSQL(String script, String sTable, boolean scriptOnly, boolean dropTable, ProgressAbortDialog progressDialog)
    {
 
       StringBuilder sbScript = new StringBuilder();
@@ -99,7 +98,6 @@ public class CreateTableOfCurrentSQLCommand
          
          if(false == qt.hasQuery())
          {
-            // i18n[CreateTableOfCurrentSQLCommand.noQuery=No query found to create the script from.]
             _session.showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
             return;
          }
@@ -115,18 +113,22 @@ public class CreateTableOfCurrentSQLCommand
 
             stmt = conn.createStatement();
             stmt.setMaxRows(1);
+
+            progressDialog.currentlyLoading(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.executing.select.for.meta.data"));
             String sql = qt.nextQuery().getQuery();
+            progressDialog.setSql(sql);
             ResultSet srcResult = stmt.executeQuery(sql);
 
-            if(_abortController.isStop())
+            if(_progressDialog.isUserCanceled())
             {
                return;
             }
 
 
+            progressDialog.currentlyLoading(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.generating.script"));
             genCreate(srcResult, sTable, sbCreate);
 
-            new InsertGenerator( _session).genInserts(srcResult, sTable, ssbInsert, true, false, () -> _abortController.isStop());
+            new InsertGenerator( _session).genInserts(srcResult, sTable, ssbInsert, true, false, () -> _progressDialog.isUserCanceled());
             StringBuilder sbInsert = ssbInsert.getStringBuilderClone();
             sbInsert.append('\n').append(sql);
 
@@ -152,8 +154,7 @@ public class CreateTableOfCurrentSQLCommand
                SQLExecuterTask executer = new SQLExecuterTask(_session, sbScript.toString(), new DefaultSQLExecuterHandler(_session));
                executer.run();
 
-               // i18n[sqlscript.successCreate=Successfully created table {0}]
-               _session.showMessage(s_stringMgr.getString("sqlscript.successCreate", sTable));
+               _session.showMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.successCreate", sTable));
             }
             catch (Exception e)
             {
@@ -190,7 +191,7 @@ public class CreateTableOfCurrentSQLCommand
       }
       finally
       {
-         _abortController.close();
+         _progressDialog.closeProgressDialog();
       }
    }
 
@@ -229,4 +230,8 @@ public class CreateTableOfCurrentSQLCommand
       }
    }
 
+   private void onCancel()
+   {
+      Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.user.canceled"));
+   }
 }

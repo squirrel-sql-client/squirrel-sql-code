@@ -60,19 +60,15 @@ public class CreateInsertScriptOfCurrentSQLCommand
    public void generateInserts(String script, ScriptBuilder scriptBuilder, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
    {
 
-      String fileName;
+      String fileName = null;
 
       if(scriptBuilder instanceof FileScriptBuilder)
       {
          fileName = ((FileScriptBuilder)scriptBuilder).getFileName();
       }
-      else
-      {
-         fileName = "<WritingToBuffer>";
-      }
 
       Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
-      _progressDialog = new ProgressAbortDialog(owningFrame, s_stringMgr.getString("CreateTableOfCurrentSQLCommand.generating.inserts"), fileName, script, 0, () -> onCancel(), null);
+      _progressDialog = new ProgressAbortDialog(owningFrame, s_stringMgr.getString("CreateInsertScriptOfCurrentSQLCommand.generating.inserts"), fileName, script, 0, () -> onCancel(), null);
 
       _session.getApplication().getThreadPool().addTask(() -> doGenerateInserts(script, scriptBuilder, insertScriptFinishedCallBack, _progressDialog));
       _progressDialog.setVisible(true);
@@ -87,7 +83,7 @@ public class CreateInsertScriptOfCurrentSQLCommand
 
          if(false == qt.hasQuery())
          {
-            _session.showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
+            _session.showErrorMessage(s_stringMgr.getString("CreateInsertScriptOfCurrentSQLCommand.noQuery"));
             return;
          }
 
@@ -98,6 +94,7 @@ public class CreateInsertScriptOfCurrentSQLCommand
             try(Statement stmt = conn.createStatement())
             {
                String sql = qt.nextQuery().getQuery();
+               progressDialog.setSql(sql);
                progressDialog.currentlyLoading(StringUtils.replace(sql, "\n", " "));
 
                ResultSet srcResult = stmt.executeQuery(sql);
@@ -119,7 +116,7 @@ public class CreateInsertScriptOfCurrentSQLCommand
 
    private void onCancel()
    {
-      Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.user.canceled"));
+      Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("CreateInsertScriptOfCurrentSQLCommand.user.canceled"));
    }
 
 

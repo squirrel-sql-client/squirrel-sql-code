@@ -50,12 +50,12 @@ import java.util.Date;
  */
 public class ProgressAbortDialog extends JDialog implements ProgressAbortCallback
 {
-   public final static ILogger s_log = LoggerController.createLogger(ProgressAbortDialog.class);
+   private final static ILogger s_log = LoggerController.createLogger(ProgressAbortDialog.class);
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ProgressAbortDialog.class);
    private TaskDescriptionComponent taskDescription;
-   private String targetFile;
-   private String sql;
+   private String _targetFile = s_stringMgr.getString("ProgressAbortDialog.targetFile.not.applicable");
+   private String _sql = s_stringMgr.getString("ProgressAbortDialog.sql.not.applicable");
 
    /**
     * Date format for the history area.
@@ -145,10 +145,15 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
       setLocationRelativeTo(owningFrame);
       init(title, totalItems, userCancelRequestListener);
 
-      setTargetFile(targetFile);
-      setSql(sql);
+      if (null != targetFile)
+      {
+         _targetFile = targetFile;
+      }
+      if (null != sql)
+      {
+         _sql = sql;
+      }
       setLabelValues();
-
 
       if (null != displayReachedCallBack)
       {
@@ -353,14 +358,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
    @Override
    public void setVisible(final boolean b)
    {
-      GUIUtils.processOnSwingEventThread(new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            callSetVisibleFromSuperClass(b);
-         }
-      });
+      GUIUtils.processOnSwingEventThread(() -> callSetVisibleFromSuperClass(b));
    }
 
    /**
@@ -396,7 +394,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
       c.weighty = 0.5;
       c.anchor = GridBagConstraints.WEST;
       c.insets = new Insets(4, 0, 4, 0);
-      taskDescriptionComponent = createTaskDescripion();
+      taskDescriptionComponent = createTaskDescription();
       dialogPanel.add(taskDescriptionComponent, c);
 
       c.gridy++;
@@ -454,7 +452,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
       super.addWindowListener(new WindowCloseListener());
    }
 
-   protected void setLabelValues()
+   private void setLabelValues()
    {
       taskDescription.setTargetFile(getTargetFile());
       taskDescription.setSql(getSql());
@@ -468,10 +466,10 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     * <li>The running SQL statement as a formated String.</li>
     * </ul>
     *
-    * @see ProgressAbortDialog#createTaskDescripion()
+    * @see ProgressAbortDialog#createTaskDescription()
     * @see TaskDescriptionComponent
     */
-   protected JComponent createTaskDescripion()
+   private JComponent createTaskDescription()
    {
       this.taskDescription = new TaskDescriptionComponent(getTargetFile(), getSql());
       return taskDescription;
@@ -489,7 +487,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    public String getTargetFile()
    {
-      return targetFile;
+      return _targetFile;
    }
 
    /**
@@ -497,7 +495,8 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    public void setTargetFile(String targetFile)
    {
-      this.targetFile = targetFile;
+      this._targetFile = targetFile;
+      GUIUtils.processOnSwingEventThread(() -> setLabelValues());
    }
 
    /**
@@ -505,7 +504,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    public String getSql()
    {
-      return sql;
+      return _sql;
    }
 
    /**
@@ -513,7 +512,8 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    public void setSql(String sql)
    {
-      this.sql = sql;
+      this._sql = sql;
+      GUIUtils.processOnSwingEventThread(() -> setLabelValues());
    }
 
 
