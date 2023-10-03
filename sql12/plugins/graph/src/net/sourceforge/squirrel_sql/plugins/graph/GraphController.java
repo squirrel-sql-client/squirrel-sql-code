@@ -1,23 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -25,13 +9,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.link.CopyGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.window.TabToWindowHandler;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.OrderStructureXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 
 public class GraphController
@@ -327,7 +312,7 @@ public class GraphController
       }
 
       Window parent = SwingUtilities.windowForComponent(_panelController.getGraphPanel());
-      SqlScriptAcessor.scriptTablesToSQLEntryArea(parent, _session, tableInfos);
+      SQLScriptServices.scriptTablesToSQLEntryArea(_session, tableInfos);
    }
 
    private void refreshAllTables()

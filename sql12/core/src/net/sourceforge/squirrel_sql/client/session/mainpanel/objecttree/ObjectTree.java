@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionColoringUtil;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffObjectTreeMenuFactory;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.menuattic.AtticHandler;
 import net.sourceforge.squirrel_sql.client.session.menuattic.MenuOrigin;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -143,6 +144,9 @@ class ObjectTree extends JTree
 
 			addToPopup(actions.get(CopySimpleObjectNameAction.class));
 			addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
+
+			addToPopup(DatabaseObjectType.TABLE, SQLScriptMenuFactory.getObjectTreeMenu(DatabaseObjectType.TABLE));
+			addToPopup(DatabaseObjectType.VIEW, SQLScriptMenuFactory.getObjectTreeMenu(DatabaseObjectType.VIEW));
 
 			addToPopup(DatabaseObjectType.TABLE, DBDiffObjectTreeMenuFactory.createMenu());
 

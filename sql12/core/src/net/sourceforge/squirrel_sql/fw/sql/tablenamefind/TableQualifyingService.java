@@ -1,13 +1,13 @@
 package net.sourceforge.squirrel_sql.fw.sql.tablenamefind;
 
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SqlScriptPluginAccessor;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import java.sql.SQLException;
 
 public class TableQualifyingService
 {
@@ -36,11 +36,11 @@ public class TableQualifyingService
                tableInfo = buf;
             }
 
-            return new QualifyResult(SqlScriptPluginAccessor.formatTableName(tableInfo), QualifyResultState.HEURISTIC_USED);
+            return new QualifyResult(SQLScriptServices.formatTableName(tableInfo), QualifyResultState.HEURISTIC_USED);
          }
          else
          {
-            return new QualifyResult(SqlScriptPluginAccessor.formatTableName(tableInfo), QualifyResultState.OK);
+            return new QualifyResult(SQLScriptServices.formatTableName(tableInfo), QualifyResultState.OK);
          }
 
       }
@@ -87,7 +87,7 @@ public class TableQualifyingService
 
    private static boolean isQualifyingRequired(ISession session) throws SQLException
    {
-      return SqlScriptPluginAccessor.isQualifyTableRequired()
+      return SQLScriptServices.isQualifyTableRequired()
              && (session.getMetaData().supportsSchemas() || session.getMetaData().supportsCatalogs());
    }
 }

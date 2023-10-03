@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandle
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
@@ -153,6 +154,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(ToggleMinimizeResultsAction.class));
       resources.configureMenuItem(ac.get(ToggleMinimizeResultsAction.class), item);
 
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
+		SQLScriptMenuFactory.addMenuItemsToSQLPanelApi(this);
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
    }
 
 

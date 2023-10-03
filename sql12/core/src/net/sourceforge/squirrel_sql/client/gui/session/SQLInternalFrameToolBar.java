@@ -3,24 +3,9 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
-import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileNewAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenRecentAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.file.*;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -64,5 +49,10 @@ class SQLInternalFrameToolBar extends ToolBar
       add(actions.get(GoToLastEditLocationAction.class));
       addSeparator();
       addToggleAction((IToggleAction) actions.get(ToggleObjectTreeBesidesEditorAction.class), session);
+
+      addSeparator();
+      SQLScriptMenuFactory.getSQLInternalFrameToolbarActions().forEach(a -> add(a));
+      addSeparator();
+
    }
 }

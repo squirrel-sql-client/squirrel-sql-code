@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.sql.tablenamefind;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SqlScriptPluginAccessor;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
@@ -149,7 +149,7 @@ public class TableNameFindService
                "TABLE", "",
                session.getMetaData());
 
-         String tableName = SqlScriptPluginAccessor.formatTableName(tInfo);
+         String tableName = SQLScriptServices.formatTableName(tInfo);
 
          if(false == StringUtilities.isEmpty(tableName, true))
          {

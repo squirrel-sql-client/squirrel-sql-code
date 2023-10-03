@@ -102,9 +102,6 @@
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/sqlbookmark" />
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/sqlbookmark.jar" />
 
-			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/sqlscript" />
-			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/sqlscript.jar" />
-
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/syntax" />
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/syntax.jar" />
 

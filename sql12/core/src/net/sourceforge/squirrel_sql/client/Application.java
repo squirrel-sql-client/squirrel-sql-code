@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffState;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.prefs.SQLScriptPreferencesManager;
 import net.sourceforge.squirrel_sql.client.session.defaultentry.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
@@ -196,8 +197,10 @@ public class Application implements IApplication
 	private PopupMenuAtticModel _popupMenuAtticModel = new PopupMenuAtticModel();
 	private MultipleSqlResultExportChannel _multipleSqlResultExportChannel = new MultipleSqlResultExportChannel();
 
-	private DBDiffState _DBDiffState = new DBDiffState();
+	private DBDiffState dbDiffState = new DBDiffState();
 	private CatalogLoadModelManager _catalogLoadModelManager = new CatalogLoadModelManager();
+
+	private SQLScriptPreferencesManager _sqlScriptPreferencesManager = new SQLScriptPreferencesManager();
 
 	public Application()
 	{
@@ -1527,6 +1530,12 @@ public class Application implements IApplication
 	@Override
 	public DBDiffState getDBDiffState()
 	{
-		return _DBDiffState;
+		return dbDiffState;
 	}
+
+   @Override
+   public SQLScriptPreferencesManager getSQLScriptPreferencesManager()
+   {
+      return _sqlScriptPreferencesManager;
+   }
 }

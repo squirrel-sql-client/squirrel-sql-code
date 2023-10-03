@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommit
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.*;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
@@ -51,10 +52,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 /**
  * Menu bar for <CODE>MainFrame</CODE>.
- *
- * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-@SuppressWarnings("serial")
 final class MainFrameMenuBar extends JMenuBar
 {
 
@@ -357,6 +355,7 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
 		addToMenuAsCheckBoxMenuItem(rsrc, ToggleObjectTreeBesidesEditorAction.class, menu);
 		menu.addSeparator();
+		menu.add(SQLScriptMenuFactory.getSessionMenu());
 
 		menu.setEnabled(false);
 		return menu;

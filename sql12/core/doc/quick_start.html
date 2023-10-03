@@ -147,6 +147,10 @@
 	</tr>
 
 	<tr>
+		<td><a href="#scripting">Scripting</a></td>
+	</tr>
+
+	<tr>
 		<td><a href="#logs">Logs</a></td>
 	</tr>
 
@@ -2167,6 +2171,79 @@ occur.
 Once all updated artifacts have been successfully downloaded and
 verified, you can re-start SQuirreL and the next stage of updating will
 being by asking you if you want to apply the updates.
+
+<h2><a name="scripting"></a>Scripting</h2>
+	<P STYLE="font-weight: medium">SQuirreL provides a wide range of scripting functions:</P>
+	<UL>
+		<LI><P STYLE="font-weight: medium">You may create DDL scripts
+			for tables out of the Object tree or from the Graph plugin. The
+			scripts contain all constraints and indexes.</P>
+		<LI><P STYLE="font-weight: medium">You may create Insert
+			scripts out of the Object tree for all of a table's data.</P>
+		<LI><P STYLE="font-weight: medium">You may create an insert
+			script from an SQL Select statement. To do so in the SQL editor hit
+			the <kbd>ctrl + t</kbd> shortcut to open the tools popup. Then choose the
+			sql2ins function from the popup.</P>
+		<LI><P STYLE="font-weight: medium">You may export the result
+			of an SQL Select statement directly into a file. To do so in the SQL
+			editor hit the <kbd>ctrl + t</kbd> shortcut to open the tools pop-up. Then
+			choose the sql2file function from the pop-up. Alternative, you can
+			do this via the menu entry Session => Scripts => Store result of SQL
+			in file</P>
+	</UL>
+	<P>
+		<IMG SRC="images/toolspopup_scripting.jpg" NAME="Graphic1" ALIGN=LEFT BORDER=0><BR
+			CLEAR=LEFT> <BR> <BR>
+	</P>
+	<UL>
+		<LI><P STYLE="font-weight: medium">You may store the result
+			of an from an SQL Select statement in a temporary table. To do so in
+			the SQL editor hit the <kbd>ctrl + t</kbd> shortcut to open the tools popup.
+			Then choose the sql2table function from the popup.</P>
+		<IMG SRC="images/creattable.jpg" NAME="Graphic2" ALIGN=LEFT BORDER=0>
+			<BR CLEAR=LEFT> <BR> <BR>
+	</UL>
+	<ul>
+		<LI>
+			<P STYLE="font-weight: medium">You may export the result of the
+				currently selected SQL Select statement directly into a file. To do
+				so, select a SQL Select statement in the SQL editor and hit the <kbd>ctrl
+					+ t</kbd> shortcut to open the tools pop-up. Then choose the sql2file
+				function from the pop-up. Alternative, you can do this via the menu
+				entry Session => Scripts => Store result of SQL in file</P>
+			<IMG SRC="images/sql2file.jpg" NAME="sql2file" ALIGN=LEFT BORDER=0>
+			<BR CLEAR=LEFT>
+			<BR> <BR> After this, the control dialog
+			appears. This dialog allows you to specify various options including the
+			target file and options such as the data format. Be careful when choosing
+			the MS Excel format as it requires the entire result set to be stored in
+			memory. In this case, if the result set is large, SQuirreL SQL may run
+			out of memory.<BR> <BR> <IMG
+				SRC="images/sql2file_exportController.jpg" NAME="sql2file" ALIGN=LEFT
+				BORDER=0><BR CLEAR=LEFT> <BR> <BR> The export is
+			done on a new database connection, so the user can continue
+			using SQuirreL SQL while exporting the data. A progress monitor shows
+			the progress of the export and you can cancel it any time. When the
+			export is complete, the progress dialog will be hidden. <BR> <BR> <IMG
+				SRC="images/sql2file_progress.jpg" NAME="sql2file" ALIGN=LEFT BORDER=0>
+			<BR CLEAR=LEFT> <BR> <BR></LI>
+	</ul>
+
+	<b>Running query output directly into a file</b><br>
+	To run query output directly into a file use the following syntax:<br><br>
+	<code>@file '/tmp/customers.xlsx' SELECT * FROM customers</code><br><br>
+	This will write the result of 'SELECT * FROM customers' to the file '/tmp/customers.xlsx'.
+	The settings for the output will be taken from the export dialog shown above.<br>
+	Please note the single quotes around the file name.<br>
+	Also note: Existing files will be replaced.<br><br>
+	To create an MS-Excel workbook file with multiple sheets use the following syntax:<br>
+	<code>
+		@msExcelWorkbook 'C:/tmp/out.xlsx'<br>
+		@sheet 'Orders' SELECT * FROM orders;<br>
+		@sheet 'Stores' SELECT * FROM stores;<br>
+	</code>
+	where the ";" may need to be replaced by the SQL separator in use.
+
 
 <h2><a name="logs"></a>Logs</h2>
 

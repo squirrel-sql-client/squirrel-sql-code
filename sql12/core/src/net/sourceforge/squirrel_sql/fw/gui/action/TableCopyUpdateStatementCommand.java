@@ -20,13 +20,13 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  */
 
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
-import net.sourceforge.squirrel_sql.fw.sql.SqlScriptPluginAccessor;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableColumn;
 
 /**
@@ -114,7 +114,8 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
             }
 
             final Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-            setListBuf.append(SqlScriptPluginAccessor.formatColumnName(colDef.getColumnName())).append(getData(colDef, cellObj, StatType.UPDATE));
+            String columnName = colDef.getColumnName();
+            setListBuf.append(SQLScriptServices.formatColumnName(columnName)).append(getData(colDef, cellObj, StatType.UPDATE));
          }
 
          tableNameProvider.colDefsFinished();

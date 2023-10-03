@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlConfigPrefsTab;
 import net.sourceforge.squirrel_sql.client.preferences.shortcut.ShortcutPrefsTab;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.prefs.DBDiffPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.prefs.SQLScriptPreferencesTab;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -308,6 +309,7 @@ public class GlobalPreferencesSheet extends DialogWidget
       _globalPreferencesPanels.add(new WikiTablePreferencesTab());
       _globalPreferencesPanels.add(new FormatSqlConfigPrefsTab(Main.getApplication()));
       _globalPreferencesPanels.add(new ShortcutPrefsTab());
+      _globalPreferencesPanels.add(new SQLScriptPreferencesTab());
       _globalPreferencesPanels.add(new DBDiffPreferencesPanel());
 
       // Go thru all loaded plugins asking for panels.

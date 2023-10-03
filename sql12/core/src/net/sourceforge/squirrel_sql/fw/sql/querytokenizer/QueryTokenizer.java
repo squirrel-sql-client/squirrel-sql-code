@@ -18,8 +18,8 @@ package net.sourceforge.squirrel_sql.fw.sql.querytokenizer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.fw.sql.SqlScriptPluginAccessor;
 import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.NextPositionAction;
 import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentAndLiteralHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -327,7 +327,7 @@ public class QueryTokenizer implements IQueryTokenizer
        for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
        {
           QueryHolder sql = iter.next();
-          if (sql.getQuery().startsWith(scriptIncludePrefix) && false == SqlScriptPluginAccessor.handledBySqlToFileHandler(sql))
+          if (sql.getQuery().startsWith(scriptIncludePrefix) && false == SQLScriptServices.handledBySqlToFileHandler(sql))
           {
              try
              {

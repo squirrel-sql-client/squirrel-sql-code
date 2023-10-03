@@ -38,7 +38,7 @@ public class JsonMarshalUtil
       }
    }
 
-   public static <T> T readObjectFromFileSave(File file, Class<T> clazz, T errorFallBackReturnValue)
+   public static <T> T readObjectFromFileSave(File file, Class<T> clazz, T fallBackReturnValue)
    {
       try
       {
@@ -46,8 +46,8 @@ public class JsonMarshalUtil
       }
       catch (Throwable e)
       {
-         s_log.error("Failed to read Json file " + file + " for to load object of class " + clazz + ". Will return errorFallBackReturnValue.", e);
-         return errorFallBackReturnValue;
+         s_log.warn("Could not read Json file " + file + " to load object of class " + clazz + ". Will return fallBackReturnValue.", e);
+         return fallBackReturnValue;
       }
    }
 

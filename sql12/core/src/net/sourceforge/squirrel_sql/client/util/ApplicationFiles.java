@@ -498,4 +498,9 @@ public class ApplicationFiles
    {
       return new File(_userSettingsDir + File.separator + "catalogLoadModel.json");
    }
+
+   public File getScriptPrefsJsonFile()
+   {
+      return new File(_userSettingsDir + File.separator + "scriptPrefs.json");
+   }
 }

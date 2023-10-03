@@ -18,6 +18,7 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommit
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.table_script.*;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.QuitSoundAction;
@@ -110,6 +111,11 @@ public class ActionRegistry
 
       toolsPopupController.addAction("aliaspopup", ac.get(AliasPopUpMenuAction.class));
       toolsPopupController.addAction("sessionpopup", ac.get(SessionPopUpMenuAction.class));
+
+      toolsPopupController.addAction("sql2table", ac.get(CreateTableOfCurrentSQLAction.class));
+      toolsPopupController.addAction("sql2ins", ac.get(CreateDataScriptOfCurrentSQLAction.class));
+      toolsPopupController.addAction("sql2insfile", ac.get(CreateInsertStatementsFileOfCurrentSQLAction.class));
+      toolsPopupController.addAction("sql2file", ac.get(CreateFileOfCurrentSQLAction.class));
    }
 
    public void preloadActions(ActionCollection actionCollection)
@@ -240,6 +246,17 @@ public class ActionRegistry
       actionCollection.add(new DBDiffCompareAction());
       actionCollection.add(new CompareToClipboardAction());
 
+      actionCollection.add(new CreateDataScriptAction());
+      actionCollection.add(new CreateTemplateDataScriptAction());
+      actionCollection.add(new CreateDataScriptOfCurrentSQLAction());
+      actionCollection.add(new CreateInsertStatementsFileOfCurrentSQLAction());
+      actionCollection.add(new CreateTableOfCurrentSQLAction());
+      actionCollection.add(new CreateTableScriptAction());
+      actionCollection.add(new DropTableScriptAction());
+      actionCollection.add(new CreateSelectScriptAction());
+      actionCollection.add(new CreateFileOfCurrentSQLAction());
+      actionCollection.add(new CreateFileOfSelectedTablesAction());
+      actionCollection.add(new CreateInsertStatementsFileOfSelectedTablesSQLAction());
    }
 
    public ActionCollection getActionCollection()

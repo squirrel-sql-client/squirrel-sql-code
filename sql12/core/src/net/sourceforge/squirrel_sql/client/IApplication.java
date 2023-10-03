@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffState;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.prefs.SQLScriptPreferencesManager;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
@@ -294,4 +295,6 @@ public interface IApplication
 	MultipleSqlResultExportChannel getMultipleSqlResultExportChannel();
 
 	DBDiffState getDBDiffState();
+
+	SQLScriptPreferencesManager getSQLScriptPreferencesManager();
 }

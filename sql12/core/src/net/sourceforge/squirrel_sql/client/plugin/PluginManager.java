@@ -855,7 +855,8 @@ public class PluginManager implements IPluginManager
 	private boolean isRemovedPlugin(IPlugin plugin)
 	{
 		return    plugin.getPluginJarFilePath().toLowerCase().endsWith("editextras.jar")
-		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("dbdiff.jar");
+		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("dbdiff.jar")
+		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("sqlscript.jar");
 	}
 
 

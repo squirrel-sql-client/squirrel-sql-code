@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -832,7 +833,8 @@ public class TableFrameController
    private void onScriptTable()
    {
       Window parent = SwingUtilities.windowForComponent(_frame);
-      SqlScriptAcessor.scriptTablesToSQLEntryArea(parent, _session, new ITableInfo[]{getTableInfo()});
+      ITableInfo[] tableInfos = new ITableInfo[]{getTableInfo()};
+      SQLScriptServices.scriptTablesToSQLEntryArea(_session, tableInfos);
    }
 
    public ITableInfo getTableInfo()

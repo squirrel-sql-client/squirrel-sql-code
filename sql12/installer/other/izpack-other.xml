@@ -112,9 +112,6 @@
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/sqlbookmark.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/sqlbookmark" />
 
-			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/sqlscript.jar" />
-			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/sqlscript" />
-
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/syntax.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/syntax" />
 

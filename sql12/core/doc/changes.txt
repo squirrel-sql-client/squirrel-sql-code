@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Refactoring: The "SQL Scripts"-Plugin's functionality was moved to SQuirreL's core.
+  The "SQL Scripts"-Plugin won't be shipped anymore
+  and in case it is still found it is programmatically kept from being loaded.
+  Users are advised to check their scripting preferences because previous preferences were lost.
+  See menu File --> Global Preferences --> Tab "SQL Scripts".
+
 Object tree: New right mouse menus in "Scripts" submenu:
   "Store selected tables' data in files" and "Create INSERT statements file from selected tables"
 
