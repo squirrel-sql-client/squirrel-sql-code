@@ -98,7 +98,7 @@
 		</pack>
 
 		<pack name="Standard" required="no" installGroups="StandardPlugins">
-			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, SQL Script, Syntax, DB Copy, DB Diff, Refactoring, Data Import</description>
+			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, Syntax, DB Copy, Refactoring, Data Import</description>
 
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/codecompletion.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/codecompletion" />
