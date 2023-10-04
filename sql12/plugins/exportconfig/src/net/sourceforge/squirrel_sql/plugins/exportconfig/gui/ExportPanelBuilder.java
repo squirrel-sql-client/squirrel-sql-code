@@ -30,16 +30,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPreferences;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -110,7 +102,6 @@ public class ExportPanelBuilder
     
 	public ExportPanelBuilder(IApplication app)
 	{
-		super();
         _app = app;
 	}
 
@@ -118,63 +109,63 @@ public class ExportPanelBuilder
 	{
 		initComponents(prefs);
 
-		JPanel ret = new JPanel(new GridBagLayout());
+		_panel = new JPanel(new GridBagLayout());
 
 		GridBagConstraints gbc;
 
 		gbc = new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
-		ret.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.prefs")), gbc);
+		_panel.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.prefs")), gbc);
 
 		gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportPrefsChk, gbc);
+		_panel.add(_exportPrefsChk, gbc);
 
 		gbc = new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportPrefsText, gbc);
+		_panel.add(_exportPrefsText, gbc);
 
 		gbc = new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportPrefsBtn, gbc);
+		_panel.add(_exportPrefsBtn, gbc);
 
 
 		gbc = new GridBagConstraints(0,2,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,5), 0,0);
-		ret.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.drivers")), gbc);
+		_panel.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.drivers")), gbc);
 
 		gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportDriversChk, gbc);
+		_panel.add(_exportDriversChk, gbc);
 
 		gbc = new GridBagConstraints(1,3,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportDriversText, gbc);
+		_panel.add(_exportDriversText, gbc);
 
 		gbc = new GridBagConstraints(2,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportDriversBtn, gbc);
+		_panel.add(_exportDriversBtn, gbc);
 
 
 		gbc = new GridBagConstraints(0,4,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,5), 0,0);
-		ret.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.aliases")), gbc);
+		_panel.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.aliases")), gbc);
 
 		gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportAliasesChk, gbc);
+		_panel.add(_exportAliasesChk, gbc);
 
 		gbc = new GridBagConstraints(1,5,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportAliasesText, gbc);
+		_panel.add(_exportAliasesText, gbc);
 
 		gbc = new GridBagConstraints(2,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-		ret.add(_exportAliasesBtn, gbc);
+		_panel.add(_exportAliasesBtn, gbc);
 
 
 		gbc = new GridBagConstraints(1,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,0,5), 0,0);
-		ret.add(_includeUserNamesChk, gbc);
+		_panel.add(_includeUserNamesChk, gbc);
 
 		gbc = new GridBagConstraints(1,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-		ret.add(_includePasswordsChk, gbc);
+		_panel.add(_includePasswordsChk, gbc);
 
 
 		gbc = new GridBagConstraints(0,8,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
-		ret.add(GUIUtils.createHorizontalSeparatorPanel(), gbc);
+		_panel.add(GUIUtils.createHorizontalSeparatorPanel(), gbc);
 
 		gbc = new GridBagConstraints(0,9,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		ret.add(createButtonBar(), gbc);
+		_panel.add(createButtonBar(), gbc);
 
-		return ret;
+		return _panel;
 
 
 
