@@ -18,13 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.client.session.action.sqlscript.prefs;
 
+import java.io.File;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.io.File;
 
 public class SQLScriptPreferencesManager
 {
@@ -39,7 +39,7 @@ public class SQLScriptPreferencesManager
       {
          File scriptPrefsJsonFile = new ApplicationFiles().getScriptPrefsJsonFile();
 
-         if(false == scriptPrefsJsonFile.exists())
+         if(false == scriptPrefsJsonFile.exists() && new File(new ApplicationFiles().getPluginsUserSettingsDirectory(), "sqlscript").exists())
          {
             Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SQLScriptPreferencesManager.warn.check.script.prefs"));
          }

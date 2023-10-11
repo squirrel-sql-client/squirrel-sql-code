@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,8 +13,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.*;
 
 public class JsonMarshalUtil
 {
@@ -42,6 +46,12 @@ public class JsonMarshalUtil
    {
       try
       {
+         if(false == file.exists())
+         {
+            s_log.info("Json file " + file + " to load object of class " + clazz + ". Does not exist will return fallBackReturnValue.");
+            return fallBackReturnValue;
+         }
+
          return readObjectFromFile(file, clazz);
       }
       catch (Throwable e)
