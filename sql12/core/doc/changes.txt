@@ -118,6 +118,10 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+#1521 DBCopy: Fixed Copy/Paste of multiple tables deleted data in wrong order.
+
+DBCopy: Fixed NullPointerException which occurred when parts of the Object where reloaded during table copying.
+
 #1520 "Export Configuration"-Plugin
   Export button of the "Configure Export" dialog, see menu Plugins --> Export --> "Configure Export",
   raised NullPointerException.

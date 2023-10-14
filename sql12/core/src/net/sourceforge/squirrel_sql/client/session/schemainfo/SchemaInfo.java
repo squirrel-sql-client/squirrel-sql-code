@@ -1463,15 +1463,15 @@ public class SchemaInfo
             //int progress = loadSchemas(1);
             // load tables with catalog = null
             _schemaInfoCache.clearTables(null, doi.getSchemaName(), null, null);
-            int progress = loadTables(null, doi.getSchemaName(), null, null, 1);
+            int progress = loadTables(AliasCatalogLoadModel.of(doi.getCatalogName()), doi.getSchemaName(), null, null, 1);
 
             // load procedures with catalog = null
             _schemaInfoCache.clearStoredProcedures(null, doi.getSchemaName(), null);
-            loadStoredProcedures(null, doi.getSchemaName(), null, progress);
+            loadStoredProcedures(AliasCatalogLoadModel.of(doi.getCatalogName()), doi.getSchemaName(), null, progress);
 
             // load UDTs with catalog = null
             _schemaInfoCache.clearUDTs(null, doi.getSchemaName(), null);
-            loadUDTs(null, doi.getSchemaName(), null, progress);
+            loadUDTs(AliasCatalogLoadModel.of(doi.getCatalogName()), doi.getSchemaName(), null, progress);
          }
          else if(DatabaseObjectType.CATALOG == doi.getDatabaseObjectType())
          {

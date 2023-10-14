@@ -20,14 +20,8 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.commands;
  */
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
-import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -50,22 +44,7 @@ public class CopyTableCommand
 	/** Logger for this class. */
 	private final static ILogger log = LoggerController.createLogger(CopyTableCommand.class);
 
-	/** Internationalized strings for this class */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CopyTableCommand.class);
-
-	private IProgressCallBackFactory progressCallBackFactory = new ProgressCallBackFactory();
-
-	static interface i18n
-	{
-
-		// i18n[CopyTablesCommand.progressDialogTitle=Analyzing FKs in Tables to Copy]
-		String PROGRESS_DIALOG_TITLE = s_stringMgr.getString("CopyTablesCommand.progressDialogTitle");
-
-		// i18n[CopyTablesCommand.loadingPrefix=Analyzing table:]
-		String LOADING_PREFIX = s_stringMgr.getString("CopyTablesCommand.loadingPrefix");
-
-	}
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CopyTableCommand.class);
 
 	/**
 	 * Ctor specifying the current session.
@@ -76,11 +55,6 @@ public class CopyTableCommand
 		_plugin = plugin;
 	}
 
-	public void setProgressCallBackFactory(IProgressCallBackFactory progressCallBackFactory)
-	{
-		this.progressCallBackFactory = progressCallBackFactory;
-	}	
-	
 	/**
 	 * Execute this command. Save the session and selected objects in the plugin for use in paste command.
     */
@@ -140,12 +114,15 @@ public class CopyTableCommand
 		// Only concerned about order when more than one table.
 		if (selectedTables.size() > 1)
 		{
-			ProgressCallBack cb =  progressCallBackFactory.create(Main.getApplication().getMainFrame(),i18n.PROGRESS_DIALOG_TITLE, dbObjs.length);
+			ProgressCallBack cb = new ProgressCallBackAdaptor(){
+				@Override
+				public void currentlyLoading(String simpleName)
+				{
+					Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("CopyTablesCommand.loadingPrefix.new") + " " + simpleName);
+				}
+			};
 
-			cb.setLoadingPrefix(i18n.LOADING_PREFIX);
 			selectedTables = SQLUtilities.getInsertionOrder(selectedTables, md, cb);
-			cb.setVisible(false);
-			cb.dispose();
 			_plugin.getSessionInfoProvider().setSourceDatabaseObjects(DBUtil.convertTableToObjectList(selectedTables));
 
 		}

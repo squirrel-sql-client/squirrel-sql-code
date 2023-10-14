@@ -28,11 +28,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author manningr : except where noted
@@ -83,10 +79,8 @@ public class SQLUtilities
 	 * @param md
 	 * @param tables
 	 * @return
-	 * @throws SQLException
 	 */
-	public static List<ITableInfo> getDeletionOrder(List<ITableInfo> tables, SQLDatabaseMetaData md,
-		ProgressCallBack callback) throws SQLException
+	public static List<ITableInfo> getDeletionOrder(List<ITableInfo> tables, SQLDatabaseMetaData md, ProgressCallBack callback)
 	{
 		List<ITableInfo> insertionOrder = getInsertionOrder(tables, md, callback);
 		Collections.reverse(insertionOrder);
@@ -107,10 +101,8 @@ public class SQLUtilities
 	 * @param tables
 	 * @param listener
 	 * @return
-	 * @throws SQLException
 	 */
-	public static List<ITableInfo> getInsertionOrder(List<ITableInfo> tables, SQLDatabaseMetaData md,
-		ProgressCallBack callback) throws SQLException
+	public static List<ITableInfo> getInsertionOrder(List<ITableInfo> tables, SQLDatabaseMetaData md, ProgressCallBack callback)
 	{
 		List<ITableInfo> result = new ArrayList<ITableInfo>();
 		// tables that are netiher children nor parents - utility tables

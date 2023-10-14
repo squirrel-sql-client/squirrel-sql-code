@@ -18,17 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
@@ -36,27 +25,21 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.MappingException;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyEvent;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.ErrorEvent;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.RecordEvent;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.StatementEvent;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.TableEvent;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.event.*;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.*;
 
 /**
  * This is the class that performs the table copy using database connections 
@@ -95,8 +78,7 @@ public class CopyExecutor extends I18NBaseObject {
     private ArrayList<ITableInfo> selectedTableInfos = null;    
     
     /** the CopyTableListeners that have registered with this class */
-    private ArrayList<CopyTableListener> listeners = 
-        new ArrayList<CopyTableListener>();
+    private ArrayList<CopyTableListener> listeners = new ArrayList<>();
     
     /** whether or not the user cancelled the copy operation */
     private volatile boolean cancelled = false;    
@@ -148,149 +130,212 @@ public class CopyExecutor extends I18NBaseObject {
      */
     private void _execute()
     {
-        start = System.currentTimeMillis();
-        boolean encounteredException = false;
-        ISQLConnection destConn = destSession.getSQLConnection();
-        if (!analyzeTables())
-        {
-            return;
-        }
-        setupAutoCommit(destConn);
-        List<IDatabaseObjectInfo> sourceObjs = prov.getSourceDatabaseObjects();
-        int[] counts = getTableCounts();
-        sendCopyStarted(counts);
+       start = System.currentTimeMillis();
+       boolean encounteredException = false;
+       ISQLConnection destConn = destSession.getSQLConnection();
+       if (!analyzeTables())
+       {
+          return;
+       }
+       setupAutoCommit(destConn);
+       List<IDatabaseObjectInfo> sourceObjs = prov.getSourceDatabaseObjects();
+       int[] counts = getTableCounts();
+       sendCopyStarted(counts);
 
-        //String destSchema = prov.getDestDatabaseObject().getSimpleName();  used to break, when a table was selected
+       //String destSchema = prov.getDestDatabaseObject().getSimpleName();  used to break, when a table was selected
 
-        String destSchema = DBUtil.getSchemaNameFromDbObject(prov.getDestDatabaseObject());
+       String destSchema = DBUtil.getSchemaNameFromDbObject(prov.getDestDatabaseObject());
 
-        String destCatalog = prov.getDestDatabaseObject().getCatalogName();
+       String destCatalog = prov.getDestDatabaseObject().getCatalogName();
 
-        TableInfo pasteToTableInfo = prov.getPasteToTableInfo(destConn, destSchema, destCatalog);
+       TableInfo pasteToTableInfo = prov.getPasteToTableInfo(destConn, destSchema, destCatalog);
 
-        int sourceObjectCount = 0;
-        for (IDatabaseObjectInfo info : sourceObjs)
-        {
-            if (!(info instanceof ITableInfo))
-            {
-                continue;
-            }
-            ITableInfo sourceTI = (ITableInfo) info;
-            sendTableCopyStarted(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount + 1);
-            try
-            {
-                int destTableCount = DBUtil.getTableCount(destSession,
-                      destCatalog,
-                      destSchema,
-                      chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(),
-                      DialectFactory.DEST_TYPE,
-                      prov.getWhereClause());
+       execDeletes(sourceObjs, destCatalog, destSchema, pasteToTableInfo);
 
-                if (destTableCount == -1)
-                {
-                    createTable(sourceTI, chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(), destSchema, destCatalog);
-                }
 
-                if (destTableCount > 0)
-                {
-                    try
-                    {
-                        if (pref.appendRecordsToExisting())
-                        {
-                            /* Do nothing */
-                        }
-                        else if (pref.deleteTableData(chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName()))
-                        {
-                            // Yes || Yes to all
-                            DBUtil.deleteDataInExistingTable(destSession,
-                                  destCatalog,
-                                  destSchema,
-                                  chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName());
-                        }
-                        else
-                        {
-                            continue; // skip this table, try the next.
-                        }
+       int sourceObjectCount = 0;
+       for (IDatabaseObjectInfo info : sourceObjs)
+       {
+          if (!(info instanceof ITableInfo))
+          {
+             continue;
+          }
+          ITableInfo sourceTI = (ITableInfo) info;
+          sendTableCopyStarted(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount + 1);
+          try
+          {
+             int destTableCount = DBUtil.getTableCount(destSession,
+                   destCatalog,
+                   destSchema,
+                   chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(),
+                   DialectFactory.DEST_TYPE,
+                   prov.getWhereClause());
 
-                    }
-                    catch (UserCancelledOperationException e)
-                    {
-                        cancelled = true;
-                        break;
-                    }
-                }
+             if (destTableCount == -1)
+             {
+                createTable(sourceTI, chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(), destSchema, destCatalog);
+             }
 
-                copyTable(sourceTI, pasteToTableInfo, counts[sourceObjectCount]);
+             // See execDeletes(...)
+             //if (destTableCount > 0)
+             //{
+             //    try
+             //    {
+             //        if (pref.appendRecordsToExisting())
+             //        {
+             //            /* Do nothing */
+             //        }
+             //        else if (pref.deleteTableData(chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName()))
+             //        {
+             //            // Yes || Yes to all
+             //            DBUtil.deleteDataInExistingTable(destSession,
+             //                  destCatalog,
+             //                  destSchema,
+             //                  chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName());
+             //        }
+             //        else
+             //        {
+             //            continue; // skip this table, try the next.
+             //        }
+             //
+             //    }
+             //    catch (UserCancelledOperationException e)
+             //    {
+             //        cancelled = true;
+             //        break;
+             //    }
+             //}
 
-                if (sourceObjectCount == sourceObjs.size() - 1 && !cancelled)
-                {
-                    // We just copied the last table.  Now it is safe to copy the
-                    // constraints.(Well, that is, if all FK dependencies are met
-                    // in the group of tables being copied. 
-                    // TODO: new feature could be to examine table list for FK's 
-                    // in tables not in the list then prompt the user to add 
-                    // those missing tables to the list.
-                    copyConstraints(sourceObjs);
-                }
-                if (!cancelled)
-                {
-                    sendTableCopyFinished(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount + 1);
-                    sleep(prefs.getTableDelayMillis());
-                }
-            }
-            catch (SQLException e)
-            {
-                encounteredException = true;
-                sendErrorEvent(ErrorEvent.SQL_EXCEPTION_TYPE, e);
-                break;
-            }
-            catch (MappingException e)
-            {
-                encounteredException = true;
-                sendErrorEvent(ErrorEvent.MAPPING_EXCEPTION_TYPE, e);
-                break;
-            }
-            catch (UserCancelledOperationException e)
-            {
-                cancelled = true;
-                break;
-            }
-            catch (Exception e)
-            {
-                encounteredException = true;
-                sendErrorEvent(ErrorEvent.GENERIC_EXCEPTION, e);
-                break;
-            }
-            sourceObjectCount++;
-        }
-        restoreAutoCommit(destConn);
-        if (cancelled)
-        {
-            sendErrorEvent(ErrorEvent.USER_CANCELLED_EXCEPTION_TYPE);
-            return;
-        }
-        if (encounteredException)
-        {
-           try
-           {
-              // An error may have occurred after the table was created
-              // especially by an erroneous WHERE-Clause the user entered.
-              // We try to reload the Object tree to make the new table visible.
-              reloadObjectTree();
-           }
-           catch (Exception e)
-           {
-              // Do nothing. The orginal exception is the important one.
-           }
+             copyTable(sourceTI, pasteToTableInfo, counts[sourceObjectCount]);
 
-           return;
-        }
-        end = System.currentTimeMillis();
+             if (sourceObjectCount == sourceObjs.size() - 1 && !cancelled)
+             {
+                // We just copied the last table.  Now it is safe to copy the
+                // constraints.(Well, that is, if all FK dependencies are met
+                // in the group of tables being copied.
+                // TODO: new feature could be to examine table list for FK's
+                // in tables not in the list then prompt the user to add
+                // those missing tables to the list.
+                copyConstraints(sourceObjs);
+             }
+             if (!cancelled)
+             {
+                sendTableCopyFinished(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount + 1);
+                sleep(prefs.getTableDelayMillis());
+             }
+          }
+          catch (SQLException e)
+          {
+             encounteredException = true;
+             sendErrorEvent(ErrorEvent.SQL_EXCEPTION_TYPE, e);
+             break;
+          }
+          catch (MappingException e)
+          {
+             encounteredException = true;
+             sendErrorEvent(ErrorEvent.MAPPING_EXCEPTION_TYPE, e);
+             break;
+          }
+          catch (UserCancelledOperationException e)
+          {
+             cancelled = true;
+             break;
+          }
+          catch (Exception e)
+          {
+             encounteredException = true;
+             sendErrorEvent(ErrorEvent.GENERIC_EXCEPTION, e);
+             break;
+          }
+          sourceObjectCount++;
+       }
+       restoreAutoCommit(destConn);
+       if (cancelled)
+       {
+          sendErrorEvent(ErrorEvent.USER_CANCELLED_EXCEPTION_TYPE);
+          return;
+       }
+       if (encounteredException)
+       {
+          try
+          {
+             // An error may have occurred after the table was created
+             // especially by an erroneous WHERE-Clause the user entered.
+             // We try to reload the Object tree to make the new table visible.
+             reloadObjectTree();
+          }
+          catch (Exception e)
+          {
+             // Do nothing. The orginal exception is the important one.
+          }
+
+          return;
+       }
+       end = System.currentTimeMillis();
 
        reloadObjectTree();
 
-        notifyCopyFinished();
+       notifyCopyFinished();
     }
+
+   private void execDeletes(List<IDatabaseObjectInfo> sourceObjs, String destCatalog, String destSchema, TableInfo pasteToTableInfo)
+   {
+      try
+      {
+         if (pref.appendRecordsToExisting())
+         {
+            return;
+         }
+
+         ArrayList<ITableInfo> destTablesToEmpty = new ArrayList<>();
+         for (IDatabaseObjectInfo sourceObj : sourceObjs)
+         {
+            if (!(sourceObj instanceof ITableInfo))
+            {
+               continue;
+            }
+            ITableInfo sourceTI = (ITableInfo) sourceObj;
+
+            ITableInfo destTableInfo = chooseDestTableInfo(sourceTI, pasteToTableInfo);
+
+            int destTableCount = DBUtil.getTableCount(destSession,
+                  destCatalog,
+                  destSchema,
+                  destTableInfo.getSimpleName(),
+                  DialectFactory.DEST_TYPE,
+                  prov.getWhereClause());
+
+            if (destTableCount > 0)
+            {
+               destTablesToEmpty.add(destTableInfo);
+            }
+         }
+
+         if(destTablesToEmpty.isEmpty())
+         {
+            return;
+         }
+
+         // The sourceObjs are in insertion order, see CopyTableCommand.getInsertionOrder()
+         Collections.reverse(destTablesToEmpty);
+
+         for (ITableInfo toEmpty : destTablesToEmpty)
+         {
+            if(pref.deleteTableData(toEmpty.getSimpleName()))
+            {
+               DBUtil.deleteDataInExistingTable(destSession, destCatalog, destSchema, toEmpty.getSimpleName());
+            }
+         }
+      }
+      catch (UserCancelledOperationException e)
+      {
+         cancelled = true;
+      }
+      catch (SQLException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
 
    private void reloadObjectTree()
    {

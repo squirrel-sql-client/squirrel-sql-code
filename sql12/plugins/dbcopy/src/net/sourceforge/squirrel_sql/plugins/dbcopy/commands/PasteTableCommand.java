@@ -20,11 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.commands;
  */
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.CopyProgressMonitor;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.CopyScripter;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.I18NBaseObject;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.*;
 
 /** 
  * This class represents the command that gets executed when the user clicks 
