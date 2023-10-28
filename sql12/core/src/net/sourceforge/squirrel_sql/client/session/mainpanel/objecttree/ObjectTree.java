@@ -698,6 +698,11 @@ public class ObjectTree extends JTree
 		}
 	}
 
+	public ISession getSession()
+	{
+		return _session;
+	}
+
 	public void dispose()
 	{
 		_dbObjType_menuEntries.clear();

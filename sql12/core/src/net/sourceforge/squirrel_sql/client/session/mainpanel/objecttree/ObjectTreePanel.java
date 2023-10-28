@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.procedure.ProcedureColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinder;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeSearchResultFuture;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -757,12 +758,14 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		// First check already expanded nodes only.
 		// This should go fast which allows to execute all tasks immediately.
-		ObjectTreeSearchResultFuture future = otm.findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), false, goToNextResultHandle);
+		//ObjectTreeSearchResultFuture future = otm.findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), false, goToNextResultHandle);
+		ObjectTreeSearchResultFuture future = new ObjectTreeFinder(_tree).findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), false, goToNextResultHandle);
 		future.executeTillFinishNow();
 
 		if (null == future.getTreePath())
 		{
-			future = otm.findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), true, goToNextResultHandle);
+			//future = otm.findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), true, goToNextResultHandle);
+			future = new ObjectTreeFinder(_tree).findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), true, goToNextResultHandle);
 		}
 		return future;
 	}
