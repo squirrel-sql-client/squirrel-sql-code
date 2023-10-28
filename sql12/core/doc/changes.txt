@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#1522 Object tree: New right mouse submenu "Save/restore selection"
+  that offers several functions to save and restore Object tree selections.
+
 Refactoring: The "SQL Scripts"-Plugin's functionality was moved to SQuirreL's core.
   The "SQL Scripts"-Plugin won't be shipped anymore
   and in case it is still found it is programmatically kept from being loaded.

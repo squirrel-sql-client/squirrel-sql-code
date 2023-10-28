@@ -1,22 +1,18 @@
 package net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.sql.SQLException;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ObjectTreeSelectionUtil
 {
@@ -49,6 +45,8 @@ public class ObjectTreeSelectionUtil
             IDatabaseObjectInfo databaseObjectInfo = objectTreeNode.getDatabaseObjectInfo();
             objectTreePathSelection.getSimpleNamePath().add(databaseObjectInfo.getSimpleName());
          }
+
+         objectTreePathSelection.setTypeName(selectedNode.getDatabaseObjectType().getName());
       }
 
       Collections.sort(objectTreeSelection.getObjectTreePathSelections(), (ps1, ps2) -> compareSelections(ps1, ps2));
@@ -114,23 +112,23 @@ public class ObjectTreeSelectionUtil
 
    private static void applyObjectTreeSelectionFromThisNodeOn(IObjectTreeAPI tree, ObjectTreeNode node, ObjectTreeSelection objectTreeSelection)
    {
-      HashSet<String> selectedNames = new HashSet<>();
+      HashMap<String, ObjectTreePathSelection> selectedNames_objectTreePathSelection = new HashMap<>();
       for (ObjectTreePathSelection objectTreePathSelection : objectTreeSelection.getObjectTreePathSelections())
       {
          List<String> simpleNamePath = objectTreePathSelection.getSimpleNamePath();
 
          if (!simpleNamePath.isEmpty())
          {
-            selectedNames.add(simpleNamePath.get(simpleNamePath.size() - 1));
+            selectedNames_objectTreePathSelection.put(simpleNamePath.get(simpleNamePath.size() - 1).toLowerCase(), objectTreePathSelection);
          }
       }
 
-      applySelections(tree, node, selectedNames);
+      applySelections(tree, node, selectedNames_objectTreePathSelection);
    }
 
-   private static void applySelections(IObjectTreeAPI tree, ObjectTreeNode curNode, HashSet<String> selectedNames)
+   private static void applySelections(IObjectTreeAPI tree, ObjectTreeNode curNode, HashMap<String, ObjectTreePathSelection> selectedNames_objectTreePathSelection)
    {
-      if(selectedNames.contains(curNode.getDatabaseObjectInfo().getSimpleName().toLowerCase()))
+      if(isNodeInSelection(curNode, selectedNames_objectTreePathSelection))
       {
          if (curNode.getParent() instanceof ObjectTreeNode)
          {
@@ -139,10 +137,7 @@ public class ObjectTreeSelectionUtil
          tree.getObjectTree().addSelectionPath(new TreePath(curNode.getPath()));
       }
 
-      //Stream.of(curNode.getExpanders()).forEach(exp -> createChildren(tree, curNode, exp));
-
-      INodeExpander[] expanders = tree.getObjectTree().getObjectTreeModel().getExpanders(curNode.getDatabaseObjectType());
-      Stream.of(expanders).forEach(exp -> initChildren(tree, curNode, exp));
+      tree.getObjectTree().expandNode(curNode);
 
       for (int i = 0; i < curNode.getChildCount(); i++)
       {
@@ -152,46 +147,17 @@ public class ObjectTreeSelectionUtil
             s_log.error("ObjectTreeNode \"" + child + "\" is not an instance of ObjectTreeNode but of " + (null == child ? "<null>" : child.getClass().getName()));
             continue;
          }
-         applySelections(tree, (ObjectTreeNode) child, selectedNames);
+         applySelections(tree, (ObjectTreeNode) child, selectedNames_objectTreePathSelection);
       }
 
    }
 
-   private static void initChildren(IObjectTreeAPI tree, ObjectTreeNode curNode, INodeExpander exp)
+   private static boolean isNodeInSelection(ObjectTreeNode curNode, HashMap<String, ObjectTreePathSelection> selectedNames_objectTreePathSelection)
    {
-      try
-      {
-         if(0 < curNode.getChildCount() || curNode.hasNoChildrenFoundWithExpander() || false == curNode.getAllowsChildren())
-         {
-            return;
-         }
+      IDatabaseObjectInfo databaseObjectInfo = curNode.getDatabaseObjectInfo();
 
-         List<ObjectTreeNode> children = exp.createChildren(tree.getSession(), curNode);
-         if(children.isEmpty())
-         {
-            curNode.setNoChildrenFoundWithExpander(true);
-         }
-         else
-         {
-            for (int j = 0; j < children.size(); j++)
-            {
-               ObjectTreeNode newChild = children.get(j);
-               if ( 0 == tree.getObjectTree().getObjectTreeModel().getExpanders(newChild.getDatabaseObjectType()).length)
-               {
-                  newChild.setAllowsChildren(false);
-               }
-               else
-               {
-                  newChild.setAllowsChildren(true);
-               }
-               curNode.add(newChild);
-            }
-         }
-      }
-      catch (SQLException e)
-      {
-         throw Utilities.wrapRuntime(e);
-      }
+      return   selectedNames_objectTreePathSelection.containsKey(databaseObjectInfo.getSimpleName().toLowerCase())
+            && databaseObjectInfo.getDatabaseObjectType().getName().equals(selectedNames_objectTreePathSelection.get(databaseObjectInfo.getSimpleName().toLowerCase()).getTypeName());
    }
 
    private static boolean applySelectionToSiblings(DatabaseObjectType databaseObjectType)

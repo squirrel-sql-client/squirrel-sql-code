@@ -58,9 +58,6 @@ public class ObjectTree extends JTree
     /** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(ObjectTree.class);
 
-	/** Model for this tree. */
-	private final ObjectTreeModel _model;
-
 	/** Current session. */
 	private final ISession _session;
 
@@ -105,8 +102,8 @@ public class ObjectTree extends JTree
 
 			setRowHeight(getFontMetrics(getFont()).getHeight());
 			_session = session;
-			_model = (ObjectTreeModel)getModel();
-			setModel(_model);
+			//_model = (ObjectTreeModel)getModel();
+			//setModel(_model);
 
 			addTreeExpansionListener(new NodeExpansionListener());
 
@@ -149,7 +146,7 @@ public class ObjectTree extends JTree
 			addToPopup(DatabaseObjectType.TABLE, DBDiffObjectTreeMenuFactory.createMenu());
 
 			addMouseListener(new ObjectTreeMouseListener());
-			setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
+			setCellRenderer(new ObjectTreeCellRenderer(getObjectTreeModel(), _session));
 
 			SwingUtilities.invokeLater(() ->
 			{
@@ -265,16 +262,6 @@ public class ObjectTree extends JTree
 	}
 
 	/**
-	 * Return the typed data model for this tree.
-	 *
-	 * @return	The typed data model for this tree.
-	 */
-	public ObjectTreeModel getTypedModel()
-	{
-		return _model;
-	}
-
-	/**
 	 * Refresh tree.
     * @param reloadSchemaInfo
     */
@@ -309,7 +296,7 @@ public class ObjectTree extends JTree
    {
       final TreePath[] previouslySelectedTreePaths = getSelectionPaths();
 
-      ObjectTreeNode root = _model.getRootObjectTreeNode();
+      ObjectTreeNode root = getObjectTreeModel().getRootObjectTreeNode();
       root.removeAllChildren();
       fireObjectTreeCleared();
       expandTree(root, previouslySelectedTreePaths, false);
@@ -392,7 +379,7 @@ public class ObjectTree extends JTree
       }
    }
 
-	private void expandNode(ObjectTreeNode node)
+	public void expandNode(ObjectTreeNode node)
 	{
 		if (node == null)
 		{
@@ -404,7 +391,7 @@ public class ObjectTree extends JTree
 			// Add together the standard expanders for this node type and any
 			// individual expanders that there are for the node and process them.
 			final DatabaseObjectType dboType = node.getDatabaseObjectType();
-			INodeExpander[] stdExpanders = _model.getExpanders(dboType);
+			INodeExpander[] stdExpanders = getObjectTreeModel().getExpanders(dboType);
 			INodeExpander[] extraExpanders = node.getExpanders();
 			if (stdExpanders.length > 0 || extraExpanders.length > 0)
 			{
@@ -423,7 +410,7 @@ public class ObjectTree extends JTree
 					System.arraycopy(stdExpanders, 0, expanders, 0, stdExpanders.length);
 					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length, extraExpanders.length);
 				}
-				new TreeLoader(_session, this, _model, node, expanders).execute();
+				new TreeLoader(_session, this, getObjectTreeModel(), node, expanders).execute();
 			}
 		}
 	}

@@ -28,4 +28,9 @@ public class ObjectTreeSelectionStoreItemWrapper
    {
       return _item.getObjectTreeSelection();
    }
+
+   public ObjectTreeSelectionStoreItem getItem()
+   {
+      return _item;
+   }
 }

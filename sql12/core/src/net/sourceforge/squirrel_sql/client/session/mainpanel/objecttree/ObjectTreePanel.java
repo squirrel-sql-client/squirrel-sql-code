@@ -335,7 +335,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
 		}
-		_tree.getTypedModel().addExpander(dboType, expander);
+		_tree.getObjectTreeModel().addExpander(dboType, expander);
 	}
 
    /**
@@ -630,7 +630,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 */
 	public DatabaseObjectType[] getDatabaseObjectTypes()
 	{
-		return _tree.getTypedModel().getDatabaseObjectTypes();
+		return _tree.getObjectTreeModel().getDatabaseObjectTypes();
 	}
 
 	/**
@@ -668,7 +668,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("ObjectTreeNode[] == null");
 		}
-		ObjectTreeModel model = _tree.getTypedModel();
+		ObjectTreeModel model = _tree.getObjectTreeModel();
 		for (int i = 0; i < nodes.length; ++i)
 		{
 			model.removeNodeFromParent(nodes[i]);
@@ -774,7 +774,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 */
 	public void addKnownDatabaseObjectType(DatabaseObjectType dboType)
 	{
-		_tree.getTypedModel().addKnownDatabaseObjectType(dboType);
+		_tree.getObjectTreeModel().addKnownDatabaseObjectType(dboType);
 	}
 
 	/**

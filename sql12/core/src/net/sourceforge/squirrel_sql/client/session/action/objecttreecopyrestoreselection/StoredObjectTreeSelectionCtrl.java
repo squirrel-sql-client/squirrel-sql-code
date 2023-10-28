@@ -37,12 +37,27 @@ public class StoredObjectTreeSelectionCtrl
 
 
       _dlg.btnOk.addActionListener(e -> onOk());
+      _dlg.btnCancel.addActionListener(e -> close());
+      _dlg.btnDeleteSelected.addActionListener(e -> onDeleteSelected());
 
       GUIUtils.initLocation(_dlg, 500, 500);
       GUIUtils.enableCloseByEscape(_dlg);
 
       _dlg.setVisible(true);
 
+   }
+
+   private void onDeleteSelected()
+   {
+      DefaultListModel<ObjectTreeSelectionStoreItemWrapper> model =
+            (DefaultListModel<ObjectTreeSelectionStoreItemWrapper>) _dlg.lstObjectTreeSelections.getModel();
+
+      for (int selectedIndex : _dlg.lstObjectTreeSelections.getSelectedIndices())
+      {
+         ObjectTreeSelectionStoreItemWrapper wrapper = model.getElementAt(selectedIndex);
+         Main.getApplication().getObjectTreeSelectionStoreManager().getItems().remove(wrapper.getItem());
+         model.remove(selectedIndex);
+      }
    }
 
    private void onListClicked(MouseEvent e)

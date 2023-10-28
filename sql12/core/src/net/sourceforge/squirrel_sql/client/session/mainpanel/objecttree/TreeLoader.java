@@ -100,7 +100,7 @@ public class TreeLoader
 						DatabaseObjectType childNodeDboType = childNode.getDatabaseObjectType();
 						if (childNodeDboType != lastDboType)
 						{
-							this._objectTree.getTypedModel().addKnownDatabaseObjectType(childNodeDboType);
+							this._objectTree.getObjectTreeModel().addKnownDatabaseObjectType(childNodeDboType);
 							lastDboType = childNodeDboType;
 							if (this._model.getExpanders(childNodeDboType).length > 0)
 							{
