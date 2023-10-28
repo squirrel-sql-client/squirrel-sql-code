@@ -503,4 +503,9 @@ public class ApplicationFiles
    {
       return new File(_userSettingsDir + File.separator + "scriptPrefs.json");
    }
+
+   public File getObjectTreeSelectionStoreJsonFile()
+   {
+      return new File(_userSettingsDir + File.separator + "objectTreeSelectionStore.json");
+   }
 }

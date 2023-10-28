@@ -13,6 +13,7 @@ import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.DBDiffS
 import net.sourceforge.squirrel_sql.client.session.action.file.*;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAction;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
+import net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection.*;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommitSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
@@ -257,6 +258,12 @@ public class ActionRegistry
       actionCollection.add(new CreateFileOfCurrentSQLAction());
       actionCollection.add(new CreateFileOfSelectedTablesAction());
       actionCollection.add(new CreateInsertStatementsFileOfSelectedTablesSQLAction());
+
+      actionCollection.add(new CopyObjectTreeSelectionToClipAction());
+      actionCollection.add(new ApplyObjectTreeSelectionFromClipAction());
+      actionCollection.add(new StoreObjectTreeSelectionAction());
+      actionCollection.add(new StoreObjectTreeSelectionNamedAction());
+      actionCollection.add(new ApplyStoredObjectTreeSelectionAction());
    }
 
    public ActionCollection getActionCollection()

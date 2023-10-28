@@ -23,16 +23,15 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionColoringUtil;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffObjectTreeMenuFactory;
+import net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection.CopyRestoreSelectionMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.menuattic.AtticHandler;
 import net.sourceforge.squirrel_sql.client.session.menuattic.MenuOrigin;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -54,7 +53,7 @@ import java.util.*;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class ObjectTree extends JTree
+public class ObjectTree extends JTree
 {
     /** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(ObjectTree.class);
@@ -69,16 +68,13 @@ class ObjectTree extends JTree
 	 * Collection of popup menus (<TT>JPopupMenu</TT> instances) for the
 	 * object tree. Keyed by node type.
 	 */
-	private final Map<IIdentifier, JPopupMenu> _popups = new HashMap<>();
+	private final Map<DatabaseObjectType, List<ObjectTreeMenuEntry>> _dbObjType_menuEntries = new HashMap<>();
 
 	/**
 	 * Global popup menu. This contains items that are to be displayed
 	 * in the popup menu no matter what items are selected in the tree.
 	 */
-	private final JPopupMenu _globalPopup = new JPopupMenu();
-
-	private final List<Action> _globalActions = new ArrayList<>();
-
+	private final List<ObjectTreeMenuEntry> _globalPopupMenuEntries = new ArrayList<>();
 
 	/**
 	 * String representation of the <TT>TreePath</TT> objects that have been
@@ -145,6 +141,8 @@ class ObjectTree extends JTree
 			addToPopup(actions.get(CopySimpleObjectNameAction.class));
 			addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
 
+			addToPopup(CopyRestoreSelectionMenuFactory.getObjectTreeMenu());
+
 			addToPopup(DatabaseObjectType.TABLE, SQLScriptMenuFactory.getObjectTreeMenu(DatabaseObjectType.TABLE));
 			addToPopup(DatabaseObjectType.VIEW, SQLScriptMenuFactory.getObjectTreeMenu(DatabaseObjectType.VIEW));
 
@@ -174,7 +172,12 @@ class ObjectTree extends JTree
 		}
 	}
 
-	// Mouse listener used to display popup menu.
+	public ObjectTreeModel getObjectTreeModel()
+	{
+		return (ObjectTreeModel) getModel();
+	}
+
+   // Mouse listener used to display popup menu.
    private class ObjectTreeMouseListener extends MouseAdapter {
       public void mousePressed(MouseEvent evt)
       {
@@ -447,8 +450,8 @@ class ObjectTree extends JTree
 			throw new IllegalArgumentException("Null Action passed");
 		}
 
-		final JPopupMenu pop = getPopup(dboType, true);
-		pop.add(action);
+		List<ObjectTreeMenuEntry> objectTreeMenuEntries = _dbObjType_menuEntries.computeIfAbsent(dboType, k -> new ArrayList<>());
+		objectTreeMenuEntries.add(new ObjectTreeMenuEntry(action));
 	}
 
 	/**
@@ -465,14 +468,8 @@ class ObjectTree extends JTree
 		{
 			throw new IllegalArgumentException("Null Action passed");
 		}
-		_globalPopup.add(action);
-		_globalActions.add(action);
 
-		for (Iterator<JPopupMenu> it = _popups.values().iterator(); it.hasNext();)
-		{
-			JPopupMenu pop = it.next();
-			pop.add(action);
-		}
+		_globalPopupMenuEntries.add(new ObjectTreeMenuEntry(action));
 	}
 
 	/**
@@ -497,8 +494,8 @@ class ObjectTree extends JTree
 			throw new IllegalArgumentException("JMenu == null");
 		}
 
-		final JPopupMenu pop = getPopup(dboType, true);
-		pop.add(menu);
+      List<ObjectTreeMenuEntry> objectTreeMenuEntries = _dbObjType_menuEntries.computeIfAbsent(dboType, k -> new ArrayList<>());
+      objectTreeMenuEntries.add(new ObjectTreeMenuEntry(menu));
 	}
 
 	/**
@@ -515,51 +512,52 @@ class ObjectTree extends JTree
 		{
 			throw new IllegalArgumentException("JMenu == null");
 		}
-		_globalPopup.add(menu);
-		_globalActions.add(menu.getAction());
-
-		for (Iterator<JPopupMenu> it = _popups.values().iterator(); it.hasNext();)
-		{
-			JPopupMenu pop = it.next();
-			pop.add(menu);
-		}
+		_globalPopupMenuEntries.add(new ObjectTreeMenuEntry(menu));
 	}
 
 	/**
 	 * Get the popup menu for the passed database object type. If one
-	 * doesn't exist then create one if requested to do so.
+	 * doesn't exist then storeByDboType one if requested to do so.
 
 	 * @param	dboType		Database Object Type.
-	 * @param	create		If <TT>true</TT> popup will eb created if it
+	 * @param	storeByDboType		If <TT>true</TT> popup will eb created if it
 	 *						doesn't exist.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> or
 	 *			<TT>DatabaseObjectType</TT>thrown.
 	 */
-	private JPopupMenu getPopup(DatabaseObjectType dboType, boolean create)
+	private JPopupMenu getPopup(DatabaseObjectType dboType)
 	{
 		if (dboType == null)
 		{
 			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
-		IIdentifier key = dboType.getIdentifier();
-		JPopupMenu pop = _popups.get(key);
-		if (pop == null && create)
+
+		List<ObjectTreeMenuEntry> dboTypeMenuEntries = _dbObjType_menuEntries.get(dboType);
+		if (dboTypeMenuEntries != null)
 		{
-			pop = new JPopupMenu();
-			_popups.put(key, pop);
-			for (Iterator<Action> it = _globalActions.iterator(); it.hasNext();)
+			return toPopupMenu(_globalPopupMenuEntries, dboTypeMenuEntries);
+		}
+		else
+		{
+			return toPopupMenu(_globalPopupMenuEntries);
+		}
+
+	}
+
+	private JPopupMenu toPopupMenu(List<ObjectTreeMenuEntry> ... objectTreeMenuEntryLists)
+	{
+		JPopupMenu ret = new JPopupMenu();
+
+		for (List<ObjectTreeMenuEntry> objectTreeMenuEntryList : objectTreeMenuEntryLists)
+		{
+			for (ObjectTreeMenuEntry globalPopupMenuEntry : objectTreeMenuEntryList)
 			{
-				Action action = it.next();
-				JMenuItem menuItem = pop.add(action);
-				if (StringUtilities.isEmpty(menuItem.getText(), true))
-				{
-					s_log.warn("Object tree popup menu item for Action " + (null == action ? "null" : action.getClass().getName()) + " has not menu title.");
-				}
+				globalPopupMenuEntry.addToPopup(ret);
 			}
 		}
-		return pop;
+		return ret;
 	}
 
 	/**
@@ -649,19 +647,19 @@ class ObjectTree extends JTree
 				}
 			}
 
-			JPopupMenu pop = null;
+			JPopupMenu ret;
 			if (sameType)
 			{
-				pop = getPopup(dboType, false);
+				ret = getPopup(dboType);
 			}
-			if (pop == null)
+			else
 			{
-				pop = _globalPopup;
+				ret = toPopupMenu(_globalPopupMenuEntries);
 			}
 
-			AtticHandler.initAtticForMenu(pop, MenuOrigin.OBJECT_TREE);
+			AtticHandler.initAtticForMenu(ret, MenuOrigin.OBJECT_TREE);
 
-			pop.show(this, x, y);
+			ret.show(this, x, y);
 		}
 	}
 
@@ -715,18 +713,8 @@ class ObjectTree extends JTree
 
 	public void dispose()
 	{
-		// Menues that are also shown in the main window Session menu might
-		// be in this popup. If we don't remove them, the Session won't be Garbage Collected.
-		_globalPopup.removeAll();
-		_globalPopup.setInvoker(null);
-		_globalActions.clear();
-		for(Iterator<JPopupMenu> i=_popups.values().iterator(); i.hasNext();)
-		{
-			JPopupMenu popup = i.next();
-			popup.removeAll();
-			popup.setInvoker(null);
-		}
-		_popups.clear();
+		_dbObjType_menuEntries.clear();
+		_globalPopupMenuEntries.clear();
 	}
 
 	private final class NodeExpansionListener implements TreeExpansionListener

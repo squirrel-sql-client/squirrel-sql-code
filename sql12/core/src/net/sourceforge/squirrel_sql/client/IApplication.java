@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffState;
+import net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection.ObjectTreeSelectionStoreManager;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.prefs.SQLScriptPreferencesManager;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
@@ -60,6 +61,8 @@ import javax.swing.*;
  */
 public interface IApplication
 {
+   ObjectTreeSelectionStoreManager getObjectTreeSelectionStoreManager();
+
    interface IMenuIDs extends MainFrame.IMenuIDs
 	{
 		// Empty body.

@@ -753,7 +753,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     */
 	private ObjectTreeSearchResultFuture findObjectTreePath(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
 	{
-		ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
+		ObjectTreeModel otm = _tree.getObjectTreeModel();
 
 		// First check already expanded nodes only.
 		// This should go fast which allows to execute all tasks immediately.
@@ -996,7 +996,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
    }
 
    @Override
-   public JTree getObjectTree()
+   public ObjectTree getObjectTree()
    {
       return _tree;
    }
@@ -1012,6 +1012,12 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	public Frame getOwningFrame()
 	{
 		return GUIUtils.getOwningFrame(_tree);
+	}
+
+	@Override
+	public ObjectTreeNode getRootNode()
+	{
+		return (ObjectTreeNode) _tree.getModel().getRoot();
 	}
 
 	/**

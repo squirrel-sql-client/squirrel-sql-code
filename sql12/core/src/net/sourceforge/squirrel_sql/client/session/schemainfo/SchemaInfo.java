@@ -202,7 +202,7 @@ public class SchemaInfo
    	breathing();
    	
       _schemaInfoCache.clearAllTableData();
-   	loadTables(null, null, null, null, 0);
+   	loadTables(Main.getApplication().getCatalogLoadModelManager().createAliasCatalogLoadModel(_session), null, null, null, 0);
       notifyTablesLoaded();   	
 
    	GUIUtils.processOnSwingEventThread(() -> reloadAllTablesFinished());

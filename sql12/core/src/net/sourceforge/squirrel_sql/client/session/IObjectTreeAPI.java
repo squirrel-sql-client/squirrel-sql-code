@@ -21,10 +21,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.FindInObjectTreeController;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeSearchResultFuture;
@@ -291,9 +288,11 @@ public interface IObjectTreeAPI extends IHasIdentifier
 
    Component getDetailTabComp();
 
-	JTree getObjectTree();
+	ObjectTree getObjectTree();
 
 	ObjectTreePosition getObjectTreePosition();
 
    Frame getOwningFrame();
+
+   ObjectTreeNode getRootNode();
 }

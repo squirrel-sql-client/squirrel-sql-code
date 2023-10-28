@@ -49,6 +49,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffState;
+import net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection.ObjectTreeSelectionStoreManager;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.prefs.SQLScriptPreferencesManager;
 import net.sourceforge.squirrel_sql.client.session.defaultentry.DefaultSQLEntryPanelFactory;
@@ -202,6 +203,8 @@ public class Application implements IApplication
 
 	private SQLScriptPreferencesManager _sqlScriptPreferencesManager = new SQLScriptPreferencesManager();
 
+	private ObjectTreeSelectionStoreManager _objectTreeSelectionStoreManager = new ObjectTreeSelectionStoreManager();
+
 	public Application()
 	{
 	}
@@ -347,9 +350,11 @@ public class Application implements IApplication
       saveUserSpecificWikiConfigurations();
       s_log.info("saveApplicationState: saveUserSpecificWikiConfigurations() ELAPSED: " + (System.currentTimeMillis() - begin));
 
-      // Save user specific WIKI configurations
       _catalogLoadModelManager.save();
       s_log.info("saveApplicationState: _catalogLoadModelManager.save() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      _objectTreeSelectionStoreManager.save();
+      s_log.info("saveApplicationState: _objectTreeSelectionStoreManager.save() ELAPSED: " + (System.currentTimeMillis() - begin));
 
 		_globalPreferences.setFirstRun(false);
 		_globalPreferences.save();
@@ -588,7 +593,13 @@ public class Application implements IApplication
       return _catalogLoadModelManager;
    }
 
-	@Override
+   @Override
+   public ObjectTreeSelectionStoreManager getObjectTreeSelectionStoreManager()
+   {
+		return _objectTreeSelectionStoreManager;
+   }
+
+   @Override
 	public IPlugin getDummyAppPlugin()
 	{
 		return _dummyPlugin;
