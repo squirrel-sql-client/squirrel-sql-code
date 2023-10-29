@@ -122,27 +122,6 @@ public class SQLScriptPreferencesPanel extends JPanel
       qualifyTableNamesCheckBox.setToolTipText(cbToolTipText);
       panel.add(qualifyTableNamesCheckBox, c);
 
-      qualifyTableNamesCheckBox.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onQualifyTableNamesCheckBox();
-         }
-      });
-   }
-
-   private void onQualifyTableNamesCheckBox()
-   {
-      if (qualifyTableNamesCheckBox.isSelected())
-      {
-         useDoubleQuotesCheckBox.setEnabled(true);
-      }
-      else
-      {
-         useDoubleQuotesCheckBox.setSelected(false);
-         useDoubleQuotesCheckBox.setEnabled(false);
-      }
    }
 
    private void addDeleteRefActionCheckBox(JPanel panel, int col, int row)
@@ -150,14 +129,10 @@ public class SQLScriptPreferencesPanel extends JPanel
       GridBagConstraints c = new GridBagConstraints();
       c.gridx = col;
       c.gridy = row;
+      c.insets = new Insets(5,0,0,0);
       c.anchor = GridBagConstraints.WEST;
-      //i18n[SQLScriptPreferencesPanel.deleteRefActionCheckboxLabel=Add delete
-      //referential action to the FK definition]
-      String cbLabelStr =
-            s_stringMgr.getString("SQLScriptPreferencesPanel.deleteRefActionCheckboxLabel");
-      // i18n[SQLScriptPreferencesPanel.deleteRefActionToolTip=Append ON DELETE ...]
-      String cbToolTipText =
-            s_stringMgr.getString("SQLScriptPreferencesPanel.deleteRefActionToolTip");
+      String cbLabelStr = s_stringMgr.getString("SQLScriptPreferencesPanel.deleteRefActionCheckboxLabel");
+      String cbToolTipText = s_stringMgr.getString("SQLScriptPreferencesPanel.deleteRefActionToolTip");
       deleteReferentialActionCheckbox = new JCheckBox(cbLabelStr);
       deleteReferentialActionCheckbox.setToolTipText(cbToolTipText);
 
@@ -261,7 +236,7 @@ public class SQLScriptPreferencesPanel extends JPanel
       GridBagConstraints c = new GridBagConstraints();
       c.gridx = col;
       c.gridy = row;
-      c.insets = new Insets(5, 25, 0, 0);
+      //c.insets = new Insets(5, 0, 0, 0);
       c.anchor = GridBagConstraints.WEST;
 
       useDoubleQuotesCheckBox = new JCheckBox(s_stringMgr.getString("SQLScriptPreferencesPanel.useDoubleQuotesForQualifying"));
@@ -331,8 +306,7 @@ public class SQLScriptPreferencesPanel extends JPanel
    private void loadData()
    {
       qualifyTableNamesCheckBox.setSelected(_prefs.isQualifyTableNames());
-      useDoubleQuotesCheckBox.setEnabled(_prefs.isQualifyTableNames());
-      useDoubleQuotesCheckBox.setSelected(_prefs.isQualifyTableNames() && _prefs.isUseDoubleQuotes());
+      useDoubleQuotesCheckBox.setSelected(_prefs.isUseDoubleQuotes());
       deleteReferentialActionCheckbox.setSelected(_prefs.isDeleteRefAction());
       deleteActionComboBox.setEnabled(deleteReferentialActionCheckbox.isSelected());
       deleteActionComboBox.setSelectedIndex(_prefs.getDeleteAction());

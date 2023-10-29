@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#1522 Copying qualified Object names from the Object tree used to always double quote the names.
+  Now it respects  the checkbox "Use double quotes for (") for qualifying"
+  at menu File --> Global Preferences --> tab "SQL Scripts"
+
 #1522 Object tree: New right mouse submenu "Save/restore selection"
   that offers several functions to save and restore Object tree selections.
 

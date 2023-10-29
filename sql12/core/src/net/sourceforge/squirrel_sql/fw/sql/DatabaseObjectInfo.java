@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import org.apache.commons.lang3.StringUtils;
 
@@ -236,11 +237,14 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
     		  
       try
       {
-         identifierQuoteString = md.getIdentifierQuoteString();
-
-         if (identifierQuoteString != null && identifierQuoteString.equals(" "))
+         if (Main.getApplication().getSQLScriptPreferencesManager().getPreferences().isUseDoubleQuotes())
          {
-            identifierQuoteString = null;
+            identifierQuoteString = md.getIdentifierQuoteString();
+
+            if (identifierQuoteString != null && identifierQuoteString.equals(" "))
+            {
+               identifierQuoteString = null;
+            }
          }
       }
       catch (SQLException ignore)
