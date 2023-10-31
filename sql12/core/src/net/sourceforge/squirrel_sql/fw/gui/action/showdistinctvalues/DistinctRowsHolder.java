@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 
 public class DistinctRowsHolder
 {
@@ -12,7 +12,7 @@ public class DistinctRowsHolder
 
    private ArrayList<Object[]> _distinctRowsInSourceTableOrder = new ArrayList<>();
 
-   private HashSet<String> _distinctCheck = new HashSet<>();
+   private HashMap<String, Object[]> _distinctCheckString_distincRow = new HashMap<>();
 
    public DistinctRowsHolder(ArrayList<ExtTableColumn> columnsToRespect)
    {
@@ -21,7 +21,7 @@ public class DistinctRowsHolder
 
    public void addRowDistinct(Object[] row)
    {
-      Object[] rowToRespect = new Object[_columnsToRespect.size()];
+      Object[] rowToRespect = new Object[_columnsToRespect.size() + 1]; // + 1 column for frequency
 
       String distinctCheckString = "";
 
@@ -34,12 +34,17 @@ public class DistinctRowsHolder
          rowToRespect[i] = row[extTableColumn.getModelIndex()];
       }
 
-      if(false == _distinctCheck.contains(distinctCheckString))
+      Object[] representantRow = _distinctCheckString_distincRow.get(distinctCheckString);
+      if( null == representantRow )
       {
-         _distinctCheck.add(distinctCheckString);
+         _distinctCheckString_distincRow.put(distinctCheckString, rowToRespect);
          _distinctRowsInSourceTableOrder.add(rowToRespect);
+         rowToRespect[rowToRespect.length - 1] = 1;
       }
-
+      else
+      {
+         representantRow[rowToRespect.length - 1] = ((Integer)representantRow[rowToRespect.length - 1]) + 1;
+      }
    }
 
    public List<Object[]> getDistinctRows()

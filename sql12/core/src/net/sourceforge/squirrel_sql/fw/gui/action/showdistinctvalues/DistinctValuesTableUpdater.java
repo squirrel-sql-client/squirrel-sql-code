@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.swing.table.TableColumn;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
@@ -8,12 +14,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.table.TableColumn;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class DistinctValuesTableUpdater
 {
@@ -155,6 +155,7 @@ public class DistinctValuesTableUpdater
       }
 
       List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
+      columnDisplayDefinitions.add(DistinctValuesUtil.createFrequencyColumn());
 
       fillTablePanel(distinctRowsHolder.getDistinctRows(), columnDisplayDefinitions);
 

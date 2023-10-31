@@ -1,13 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class DistinctValuesHolder
 {
@@ -91,12 +90,11 @@ public class DistinctValuesHolder
       }
 
       ArrayList<ColumnDisplayDefinition> ret = new ArrayList<>(originalDisplayDefinitions);
-      final ColumnDisplayDefinition dispDef = new ColumnDisplayDefinition(200, s_stringMgr.getString("DistinctValuesHolder.count.column.name"));
-      dispDef.setSqlType(Types.INTEGER);
-      dispDef.setSqlTypeName("INTEGER");
+      final ColumnDisplayDefinition dispDef = DistinctValuesUtil.createFrequencyColumn();
 
       ret.add(dispDef);
 
       return ret;
    }
+
 }

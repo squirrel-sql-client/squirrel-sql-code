@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+"Show distinct values..." dialog: The distinct rows displays now have an additional column
+  named "Frequency" which show how often a row occurs.
+  Note: To open the "Show distinct values..." dialog right click any table
+        and choose the "Show distinct values..." menu item.
+
 #1522 Copying qualified Object names from the Object tree used to always double quote the names.
   Now it respects  the checkbox "Use double quotes for (") for qualifying"
   at menu File --> Global Preferences --> tab "SQL Scripts"
