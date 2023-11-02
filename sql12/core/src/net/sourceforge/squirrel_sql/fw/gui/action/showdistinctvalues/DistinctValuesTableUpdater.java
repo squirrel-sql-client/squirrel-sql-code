@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.table.TableColumn;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
@@ -136,6 +137,7 @@ public class DistinctValuesTableUpdater
 
    private void doDistinctRows(DataSetViewerTable sourceTable, int[] selRows, ArrayList<ExtTableColumn> extTableColumns)
    {
+      long begMillis = System.currentTimeMillis();
       DistinctRowsHolder distinctRowsHolder = new DistinctRowsHolder(extTableColumns);
 
       if (null != selRows)
@@ -160,6 +162,9 @@ public class DistinctValuesTableUpdater
       fillTablePanel(distinctRowsHolder.getDistinctRows(), columnDisplayDefinitions);
 
       writeDistinctInRowStatusBar(distinctRowsHolder);
+
+      long distinctRowsTime = System.currentTimeMillis() - begMillis;
+      Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("DistinctValuesTableUpdater.distinct.rows.message", distinctRowsTime));
    }
 
    private void writeDistinctInRowStatusBar(DistinctRowsHolder distinctRowsHolder)
