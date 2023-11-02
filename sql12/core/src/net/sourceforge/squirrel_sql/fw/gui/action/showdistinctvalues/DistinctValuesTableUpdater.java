@@ -1,24 +1,24 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.table.TableColumn;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.swing.table.TableColumn;
-
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class DistinctValuesTableUpdater
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DistinctValuesTableUpdater.class);
+
+   public final static ILogger s_log = LoggerController.createLogger(DistinctValuesTableUpdater.class);
+
 
    private ShowDistinctValuesDlg _dlg;
 
@@ -34,6 +34,8 @@ public class DistinctValuesTableUpdater
 
       if(_dlg.optDistinctInColumn.isSelected())
       {
+         long begMillis = System.currentTimeMillis();
+
          DistinctValuesHolder distinctValuesHolder = new DistinctValuesHolder();
          for (int i=0; i < sourceTable.getDataSetViewerTableModel().getRowCount(); ++i)
          {
@@ -42,6 +44,9 @@ public class DistinctValuesTableUpdater
 
          final List<Object[]> distinctRows = distinctValuesHolder.getDistinctRows();
          fillTablePanel(distinctRows, distinctValuesHolder.maybeAppendCountColumn(Collections.singletonList(selectedColumn.getColumnDisplayDefinition())));
+
+         long distinctValuesTime = System.currentTimeMillis() - begMillis;
+         s_log.info("Building distinct values took " + distinctValuesTime + " Milli seconds");
 
          _dlg.lblStatus.setText(s_stringMgr.getString("ShowDistinctValuesCtrl.numberOfDistinctValuesInColumn", selectedColumn.getColumnDisplayDefinition().getColumnName(), distinctRows.size()));
       }
@@ -52,6 +57,7 @@ public class DistinctValuesTableUpdater
 
          if (_dlg.optDistinctInColumns.isSelected())
          {
+            long begMillis = System.currentTimeMillis();
             DistinctValuesHolder distinctValuesHolder = new DistinctValuesHolder();
             for (int selRowIx : selRows)
             {
@@ -63,6 +69,9 @@ public class DistinctValuesTableUpdater
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
             fillTablePanel(distinctValuesHolder.getDistinctRows(), distinctValuesHolder.maybeAppendCountColumn(columnDisplayDefinitions));
+
+            long distinctValuesTime = System.currentTimeMillis() - begMillis;
+            s_log.info("Building distinct values took " + distinctValuesTime + " Milli seconds");
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
@@ -78,6 +87,7 @@ public class DistinctValuesTableUpdater
 
          if (_dlg.optDistinctInColumns.isSelected())
          {
+            long begMillis = System.currentTimeMillis();
             DistinctValuesHolder distinctValuesHolder = new DistinctValuesHolder();
             for (int selRowIx : selRows)
             {
@@ -89,6 +99,9 @@ public class DistinctValuesTableUpdater
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
             fillTablePanel(distinctValuesHolder.getDistinctRows(), distinctValuesHolder.maybeAppendCountColumn(columnDisplayDefinitions));
+
+            long distinctValuesTime = System.currentTimeMillis() - begMillis;
+            s_log.info("Building distinct values took " + distinctValuesTime + " Milli seconds");
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
@@ -103,6 +116,7 @@ public class DistinctValuesTableUpdater
 
          if (_dlg.optDistinctInColumns.isSelected())
          {
+            long begMillis = System.currentTimeMillis();
             DistinctValuesHolder distinctValuesHolder = new DistinctValuesHolder();
             for (int rowIx = 0; rowIx < sourceTable.getRowCount(); ++rowIx)
             {
@@ -114,6 +128,9 @@ public class DistinctValuesTableUpdater
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
             fillTablePanel(distinctValuesHolder.getDistinctRows(), distinctValuesHolder.maybeAppendCountColumn(columnDisplayDefinitions));
+
+            long distinctValuesTime = System.currentTimeMillis() - begMillis;
+            s_log.info("Building distinct values took " + distinctValuesTime + " Milli seconds");
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
@@ -164,7 +181,7 @@ public class DistinctValuesTableUpdater
       writeDistinctInRowStatusBar(distinctRowsHolder);
 
       long distinctRowsTime = System.currentTimeMillis() - begMillis;
-      Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("DistinctValuesTableUpdater.distinct.rows.message", distinctRowsTime));
+      s_log.info("Building distinct rows took " + distinctRowsTime + " Milli seconds");
    }
 
    private void writeDistinctInRowStatusBar(DistinctRowsHolder distinctRowsHolder)
