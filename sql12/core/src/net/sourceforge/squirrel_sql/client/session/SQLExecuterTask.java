@@ -184,9 +184,7 @@ public class SQLExecuterTask implements Runnable
                _handler.sqlToBeExecuted(querySql);
             }
 
-            _currentStatementWrapper = new StatementWrapper(conn.createStatement(), _session);
-            _currentStatementWrapper.setFetchSize();
-            _currentStatementWrapper.setQueryTimeOut();
+            _currentStatementWrapper = createStatementWrapper(conn);
             if (correctlySupportsMaxRows)
             {
                _currentStatementWrapper.setMaxRows();
@@ -205,7 +203,7 @@ public class SQLExecuterTask implements Runnable
                else if (_currentStatementWrapper.isMaxRowsWasSet())
                {
                   _currentStatementWrapper.closeIfContinueReadIsNotActive();
-                  _currentStatementWrapper = new StatementWrapper(conn.createStatement(), _session);
+                  _currentStatementWrapper = createStatementWrapper(conn);
                }
             }
 
@@ -303,6 +301,15 @@ public class SQLExecuterTask implements Runnable
 
          SwingUtilities.invokeLater(() -> fireExecutionListenersFinshed());
       }
+   }
+
+   private StatementWrapper createStatementWrapper(ISQLConnection conn) throws SQLException
+   {
+      StatementWrapper ret = new StatementWrapper(conn.createStatement(), _session);
+      ret.setFetchSize();
+      ret.setQueryTimeOut();
+
+      return ret;
    }
 
    private void enableEventQueueOutOfMemoryHandling(final Throwable ex)
