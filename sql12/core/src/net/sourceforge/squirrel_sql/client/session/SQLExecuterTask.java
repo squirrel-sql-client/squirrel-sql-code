@@ -27,6 +27,14 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.DatabaseUpdateInfosListener;
@@ -42,14 +50,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.SwingUtilities;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This class can be used to execute SQL.
@@ -186,6 +186,7 @@ public class SQLExecuterTask implements Runnable
 
             _currentStatementWrapper = new StatementWrapper(conn.createStatement(), _session);
             _currentStatementWrapper.setFetchSize();
+            _currentStatementWrapper.setQueryTimeOut();
             if (correctlySupportsMaxRows)
             {
                _currentStatementWrapper.setMaxRows();

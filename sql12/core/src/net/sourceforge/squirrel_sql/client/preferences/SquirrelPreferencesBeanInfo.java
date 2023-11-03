@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SquirrelPreferences</CODE>.
@@ -137,7 +137,9 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(MESSAGE_PANEL_BLACK_FOREGROUND_AS_UI_DEFAULT, SquirrelPreferences.class, "isMessagePanelBlackForegroundAsUIDefault", "setMessagePanelBlackForegroundAsUIDefault"),
 
             prop(SHOW_ALIAS_PASSWORD_COPY_BUTTON, SquirrelPreferences.class, "getShowAliasPasswordCopyButton", "setShowAliasPasswordCopyButton"),
-            prop(SHOW_ALIAS_PASSWORD_SHOW_BUTTON, SquirrelPreferences.class, "getShowAliasPasswordShowButton", "setShowAliasPasswordShowButton")
+            prop(SHOW_ALIAS_PASSWORD_SHOW_BUTTON, SquirrelPreferences.class, "getShowAliasPasswordShowButton", "setShowAliasPasswordShowButton"),
+
+            prop(QUERY_TIMEOUT, SquirrelPreferences.class, "getQueryTimeout", "setQueryTimeout")
       };
    }
 

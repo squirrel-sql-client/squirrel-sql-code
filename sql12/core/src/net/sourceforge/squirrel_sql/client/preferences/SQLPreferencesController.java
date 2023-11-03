@@ -18,6 +18,12 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanelController;
@@ -26,12 +32,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JColorChooser;
-import javax.swing.JFileChooser;
-import javax.swing.JScrollPane;
-import java.awt.Color;
-import java.awt.Component;
 
 /**
  * This preferences panel allows maintenance of SQL preferences.
@@ -73,6 +73,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 
 		_panel.loginTimeout.setInt(prefs.getLoginTimeout());
 		_panel.largeScriptStmtCount.setInt(prefs.getLargeScriptStmtCount());
+		_panel.queryTimeout.setInt(prefs.getQueryTimeout());
 		_panel.chkCopyQuotedSqlsToClip.setSelected(prefs.getCopyQuotedSqlsToClip());
 		_panel.chkAllowRunAllSQLsInEditor.setSelected(prefs.getAllowRunAllSQLsInEditor());
 
@@ -105,6 +106,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 
 		prefs.setLoginTimeout(_panel.loginTimeout.getInt());
 		prefs.setLargeScriptStmtCount(_panel.largeScriptStmtCount.getInt());
+		prefs.setQueryTimeout(_panel.queryTimeout.getInt());
 
 		prefs.setCopyQuotedSqlsToClip(_panel.chkCopyQuotedSqlsToClip.isSelected());
 		prefs.setAllowRunAllSQLsInEditor(_panel.chkAllowRunAllSQLsInEditor.isSelected());

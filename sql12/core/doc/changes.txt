@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+New global preferences option to set the query timeout for SQL executions.
+  This option uses the JDBC-API method java.sql.Statement.setQueryTimeout(<seconds>).
+  See menu File --> Global Preferences --> top of tab SQL
+
 "Show distinct values..." dialog: The distinct rows displays now have an additional column
   named "Frequency" which show how often a row occurs.
   Note: To open the "Show distinct values..." dialog right click any table

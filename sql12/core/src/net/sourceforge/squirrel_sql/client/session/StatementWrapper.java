@@ -1,16 +1,17 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.StatementCallback;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.StatementCallback;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class StatementWrapper implements StatementCallback
 {
@@ -97,6 +98,23 @@ public class StatementWrapper implements StatementCallback
          }
       }
    }
+
+   public void setQueryTimeOut()
+   {
+      try
+      {
+         int queryTimeout = Main.getApplication().getSquirrelPreferences().getQueryTimeout();
+         if( 0 != queryTimeout) // 0 Is the default according to JDBC-API
+         {
+            _statement.setQueryTimeout(queryTimeout);
+         }
+      }
+      catch(SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
 
 
    public void cancel() throws SQLException

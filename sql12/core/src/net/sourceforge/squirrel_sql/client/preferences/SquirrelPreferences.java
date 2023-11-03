@@ -20,6 +20,16 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
 import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
@@ -35,16 +45,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
-import java.awt.Color;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.Serializable;
-import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 /**
  * This class represents the application preferences.
  *
@@ -140,6 +140,7 @@ public class SquirrelPreferences implements Serializable
 
 		String SHOW_ALIAS_PASSWORD_COPY_BUTTON = "showAliasPasswordCopyButton";
 		String SHOW_ALIAS_PASSWORD_SHOW_BUTTON = "showAliasPasswordShowButton";
+		String QUERY_TIMEOUT = "queryTimeout";
 
 
 	}
@@ -338,6 +339,7 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _showAliasPasswordCopyButton;
 	private boolean _showAliasPasswordShowButton;
+	private int _queryTimeout = 0;
 
 
 	public SquirrelPreferences()
@@ -1628,4 +1630,13 @@ public class SquirrelPreferences implements Serializable
 		_showAliasPasswordShowButton = aliasPasswordShowButton;
 	}
 
+	public int getQueryTimeout()
+	{
+		return _queryTimeout;
+	}
+
+	public void setQueryTimeout(int queryTimeout)
+	{
+		_queryTimeout = queryTimeout;
+	}
 }

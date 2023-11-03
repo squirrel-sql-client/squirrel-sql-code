@@ -1,13 +1,10 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -17,11 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public final class SQLPreferencesPanel extends JPanel
 {
@@ -35,6 +35,7 @@ public final class SQLPreferencesPanel extends JPanel
 
    IntegerField loginTimeout = new IntegerField();
    IntegerField largeScriptStmtCount = new IntegerField();
+   IntegerField queryTimeout = new IntegerField();
    JCheckBox chkCopyQuotedSqlsToClip = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.copy.quoted.sql.to.clip"));
    JCheckBox chkAllowRunAllSQLsInEditor = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.allow.run.all.sqls.in.editor"));
    JCheckBox chkMarkCurrentSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.mark.current.sql"));
@@ -113,7 +114,18 @@ public final class SQLPreferencesPanel extends JPanel
 
       gbc.gridx = 0;
       gbc.gridy = 1;
-      // i18n[SQLPreferencesPanel.largeScriptStmtCount=Large Script Statement Count: ]
+      pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.query.timeout")), gbc);
+
+      ++gbc.gridx;
+      queryTimeout.setColumns(4);
+      pnl.add(queryTimeout, gbc);
+
+      ++gbc.gridx;
+      pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.query.timeout.zero.means.no.limit")), gbc);
+
+
+      gbc.gridx = 0;
+      gbc.gridy = 2;
       pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.largeScriptStmtCount")), gbc);
 
       ++gbc.gridx;
@@ -123,43 +135,42 @@ public final class SQLPreferencesPanel extends JPanel
       gbc.fill = GridBagConstraints.HORIZONTAL;
       pnl.add(new MultipleLineLabel(s_stringMgr.getString("SQLPreferencesPanel.largeScriptStmtCount.note")), gbc);
 
-
       gbc.gridx = 0;
-      gbc.gridy = 2;
+      gbc.gridy = 3;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       pnl.add(chkCopyQuotedSqlsToClip, gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 3;
-      gbc.gridwidth = GridBagConstraints.REMAINDER;
-      pnl.add(chkAllowRunAllSQLsInEditor, gbc);
-
-      gbc.gridx = 0;
       gbc.gridy = 4;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
-      gbc.fill = GridBagConstraints.NONE;
-      pnl.add(createCurrentSqlMarkPanel(), gbc);
+      pnl.add(chkAllowRunAllSQLsInEditor, gbc);
 
       gbc.gridx = 0;
       gbc.gridy = 5;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
-      pnl.add(chkUseStatementSeparatorAsSqlToExecuteBounds, gbc);
+      pnl.add(createCurrentSqlMarkPanel(), gbc);
 
       gbc.gridx = 0;
       gbc.gridy = 6;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc.fill = GridBagConstraints.NONE;
+      pnl.add(chkUseStatementSeparatorAsSqlToExecuteBounds, gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 7;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.HORIZONTAL;
       pnl.add(createReloadSQLContentsPanel(), gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 7;
+      gbc.gridy = 8;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
       pnl.add(createMaxTextOutputColumnWidthPanel(), gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 8;
+      gbc.gridy = 9;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
       pnl.add(chkNotifyExternalFileChanges, gbc);
