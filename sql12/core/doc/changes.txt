@@ -488,7 +488,7 @@ About dialog: Completed web links.
 MS-Excel export of UI tables allows to include result coloring.
   See right mouse menu of UI tables --> "Export CSV / MS Excel / XML / JSON ..."
   The following colors will be saved:
-   - User colored rows or cell, see tables right mouse menu
+   - User colored rows or cells, see tables right mouse menu
    - Find result coloring
    - Duplicates coloring
   Warning: For large tables coloring results in higher memory usage and slower export.
