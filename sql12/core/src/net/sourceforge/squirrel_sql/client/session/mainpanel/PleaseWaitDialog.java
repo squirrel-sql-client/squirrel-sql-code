@@ -25,121 +25,107 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
+import java.awt.*;
 import java.sql.Statement;
 
 
 /**
  * The dialog to ask the user to wait.
- * 
+ *
  * @author Thorsten Mürell
  */
-public class PleaseWaitDialog extends DialogWidget implements ActionListener {
+public class PleaseWaitDialog extends DialogWidget
+{
 
-	private static final StringManager stringMgr =
-		StringManagerFactory.getStringManager(PleaseWaitDialog.class);
-	
-	private JButton cancelButton;
-	private IMessageHandler messageHandler;
-	private Statement stmt;
-	
-	/**
-	 * Creates the dialog.
-	 * 
-	 * @param stmt The statement that is currently executed
-    * @param app The message handler to produce the log output to
+   private static final StringManager stringMgr =
+         StringManagerFactory.getStringManager(PleaseWaitDialog.class);
+
+   private JButton cancelButton;
+   private JButton closeButton;
+   private IMessageHandler messageHandler;
+   private Statement stmt;
+
+   /**
+    * Creates the dialog.
+    *
+    * @param stmt The statement that is currently executed
+    * @param app  The message handler to produce the log output to
     */
-	public PleaseWaitDialog(Statement stmt, IApplication app) {
-        //i18n[PleaseWaitDialog.queryExecuting=Query is executing]
-		super(stringMgr.getString("PleaseWaitDialog.queryExecuting"), true, app);
-		this.messageHandler = app.getMessageHandler();
-		this.stmt = stmt;
+   public PleaseWaitDialog(Statement stmt, IApplication app)
+   {
+      //i18n[PleaseWaitDialog.queryExecuting=Query is executing]
+      super(stringMgr.getString("PleaseWaitDialog.queryExecuting"), true, app);
+      this.messageHandler = app.getMessageHandler();
+      this.stmt = stmt;
 
-		makeToolWindow(true);
+      makeToolWindow(true);
 
-		final JPanel content = new JPanel(new BorderLayout());
-		content.add(createMainPanel(), BorderLayout.CENTER);
-        setContentPane(content);
-        pack();
-	}
-	
-	private Component createMainPanel()
-	{
+      final JPanel content = new JPanel(new BorderLayout());
+      content.add(createMainPanel(), BorderLayout.CENTER);
+      setContentPane(content);
+      pack();
+   }
 
-		JPanel ret = new JPanel(new GridBagLayout());
+   private Component createMainPanel()
+   {
 
-		GridBagConstraints gbc;
-		gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
-		ret.add(new JLabel(getTitle()), gbc);
+      JPanel ret = new JPanel(new GridBagLayout());
 
-		gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
-		ret.add(new JLabel(stringMgr.getString("PleaseWaitDialog.pleaseWait")), gbc);
+      GridBagConstraints gbc;
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+      ret.add(new JLabel(getTitle()), gbc);
 
-		gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 10, 5), 0, 0);
-		cancelButton = new JButton(stringMgr.getString("PleaseWaitDialog.cancel"));
-		cancelButton.addActionListener(this);
-		ret.add(cancelButton, gbc);
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+      ret.add(new JLabel(stringMgr.getString("PleaseWaitDialog.pleaseWait")), gbc);
 
-		return ret;
+      gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 10, 5), 0, 0);
+      ret.add(createCancelClosePanel(), gbc);
 
+      return ret;
+   }
 
-//		final FormLayout layout = new FormLayout(
-//			// Columns
-//			"center:pref",
-//			// Rows
-//			"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref");
-//
-//		PanelBuilder builder = new PanelBuilder(layout);
-//		CellConstraints cc = new CellConstraints();
-//		builder.setDefaultDialogBorder();
-//
-//		int y = 1;
-//		builder.addSeparator(getTitle(), cc.xywh(1, y, 1, 1));
-//
-//		y += 2;
-//		//i18n[PleaseWaitDialog.pleaseWait=Please wait while the query is executed]
-//		builder.addLabel(stringMgr.getString("PleaseWaitDialog.pleaseWait"), cc.xy(1, y));
-//
-//		y += 2;
-//		builder.addSeparator("", cc.xywh(1, y, 1, 1));
-//
-//		//i18n[PleaseWaitDialog.cancel=Cancel]
-//		cancelButton = new JButton(stringMgr.getString("PleaseWaitDialog.cancel"));
-//		cancelButton.addActionListener(this);
-//
-//		y += 2;
-//		builder.add(cancelButton, cc.xywh(1, y, 1, 1));
-//
-//		return builder.getPanel();
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-	      if (stmt != null) {
-	         CancelStatementThread cst = new CancelStatementThread(new StatementWrapper(stmt), messageHandler);
-	         cst.tryCancel();
-	      }
-	}
-	
-	/**
-	 * Shows the dialog in front of all windows and centered.
-	 *  
-	 * @param app The application to show the window in
-	 */
-	public void showDialog(IApplication app) {
-        app.getMainFrame().addWidget(this);
-        moveToFront();
-        setLayer(JLayeredPane.MODAL_LAYER);
-        DialogWidget.centerWithinDesktop(this);
-        this.setVisible(true);
-	}
+   private JPanel createCancelClosePanel()
+   {
+      JPanel ret = new JPanel(new GridLayout(1,2,5,5));
+
+      cancelButton = new JButton(stringMgr.getString("PleaseWaitDialog.cancel"));
+      cancelButton.addActionListener(e -> onCancel());
+      ret.add(cancelButton);
+
+      closeButton = new JButton(stringMgr.getString("PleaseWaitDialog.close"));
+      closeButton.addActionListener(e -> onClose());
+      ret.add(closeButton);
+      return ret;
+   }
+
+   private void onClose()
+   {
+      onCancel();
+      setVisible(false);
+      dispose();
+   }
+
+   private void onCancel()
+   {
+      if (stmt != null)
+      {
+         CancelStatementThread cst = new CancelStatementThread(new StatementWrapper(stmt), messageHandler);
+         cst.tryCancel();
+      }
+   }
+
+   /**
+    * Shows the dialog in front of all windows and centered.
+    *
+    * @param app The application to show the window in
+    */
+   public void showDialog(IApplication app)
+   {
+      app.getMainFrame().addWidget(this);
+      moveToFront();
+      setLayer(JLayeredPane.MODAL_LAYER);
+      DialogWidget.centerWithinDesktop(this);
+      this.setVisible(true);
+   }
 }

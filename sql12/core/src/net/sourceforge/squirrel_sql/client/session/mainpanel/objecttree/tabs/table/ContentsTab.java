@@ -28,30 +28,20 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JTable;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -249,16 +239,16 @@ public class ContentsTab extends BaseTableTab
 
 
 
-            rs = createResultSet(ti, stmt, coded + pseudoColumn);
+            rs = createResultSet(ti, stmt, coded + pseudoColumn, true);
 
             if(null == rs)
             {
                pseudoColumn = "";
-               rs = createResultSet(ti, stmt, coded);
+               rs = createResultSet(ti, stmt, coded, false);
 
                if(null == rs)
                {
-                  rs = createResultSet(ti, stmt, "*");
+                  rs = createResultSet(ti, stmt, "*", false);
 
                   if(null == rs)
                   {
@@ -320,12 +310,14 @@ public class ContentsTab extends BaseTableTab
       catch (SQLException ex)
       {
          throw new DataSetException(ex);
-      } finally {
-          disposeWaitDialog();
+      }
+      finally
+      {
+         disposeWaitDialog();
       }
    }
 
-   private ResultSet createResultSet(ITableInfo ti, Statement stmt, String columnsExpression)
+   private ResultSet createResultSet(ITableInfo ti, Statement stmt, String columnsExpression, boolean showWaitDialog)
    {
       final StringBuffer buf = new StringBuffer();
       try
@@ -352,7 +344,10 @@ public class ContentsTab extends BaseTableTab
             s_log.debug("createDataSet running SQL: " + buf.toString());
          }
 
-         showWaitDialog(stmt);
+         if (showWaitDialog)
+         {
+            showWaitDialog(stmt);
+         }
 
          ResultSet rs = stmt.executeQuery(buf.toString());
 
@@ -436,6 +431,10 @@ public class ContentsTab extends BaseTableTab
          GUIUtils.processOnSwingEventThread(new Runnable() {
          @Override
 			public void run() {
+               if(null != _waitDialog)
+               {
+                  disposeWaitDialog();
+               }
                _waitDialog = new PleaseWaitDialog(stmt, _app);
                _waitDialog.showDialog(_app);                                          
                // Restore the paths
@@ -450,16 +449,25 @@ public class ContentsTab extends BaseTableTab
     * 
     * @param _waitDialog the PleaseWaitDialog to close - can be null.
     */
-   private void disposeWaitDialog() {
-   	if (!_prefs.getShowPleaseWaitDialog()) return;
-          GUIUtils.processOnSwingEventThread(new Runnable() {
-              @Override
-			public void run() {
-            	  if (_waitDialog != null) {
-                  _waitDialog.dispose();
-              }
-        	  }       
-          });
+   private void disposeWaitDialog()
+   {
+      if (!_prefs.getShowPleaseWaitDialog())
+      {
+         return;
+      }
+      GUIUtils.processOnSwingEventThread(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            if (_waitDialog != null)
+            {
+               _waitDialog.setVisible(false);
+               _waitDialog.dispose();
+               _waitDialog = null;
+            }
+         }
+      });
    }
    
    @Override
