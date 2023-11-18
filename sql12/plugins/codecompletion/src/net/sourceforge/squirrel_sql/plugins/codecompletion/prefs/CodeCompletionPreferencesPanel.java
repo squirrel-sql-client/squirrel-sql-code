@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.prefs;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CompletionCaseSpelling;
 
 import javax.swing.*;
@@ -31,6 +31,7 @@ public class CodeCompletionPreferencesPanel extends JPanel
 
    JCheckBox chkShowRemarksInColumnCompletion;
    JCheckBox chkMatchCamelCase;
+   JCheckBox chkMatchContains;
    JCheckBox chkIncludeUDTs;
    JCheckBox chkSortColumnsAlphabetically;
 
@@ -104,19 +105,25 @@ public class CodeCompletionPreferencesPanel extends JPanel
       gbc = new GridBagConstraints(0,10,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
       add(createShowRemarksInColumnCompletionPanel(),gbc);
 
-      gbc = new GridBagConstraints(0,11,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
+
+      gbc = new GridBagConstraints(0,11,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,0,5),0,0 );
       chkMatchCamelCase = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.matchCamelCase"));
       add(chkMatchCamelCase,gbc);
 
       gbc = new GridBagConstraints(0,12,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
+      chkMatchContains = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.matchContains"));
+      add(chkMatchContains,gbc);
+
+
+      gbc = new GridBagConstraints(0,13,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
       chkIncludeUDTs = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.includeUDTs"));
       add(chkIncludeUDTs, gbc);
 
-      gbc = new GridBagConstraints(0,13,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
+      gbc = new GridBagConstraints(0,14,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
       chkSortColumnsAlphabetically = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.SortColumnsAlphabetically"));
       add(chkSortColumnsAlphabetically, gbc);
 
-      gbc = new GridBagConstraints(0,14,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
+      gbc = new GridBagConstraints(0,15,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
       add(createCaseSpellingPanel(), gbc);
 
       GUIUtils.setPreferredWidth(this, 550);
@@ -158,11 +165,6 @@ public class CodeCompletionPreferencesPanel extends JPanel
       gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0 );
       _cboCatalogUpperLower = new JComboBox<>(CompletionCaseSpelling.values());
       ret.add(_cboCatalogUpperLower, gbc);
-
-
-
-
-
 
       ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("CodeCompletionPreferencesPanel.UpperCase.LowerCase")));
 

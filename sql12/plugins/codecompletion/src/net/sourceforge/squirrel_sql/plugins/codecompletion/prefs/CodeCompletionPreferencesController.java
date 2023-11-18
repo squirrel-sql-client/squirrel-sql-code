@@ -9,12 +9,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CompletionCaseSpelling;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -85,6 +83,10 @@ public class CodeCompletionPreferencesController
       _panel.chkShowRemarksInColumnCompletion.setSelected(_prefs.isShowRemarksInColumnCompletion());
 
       _panel.chkMatchCamelCase.setSelected(_prefs.isMatchCamelCase());
+		_panel.chkMatchCamelCase.addActionListener(e -> updateUI(_panel.chkMatchCamelCase));
+
+      _panel.chkMatchContains.setSelected(_prefs.isMatchContains());
+		_panel.chkMatchContains.addActionListener(e -> updateUI(_panel.chkMatchContains));
 
       _panel.chkIncludeUDTs.setSelected(_prefs.isIncludeUDTs());
 
@@ -132,6 +134,26 @@ public class CodeCompletionPreferencesController
 		int[] selRows = _panel.tblPrefixes.getSelectedRows();
 		tm.removeRows(selRows);
 	}
+
+	private void updateUI(JCheckBox chkChanged)
+	{
+		if(chkChanged == _panel.chkMatchContains)
+		{
+			if (_panel.chkMatchContains.isSelected())
+			{
+				_panel.chkMatchCamelCase.setSelected(false);
+			}
+		}
+
+		if (chkChanged == _panel.chkMatchCamelCase)
+		{
+			if(_panel.chkMatchCamelCase.isSelected())
+			{
+				_panel.chkMatchContains.setSelected(false);
+			}
+		}
+	}
+
 
 
 
@@ -209,6 +231,8 @@ public class CodeCompletionPreferencesController
       _prefs.setShowRemarksInColumnCompletion(_panel.chkShowRemarksInColumnCompletion.isSelected());
 
       _prefs.setMatchCamelCase(_panel.chkMatchCamelCase.isSelected());
+
+		_prefs.setMatchContains(_panel.chkMatchContains.isSelected());
 
       _prefs.setIncludeUDTs(_panel.chkIncludeUDTs.isSelected());
 

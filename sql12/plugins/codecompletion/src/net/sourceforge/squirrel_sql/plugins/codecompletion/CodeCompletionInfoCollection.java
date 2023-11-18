@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionMatchType;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
@@ -26,12 +27,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
-import javax.swing.JOptionPane;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import javax.swing.*;
+import java.util.*;
 
 public class CodeCompletionInfoCollection
 {
@@ -255,21 +252,22 @@ public class CodeCompletionInfoCollection
 		for(int i=0; i < _aliasCompletionInfos.size(); ++i)
 		{
          CodeCompletionTableAliasInfo buf = _aliasCompletionInfos.get(i);
-			if(buf.isInStatementOfAlias(pos) && buf.matchesCompletionStringStart(trimmedPrefix, _useCompletionPrefs && _prefs.isMatchCamelCase()))
-			{
-				ret.add(buf);
-			}
+         if (buf.isInStatementOfAlias(pos) && buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchType.of(_useCompletionPrefs, _prefs)))
+         {
+
+            ret.add(buf);
+         }
 		}
 
 
       for(int i=0; i < completionInfos.size(); ++i)
       {
          CodeCompletionInfo buf = completionInfos.get(i);
-         if(buf.matchesCompletionStringStart(trimmedPrefix, _useCompletionPrefs && _prefs.isMatchCamelCase()))
+         if (buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchType.of(_useCompletionPrefs, _prefs)))
          {
             ret.add(buf);
 
-            if(MAX_COMPLETION_INFOS < ret.size())
+            if (MAX_COMPLETION_INFOS < ret.size())
             {
                _session.showMessage(TOO_MANY_COMPLETION_INFOS);
                break;

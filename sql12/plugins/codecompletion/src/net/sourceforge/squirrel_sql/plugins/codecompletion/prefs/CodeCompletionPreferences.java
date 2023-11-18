@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.prefs;
 
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionPlugin;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CompletionCaseSpelling;
 
 import java.io.Serializable;
@@ -26,6 +25,7 @@ public class CodeCompletionPreferences implements Serializable
    private String _columnCaseSpelling = CompletionCaseSpelling.UNCHANGED.name();
    private String _schemaCaseSpelling = CompletionCaseSpelling.UNCHANGED.name();
    private String _tableViewCaseSpelling = CompletionCaseSpelling.UNCHANGED.name();
+   private boolean _matchContains;
 
    public int getGeneralCompletionConfig()
 	{
@@ -76,6 +76,17 @@ public class CodeCompletionPreferences implements Serializable
    {
       _matchCamelCase = matchCamelCase;
    }
+
+   public boolean isMatchContains()
+   {
+      return _matchContains;
+   }
+
+   public void setMatchContains(boolean matchContains)
+   {
+      _matchContains = matchContains;
+   }
+
 
    public boolean isIncludeUDTs()
    {

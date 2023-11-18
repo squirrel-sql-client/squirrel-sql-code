@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionMatchType;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -171,7 +172,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
          {
             for (CodeCompletionColumnInfo colInfo : _colInfos)
             {
-               if(colInfo.matchesCompletionStringStart(trimmedColNamePattern, _useCompletionPrefs && _prefs.isMatchCamelCase()))
+               if (colInfo.matchesCompletionStringStart(trimmedColNamePattern, CompletionMatchType.of(_useCompletionPrefs, _prefs)))
                {
                   ret.add(colInfo);
                }

@@ -49,10 +49,10 @@ public abstract class CompletionInfo implements Comparable<CompletionInfo>
       return _upperCaseCompletionString.compareTo(other._upperCaseCompletionString);
    }
 
-   public boolean matchesCompletionStringStart(String testString, boolean matchCamelCase)
+   public boolean matchesCompletionStringStart(String testString, CompletionMatchType completionMatchType)
    {
       initCache();
-      return _upperCaseCompletionString.startsWith(testString.toUpperCase()) || (matchCamelCase && matchesCamelCase(testString));
+      return _upperCaseCompletionString.startsWith(testString.toUpperCase()) || (completionMatchType.match(testString, _completionString));
    }
 
    private boolean matchesCamelCase(String testString)
