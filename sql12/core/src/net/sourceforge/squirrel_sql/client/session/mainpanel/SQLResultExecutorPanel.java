@@ -778,10 +778,18 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       }
       else
       {
+
          _resultTabClosing.closeTabAt(indexToReplace);
          _tabbedExecutionsPanel.insertTab(tab.getTitle(), tabIcon, tab, tab.getViewableSqlString(), indexToReplace);
-      }
 
+         final JLabel tabComponent = new JLabel(StringUtilities.shortenEnd(tab.getViewableSqlString(), 20, null));
+         _tabbedExecutionsPanel.setTabComponentAt(_tabbedExecutionsPanel.indexOfComponent(tab), tabComponent);
+
+         if(null != tabIcon)
+         {
+            setIconAt(indexToReplace, tabIcon);
+         }
+      }
 	}
 
    private void checkResultTabLimit()

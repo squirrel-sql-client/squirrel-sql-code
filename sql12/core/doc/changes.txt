@@ -134,6 +134,8 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+NullPointerException occurred on anchoring SQL result tabs that were rerun before.
+
 Object tree search failed to find object types that where loaded by database specific Plugins.
 
 #1521 DBCopy: Fixed Copy/Paste of multiple tables deleted data in wrong order.
