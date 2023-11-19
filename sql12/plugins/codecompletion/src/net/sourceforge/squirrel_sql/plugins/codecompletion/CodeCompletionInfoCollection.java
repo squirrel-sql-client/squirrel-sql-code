@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
-import net.sourceforge.squirrel_sql.fw.completion.CompletionMatchType;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
@@ -252,7 +251,7 @@ public class CodeCompletionInfoCollection
 		for(int i=0; i < _aliasCompletionInfos.size(); ++i)
 		{
          CodeCompletionTableAliasInfo buf = _aliasCompletionInfos.get(i);
-         if (buf.isInStatementOfAlias(pos) && buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchType.of(_useCompletionPrefs, _prefs)))
+         if (buf.isInStatementOfAlias(pos) && buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchTypeUtil.matchTypeOf(_useCompletionPrefs, _prefs)))
          {
 
             ret.add(buf);
@@ -263,7 +262,7 @@ public class CodeCompletionInfoCollection
       for(int i=0; i < completionInfos.size(); ++i)
       {
          CodeCompletionInfo buf = completionInfos.get(i);
-         if (buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchType.of(_useCompletionPrefs, _prefs)))
+         if (buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchTypeUtil.matchTypeOf(_useCompletionPrefs, _prefs)))
          {
             ret.add(buf);
 
