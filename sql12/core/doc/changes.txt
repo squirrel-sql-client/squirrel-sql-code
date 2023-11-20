@@ -9,7 +9,6 @@ Enhancements:
 Refactoring: The "Data Import"-Plugin's functionality was moved to SQuirreL's core.
   The "Data Import"-Plugin won't be shipped anymore
   and in case it is still found it is programmatically kept from being loaded.
-  See menu File --> Global Preferences --> Tab "SQL Scripts".
 
 The code completion preferences allow to switch to "Contains Completion".
   "Contains completion" finds all object names that contain a string when it's completed by ctrl+space.

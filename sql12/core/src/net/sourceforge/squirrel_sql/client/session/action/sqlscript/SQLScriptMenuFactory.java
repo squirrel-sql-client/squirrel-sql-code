@@ -34,14 +34,23 @@ public class SQLScriptMenuFactory
       resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
       resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
       resources.addToMenu(coll.get(CreateSelectScriptAction.class), menu);
-      resources.addToMenu(coll.get(CreateFileOfSelectedTablesAction.class), menu);
       resources.addToMenu(coll.get(CreateInsertStatementsFileOfSelectedTablesSQLAction.class), menu);
+
+      // See getExportAction()
+      //resources.addToMenu(coll.get(CreateFileOfSelectedTablesAction.class), menu);
 
       if (databaseObjectType == DatabaseObjectType.TABLE)
       {
          resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
       }
+
+
       return menu;
+   }
+
+   public static Action getExportAction()
+   {
+      return Main.getApplication().getActionCollection().get(CreateFileOfSelectedTablesAction.class);
    }
 
    public static JMenu getSessionMenu()

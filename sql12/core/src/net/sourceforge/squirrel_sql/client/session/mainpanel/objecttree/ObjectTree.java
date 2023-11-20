@@ -144,6 +144,9 @@ public class ObjectTree extends JTree
 			addToPopup(DatabaseObjectType.TABLE, SQLScriptMenuFactory.getObjectTreeMenu(DatabaseObjectType.TABLE));
 			addToPopup(DatabaseObjectType.VIEW, SQLScriptMenuFactory.getObjectTreeMenu(DatabaseObjectType.VIEW));
 
+			// Put export next to import
+			addToPopup(DatabaseObjectType.TABLE, SQLScriptMenuFactory.getExportAction());
+			addToPopup(DatabaseObjectType.VIEW, SQLScriptMenuFactory.getExportAction());
 			addToPopup(DatabaseObjectType.TABLE, actions.get(ImportTableDataAction.class));
 			addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, actions.get(ImportTableDataAction.class));
 			addToPopup(DatabaseObjectType.SESSION, actions.get(ImportTableDataAction.class));
