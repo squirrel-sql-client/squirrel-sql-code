@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.catalogspanel.CatalogsPanelController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.dataimport.action.ImportTableDataAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.*;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAction;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
@@ -87,6 +88,7 @@ class SessionPanelToolBar extends ToolBar
       SQLScriptMenuFactory.getSessionToolbarActions().forEach(a -> add(a));
       addSeparator();
 
+      add(actions.get(ImportTableDataAction.class));
    }
 
    public CatalogsPanelController getCatalogsPanelController()

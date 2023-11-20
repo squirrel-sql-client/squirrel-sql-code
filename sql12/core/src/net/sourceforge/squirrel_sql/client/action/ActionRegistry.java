@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPreferencesAction;
 import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.dataimport.action.ImportTableDataAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.DBDiffCompareAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.DBDiffSelectAction;
@@ -117,6 +118,9 @@ public class ActionRegistry
       toolsPopupController.addAction("sql2ins", ac.get(CreateDataScriptOfCurrentSQLAction.class));
       toolsPopupController.addAction("sql2insfile", ac.get(CreateInsertStatementsFileOfCurrentSQLAction.class));
       toolsPopupController.addAction("sql2file", ac.get(CreateFileOfCurrentSQLAction.class));
+
+      toolsPopupController.addAction("import", ac.get(ImportTableDataAction.class));
+
    }
 
    public void preloadActions(ActionCollection actionCollection)
@@ -264,6 +268,8 @@ public class ActionRegistry
       actionCollection.add(new StoreObjectTreeSelectionAction());
       actionCollection.add(new StoreObjectTreeSelectionNamedAction());
       actionCollection.add(new ApplyStoredObjectTreeSelectionAction());
+
+      actionCollection.add(new ImportTableDataAction());
    }
 
    public ActionCollection getActionCollection()

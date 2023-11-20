@@ -856,7 +856,8 @@ public class PluginManager implements IPluginManager
 	{
 		return    plugin.getPluginJarFilePath().toLowerCase().endsWith("editextras.jar")
 		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("dbdiff.jar")
-		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("sqlscript.jar");
+		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("sqlscript.jar")
+		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("dataimport.jar");
 	}
 
 

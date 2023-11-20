@@ -194,6 +194,9 @@ public class SquirrelResources extends Resources
 
 		String ALIAS_CONNECT = "aliasConnect";
 		String ALIAS_MODIFY = "aliasModify";
+
+		String CLIPBOARD = "clipboard";
+
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

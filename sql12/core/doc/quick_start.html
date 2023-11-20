@@ -139,11 +139,15 @@
 	</tr>
 
 	<tr>
-		<td><a href="#plugins">Plugins</a></td>
+		<td><a href="#scripting">Scripting</a></td>
 	</tr>
 
 	<tr>
-		<td><a href="#scripting">Scripting</a></td>
+		<td><a href="#dataimport">Data Import</a></td>
+	</tr>
+
+	<tr>
+		<td><a href="#plugins">Plugins</a></td>
 	</tr>
 
 	<tr>
@@ -2004,28 +2008,6 @@ limit the number of lines of SQL available in the SQL History Combo box
 (pull down list above the SQL command entry area) to the (adjustable)
 number given.</p>
 
-<h2><a name="plugins"></a>Plugins</h2>
-
-<p>A plugin is an application written in Java that runs within
-SQuirreL. This allows developers to enhance the functionality of
-SQuirreL without having to rebuild the SQuirreL application itself. It
-also allows you to "pick and choose" the functionality that you want in
-SQuirreL. For instance if you don't use Oracle then you don't need the
-Oracle specific functionality supplied by the Oracle plugin.</p>
-
-<p>All supported plugins are available in the install jar and can be
-installed at the same time when installing SQuirreL, or at any time
-afterward. Third-party plugins can be installed by unpacking the archive
-file (*.zip, *.gz) into the plugins directory within the SQuirreL
-application directory keeping the directory structure. To use the plugin
-you will need to restart SQuirreL. The SQuirreL project team no longer
-makes individual plugins available for download.</p>
-
-<p>The "Summary" option on the "Plugins" menu will display a dialog
-box showing the plugins currently installed.</p>
-
-<p align="CENTER"><img src="images/plugins_1.png" border="0"
-	alt="Plugins Summary"></p>
 
 <h2><a name="scripting"></a>Scripting</h2>
 	<P STYLE="font-weight: medium">SQuirreL provides a wide range of scripting functions:</P>
@@ -2098,6 +2080,60 @@ box showing the plugins currently installed.</p>
 		@sheet 'Stores' SELECT * FROM stores;<br>
 	</code>
 	where the ";" may need to be replaced by the SQL separator in use.
+
+<h2><a name="dataimport"></a>Data Import</h2>
+	<h3>Thorsten Mürell</h3>
+
+	<p>Data import allows to import arbitrary files into existing tables of the
+		database. Currently, the following types of files are supported:</p>
+
+	<ul>
+		<li>Microsoft Excel files</li>
+		<li>Comma separated files (CSV)</li>
+	</ul>
+
+	<p>Both file formats offer you some selections to choose the sheet (Excel) or the
+		seperator and file encoding (CSV).</p>
+
+	<p>To import a file, right-click a table and choose "Import file" from the menu.</p>
+
+	<p>After that you can map the table's columns to the columns of the import file. At
+		the top of dialog you firstly choose, if the first row contains the column headers.
+		Then you can associate the existing table columns with the import file columns.
+		You also have several "special" options:</p>
+
+	<ul>
+		<li><b>Skip:</b> This column is not used. The default value of the database will
+			be used.</li>
+		<li><b>NULL:</b> This column will be set to NULL.</li>
+		<li><b>Fixed value:</b> This column will be set to fixed value, that you can
+			specify in the third column named "Fixed Value".</li>
+		<li><b>Auto increment:</b> This column will be incremented by one each insert.
+			You can specify the start value by typing a number into the "Fixed Value"
+			column.</li>
+	</ul>
+
+<h2><a name="plugins"></a>Plugins</h2>
+
+	<p>A plugin is an application written in Java that runs within
+		SQuirreL. This allows developers to enhance the functionality of
+		SQuirreL without having to rebuild the SQuirreL application itself. It
+		also allows you to "pick and choose" the functionality that you want in
+		SQuirreL. For instance if you don't use Oracle then you don't need the
+		Oracle specific functionality supplied by the Oracle plugin.</p>
+
+	<p>All supported plugins are available in the install jar and can be
+		installed at the same time when installing SQuirreL, or at any time
+		afterward. Third-party plugins can be installed by unpacking the archive
+		file (*.zip, *.gz) into the plugins directory within the SQuirreL
+		application directory keeping the directory structure. To use the plugin
+		you will need to restart SQuirreL. The SQuirreL project team no longer
+		makes individual plugins available for download.</p>
+
+	<p>The "Summary" option on the "Plugins" menu will display a dialog
+		box showing the plugins currently installed.</p>
+
+	<p align="CENTER"><img src="images/plugins_1.png" border="0" alt="Plugins Summary"></p>
 
 
 <h2><a name="logs"></a>Logs</h2>

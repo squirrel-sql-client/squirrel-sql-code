@@ -186,7 +186,6 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="refactoring"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="sqlbookmark"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="syntax"/></antcall>
-        <antcall target="doCompilePlugin"><param name="pluginName" value="dataimport"/></antcall>
     </target>
 
 

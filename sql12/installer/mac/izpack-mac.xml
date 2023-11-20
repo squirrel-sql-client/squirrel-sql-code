@@ -111,9 +111,6 @@
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/refactoring" />
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/refactoring.jar" />
 
-			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/dataimport" />
-			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/dataimport.jar" />
-
 			<!-- Takes care that the included directories contain only files the installer provides,
                  i.e. all other files are deleted. -->
 			<updatecheck>

@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPref
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.dataimport.action.ImportTableDataAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.*;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAction;
@@ -356,6 +357,9 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenuAsCheckBoxMenuItem(rsrc, ToggleObjectTreeBesidesEditorAction.class, menu);
 		menu.addSeparator();
 		menu.add(SQLScriptMenuFactory.getSessionMenu());
+		menu.addSeparator();
+		addToMenu(rsrc, ImportTableDataAction.class, menu);
+		menu.addSeparator();
 
 		menu.setEnabled(false);
 		return menu;

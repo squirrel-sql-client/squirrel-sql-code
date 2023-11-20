@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionColoringUtil;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.dataimport.action.ImportTableDataAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffObjectTreeMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection.CopyRestoreSelectionMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
@@ -142,6 +143,12 @@ public class ObjectTree extends JTree
 
 			addToPopup(DatabaseObjectType.TABLE, SQLScriptMenuFactory.getObjectTreeMenu(DatabaseObjectType.TABLE));
 			addToPopup(DatabaseObjectType.VIEW, SQLScriptMenuFactory.getObjectTreeMenu(DatabaseObjectType.VIEW));
+
+			addToPopup(DatabaseObjectType.TABLE, actions.get(ImportTableDataAction.class));
+			addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, actions.get(ImportTableDataAction.class));
+			addToPopup(DatabaseObjectType.SESSION, actions.get(ImportTableDataAction.class));
+			addToPopup(DatabaseObjectType.SCHEMA, actions.get(ImportTableDataAction.class));
+			addToPopup(DatabaseObjectType.CATALOG, actions.get(ImportTableDataAction.class));
 
 			addToPopup(DatabaseObjectType.TABLE, DBDiffObjectTreeMenuFactory.createMenu());
 
