@@ -146,6 +146,8 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+Made logs display non-editable.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/27
   Fixed and improved the content tab's wait dialog.
   Note: The content tab is one of the Object tree's details tabs for tables and others object types.

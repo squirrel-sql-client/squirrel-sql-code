@@ -34,18 +34,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -456,6 +446,7 @@ public class ViewLogsSheet extends DialogWidget
 
 		final JPanel pnl = new JPanel(new BorderLayout());
 		pnl.add(_logDirCmb, BorderLayout.NORTH);
+		_logContentsTxt.setEditable(false);
 		_logContentsTxt.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 0));
 		pnl.add(new JScrollPane(_logContentsTxt), BorderLayout.CENTER);
 
