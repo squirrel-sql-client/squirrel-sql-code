@@ -39,13 +39,14 @@ public class ExcelFileImporter implements IFileImporter
 
    private File importFile;
    private int pointer = -1;
-   private int size = 0;
    private Workbook workbook = null;
    private Sheet sheet = null;
    private ExcelSettingsBean settings;
    private boolean _trimValues;
 
    private FailedToInterpretHandler _failedToInterpretHandler = new FailedToInterpretHandler();
+   private ExcelRowReader _excelRowReader;
+
    /**
     * The standard constructor
     *
@@ -102,19 +103,21 @@ public class ExcelFileImporter implements IFileImporter
          throw new IOException(fe.toString());
       }
 
-      if(0 == sht.getPhysicalNumberOfRows())
+      ExcelRowReader excelRowReader = new ExcelRowReader(sht);
+      if(0 == excelRowReader.getNumberOfNonNullRows())
       {
          throw new  IllegalStateException("The Excel sheet has no rows.");
       }
 
-      int maxLines = Math.min(noOfLines, sht.getPhysicalNumberOfRows());
-      Row row = sht.getRow(0);
+      int maxLines = Math.min(noOfLines, excelRowReader.getNumberOfNonNullRows());
+
+      Row row = excelRowReader.getNonNullRow(0);
       final int firstRowsNumberOfCells = row.getPhysicalNumberOfCells();
       data = new String[maxLines][firstRowsNumberOfCells];
 
       for (int y = 0; y < maxLines; y++)
       {
-         row = sht.getRow(y);
+         row = excelRowReader.getNonNullRow(y);
          for (int x = 0; x < firstRowsNumberOfCells; x++)
          {
             if (null == row.getCell(x))
@@ -138,7 +141,8 @@ public class ExcelFileImporter implements IFileImporter
    public boolean reset()
    {
       sheet = getSheet(workbook);
-      size = sheet.getPhysicalNumberOfRows();
+      _excelRowReader = new ExcelRowReader(sheet);
+
       pointer = -1;
       return true;
    }
@@ -150,7 +154,7 @@ public class ExcelFileImporter implements IFileImporter
     */
    public boolean next()
    {
-      if (pointer >= size - 1)
+      if (pointer >= _excelRowReader.getNumberOfNonNullRows() - 1)
       {
          return false;
       }
@@ -172,14 +176,14 @@ public class ExcelFileImporter implements IFileImporter
    {
       checkPointer();
 
-      if(null == sheet.getRow(pointer).getCell(column))
+      if(null == _excelRowReader.getNonNullRow(pointer).getCell(column))
       {
          return null;
       }
 
       if (_trimValues)
       {
-         String ret = sheet.getRow(pointer).getCell(column).toString();
+         String ret = _excelRowReader.getNonNullRow(pointer).getCell(column).toString();
 
          if (null == ret)
          {
@@ -190,7 +194,7 @@ public class ExcelFileImporter implements IFileImporter
       }
       else
       {
-         return sheet.getRow(pointer).getCell(column).toString();
+         return _excelRowReader.getNonNullRow(pointer).getCell(column).toString();
       }
    }
 
@@ -214,7 +218,7 @@ public class ExcelFileImporter implements IFileImporter
    public Double getDouble(int column) throws IOException
    {
       checkPointer();
-      Cell cell = sheet.getRow(pointer).getCell(column);
+      Cell cell = _excelRowReader.getNonNullRow(pointer).getCell(column);
 
       if(null == cell)
       {
@@ -250,7 +254,7 @@ public class ExcelFileImporter implements IFileImporter
    public Date getDate(int column) throws IOException
    {
       checkPointer();
-      Cell cell = sheet.getRow(pointer).getCell(column);
+      Cell cell = _excelRowReader.getNonNullRow(pointer).getCell(column);
 
       if(null == cell)
       {

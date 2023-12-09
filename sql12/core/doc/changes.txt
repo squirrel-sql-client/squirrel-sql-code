@@ -146,6 +146,9 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+MS-Excel import failed with NullPointerException when a sheet contained null rows.
+  See menu Session --> "Import clipboard or file  (MS Excel or CSV)"
+
 Made logs display non-editable.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/27
