@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Look and Feel plugin: Upgrade FlatLaF to version 3.2.5.
+
 MS-Excel import from clipboard now works if the clipboard contains a file.
   It used to work only when the clipboard contained CSV data.
   See menu Session --> "Import clipboard or file  (MS Excel or CSV)" -->
