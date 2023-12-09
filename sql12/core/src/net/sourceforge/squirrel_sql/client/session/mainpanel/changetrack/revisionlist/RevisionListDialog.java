@@ -1,21 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.diff.DiffPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class RevisionListDialog extends JDialog
 {
@@ -50,7 +42,7 @@ public class RevisionListDialog extends JDialog
       splitTreePreview.setLeftComponent(GUIUtils.setMinimumWidth(new JScrollPane(lstRevisions), 0));
 
       txtPreview.setEditable(false);
-      tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.script"), txtPreview);
+      tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.script"), new JScrollPane(txtPreview));
       tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.diffToLocal"), diffToLocalPanel);
       tabbedPane.addTab(s_stringMgr.getString("RevisionListDialog.revisionsDiff"), revisionsDiffPanel);
 

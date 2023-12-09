@@ -153,6 +153,10 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+GIT revision display was missing scrollbars.
+  For files committed to GIT see right mouse menu on SQL editor's left gutter -->
+  "Show GIT revisions for file ..." --> tab Script.
+
 MS-Excel import failed with NullPointerException when a sheet contained null rows.
   See menu Session --> "Import clipboard or file  (MS Excel or CSV)"
 
