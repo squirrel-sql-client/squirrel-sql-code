@@ -51,7 +51,10 @@ public class ExcelRowReader
          if(null != row)
          {
             _nonNullIndexes.add(i);
-            return row;
+            if(rowIndex < _nonNullIndexes.size())
+            {
+               return row;
+            }
          }
       }
    }
