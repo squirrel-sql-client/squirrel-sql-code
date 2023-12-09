@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+MS-Excel import from clipboard now works if the clipboard contains a file.
+  It used to work only when the clipboard contained CSV data.
+  See menu Session --> "Import clipboard or file  (MS Excel or CSV)" -->
+  button "Import from clipboard"
+
 When exporting UI tables to file the file path is written to SQuirreL's message panel.
   See right mouse menu on UI tables --> "Export CSV / MS Excel / XML / JSON ..."
 

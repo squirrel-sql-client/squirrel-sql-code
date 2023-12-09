@@ -43,8 +43,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * This command shows the necessary dialogs to import a file.
@@ -100,7 +102,18 @@ public class ImportTableDataCommand
          {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             Transferable tran = clipboard.getContents(null);
-            if (tran != null && tran.isDataFlavorSupported(DataFlavor.stringFlavor))
+            if (tran != null && tran.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+            {
+               List<File> fileList = (List<File>) tran.getTransferData(DataFlavor.javaFileListFlavor);
+
+               if (fileList.isEmpty() || null == fileList.get(0))
+               {
+                  return;
+               }
+
+               fileDisplayWrapper = new FileDisplayWrapper(fileList.get(0), false);
+            }
+            else if (tran != null && tran.isDataFlavorSupported(DataFlavor.stringFlavor))
             {
                String clipContent = (String) tran.getTransferData(DataFlavor.stringFlavor);
 
@@ -116,7 +129,7 @@ public class ImportTableDataCommand
             }
             else
             {
-               throw new IllegalStateException("Failed to interpret clipboard as String");
+               throw new IllegalStateException("Failed to interpret clipboard as string or file");
             }
          }
          else
