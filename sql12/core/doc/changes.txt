@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+When exporting UI tables to file the file path is written to SQuirreL's message panel.
+  See right mouse menu on UI tables --> "Export CSV / MS Excel / XML / JSON ..."
+
 Refactoring: The "Data Import"-Plugin's functionality was moved to SQuirreL's core.
   The "Data Import"-Plugin won't be shipped anymore
   and in case it is still found it is programmatically kept from being loaded.

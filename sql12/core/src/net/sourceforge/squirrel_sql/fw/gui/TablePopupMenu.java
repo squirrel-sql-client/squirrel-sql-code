@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuControl
 import net.sourceforge.squirrel_sql.fw.gui.action.columndetails.ColumnDetailsController;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyasmarkdown.TableCopyAsMarkdownCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportUtil;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExport;
 import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
@@ -43,6 +44,7 @@ import net.sourceforge.squirrel_sql.fw.gui.table.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.resources.ResourceUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.apache.commons.lang3.time.StopWatch;
 
 import javax.swing.*;
 import java.awt.*;
@@ -485,9 +487,17 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-			new TableExport(_dataSetViewerTablePanel.getTable()).export();
+			TableExport tableExport = new TableExport(_dataSetViewerTablePanel.getTable());
+
+
+			StopWatch stopWatch = new StopWatch();
+			stopWatch.start();
+			tableExport.export();
+			stopWatch.stop();
+			ExportUtil.writeExportMessage(stopWatch, tableExport.getWrittenRows(), tableExport.getTargetFile());
 		}
-   }
+
+	}
 
    private class ShowReferencesAction extends BaseAction
    {

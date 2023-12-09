@@ -35,10 +35,8 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,16 +130,7 @@ public class CreateFileOfSQLCommand
             }
             else if (_resultSetExport.getWrittenRows() >= 0)
             {
-               NumberFormat nf = NumberFormat.getIntegerInstance();
-
-               String rows = nf.format(_resultSetExport.getWrittenRows());
-               File targetFile = _resultSetExport.getTargetFile();
-               String seconds = nf.format(stopWatch.getTime() / 1000);
-               String msg = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.sucessMessage",
-                     rows,
-                     targetFile,
-                     seconds);
-               getSession().showMessage(msg);
+               ExportUtil.writeExportMessage(stopWatch, _resultSetExport.getWrittenRows(), _resultSetExport.getTargetFile());
             }
          }
          finally
