@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Upgraded to latest RSyntax version 6.0.2.
+
 Look and Feel plugin: Upgrade FlatLaF to version 3.2.5.
 
 MS-Excel import from clipboard now works if the clipboard contains a file.

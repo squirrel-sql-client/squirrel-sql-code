@@ -26,11 +26,9 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import org.fife.ui.EscapableDialog;
-import org.fife.ui.RColorButton;
-import org.fife.ui.ResizableFrameContentPane;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -53,10 +51,9 @@ import java.awt.event.ActionListener;
  * Had to be copied because it worked with the RText class
  *
  */
-public class SquirrelGoToDialog extends EscapableDialog
+public class SquirrelGoToDialog extends JDialog
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SquirrelGoToDialog.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SquirrelGoToDialog.class);
 
 
    private JButton okButton;
@@ -84,7 +81,7 @@ public class SquirrelGoToDialog extends EscapableDialog
       GoToListener listener = new GoToListener();
 
       // Set the main content pane for the "GoTo" dialog.
-      JPanel contentPane = new ResizableFrameContentPane(new BorderLayout());
+      JPanel contentPane = new JPanel(new BorderLayout());
       contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
       setContentPane(contentPane);
 
@@ -123,6 +120,8 @@ public class SquirrelGoToDialog extends EscapableDialog
       applyComponentOrientation(orientation);
       pack();
       setLocationRelativeTo(parent);
+
+      GUIUtils.enableCloseByEscape(this);
 
    }
 
@@ -164,18 +163,6 @@ public class SquirrelGoToDialog extends EscapableDialog
       }
 
    }
-
-
-   /**
-    * Called when the user clicks Cancel or hits the Escape key.  This
-    * hides the dialog.
-    */
-   protected void escapePressed()
-   {
-      lineNumber = -1;
-      super.escapePressed();
-   }
-
 
    /**
     * Gets the line number the user entered to go to.
@@ -285,9 +272,14 @@ public class SquirrelGoToDialog extends EscapableDialog
       {
          String command = e.getActionCommand();
          if (command.equals("OK"))
+         {
             attemptToGetGoToLine();
+         }
          else if (command.equals("Cancel"))
-            escapePressed();
+         {
+            close();
+         }
+
       }
 
       public void changedUpdate(DocumentEvent e)
@@ -305,6 +297,12 @@ public class SquirrelGoToDialog extends EscapableDialog
       }
 
 	}
+
+   private void close()
+   {
+      setVisible(false);
+      dispose();
+   }
 
 
 }
