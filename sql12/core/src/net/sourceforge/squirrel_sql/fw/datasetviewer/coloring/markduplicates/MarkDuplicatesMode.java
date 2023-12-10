@@ -6,42 +6,44 @@ import net.sourceforge.squirrel_sql.fw.gui.buttonchooser.ButtonChooser;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.AbstractButton;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JToggleButton;
+import javax.swing.*;
 import java.util.Optional;
 
 public enum MarkDuplicatesMode
 {
    DUPLICATE_VALUES_IN_COLUMNS(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_VALUES_IN_COLUMNS),
-                               StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateValuesInColumns.text"),
-                               StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateValuesInColumns.tooltip")),
+                               I18n.s_stringMgr.getString("MarkDuplicatesMode.duplicateValuesInColumns.text"),
+                               I18n.embedInUsageInfo("MarkDuplicatesMode.duplicateValuesInColumns.tooltip")),
 
    DUPLICATE_CONSECUTIVE_VALUES_IN_COLUMNS(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_VALUES_IN_COLUMNS_IF_CONSECUTIVE),
-                               StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateValuesInColumnsIfConsecutive.text"),
-                               StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateValuesInColumnsIfConsecutive.tooltip")),
+                               I18n.s_stringMgr.getString("MarkDuplicatesMode.duplicateValuesInColumnsIfConsecutive.text"),
+                               I18n.embedInUsageInfo("MarkDuplicatesMode.duplicateValuesInColumnsIfConsecutive.tooltip")),
 
    DUPLICATE_ROWS(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_ROWS),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateRows.text"),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateRows.tooltip")),
+                  I18n.s_stringMgr.getString("MarkDuplicatesMode.duplicateRows.text"),
+                  I18n.embedInUsageInfo("MarkDuplicatesMode.duplicateRows.tooltip")),
 
    DUPLICATE_CONSECUTIVE_ROWS(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_ROWS_IF_CONSECUTIVE),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateRowsIfConsecutive.text"),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateRowsIfConsecutive.tooltip")),
+                  I18n.s_stringMgr.getString("MarkDuplicatesMode.duplicateRowsIfConsecutive.text"),
+                  I18n.embedInUsageInfo("MarkDuplicatesMode.duplicateRowsIfConsecutive.tooltip")),
 
    DUPLICATE_CELLS_IN_ROW(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_CELLS_IN_ROW),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRow.text"),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRow.tooltip")),
+                  I18n.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRow.text"),
+                  I18n.embedInUsageInfo("MarkDuplicatesMode.duplicateCellsInSameRow.tooltip")),
 
    DUPLICATE_CONSECUTIVE_CELLS_IN_ROW(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_CONSECUTIVE_CELLS_IN_ROW),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRowIfConsecutive.text"),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRowIfConsecutive.tooltip"));
+                  I18n.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRowIfConsecutive.text"),
+                  I18n.embedInUsageInfo("MarkDuplicatesMode.duplicateCellsInSameRowIfConsecutive.tooltip"));
 
 
-   private static class StaticsAccess
+   private static class I18n
    {
       static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MarkDuplicatesMode.class);
+
+      static String embedInUsageInfo(String toEmbed)
+      {
+         return s_stringMgr.getString("MarkDuplicatesMode.usage.tooltip.embed", toEmbed);
+      }
    }
 
    private final ImageIcon _icon;
