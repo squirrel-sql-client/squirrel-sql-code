@@ -58,6 +58,8 @@ public class LibraryResources extends Resources
       String HIDE_SELECTED = "hideSelected";
       String COLOR_CHOOSE = "colorChoose";
       String CONFIGURE = "configure";
+
+      String MARK_ALL_RESULTS = "mark_all_results";
    }
 
 	public LibraryResources()

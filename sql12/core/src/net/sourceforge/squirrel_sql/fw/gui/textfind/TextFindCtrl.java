@@ -62,6 +62,7 @@ public class TextFindCtrl
 
       _findPanel.btnDown.addActionListener(e -> onFind(true));
       _findPanel.btnUp.addActionListener(e -> onFind(false));
+      _findPanel.btnMarkAll.addActionListener(e -> onToggleMarkAll());
       _findPanel.btnConfig.addActionListener(e -> onConfig());
       _findPanel.btnHide.addActionListener(e -> closeFind());
 
@@ -104,6 +105,8 @@ public class TextFindCtrl
    {
       try
       {
+         _findPanel.btnMarkAll.setSelected(false);
+
          if(StringUtilities.isEmpty(_editableComboBoxHandler.getItem(), true))
          {
             Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("TextFindCtrl.text.to.find.missing"));
@@ -168,6 +171,59 @@ public class TextFindCtrl
          throw Utilities.wrapRuntime(e);
       }
    }
+
+   private void onToggleMarkAll()
+   {
+      try
+      {
+         if(false == _findPanel.btnMarkAll.isSelected())
+         {
+            _textComponentToSearch.getHighlighter().removeAllHighlights();
+            //if (null != _textComponentToSearch.getText() && 0 < _textComponentToSearch.getText().length())
+            //{
+            //   _textComponentToSearch.setCaretPosition(0);
+            //}
+            return;
+         }
+
+
+         if(StringUtilities.isEmpty(_editableComboBoxHandler.getItem(), true))
+         {
+            Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("TextFindCtrl.text.to.find.missing"));
+            return;
+         }
+
+         int nextOccurrenceToFind = 1;
+         MatchBounds matchBounds =
+               TextFinder.findNthOccurrence(_textComponentToSearch.getText(), _editableComboBoxHandler.getItem(), nextOccurrenceToFind, getSelectedFindMode());
+
+         boolean firstMatch = true;
+         while (null != matchBounds)
+         {
+            //////////////////////////////////////////////////////////////////////
+            // Scrolls correctly and does not interfere with highlighting.
+            if (firstMatch)
+            {
+               _textComponentToSearch.setSelectionStart(matchBounds.getBeginIx());
+               _textComponentToSearch.setSelectionEnd(matchBounds.getBeginIx());
+               firstMatch = false;
+            }
+            //
+            //////////////////////////////////////////////////////////////////////
+
+            _textComponentToSearch.getHighlighter().addHighlight(matchBounds.getBeginIx(), matchBounds.getEndIx(), _highlightPainter);
+            ++nextOccurrenceToFind;
+
+            matchBounds =
+                  TextFinder.findNthOccurrence(_textComponentToSearch.getText(), _editableComboBoxHandler.getItem(), nextOccurrenceToFind, getSelectedFindMode());
+         }
+      }
+      catch (BadLocationException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
 
    private void initKeyStrokes()
    {
@@ -254,6 +310,7 @@ public class TextFindCtrl
 
       _nextOccurrenceToFind = 1;
 
+      _findPanel.btnMarkAll.setSelected(false);
       _textComponentToSearch.getHighlighter().removeAllHighlights();
    }
 }

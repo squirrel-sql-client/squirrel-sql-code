@@ -16,6 +16,7 @@ public class TextFindPanel extends JPanel
    final JComboBox cboTextToFind = new JComboBox();
    final JButton btnDown;
    final JButton btnUp;
+   final JToggleButton btnMarkAll;
    final JButton btnConfig;
    final JButton btnHide;
 
@@ -43,13 +44,20 @@ public class TextFindPanel extends JPanel
       add(btnUp, gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,5,2,0),0,0 );
+      btnMarkAll = new JToggleButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.MARK_ALL_RESULTS));
+      btnMarkAll.setToolTipText(s_stringMgr.getString("TextSetFindPanel.markAll"));
+      btnMarkAll.setBorder(BorderFactory.createEtchedBorder());
+      btnMarkAll.setFocusable(false);
+      add(btnMarkAll, gbc);
+
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,5,2,0),0,0 );
       btnConfig = new JButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.CONFIGURE));
       btnConfig.setToolTipText(s_stringMgr.getString("TextSetFindPanel.configure"));
       btnConfig.setBorder(BorderFactory.createEtchedBorder());
       btnConfig.setFocusable(false);
       add(btnConfig, gbc);
 
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,5,2,5),0,0 );
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,5,2,5),0,0 );
       btnHide = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.CLOSE));
       if (permanent)
       {
