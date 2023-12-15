@@ -29,7 +29,7 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
 /**
- * Objects of this class hold a collection of <TT>ISQLAlias</TT> objects.
+ * Objects of this class hold a collection of <TT>SQLAlias</TT> objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */

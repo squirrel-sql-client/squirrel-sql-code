@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
@@ -8,7 +8,7 @@ import java.io.*;
 
 class ReloadSqlContentsHelper
 {
-   static String getLastSqlContent(ISQLAliasExt alias)
+   static String getLastSqlContent(SQLAlias alias)
    {
       try
       {
@@ -46,7 +46,7 @@ class ReloadSqlContentsHelper
       }
    }
 
-   private static File getContentsFile(ISQLAliasExt alias)
+   private static File getContentsFile(SQLAlias alias)
    {
       File userDir = new ApplicationFiles().getUserSettingsDirectory();
 
@@ -57,7 +57,7 @@ class ReloadSqlContentsHelper
       return new File(sqlContentsDir, "sqlcontents_" + StringUtilities.javaNormalize(alias.getIdentifier().toString(), false) + ".sql");
    }
 
-   static void writeLastSqlContent(ISQLAliasExt alias, String entireSQLScript)
+   static void writeLastSqlContent(SQLAlias alias, String entireSQLScript)
    {
       try
       {
@@ -76,7 +76,7 @@ class ReloadSqlContentsHelper
       }
    }
 
-   static void tryDeleteContentsFile(ISQLAliasExt alias)
+   static void tryDeleteContentsFile(SQLAlias alias)
    {
       getContentsFile(alias).delete();
    }

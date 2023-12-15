@@ -17,25 +17,18 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ViewSessionScriptsPanel extends JPanel
 {
@@ -71,7 +64,7 @@ public class ViewSessionScriptsPanel extends JPanel
 	private void refreshScript()
 	{
 		boolean setText = false;
-		ISQLAlias alias = _aliasesCmb.getSelectedSQLAlias();
+		SQLAlias alias = _aliasesCmb.getSelectedSQLAlias();
 		if (alias != null)
 		{
 			AliasScript script = _plugin.getScriptsCache().get(alias);
@@ -121,7 +114,7 @@ public class ViewSessionScriptsPanel extends JPanel
 			{
 				synchronized (_sqlEntry)
 				{
-					ISQLAlias alias = _aliasesCmb.getSelectedSQLAlias();
+					SQLAlias alias = _aliasesCmb.getSelectedSQLAlias();
 					if (alias != null)
 					{
 						AliasScript script = _plugin.getScriptsCache().get(alias);

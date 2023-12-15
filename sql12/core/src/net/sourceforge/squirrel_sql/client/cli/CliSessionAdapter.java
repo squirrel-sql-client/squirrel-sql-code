@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.CurrentSchemaModel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
@@ -77,7 +77,7 @@ public class CliSessionAdapter implements ISession
    }
 
    @Override
-   public ISQLAliasExt getAlias()
+   public SQLAlias getAlias()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }

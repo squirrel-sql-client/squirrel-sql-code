@@ -17,11 +17,12 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+
+import java.io.Serializable;
 /**
  * An SQL script run when a session is started.
  *
@@ -31,7 +32,7 @@ public class AliasScript implements Serializable, IHasIdentifier
 {
 	/**
 	 * The <TT>IIdentifier</TT> that uniquely identifies this object. This is
-	 * actually the identifier of the <TT>ISQLALias</TT> that this script is
+	 * actually the identifier of the <TT>SQLAlias</TT> that this script is
 	 * for.
 	 */
 	private IIdentifier _id;
@@ -48,20 +49,20 @@ public class AliasScript implements Serializable, IHasIdentifier
 	}
 
 	/**
-	 * Ctor specifying the <TT>ISQLAlias</TT>.
+	 * Ctor specifying the <TT>SQLAlias</TT>.
 	 *
-	 * @param	alias	<TT>ISQLAlias</TT> we have creatign this script for.
+	 * @param	alias	<TT>SQLAlias</TT> we have creatign this script for.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 * 			Thrown if <TT>null</TT> <TT>SQLAlias</TT> passed.
 	 */
-	public AliasScript(ISQLAlias alias)
+	public AliasScript(SQLAlias alias)
 	{
 		super();
 
 		if (alias == null)
 		{
-			throw new IllegalArgumentException("ISQLAlias == null");
+			throw new IllegalArgumentException("SQLAlias == null");
 		}
 
 		_id = alias.getIdentifier();

@@ -1,28 +1,14 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
-import javax.swing.SwingConstants;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -48,7 +34,7 @@ public class RecentFilesDialog extends JDialog
    JButton btnRemoveSeleted;
 
 
-   public RecentFilesDialog(Frame parent, boolean isCalledFromAliasView, ISQLAlias alias)
+   public RecentFilesDialog(Frame parent, boolean isCalledFromAliasView, SQLAlias alias)
    {
       super(parent, true);
 
@@ -128,7 +114,7 @@ public class RecentFilesDialog extends JDialog
       return Props.getInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, 500);
    }
 
-   private JPanel createButtonsPanel(boolean isCalledFromAliasView, ISQLAlias alias)
+   private JPanel createButtonsPanel(boolean isCalledFromAliasView, SQLAlias alias)
    {
       JPanel ret = new JPanel(new GridBagLayout());
 

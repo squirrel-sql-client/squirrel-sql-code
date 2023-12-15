@@ -22,7 +22,6 @@ package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
@@ -38,17 +37,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class manages sessions.
@@ -93,7 +85,7 @@ public class SessionManager
     * @param	password	Password for <TT>user</TT>
     *
     * @throws	IllegalArgumentException
-    *			Thrown if IApplication, ISQLDriver, ISQLAlias,
+    *			Thrown if IApplication, ISQLDriver, SQLAlias,
     * 			or SQLConnection is passed as null.
     */
    public synchronized ISession createSession(IApplication app,
@@ -614,7 +606,7 @@ public class SessionManager
     * Note: This Method does not cache allowed Schemas.
     * It is preferable to use getAllowedSchemas(ISession) if a Session is available.
     */
-   public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias, IIdentifier sessionIdentifierOrNull)
+   public String[] getAllowedSchemas(ISQLConnection con, SQLAlias alias, IIdentifier sessionIdentifierOrNull)
    {
       try
       {

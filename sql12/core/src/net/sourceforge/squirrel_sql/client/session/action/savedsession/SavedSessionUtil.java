@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -9,7 +10,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -125,7 +125,7 @@ public class SavedSessionUtil
       ((SessionManageAction)Main.getApplication().getActionCollection().get(SessionManageAction.class)).updateUI();
    }
 
-   public static ISQLAlias getAliasForIdString(String defaultAliasIdString)
+   public static SQLAlias getAliasForIdString(String defaultAliasIdString)
    {
       final UidIdentifier aliasId = new UidIdentifier(defaultAliasIdString);
       return Main.getApplication().getAliasesAndDriversManager().getAlias(aliasId);
@@ -150,7 +150,7 @@ public class SavedSessionUtil
    {
       String savedSessionName = savedSession.getName();
 
-      final ISQLAlias alias = getAliasForIdString(savedSession.getDefaultAliasIdString());
+      final SQLAlias alias = getAliasForIdString(savedSession.getDefaultAliasIdString());
       String aliasName = "<unknown>";
       String jdbcUrl = "<unknown>";
       String jdbcUser = "<unknown>";
@@ -195,7 +195,7 @@ public class SavedSessionUtil
       String aliasUrl = "<unknown>";
       String aliasUserName = "<unknown>";
 
-      final ISQLAlias alias = getAliasForIdString(value.getDefaultAliasIdString());
+      final SQLAlias alias = getAliasForIdString(value.getDefaultAliasIdString());
       if(null != alias)
       {
          aliasName = alias.getName();

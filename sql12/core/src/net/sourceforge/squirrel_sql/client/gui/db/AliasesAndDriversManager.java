@@ -25,7 +25,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.listholder.ListHolder;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
@@ -244,17 +243,17 @@ public class AliasesAndDriversManager
       _driverListHolder.removeChangesListener(lis);
    }
 
-   public ISQLAlias getAlias(IIdentifier id)
+   public SQLAlias getAlias(IIdentifier id)
    {
       return _aliasListHolder.get(id);
    }
 
-   public Iterator<? extends ISQLAlias> aliases()
+   public Iterator<? extends SQLAlias> aliases()
    {
       return _aliasListHolder.getAll().iterator();
    }
 
-   public List<? extends ISQLAlias> getAliasList()
+   public List<? extends SQLAlias> getAliasList()
    {
       return _aliasListHolder.getAll();
    }
@@ -265,7 +264,7 @@ public class AliasesAndDriversManager
    }
 
 
-   public void addAlias(ISQLAlias alias)
+   public void addAlias(SQLAlias alias)
    {
       _aliasListHolder.add(alias);
    }
@@ -277,12 +276,12 @@ public class AliasesAndDriversManager
       _aliasListHolder.remove(alias.getIdentifier());
    }
 
-   public Iterator<ISQLAlias> getAliasesForDriver(ISQLDriver driver)
+   public Iterator<SQLAlias> getAliasesForDriver(ISQLDriver driver)
    {
-      ArrayList<ISQLAlias> data = new ArrayList<>();
-      for (Iterator<? extends ISQLAlias> it = aliases(); it.hasNext();)
+      ArrayList<SQLAlias> data = new ArrayList<>();
+      for (Iterator<? extends SQLAlias> it = aliases(); it.hasNext();)
       {
-         ISQLAlias alias = it.next();
+         SQLAlias alias = it.next();
          if (driver.equals(getDriver(alias.getDriverIdentifier())))
          {
             data.add(alias);

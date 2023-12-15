@@ -12,14 +12,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasComman
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -116,7 +112,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
       }
       else
       {
-         final ISQLAlias alias = SavedSessionUtil.getAliasForIdString(savedSessionJsonBean.getDefaultAliasIdString());
+         final SQLAlias alias = SavedSessionUtil.getAliasForIdString(savedSessionJsonBean.getDefaultAliasIdString());
 
          if(null == alias)
          {
@@ -124,7 +120,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
             return;
          }
 
-         final ConnectToAliasCallBack callback = new ConnectToAliasCallBack((SQLAlias) alias)
+         final ConnectToAliasCallBack callback = new ConnectToAliasCallBack(alias)
          {
             @Override
             public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
@@ -133,7 +129,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
             }
          };
 
-         new ConnectToAliasCommand((SQLAlias) alias, true, callback).execute();
+         new ConnectToAliasCommand(alias, true, callback).execute();
 
       }
    }

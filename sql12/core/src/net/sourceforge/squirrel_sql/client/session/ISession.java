@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.CurrentSchemaModel;
 import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
@@ -105,7 +105,7 @@ public interface ISession extends IHasIdentifier
     *
     * @return the alias used to connect to the database.
     */
-   ISQLAliasExt getAlias();
+   SQLAlias getAlias();
 
    /**
     * Return the properties for this session.

@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 
@@ -33,7 +32,7 @@ import java.util.Iterator;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasesListModel extends SortedListModel<ISQLAlias>
+public class AliasesListModel extends SortedListModel<SQLAlias>
 {
     /** Application API. */
 	private IApplication _app;
@@ -59,7 +58,7 @@ public class AliasesListModel extends SortedListModel<ISQLAlias>
 	 */
 	private void load()
 	{
-		Iterator<? extends ISQLAlias> it = _app.getAliasesAndDriversManager().aliases();
+		Iterator<? extends SQLAlias> it = _app.getAliasesAndDriversManager().aliases();
 		while (it.hasNext())
 		{
 			addAlias(it.next());
@@ -67,21 +66,21 @@ public class AliasesListModel extends SortedListModel<ISQLAlias>
 	}
 
 	/**
-	 * Add an <TT>ISQLAlias</TT> to this model.
+	 * Add an <TT>SQLAlias</TT> to this model.
 	 *
-	 * @param   alias   <TT>ISQLAlias</TT> to be added.
+	 * @param   alias   <TT>SQLAlias</TT> to be added.
 	 */
-	private void addAlias(ISQLAlias alias)
+	private void addAlias(SQLAlias alias)
 	{
 		addElement(alias);
 	}
 
 	/**
-	 * Remove an <TT>ISQLAlias</TT> from this model.
+	 * Remove an <TT>SQLAlias</TT> from this model.
 	 *
-	 * @param   alias   <TT>ISQLAlias</TT> to be removed.
+	 * @param   alias   <TT>SQLAlias</TT> to be removed.
 	 */
-	private void removeAlias(ISQLAlias alias)
+	private void removeAlias(SQLAlias alias)
 	{
 		removeElement(alias);
 	}
@@ -99,7 +98,7 @@ public class AliasesListModel extends SortedListModel<ISQLAlias>
 
 			for (int i = 0; i < aliases.length; i++)
          {
-            addElement((ISQLAlias) aliases[i]);
+            addElement((SQLAlias) aliases[i]);
 			}
 		}
 		finally
@@ -125,7 +124,7 @@ public class AliasesListModel extends SortedListModel<ISQLAlias>
    {
       for (int i = 0; i < size(); i++)
       {
-         SQLAlias alias = (SQLAlias) get(i);
+         SQLAlias alias = get(i);
 
          if (aliasIdentifier.equals(alias.getIdentifier()))
          {
@@ -156,9 +155,9 @@ public class AliasesListModel extends SortedListModel<ISQLAlias>
 		public void objectAdded(ObjectCacheChangeEvent evt)
 		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLAlias)
+			if (obj instanceof SQLAlias)
 			{
-				addAlias((ISQLAlias)obj);
+				addAlias((SQLAlias)obj);
 			}
 		}
 
@@ -170,9 +169,9 @@ public class AliasesListModel extends SortedListModel<ISQLAlias>
 		public void objectRemoved(ObjectCacheChangeEvent evt)
 		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLAlias)
+			if (obj instanceof SQLAlias)
 			{
-				removeAlias((ISQLAlias)obj);
+				removeAlias((SQLAlias)obj);
 			}
 		}
 	}

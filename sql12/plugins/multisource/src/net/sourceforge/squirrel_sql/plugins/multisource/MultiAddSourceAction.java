@@ -2,9 +2,9 @@ package net.sourceforge.squirrel_sql.plugins.multisource;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -31,10 +31,10 @@ public class MultiAddSourceAction extends SquirrelAction {
 	public void actionPerformed(ActionEvent evt) {
 		try {
 			// List all the aliases in the system (then have user pick one).
-			Iterator<? extends ISQLAlias> iterator = _session.getApplication().getAliasesAndDriversManager().aliases();
-			ArrayList<ISQLAlias> aliasList = new ArrayList<ISQLAlias>();
+			Iterator<? extends SQLAlias> iterator = _session.getApplication().getAliasesAndDriversManager().aliases();
+			ArrayList<SQLAlias> aliasList = new ArrayList<SQLAlias>();
 			while (iterator.hasNext()) {
-				ISQLAlias alias = iterator.next();
+				SQLAlias alias = iterator.next();
 				if (alias.getUrl().toLowerCase().indexOf("jdbc:unity") < 0) {
 					aliasList.add(alias);
 				}

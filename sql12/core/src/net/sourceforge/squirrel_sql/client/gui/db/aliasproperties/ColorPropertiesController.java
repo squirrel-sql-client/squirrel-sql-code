@@ -21,11 +21,11 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import java.awt.Component;
+import java.awt.*;
 
 /**
  * This dialog allows the user to review and maintain background color overrides for an alias.
@@ -40,7 +40,7 @@ public class ColorPropertiesController implements IAliasPropertiesPanelControlle
 
 	private ColorPropertiesPanel _propsPnl;
 
-	private ISQLAliasExt _alias;
+	private SQLAlias _alias;
 
 	public static interface i18n {
 		// i18n[ColorPropertiesController.title=Color]
@@ -50,7 +50,7 @@ public class ColorPropertiesController implements IAliasPropertiesPanelControlle
 		String HINT = s_stringMgr.getString("ColorPropertiesController.hint");
 	}
 	
-	public ColorPropertiesController(ISQLAliasExt alias)
+	public ColorPropertiesController(SQLAlias alias)
 	{
 		_alias = alias;
 		_propsPnl = new ColorPropertiesPanel(alias.getColorProperties());

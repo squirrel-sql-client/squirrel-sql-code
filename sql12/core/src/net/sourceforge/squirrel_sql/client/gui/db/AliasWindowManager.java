@@ -19,11 +19,10 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 public class AliasWindowManager
 {
-	public static AliasInternalFrame showModifyAliasInternalFrame(final ISQLAlias alias)
+	public static AliasInternalFrame showModifyAliasInternalFrame(final SQLAlias alias)
 	{
 		return moveToFront(AliasWindowFactory.getModifySheet(alias));
 	}

@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
@@ -49,13 +48,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaDataFactory;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaDataFactory;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -67,55 +60,22 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.exception.OracleExceptionFormatter;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.ConstraintParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.DefaultDatabaseExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.OracleTableParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.PackageExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.ProcedureExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.SchemaExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.SessionParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.*;
 import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecutor;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePluginPreferencesPanel;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.control.GenerateControlFileAction;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.ConstraintColumnInfoTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.ConstraintDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.ConstraintSourceTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexSourceTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.LobDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.SequenceDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionStatisticsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.SnapshotSourceTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerColumnInfoTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.*;
 import net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.oracle.types.OracleXmlTypeDataTypeComponentFactory;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -684,7 +644,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		return result;
 	}
 
-	private boolean isOracle(ISQLAliasExt alias)
+	private boolean isOracle(SQLAlias alias)
 	{
 		IIdentifier driverIdentifier = alias.getDriverIdentifier();
 		Driver jdbcDriver = getApplication().getSQLDriverManager().getJDBCDriver(driverIdentifier);
@@ -697,7 +657,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		return jdbcDriver.getClass().getName().startsWith("oracle.");
 	}
 
-	private String[] onGetAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
+	private String[] onGetAllowedSchemas(ISQLConnection con, SQLAlias alias)
 	{
 		if (isOracle(alias))
 		{

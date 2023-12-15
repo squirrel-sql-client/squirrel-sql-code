@@ -35,7 +35,7 @@ public class ConnectToAliasAction extends AliasAction
     * Ctor specifying the list of aliases.
     *
     * @param	app		Application API.
-    * @param	list	List of <TT>ISQLAlias</TT> objects.
+    * @param	list	List of <TT>SQLAlias</TT> objects.
     */
    public ConnectToAliasAction(IApplication app, IAliasesList list)
    {

@@ -30,7 +30,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -94,7 +93,7 @@ public class ConnectionInternalFrame extends DialogWidget
 	private IApplication _app;
 
 	/** Alias we are going to connect to. */
-	private ISQLAlias _alias;
+	private SQLAlias _alias;
 
 	/** JDBC driver for <TT>_alias</TT>. */
 	private ISQLDriver _sqlDriver;
@@ -131,10 +130,10 @@ public class ConnectionInternalFrame extends DialogWidget
 	 * @param	handler	Handler for internal frame actions.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>ISQLAlias</TT>,
+	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>SQLAlias</TT>,
 	 * 			or <TT>IConnectionInternalFrameHandler</TT> passed.
 	 */
-	public ConnectionInternalFrame(IApplication app, ISQLAlias alias,
+	public ConnectionInternalFrame(IApplication app, SQLAlias alias,
 									IHandler handler)
 	{
 		super("", true, app);
@@ -144,7 +143,7 @@ public class ConnectionInternalFrame extends DialogWidget
 		}
 		if (alias == null)
 		{
-			throw new IllegalArgumentException("Null ISQLAlias passed");
+			throw new IllegalArgumentException("Null SQLAlias passed");
 		}
 		if (handler == null)
 		{

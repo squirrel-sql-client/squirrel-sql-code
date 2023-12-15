@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
 import java.awt.event.ActionEvent;
 
 /**
- * This <CODE>Action</CODE> allows the user to delete an <TT>ISQLAlias</TT>.
+ * This <CODE>Action</CODE> allows the user to delete an <TT>SQLAlias</TT>.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */

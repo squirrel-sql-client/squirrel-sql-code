@@ -21,11 +21,11 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import java.awt.Component;
+import java.awt.*;
 
 /**
  * This dialog allows the user to review and maintain connection properties for an alias.
@@ -40,7 +40,7 @@ public class ConnectionPropertiesController implements IAliasPropertiesPanelCont
 
 	private ConnectionPropertiesPanel _propsPnl;
 
-	private ISQLAliasExt _alias;
+	private SQLAlias _alias;
 
 	public static interface i18n {
 		// i18n[ConnectionPropertiesController.title=Connection]
@@ -50,7 +50,7 @@ public class ConnectionPropertiesController implements IAliasPropertiesPanelCont
 		String HINT = s_stringMgr.getString("ConnectionPropertiesController.hint");
 	}
 	
-	public ConnectionPropertiesController(ISQLAliasExt alias)
+	public ConnectionPropertiesController(SQLAlias alias)
 	{
 		_alias = alias;
 		_propsPnl = new ConnectionPropertiesPanel(alias.getConnectionProperties());

@@ -18,16 +18,16 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 /**
  * XML cache of SQL scripts.
  *
@@ -70,20 +70,20 @@ public class AliasScriptCache
 	}
 
 	/**
-	 * Return the <TT>AliasScript</TT> for the passed <TT>ISQLAlias</TT>.
+	 * Return the <TT>AliasScript</TT> for the passed <TT>SQLAlias</TT>.
 	 *
 	 * @param	alias	<TT>SQLALias</TT> to retrieve collection of scripts for.
 	 *
-	 * @throws	IllegalArgumentException	Thrown if null<TT>ISQLAlias</TT> passed.
+	 * @throws	IllegalArgumentException	Thrown if null<TT>SQLAlias</TT> passed.
 	 *
 	 * @throws	InternalError	Thrown if we try to add a script for an alias
 	 * 							and one already exists. Programming error.
 	 */
-	public synchronized AliasScript get(ISQLAlias alias)
+	public synchronized AliasScript get(SQLAlias alias)
 	{
 		if (alias == null)
 		{
-			throw new IllegalArgumentException("ISQLALias == null");
+			throw new IllegalArgumentException("SQLAlias == null");
 		}
 
 		AliasScript script = (AliasScript)_cache.get(AliasScript.class, alias.getIdentifier());

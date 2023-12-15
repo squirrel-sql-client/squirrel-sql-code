@@ -1,9 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -18,7 +17,7 @@ public class RecentFilesManager
 
    private RecentFilesJsonBean _recentFilesJsonBean = new RecentFilesJsonBean();
 
-   public void fileTouched(String absolutePath, ISQLAliasExt alias)
+   public void fileTouched(String absolutePath, SQLAlias alias)
    {
       ArrayList<String> recentFiles = _recentFilesJsonBean.getRecentFiles();
       adjustFileArray(absolutePath, recentFiles);
@@ -41,7 +40,7 @@ public class RecentFilesManager
 
 
 
-   private AliasFileXmlBean findOrCreateAliasFile(ISQLAlias alias)
+   private AliasFileXmlBean findOrCreateAliasFile(SQLAlias alias)
    {
       AliasFileXmlBean ret = findAliasFile(alias);
 
@@ -55,7 +54,7 @@ public class RecentFilesManager
       return ret;
    }
 
-   private AliasFileXmlBean findAliasFile(ISQLAlias alias)
+   private AliasFileXmlBean findAliasFile(SQLAlias alias)
    {
       AliasFileXmlBean ret = null;
       ArrayList<AliasFileXmlBean> aliasFileXmlBeans = _recentFilesJsonBean.getAliasFileXmlBeans();
@@ -106,12 +105,12 @@ public class RecentFilesManager
       return _recentFilesJsonBean.getFavouriteFiles();
    }
 
-   public ArrayList<String> getRecentFilesForAlias(ISQLAlias selectedAlias)
+   public ArrayList<String> getRecentFilesForAlias(SQLAlias selectedAlias)
    {
       return findOrCreateAliasFile(selectedAlias).getRecentFiles();
    }
 
-   public ArrayList<String> getFavouriteFilesForAlias(ISQLAlias selectedAlias)
+   public ArrayList<String> getFavouriteFilesForAlias(SQLAlias selectedAlias)
    {
       return findOrCreateAliasFile(selectedAlias).getFavouriteFiles();
    }
@@ -131,7 +130,7 @@ public class RecentFilesManager
       adjustFileArray(selectedFile.getAbsolutePath(), _recentFilesJsonBean.getFavouriteFiles());
    }
 
-   public void adjustFavouriteAliasFiles(ISQLAlias alias, File selectedFile)
+   public void adjustFavouriteAliasFiles(SQLAlias alias, File selectedFile)
    {
       adjustFileArray(selectedFile.getAbsolutePath(), findOrCreateAliasFile(alias).getFavouriteFiles());
    }
@@ -146,17 +145,17 @@ public class RecentFilesManager
       _recentFilesJsonBean.setFavouriteFiles(files);
    }
 
-   public void setRecentFilesForAlias(ISQLAlias alias, ArrayList<String> files)
+   public void setRecentFilesForAlias(SQLAlias alias, ArrayList<String> files)
    {
       findOrCreateAliasFile(alias).setRecentFiles(files);
    }
 
-   public void setFavouriteFilesForAlias(ISQLAlias alias, ArrayList<String> files)
+   public void setFavouriteFilesForAlias(SQLAlias alias, ArrayList<String> files)
    {
       findOrCreateAliasFile(alias).setFavouriteFiles(files);
    }
 
-   public void setOpenAtStartupFile(ISQLAlias alias, String openAtStartupFile)
+   public void setOpenAtStartupFile(SQLAlias alias, String openAtStartupFile)
    {
       AliasFileXmlBean aliasFile = findOrCreateAliasFile(alias);
 
@@ -181,7 +180,7 @@ public class RecentFilesManager
       aliasFile.setOpenAtStartupFile(openAtStartupFile);
    }
 
-   public String getOpenAtStartupFileForAlias(ISQLAlias alias)
+   public String getOpenAtStartupFileForAlias(SQLAlias alias)
    {
       AliasFileXmlBean aliasFile = findAliasFile(alias);
 

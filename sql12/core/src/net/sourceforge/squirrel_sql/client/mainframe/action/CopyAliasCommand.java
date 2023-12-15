@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
- * <TT>ISQLAlias</TT> to a new one and then maintain the new one.
+ * <TT>SQLAlias</TT> to a new one and then maintain the new one.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -33,17 +33,17 @@ public class CopyAliasCommand implements ICommand
    /** Application API. */
    private final IApplication _app;
 
-   /** <TT>ISQLAlias</TT> to be copied. */
+   /** <TT>SQLAlias</TT> to be copied. */
    private final SQLAlias _sqlAlias;
 
    /**
     * Ctor.
     *
     * @param	app			Application API.
-    * @param	sqlAlias	<TT>ISQLAlias</TT> to be copied.
+    * @param	sqlAlias	<TT>SQLAlias</TT> to be copied.
     *
     * @throws	IllegalArgumentException
-    *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> or
+    *			Thrown if a <TT>null</TT> <TT>SQLAlias</TT> or
     *			<tt>IApplication</tt> passed.
     */
    public CopyAliasCommand(IApplication app, SQLAlias sqlAlias)
@@ -55,7 +55,7 @@ public class CopyAliasCommand implements ICommand
       }
       if (sqlAlias == null)
       {
-         throw new IllegalArgumentException("Null ISQLAlias passed");
+         throw new IllegalArgumentException("Null SQLAlias passed");
       }
 
       _app = app;

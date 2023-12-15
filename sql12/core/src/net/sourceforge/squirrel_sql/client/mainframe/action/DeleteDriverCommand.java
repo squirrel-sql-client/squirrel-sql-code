@@ -17,18 +17,18 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
-import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.awt.*;
+import java.util.Iterator;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to delete an existing
@@ -87,12 +87,12 @@ public class DeleteDriverCommand implements ICommand
 	{
 		final Object[] args = {_sqlDriver.getName()};
 		final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
-		Iterator<ISQLAlias> it = cache.getAliasesForDriver(_sqlDriver);
+		Iterator<SQLAlias> it = cache.getAliasesForDriver(_sqlDriver);
 		if (it.hasNext())
 		{
             StringBuffer aliasList = new StringBuffer();
             while (it.hasNext()) {
-                net.sourceforge.squirrel_sql.client.gui.db.SQLAlias alias = (SQLAlias)it.next();
+                net.sourceforge.squirrel_sql.client.gui.db.SQLAlias alias = it.next();
                 aliasList.append("\n");
                 aliasList.append(alias.getName());
             }

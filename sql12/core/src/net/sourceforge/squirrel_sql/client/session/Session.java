@@ -24,7 +24,6 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
@@ -196,7 +195,7 @@ class Session implements ISession
       }
       if (alias == null)
       {
-         throw new IllegalArgumentException("null ISQLAlias passed");
+         throw new IllegalArgumentException("null SQLAlias passed");
       }
       if (conn == null)
       {
@@ -458,9 +457,9 @@ class Session implements ISession
    }
 
    /**
-    * @return <TT>ISQLAlias</TT> for this session.
+    * @return <TT>SQLAlias</TT> for this session.
     */
-   public ISQLAliasExt getAlias()
+   public SQLAlias getAlias()
    {
       return _alias;
    }

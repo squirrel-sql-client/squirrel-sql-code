@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import java.awt.event.ActionEvent;
 
 /**
- * This <CODE>Action</CODE> allows the user to copy an <TT>ISQLAlias</TT>
+ * This <CODE>Action</CODE> allows the user to copy an <TT>SQLAlias</TT>
  * and maintain the newly copied one.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
@@ -41,7 +41,7 @@ public class CopyAliasAction extends AliasAction
     * Ctor specifying the list of aliases.
     *
     * @param	app		Application API.
-    * @param	list	List of <TT>ISQLAlias</TT> objects.
+    * @param	list	List of <TT>SQLAlias</TT> objects.
     *
     * @throws	IllegalArgumentException
     *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.

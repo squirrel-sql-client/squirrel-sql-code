@@ -2,15 +2,12 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.GridLayout;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -35,7 +32,7 @@ import java.util.List;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /**
- * This is a <TT>JList</TT> that displays all the <TT>ISQLAlias</TT>
+ * This is a <TT>JList</TT> that displays all the <TT>SQLAlias</TT>
  * objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
@@ -56,7 +53,7 @@ public class AliasesList implements IToogleableAliasesList
       _jTreeImpl = new JTreeAliasesListImpl(app, listModel, item -> onAliasSelected(item));
    }
 
-   private void onAliasSelected(ISQLAlias item)
+   private void onAliasSelected(SQLAlias item)
    {
       String label = null;
       if (item != null)
@@ -147,14 +144,14 @@ public class AliasesList implements IToogleableAliasesList
    }
 
    @Override
-   public void goToAlias(ISQLAlias aliasToGoTo)
+   public void goToAlias(SQLAlias aliasToGoTo)
    {
       getCurrentImpl().goToAlias(aliasToGoTo);
    }
 
 
    /**
-	 * Return the <TT>ISQLAlias</TT> that is currently selected.
+	 * Return the <TT>SQLAlias</TT> that is currently selected.
     * @param evt
     */
 	public SQLAlias getSelectedAlias(MouseEvent evt)
@@ -163,7 +160,7 @@ public class AliasesList implements IToogleableAliasesList
    }
 
    @Override
-   public ISQLAlias getLeadSelectionValue()
+   public SQLAlias getLeadSelectionValue()
    {
       return getCurrentImpl().getLeadSelectionValue();
    }
@@ -204,7 +201,7 @@ public class AliasesList implements IToogleableAliasesList
    }
 
    @Override
-   public void aliasChanged(ISQLAlias sqlAlias)
+   public void aliasChanged(SQLAlias sqlAlias)
    {
       _jListImpl.aliasChanged(sqlAlias);
       _jTreeImpl.aliasChanged(sqlAlias);
@@ -215,16 +212,16 @@ public class AliasesList implements IToogleableAliasesList
    {
       List<SQLAlias> ret = new ArrayList<>();
 
-      for (ISQLAlias isqlAlias : Main.getApplication().getAliasesAndDriversManager().getAliasList())
+      for (SQLAlias SQLAlias : Main.getApplication().getAliasesAndDriversManager().getAliasList())
       {
          for (SQLAlias importSqlAlias : importSqlAliases)
          {
-            if(false == StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(isqlAlias.getName(), importSqlAlias.getName()))
+            if(false == StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(SQLAlias.getName(), importSqlAlias.getName()))
             {
                continue;
             }
 
-            final SQLAlias sqlAlias = (SQLAlias) isqlAlias;
+            final SQLAlias sqlAlias = SQLAlias;
             if(respectAliasVersionTimeMills  && importSqlAlias.getAliasVersionTimeMills() <= sqlAlias.getAliasVersionTimeMills())
             {
                continue;

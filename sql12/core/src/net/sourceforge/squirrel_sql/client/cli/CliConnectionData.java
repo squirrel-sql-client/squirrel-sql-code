@@ -1,20 +1,20 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 
 import java.sql.SQLException;
 
 public class CliConnectionData
 {
-   private ISQLAlias _alias;
+   private SQLAlias _alias;
    private CliSession _cliSession;
 
-   public ISQLAlias getAlias()
+   public SQLAlias getAlias()
    {
       return _alias;
    }
 
-   public void setAlias(ISQLAlias alias)
+   public void setAlias(SQLAlias alias)
    {
       _alias = alias;
 

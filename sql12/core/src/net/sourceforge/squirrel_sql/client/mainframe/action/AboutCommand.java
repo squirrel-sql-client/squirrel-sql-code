@@ -17,13 +17,13 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.gui.aboutdialog.AboutBoxDialog;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
- * <TT>ISQLAlias</TT> to a new one and then maintain the new one.
+ * <TT>SQLAlias</TT> to a new one and then maintain the new one.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */

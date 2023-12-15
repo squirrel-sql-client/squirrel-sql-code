@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -14,7 +15,7 @@ public class SQLConnector
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLConnector.class);
 
-   public static SQLConnection getSqlConnection(ISQLDriver sqlDriver, ISQLAlias alias, String user, String pw, SQLDriverPropertyCollection props, ReconnectInfo reconnectInfo, Driver driver)
+   public static SQLConnection getSqlConnection(ISQLDriver sqlDriver, SQLAlias alias, String user, String pw, SQLDriverPropertyCollection props, ReconnectInfo reconnectInfo, Driver driver)
    {
       try
       {

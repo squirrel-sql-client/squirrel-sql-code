@@ -6,13 +6,10 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.fw.gui.JScrollPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.JScrollPopupMenuPosition;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.Comparator;
 import java.util.List;
@@ -29,7 +26,7 @@ public class AliasPopUpMenuAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		final List<? extends ISQLAlias> aliasList = Main.getApplication().getAliasesAndDriversManager().getAliasList();
+		final List<? extends SQLAlias> aliasList = Main.getApplication().getAliasesAndDriversManager().getAliasList();
 
 		if(0 == aliasList.size())
 		{
@@ -54,7 +51,7 @@ public class AliasPopUpMenuAction extends SquirrelAction
 			++menuCount;
 		}
 
-		for (ISQLAlias alias : aliasList.stream().sorted(Comparator.comparing(al -> al.getName().toLowerCase())).collect(Collectors.toList()))
+		for (SQLAlias alias : aliasList.stream().sorted(Comparator.comparing(al -> al.getName().toLowerCase())).collect(Collectors.toList()))
 		{
 			JMenuItem menuItem = new JMenuItem(alias.getName());
 			menuItem.addActionListener(e -> onAliasSelected(alias));
@@ -74,8 +71,8 @@ public class AliasPopUpMenuAction extends SquirrelAction
 		}
 	}
 
-	private void onAliasSelected(ISQLAlias alias)
+	private void onAliasSelected(SQLAlias alias)
 	{
-		new ConnectToAliasCommand((SQLAlias) alias).execute();
+		new ConnectToAliasCommand(alias).execute();
 	}
 }

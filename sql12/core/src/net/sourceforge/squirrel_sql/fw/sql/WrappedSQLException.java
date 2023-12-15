@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import java.sql.SQLException;
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
- * an <TT>ISQLAlias</TT>.
+ * an <TT>SQLAlias</TT>.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */

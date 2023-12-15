@@ -19,9 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 
-import javax.swing.JComboBox;
+import javax.swing.*;
 import java.util.Iterator;
 /**
  * This <TT>JComboBox</TT> will display all aliases.
@@ -39,9 +39,9 @@ public class SQLALiasesCombo extends JComboBox
 		super();
 	}
 
-	public ISQLAlias getSelectedSQLAlias()
+	public SQLAlias getSelectedSQLAlias()
 	{
-		return (ISQLAlias)getSelectedItem();
+		return (SQLAlias)getSelectedItem();
 	}
 
 	/**
@@ -58,9 +58,9 @@ public class SQLALiasesCombo extends JComboBox
 	public void load(IApplication app)
 	{
 		removeAllItems();
-		for (Iterator<? extends ISQLAlias> it = app.getAliasesAndDriversManager().aliases(); it.hasNext();)
+		for (Iterator<? extends SQLAlias> it = app.getAliasesAndDriversManager().aliases(); it.hasNext();)
 		{
-			ISQLAlias alias = it.next();
+			SQLAlias alias = it.next();
 			addItem(alias);
 		}
 	}

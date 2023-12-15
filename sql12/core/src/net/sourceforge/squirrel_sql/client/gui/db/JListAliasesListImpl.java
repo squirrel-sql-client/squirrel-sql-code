@@ -4,15 +4,13 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.ListAliasColorSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JList;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 /*
@@ -34,7 +32,7 @@ import java.awt.event.MouseEvent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /**
- * This is a <TT>JList</TT> that displays all the <TT>ISQLAlias</TT>
+ * This is a <TT>JList</TT> that displays all the <TT>SQLAlias</TT>
  * objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
@@ -84,7 +82,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 	}
 
 	@Override
-	public ISQLAlias getLeadSelectionValue()
+	public SQLAlias getLeadSelectionValue()
 	{
 		JList<?> list = getList();
 		int selectedIndex = list.getLeadSelectionIndex();
@@ -93,7 +91,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 		{
 			selectedValue = list.getModel().getElementAt(selectedIndex);
 		}
-		return (selectedValue instanceof ISQLAlias) ? (ISQLAlias) selectedValue : null;
+		return (selectedValue instanceof SQLAlias) ? (SQLAlias) selectedValue : null;
 	}
 
 	private void onIntervalRemoved(ListDataEvent evt)
@@ -133,7 +131,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 
 
 	/**
-	 * Return the <TT>ISQLAlias</TT> that is currently selected.
+	 * Return the <TT>SQLAlias</TT> that is currently selected.
     *
     * @param evt
     */
@@ -144,7 +142,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 
    public void sortAliases()
    {
-      final ISQLAlias selectedAlias = getSelectedAlias(null);
+      final SQLAlias selectedAlias = getSelectedAlias(null);
 
       _model.sortAliasesForListImpl();
 
@@ -192,7 +190,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
    {
       if(null != getList().getSelectedValue())
       {
-         AliasWindowManager.showModifyAliasInternalFrame((ISQLAlias) getList().getSelectedValue());
+         AliasWindowManager.showModifyAliasInternalFrame((SQLAlias) getList().getSelectedValue());
       }
    }
 
@@ -202,7 +200,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
    }
 
    @Override
-   public void goToAlias(ISQLAlias aliasToGoTo)
+   public void goToAlias(SQLAlias aliasToGoTo)
    {
 		SQLAlias alias = _model.getAlias(aliasToGoTo.getIdentifier());
 		getList().setSelectedValue(alias, true);
@@ -220,7 +218,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 		final int idx = getList().locationToIndex(evt.getPoint());
 		if (idx != -1)
 		{
-			tip = ((ISQLAlias)getList().getModel().getElementAt(idx)).getName();
+			tip = ((SQLAlias)getList().getModel().getElementAt(idx)).getName();
 		}
 		else
 		{
@@ -244,7 +242,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
    }
 
 	@Override
-	public void aliasChanged(ISQLAlias sqlAlias)
+	public void aliasChanged(SQLAlias sqlAlias)
 	{
 	}
 

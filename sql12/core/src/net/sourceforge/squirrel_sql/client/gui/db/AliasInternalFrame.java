@@ -34,7 +34,6 @@ import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoBu
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -45,30 +44,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
 /**
@@ -101,8 +83,8 @@ public class AliasInternalFrame extends DialogWidget
 	/** Number of characters to show in text fields. */
 	private static final int COLUMN_COUNT = 25;
 
-	/** The <TT>ISQLAlias</TT> being maintained. */
-	private final ISQLAlias _sqlAlias;
+	/** The <TT>SQLAlias</TT> being maintained. */
+	private final SQLAlias _sqlAlias;
 
 	/** Frame title. */
 	private final JLabel _titleLbl = new JLabel();
@@ -146,21 +128,21 @@ public class AliasInternalFrame extends DialogWidget
 	/**
 	 * Ctor.
 	 *
-	 * @param	sqlAlias	The <TT>ISQLAlias</TT> to be maintained.
+	 * @param	sqlAlias	The <TT>SQLAlias</TT> to be maintained.
 	 * @param	maintType	The maintenance type.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or
-	 * 			<TT>ISQLAlias</TT> or an invalid value passed for
+	 * 			<TT>SQLAlias</TT> or an invalid value passed for
 	 *			<TT>maintType</TT>.
 	 */
-	AliasInternalFrame(ISQLAlias sqlAlias, int maintType)
+	AliasInternalFrame(SQLAlias sqlAlias, int maintType)
 	{
 		super("", true, Main.getApplication());
 
 		if (sqlAlias == null)
 		{
-			throw new IllegalArgumentException("ISQLAlias == null");
+			throw new IllegalArgumentException("SQLAlias == null");
 		}
 		if (maintType < IMaintenanceType.NEW || maintType > IMaintenanceType.COPY)
 		{
@@ -206,7 +188,7 @@ public class AliasInternalFrame extends DialogWidget
 	 *
 	 * @return	the alias that is being maintained.
 	 */
-	ISQLAlias getSQLAlias()
+	SQLAlias getSQLAlias()
 	{
 		return _sqlAlias;
 	}
@@ -269,7 +251,7 @@ public class AliasInternalFrame extends DialogWidget
 		}
 	}
 
-	private void applyFromDialog(ISQLAlias alias) throws ValidationException
+	private void applyFromDialog(SQLAlias alias) throws ValidationException
 	{
 		ISQLDriver driver = _drivers.getSelectedDriver();
 		if (driver == null)
@@ -518,7 +500,7 @@ public class AliasInternalFrame extends DialogWidget
 				return;
 			}
 
-			ConnectToAliasCallBack connectToAliasCallBack = new ConnectToAliasCallBack((SQLAlias) _sqlAlias)
+			ConnectToAliasCallBack connectToAliasCallBack = new ConnectToAliasCallBack(_sqlAlias)
 			{
 				@Override
 				public void sessionCreated(ISession session)
@@ -527,7 +509,7 @@ public class AliasInternalFrame extends DialogWidget
 				}
 			};
 
-			new ConnectToAliasCommand((SQLAlias) _sqlAlias, true, connectToAliasCallBack).execute();
+			new ConnectToAliasCommand(_sqlAlias, true, connectToAliasCallBack).execute();
 		}
 		else
 		{
@@ -541,7 +523,7 @@ public class AliasInternalFrame extends DialogWidget
 
 			try
 			{
-				alias.assignFromWithValidationException((SQLAlias) _sqlAlias, false);
+				alias.assignFromWithValidationException(_sqlAlias, false);
 			}
 			catch (ValidationException e)
 			{

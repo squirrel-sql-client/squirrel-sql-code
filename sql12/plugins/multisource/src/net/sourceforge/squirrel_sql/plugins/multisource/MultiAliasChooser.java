@@ -1,40 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.multisource;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.Timer;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Constructor;
@@ -56,9 +35,9 @@ public class MultiAliasChooser extends JDialog
 	private JComboBox _aliasCbx;
 	private JTextField _nameTxt;
 	private JTextField _schemaTxt;
-	private ArrayList<ISQLAlias> _aliasList;
-	private ISQLAlias _selectedAlias;
-	private ISQLAlias _lastAdded;
+	private ArrayList<SQLAlias> _aliasList;
+	private SQLAlias _selectedAlias;
+	private SQLAlias _lastAdded;
 	private String _sourceName;
 	private IApplication _app;
 	private ISession _session;
@@ -93,7 +72,7 @@ public class MultiAliasChooser extends JDialog
 	private static int fieldSize = 55;
 
 
-	public MultiAliasChooser(IApplication app, ISession session, ArrayList<ISQLAlias> aliasList) {
+	public MultiAliasChooser(IApplication app, ISession session, ArrayList<SQLAlias> aliasList) {
 		super((Frame) null, s_stringMgr.getString("MultiAliasChooser.title"), true);
 		setSize(600, 461); // 785,600
 		_aliasList = aliasList;
@@ -105,7 +84,7 @@ public class MultiAliasChooser extends JDialog
 	/**
 	 * Show dialog.
 	 */
-	public ISQLAlias showDialog() {
+	public SQLAlias showDialog() {
 		setVisible(true);
 		return _lastAdded;
 	}
@@ -259,12 +238,12 @@ public class MultiAliasChooser extends JDialog
 		_aliasCbx.setMaximumRowCount(5); // Display up to 5 rows without a scrollbar
 		_aliasCbx.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				_sourceName = StringUtilities.javaNormalize(((ISQLAlias) _aliasCbx.getSelectedItem()).getName());
+				_sourceName = StringUtilities.javaNormalize(((SQLAlias) _aliasCbx.getSelectedItem()).getName());
 				_nameTxt.setText(_sourceName);
 			}
 		});
 		
-		_sourceName = StringUtilities.javaNormalize(((ISQLAlias) _aliasCbx.getSelectedItem()).getName());
+		_sourceName = StringUtilities.javaNormalize(((SQLAlias) _aliasCbx.getSelectedItem()).getName());
 		_nameTxt.setText(_sourceName);
 
 		final JPanel sourcePanelLower = new JPanel(new BorderLayout(5,5));
@@ -366,7 +345,7 @@ public class MultiAliasChooser extends JDialog
 	 * Uses reflection to call methods of the UnityJDBC driver.
 	 */
 	private boolean executeAddSource() {
-		ISQLAlias alias = (ISQLAlias) _aliasCbx.getSelectedItem();
+		SQLAlias alias = (SQLAlias) _aliasCbx.getSelectedItem();
 		MultiAliasChooser.this._selectedAlias = alias;
 		
 		// Verify correct format of source name (no spaces, etc.)
@@ -546,7 +525,7 @@ public class MultiAliasChooser extends JDialog
 			MultiAliasChooser.this._progressBar.setForeground(Color.GREEN);
 			
 			//, alias.getUrl(), alias.getUserName(), alias.getPassword()
-			ISQLAlias alias = (ISQLAlias) MultiAliasChooser.this._aliasCbx.getSelectedItem();
+			SQLAlias alias = (SQLAlias) MultiAliasChooser.this._aliasCbx.getSelectedItem();
 			IIdentifier driverID = alias.getDriverIdentifier();
 			ISQLDriver driver = _app.getAliasesAndDriversManager().getDriver(driverID);
 			

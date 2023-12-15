@@ -25,7 +25,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -42,7 +41,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
     
 	/**
 	 * Collection of <TT>AliasMaintDialog</TT> that are currently visible modifying
-	 * an existing aliss. Keyed by <TT>ISQLAlias.getIdentifier()</TT>.
+	 * an existing aliss. Keyed by <TT>SQLAlias.getIdentifier()</TT>.
 	 */
 	private static Map<IIdentifier, AliasInternalFrame> _modifySheets = new HashMap<IIdentifier, AliasInternalFrame>();
 
@@ -57,9 +56,9 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 * @return	The maintenance sheet for the passed alias.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>SQLAlias</TT> passed.
 	 */
-	public static AliasInternalFrame getModifySheet(ISQLAlias alias)
+	public static AliasInternalFrame getModifySheet(SQLAlias alias)
 	{
 		AliasInternalFrame sheet = _modifySheets.get(alias.getIdentifier());
 		if (sheet == null)
@@ -109,7 +108,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	{
 		final AliasesAndDriversManager cache = Main.getApplication().getAliasesAndDriversManager();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
-		final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
+		final SQLAlias alias = cache.createAlias(factory.createIdentifier());
 		final AliasInternalFrame sheet = new AliasInternalFrame(alias, NEW);
 		Main.getApplication().getMainFrame().addWidget(sheet);
       DialogWidget.centerWithinDesktop(sheet);
@@ -127,7 +126,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 * @return	The new maintenance sheet.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>SQLAlias</TT> passed.
 	 */
 	public static AliasInternalFrame getCopySheet(SQLAlias alias)
 	{

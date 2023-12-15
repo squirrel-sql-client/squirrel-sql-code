@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.session.catalogspanel;
 
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
@@ -18,7 +18,7 @@ public class CatalogLoadModelManager
       return new AliasCatalogLoadModel(aliasCatalogLoadModel, session);
    }
 
-   public AliasCatalogLoadModelJsonBean getAliasCatalogLoadModelJsonBean(ISQLAliasExt alias)
+   public AliasCatalogLoadModelJsonBean getAliasCatalogLoadModelJsonBean(SQLAlias alias)
    {
       return _catalogLoadModelJsonBean.getAliasIdToAliasCatalogLoadModelBeans().computeIfAbsent(alias.getIdentifier().toString(), s -> new AliasCatalogLoadModelJsonBean());
    }

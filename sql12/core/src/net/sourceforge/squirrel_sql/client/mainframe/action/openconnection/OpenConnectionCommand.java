@@ -20,17 +20,17 @@ package net.sourceforge.squirrel_sql.client.mainframe.action.openconnection;
  */
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.sql.DriverManager;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +40,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class OpenConnectionCommand
 {
-	/** The <TT>ISQLAlias</TT> to connect to. */
-	private ISQLAlias _sqlAlias;
+	/** The <TT>SQLAlias</TT> to connect to. */
+	private SQLAlias _sqlAlias;
 
 	private final String _userName;
 	private final String _password;
@@ -54,24 +54,24 @@ public class OpenConnectionCommand
 	 * Ctor.
 	 *
 	 * @param	app			The <TT>IApplication</TT> that defines app API.
-	 * @param	alias		The <TT>ISQLAlias</TT> to connect to.
+	 * @param	alias		The <TT>SQLAlias</TT> to connect to.
 	 * @param	userName	The user to connect as.
 	 * @param	password	Password for userName.
 	 * @param	props		Connection properties.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>SQLAlias</TT> passed.
 	 */
-	public OpenConnectionCommand(ISQLAlias sqlAlias, String userName, String password, SQLDriverPropertyCollection props)
+	public OpenConnectionCommand(SQLAlias sqlAlias, String userName, String password, SQLDriverPropertyCollection props)
 	{
 	   this(sqlAlias, userName, password, props, null);
    }
 
-	public OpenConnectionCommand(ISQLAlias sqlAlias, String userName, String password, SQLDriverPropertyCollection props, ReconnectInfo reconnectInfo)
+	public OpenConnectionCommand(SQLAlias sqlAlias, String userName, String password, SQLDriverPropertyCollection props, ReconnectInfo reconnectInfo)
 	{
       if (sqlAlias == null)
 		{
-			throw new IllegalArgumentException("Null ISQLAlias passed");
+			throw new IllegalArgumentException("Null SQLAlias passed");
 		}
 		_sqlAlias = sqlAlias;
 		_userName = userName;

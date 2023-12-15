@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -30,26 +29,26 @@ public class AppStartupSessionStarter
 
       boolean foundStartupJdbcUrl = false;
       boolean foundStartupAliasName = false;
-      for (Iterator<? extends ISQLAlias> it = cache.aliases(); it.hasNext();)
+      for (Iterator<? extends SQLAlias> it = cache.aliases(); it.hasNext();)
       {
-         ISQLAlias alias = it.next();
+         SQLAlias alias = it.next();
          if (alias.isConnectAtStartup())
          {
-            startUpAliases.add((SQLAlias) alias);
+            startUpAliases.add(alias);
          }
          else if(   false == foundStartupJdbcUrl
                  && false == StringUtilities.isEmpty(args.getStartupJdbcUrl(), true)
                  && args.getStartupJdbcUrl().trim().equals(alias.getUrl()))
          {
             foundStartupJdbcUrl = true;
-            startUpAliases.add((SQLAlias) alias);
+            startUpAliases.add(alias);
          }
          else if(   false == foundStartupAliasName
                  && false == StringUtilities.isEmpty(args.getStartupAliasName(), true)
                  && args.getStartupAliasName().trim().equals(alias.getName()))
          {
             foundStartupAliasName = true;
-            startUpAliases.add((SQLAlias) alias);
+            startUpAliases.add(alias);
          }
       }
 

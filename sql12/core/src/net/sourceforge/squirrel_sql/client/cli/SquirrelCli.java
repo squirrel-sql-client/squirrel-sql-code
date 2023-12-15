@@ -13,7 +13,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferen
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferencesDAO;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -38,11 +37,11 @@ public class SquirrelCli
 
    public static void connect(String aliasName, String password)
    {
-      Iterator<? extends ISQLAlias> aliasIterator = Main.getApplication().getAliasesAndDriversManager().aliases();
+      Iterator<? extends SQLAlias> aliasIterator = Main.getApplication().getAliasesAndDriversManager().aliases();
 
       while(aliasIterator.hasNext())
       {
-         ISQLAlias alias = aliasIterator.next();
+         SQLAlias alias = aliasIterator.next();
 
          if(aliasName.equals(alias.getName()))
          {

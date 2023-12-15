@@ -1,10 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session.connectionpool;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionUtil;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -32,7 +36,7 @@ public class SessionConnectionPool
    private final SQLConnection _masterConnection;
    private final PropertyChangeListener _propertyChangeListener;
    private final SessionProperties _sessionProperties;
-   private final ISQLAlias _sqlAlias;
+   private final SQLAlias _sqlAlias;
    private final String _userName;
    private final String _password;
    private final MessageHandlerReader _messageHandlerReader;
@@ -53,7 +57,7 @@ public class SessionConnectionPool
    private volatile boolean _autoCommit;
 
    public SessionConnectionPool(SQLConnection masterConnection,
-                                ISQLAlias sqlAlias,
+                                SQLAlias sqlAlias,
                                 String userName,
                                 String password,
                                 SessionProperties sessionProperties,

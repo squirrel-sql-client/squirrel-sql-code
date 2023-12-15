@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import java.awt.Frame;
+import java.awt.*;
 
 /**
  * This is fired to allow the user to save the application state in 
@@ -41,10 +41,10 @@ public class SavePreferencesCommand implements ICommand
     * Ctor.
     *
     * @param   frame      Owning <TT>Frame</TT>.
-    * @param   sqlAlias   <ISQLAlias</TT> to be deleted.
+    * @param   sqlAlias   <SQLAlias</TT> to be deleted.
     *
     * @throws IllegalArgumentException
-    *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> or
+    *			Thrown if a <TT>null</TT> <TT>SQLAlias</TT> or
     *			<TT>IApplication</TT> passed.
     */
    public SavePreferencesCommand(Frame frame)

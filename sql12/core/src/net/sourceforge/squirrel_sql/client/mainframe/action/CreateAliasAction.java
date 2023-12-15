@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import java.awt.event.ActionEvent;
 
 /**
- * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLAlias</TT>.
+ * This <CODE>Action</CODE> allows the user to create a new <TT>SQLAlias</TT>.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */

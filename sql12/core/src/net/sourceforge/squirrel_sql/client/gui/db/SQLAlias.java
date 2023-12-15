@@ -18,9 +18,10 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -36,8 +37,7 @@ import java.io.Serializable;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-@SuppressWarnings("serial")
-public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparable<Object>
+public class SQLAlias implements Cloneable, Serializable, Comparable<Object>, IHasIdentifier, IValidatable
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLAlias.class);
 
@@ -56,7 +56,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 
    /**
     * The <CODE>IIdentifier</CODE> that identifies the <CODE>ISQLDriver</CODE>
-    * that this <CODE>ISQLAlias</CODE> uses.
+    * that this <CODE>SQLAlias</CODE> uses.
     */
    private IIdentifier _driverId;
 
@@ -136,11 +136,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    }
 
    /**
-    * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
+    * Assign data from the passed <CODE>SQLAlias</CODE> to this one.
     *
     * This Alias becomes a clone of sqlAlias.
     *
-    * @param	sqlAlias	 <CODE>ISQLAlias</CODE> to copy data from.
+    * @param	sqlAlias	 <CODE>SQLAlias</CODE> to copy data from.
     *
     * @exception	ValidationException
     *				Thrown if an error occurs assigning data from
@@ -181,7 +181,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 
    /**
     * Returns <TT>true</TT> if this objects is equal to the passed one. Two
-    * <TT>ISQLAlias</TT> objects are considered equal if they have the same
+    * <TT>SQLAlias</TT> objects are considered equal if they have the same
     * identifier.
     */
    public boolean equals(Object rhs)
@@ -189,7 +189,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       boolean rc = false;
       if (rhs != null && rhs.getClass().equals(getClass()))
       {
-         rc = ((ISQLAlias)rhs).getIdentifier().equals(getIdentifier());
+         rc = ((SQLAlias)rhs).getIdentifier().equals(getIdentifier());
       }
       return rc;
    }
@@ -203,7 +203,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    }
 
    /**
-    * Returns the name of this <TT>ISQLAlias</TT>.
+    * Returns the name of this <TT>SQLAlias</TT>.
     */
    public String toString()
    {
@@ -219,7 +219,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public int compareTo(Object rhs)
    {
-      return _name.compareTo(((ISQLAlias)rhs).getName());
+      return _name.compareTo(((SQLAlias)rhs).getName());
    }
 
    /**
@@ -272,13 +272,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       _password = data;
    }
 
-   @Override
    public boolean isEncryptPassword()
    {
       return _encryptPassword;
    }
 
-   @Override
    public void setEncryptPassword(boolean b)
    {
       _versioner.trigger(_encryptPassword, b);
@@ -465,7 +463,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt#setSchemaProperties(net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties)
+    * @see net.sourceforge.squirrel_sql.client.gui.db.SQLAlias#setSchemaProperties(net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties)
     */
    public void setSchemaProperties(SQLAliasSchemaProperties schemaProperties)
    {
@@ -473,26 +471,24 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       _schemaProperties.acceptAliasVersioner(_versioner);
    }
 
-	@Override
 	public SQLAliasColorProperties getColorProperties()
 	{
 		return _colorProperties;
 	}
 
-	@Override
 	public void setColorProperties(SQLAliasColorProperties colorProperties)
 	{
 		_colorProperties = colorProperties;
       _colorProperties.acceptAliasVersioner(_versioner);
 	}
 
-	@Override
+
 	public SQLAliasConnectionProperties getConnectionProperties()
 	{
 		return _connectionProperties;
 	}
 
-	@Override
+
 	public void setConnectionProperties(SQLAliasConnectionProperties connectionProperties)
 	{
 		_connectionProperties = connectionProperties;

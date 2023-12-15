@@ -1,12 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.*;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,9 +45,9 @@ public class AliasFolderState implements Comparable<AliasFolderState>, Serializa
       _isExpanded = tree.isExpanded(new TreePath(dmtn.getPath()));
 
 
-      if(dmtn.getUserObject() instanceof ISQLAlias)
+      if(dmtn.getUserObject() instanceof SQLAlias)
       {
-         ISQLAlias alias = (ISQLAlias) dmtn.getUserObject();
+         SQLAlias alias = (SQLAlias) dmtn.getUserObject();
          _aliasIdentifier = alias.getIdentifier();
          _aliasName = alias.getName();
       }

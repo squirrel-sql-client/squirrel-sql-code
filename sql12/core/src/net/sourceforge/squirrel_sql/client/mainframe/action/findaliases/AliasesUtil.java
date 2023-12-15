@@ -4,19 +4,19 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import java.awt.event.ActionEvent;
 
 public class AliasesUtil
 {
-   public static void viewInAliasesDockWidget(ISQLAlias aliasToView)
+   public static void viewInAliasesDockWidget(SQLAlias aliasToView)
    {
       viewInAliasesDockWidget(aliasToView, Main.getApplication().getWindowManager().getAliasesListInternalFrame().getAliasesList(), AliasesUtil.class);
    }
 
-   public static void viewInAliasesDockWidget(ISQLAlias selectedAlias, IAliasesList al, java.lang.Object eventSource)
+   public static void viewInAliasesDockWidget(SQLAlias selectedAlias, IAliasesList al, java.lang.Object eventSource)
    {
       viewInAliasesDockWidget(new AliasSearchWrapper(selectedAlias), al, eventSource);
    }

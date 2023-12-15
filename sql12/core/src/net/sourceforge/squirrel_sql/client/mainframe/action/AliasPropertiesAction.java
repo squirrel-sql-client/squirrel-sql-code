@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 
 import java.awt.event.ActionEvent;
 
@@ -19,7 +19,7 @@ public class AliasPropertiesAction  extends SquirrelAction
 
    public void actionPerformed(ActionEvent e)
    {
-      ISQLAlias selectedAlias = _aliasList.getSelectedAlias(null);
+      SQLAlias selectedAlias = _aliasList.getSelectedAlias(null);
 
       if(null == selectedAlias)
       {

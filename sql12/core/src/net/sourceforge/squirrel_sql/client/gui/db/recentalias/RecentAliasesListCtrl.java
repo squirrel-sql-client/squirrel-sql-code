@@ -9,7 +9,6 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.AliasesU
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -172,7 +171,7 @@ public class RecentAliasesListCtrl
          ((DefaultListModel<AliasSearchWrapper>)_widget.lstAliases.getModel()).removeElement(selectedAliasSearchWrapper);
          return null;
       }
-      return (SQLAlias) selectedAliasSearchWrapper.getAlias();
+      return selectedAliasSearchWrapper.getAlias();
    }
 
    private void onClearList(DefaultListModel model)
@@ -197,7 +196,7 @@ public class RecentAliasesListCtrl
 
    private SQLAlias findAlias(String aliasIdentifierString)
    {
-      return (SQLAlias) Main.getApplication().getAliasesAndDriversManager().getAlias(new UidIdentifier(aliasIdentifierString));
+      return Main.getApplication().getAliasesAndDriversManager().getAlias(new UidIdentifier(aliasIdentifierString));
    }
 
    public RecentAliasesListDockWidget getWidget()
@@ -249,7 +248,7 @@ public class RecentAliasesListCtrl
 
    }
 
-   public void aliasChanged(ISQLAlias sqlAlias)
+   public void aliasChanged(SQLAlias sqlAlias)
    {
       _widget.lstAliases.repaint();
    }

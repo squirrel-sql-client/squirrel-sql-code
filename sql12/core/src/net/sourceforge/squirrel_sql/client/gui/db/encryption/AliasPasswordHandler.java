@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.db.encryption;
 
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 public class AliasPasswordHandler
 {
-   public static String getPassword(ISQLAlias sqlAlias)
+   public static String getPassword(SQLAlias sqlAlias)
    {
       if (sqlAlias.isEncryptPassword())
       {
@@ -17,7 +17,7 @@ public class AliasPasswordHandler
       }
    }
 
-   public static void setPassword(ISQLAlias alias, String unencryptedPassword) throws ValidationException
+   public static void setPassword(SQLAlias alias, String unencryptedPassword) throws ValidationException
    {
       if (alias.isEncryptPassword())
       {

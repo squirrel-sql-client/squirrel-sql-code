@@ -2,7 +2,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action.findaliases;
 
 import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -13,10 +12,10 @@ public class AliasSearchWrapper
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasSearchWrapper.class);
 
-   private ISQLAlias _alias;
+   private SQLAlias _alias;
    private AliasFolder _aliasFolder;
 
-   public AliasSearchWrapper(ISQLAlias alias)
+   public AliasSearchWrapper(SQLAlias alias)
    {
       _alias = alias;
    }
@@ -26,7 +25,7 @@ public class AliasSearchWrapper
       _aliasFolder = aliasFolder;
    }
 
-   public ISQLAlias getAlias()
+   public SQLAlias getAlias()
    {
       return _alias;
    }
@@ -48,7 +47,7 @@ public class AliasSearchWrapper
       }
    }
 
-   public static List<AliasSearchWrapper> wrapAliases(List<? extends ISQLAlias> aliasList)
+   public static List<AliasSearchWrapper> wrapAliases(List<? extends SQLAlias> aliasList)
    {
       return aliasList.stream().map( a -> new AliasSearchWrapper(a)).collect(Collectors.toList());
    }
@@ -74,7 +73,7 @@ public class AliasSearchWrapper
    {
       if (null != _alias)
       {
-         final SQLAlias sqlAlias = (SQLAlias) _alias;
+         final SQLAlias sqlAlias = _alias;
          if (sqlAlias.getColorProperties().isOverrideAliasBackgroundColor())
          {
             return sqlAlias.getColorProperties().getAliasBackgroundColorRgbValue();

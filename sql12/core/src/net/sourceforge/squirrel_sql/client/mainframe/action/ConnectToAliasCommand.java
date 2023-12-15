@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 /**
  * This command is used to start Sessions and to test connections.
@@ -55,7 +55,7 @@ public class ConnectToAliasCommand implements ICommand
 
 	private static final ILogger s_log = LoggerController.createLogger(ConnectToAliasCommand.class);
 
-	/** The <TT>ISQLAlias</TT> to connect to. */
+	/** The <TT>SQLAlias</TT> to connect to. */
 	private SQLAlias _sqlAlias;
 
 	/** If <TT>true</TT> a session is to be created as well as connecting to database. */
@@ -67,11 +67,11 @@ public class ConnectToAliasCommand implements ICommand
 	/**
 	 * Ctor. This ctor will create a new session as well as opening a connection.
 	 *
-	 * @param	alias	The <TT>ISQLAlias</TT> to connect to.
+	 * @param	alias	The <TT>SQLAlias</TT> to connect to.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
-	 *			<TT>ISQLAlias</TT> passed.
+	 *			<TT>SQLAlias</TT> passed.
 	 */
 	public ConnectToAliasCommand(SQLAlias sqlAlias)
 	{
@@ -81,20 +81,20 @@ public class ConnectToAliasCommand implements ICommand
 	/**
 	 * Ctor.
 	 *
-	 * @param	alias			The <TT>ISQLAlias</TT> to connect to.
+	 * @param	alias			The <TT>SQLAlias</TT> to connect to.
 	 * @param	createSession	If <TT>true</TT> then create a session as well
 	 *							as connecting to the database.
 	 * @param	callback		Callback for client code to be informed of the
 	 *							progress of this command.
 	 *
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
-	 *			<TT>ISQLAlias</TT> passed.
+	 *			<TT>SQLAlias</TT> passed.
 	 */
 	public ConnectToAliasCommand(SQLAlias sqlAlias, boolean createSession, ICompletionCallback callback)
 	{
 		if (sqlAlias == null)
 		{
-			throw new IllegalArgumentException("Null ISQLAlias passed");
+			throw new IllegalArgumentException("Null SQLAlias passed");
 		}
 		_sqlAlias = sqlAlias;
 		_createSession = createSession;
@@ -142,7 +142,7 @@ public class ConnectToAliasCommand implements ICommand
 		/** Application API. */
 		private IApplication _app;
 
-		/** <TT>ISQLAlias</TT> to connect to. */
+		/** <TT>SQLAlias</TT> to connect to. */
 		private SQLAlias _alias;
 
 		/** If <TT>true</TT> a session is to be created as well as connecting to database. */
@@ -172,7 +172,7 @@ public class ConnectToAliasCommand implements ICommand
 		 * @param	cmd				Command executing this handler.
 		 *
 		 * @throws	IllegalArgumentException
-		 * 			Thrown if <TT>null</TT>IApplication</TT>, <TT>ISQLAlias</TT>,
+		 * 			Thrown if <TT>null</TT>IApplication</TT>, <TT>SQLAlias</TT>,
 		 * 			or <TT>ICompletionCallback</TT> passed.
 		 */
 		private  SheetHandler(IApplication app, SQLAlias alias, boolean createSession, ICompletionCallback callback)
@@ -183,7 +183,7 @@ public class ConnectToAliasCommand implements ICommand
 			}
 			if (alias == null)
 			{
-				throw new IllegalArgumentException("ISQLAlias == null");
+				throw new IllegalArgumentException("SQLAlias == null");
 			}
 			if (callback == null)
 			{

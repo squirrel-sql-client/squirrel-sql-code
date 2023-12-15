@@ -12,7 +12,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.sql.SQLException;
 
 public class ConnectToAliasCallBack implements ICompletionCallback
@@ -28,7 +28,7 @@ public class ConnectToAliasCallBack implements ICompletionCallback
    {
       if (alias == null)
       {
-         throw new IllegalArgumentException("ISQLAlias == null");
+         throw new IllegalArgumentException("SQLAlias == null");
       }
       _sqlAlias = alias;
    }

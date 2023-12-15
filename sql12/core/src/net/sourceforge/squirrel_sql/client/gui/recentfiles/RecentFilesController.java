@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
@@ -10,7 +11,6 @@ import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
 import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
 import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.DesktopUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -49,7 +49,7 @@ public class RecentFilesController
    private RecentFilesDialog _dialog;
    private IApplication _app;
    private Frame _parent;
-   private ISQLAlias _selectedAlias;
+   private SQLAlias _selectedAlias;
    private DefaultMutableTreeNode _recentFilesNode;
    private DefaultMutableTreeNode _favouriteFilesNode;
    private DefaultMutableTreeNode _recentFilesForAliasNode;
@@ -58,7 +58,7 @@ public class RecentFilesController
 
    private int standardSplitDividerSize;
 
-   public RecentFilesController(IApplication app, ISQLAlias selectedAlias)
+   public RecentFilesController(IApplication app, SQLAlias selectedAlias)
    {
       init(app, app.getMainFrame() , selectedAlias, true);
    }
@@ -71,7 +71,7 @@ public class RecentFilesController
    }
 
 
-   private void init(IApplication app, final Frame parent, final ISQLAlias alias, boolean isCalledFromAliasView)
+   private void init(IApplication app, final Frame parent, final SQLAlias alias, boolean isCalledFromAliasView)
    {
       _app = app;
       _parent = parent;
@@ -253,7 +253,7 @@ public class RecentFilesController
       return files;
    }
 
-   private void onAddToFavourites(ISQLAlias alias)
+   private void onAddToFavourites(SQLAlias alias)
    {
       JFileChooser fc = new JFileChooser(_app.getSquirrelPreferences().getFilePreviousDir());
 

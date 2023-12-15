@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -12,11 +11,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Hashtable;
 
 public class SchemaInfoCacheSerializer
@@ -169,7 +164,7 @@ public class SchemaInfoCacheSerializer
    }
 
 
-   public static File getSchemaCacheFile(ISQLAliasExt alias)
+   public static File getSchemaCacheFile(SQLAlias alias)
    {
       String uniquePrefix = alias.getIdentifier().toString();
 
@@ -194,7 +189,7 @@ public class SchemaInfoCacheSerializer
       }
    }
 
-   public static void deleteCacheFile(IApplication app, ISQLAliasExt alias, boolean verbose)
+   public static void deleteCacheFile(IApplication app, SQLAlias alias, boolean verbose)
    {
       File schemaCacheFile = SchemaInfoCacheSerializer.getSchemaCacheFile(alias);
 

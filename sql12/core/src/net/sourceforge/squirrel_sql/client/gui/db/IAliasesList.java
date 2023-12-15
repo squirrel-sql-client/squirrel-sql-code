@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-
 import java.awt.event.MouseEvent;
 
 /*
@@ -26,7 +24,7 @@ import java.awt.event.MouseEvent;
 public interface IAliasesList extends IBaseList
 {
 	/**
-	 * Return the <TT>ISQLAlias</TT> that is currently selected.
+	 * Return the <TT>SQLAlias</TT> that is currently selected.
     * @param evt
     */
 	SQLAlias getSelectedAlias(MouseEvent evt);
@@ -41,13 +39,13 @@ public interface IAliasesList extends IBaseList
 
    boolean isEmpty();
 
-   void goToAlias(ISQLAlias aliasToGoTo);
+   void goToAlias(SQLAlias aliasToGoTo);
 
    void colorSelected();
 
-   void aliasChanged(ISQLAlias sqlAlias);
+   void aliasChanged(SQLAlias sqlAlias);
 
    void goToAliasFolder(AliasFolder aliasFolder);
 
-   ISQLAlias getLeadSelectionValue();
+   SQLAlias getLeadSelectionValue();
 }

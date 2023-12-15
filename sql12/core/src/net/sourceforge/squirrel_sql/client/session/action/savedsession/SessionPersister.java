@@ -1,17 +1,17 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainDialog;
 import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class SessionPersister
 {
@@ -32,7 +32,7 @@ public class SessionPersister
    {
       SavedSessionJsonBean savedSessionJsonBean = session.getSavedSession();
 
-      final ISQLAliasExt alias = session.getAlias();
+      final SQLAlias alias = session.getAlias();
       final SavedSessionsManager savedSessionsManager = Main.getApplication().getSavedSessionsManager();
       String savedSessionNameTemplate = null;
       if(null == savedSessionJsonBean)
