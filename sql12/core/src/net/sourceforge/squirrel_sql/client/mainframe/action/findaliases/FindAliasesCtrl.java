@@ -1,12 +1,7 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findaliases;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
-import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
-import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
-import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.FindAliasListCellRenderer;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -16,17 +11,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.Dimension;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -208,7 +197,7 @@ public class FindAliasesCtrl
 
          if (_dlg.chkLeaveOpen.isSelected())
          {
-            completionCallback = new ConnectToAliasCallBack((SQLAlias) selectedWrapperAlias.getAlias())
+            completionCallback = new ConnectToAliasCallBack(selectedWrapperAlias.getAlias())
             {
                @Override
                public void sessionCreated(ISession session)
@@ -222,7 +211,7 @@ public class FindAliasesCtrl
          }
 
 
-         new ConnectToAliasCommand((SQLAlias) selectedWrapperAlias.getAlias(), true, completionCallback).execute();
+         new ConnectToAliasCommand(selectedWrapperAlias.getAlias(), true, completionCallback).execute();
 
          if(false == _dlg.chkLeaveOpen.isSelected())
          {

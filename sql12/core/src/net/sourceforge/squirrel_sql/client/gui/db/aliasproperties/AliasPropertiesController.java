@@ -48,7 +48,7 @@ public class AliasPropertiesController
          return null;
       }
 
-      SQLAlias firstAlias = (SQLAlias) Main.getApplication().getAliasesAndDriversManager().getAliasList().get(0);
+      SQLAlias firstAlias = Main.getApplication().getAliasesAndDriversManager().getAliasList().get(0);
 
       if(ofOpenDialog)
       {

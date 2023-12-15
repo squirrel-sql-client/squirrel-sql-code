@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloneAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -62,7 +61,7 @@ public class NewAliasConnectionAction extends SquirrelAction implements ISession
    @Override
    public void actionPerformed(ActionEvent evt)
    {
-      new CloneAliasCommand((SQLAlias) _session.getAlias()).execute();
+      new CloneAliasCommand(_session.getAlias()).execute();
    }
 
    @Override
