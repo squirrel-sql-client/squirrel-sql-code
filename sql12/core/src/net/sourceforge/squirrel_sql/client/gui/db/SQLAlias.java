@@ -37,7 +37,7 @@ import java.io.Serializable;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLAlias implements Cloneable, Serializable, Comparable<Object>, IHasIdentifier, IValidatable
+public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentifier, IValidatable
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLAlias.class);
 
@@ -217,9 +217,9 @@ public class SQLAlias implements Cloneable, Serializable, Comparable<Object>, IH
     * ClassCastException (as <TT>SQLAlias</TT> objects are comparable only to
     * other <TT>SQLAlias</TT> objects).
     */
-   public int compareTo(Object rhs)
+   public int compareTo(SQLAlias rhs)
    {
-      return _name.compareTo(((SQLAlias)rhs).getName());
+      return _name.compareTo(rhs.getName());
    }
 
    /**
