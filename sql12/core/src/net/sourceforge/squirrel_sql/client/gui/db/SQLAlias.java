@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
@@ -240,6 +241,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       return _id;
    }
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.aliasName)
    public String getName()
    {
       return _name;

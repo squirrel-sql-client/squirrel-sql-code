@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.dataimport.gui;
 
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.action.dataimport.action.FileDisplayWrapper;
@@ -46,7 +45,7 @@ public class ImportFileDialog extends DialogWidget
 
    public ImportFileDialog(FileDisplayWrapper importFile, String importFileTypeDescription, ITableInfo table)
    {
-      super("", true, Main.getApplication());
+      super("", true);
 
       String tableName = s_stringMgr.getString("ImportFileDialogCtrl.no.table");
 

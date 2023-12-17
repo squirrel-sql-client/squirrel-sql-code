@@ -55,7 +55,7 @@ public class PleaseWaitDialog extends DialogWidget
    public PleaseWaitDialog(Statement stmt, IApplication app)
    {
       //i18n[PleaseWaitDialog.queryExecuting=Query is executing]
-      super(stringMgr.getString("PleaseWaitDialog.queryExecuting"), true, app);
+      super(stringMgr.getString("PleaseWaitDialog.queryExecuting"), true);
       this.messageHandler = app.getMessageHandler();
       this.stmt = stmt;
 

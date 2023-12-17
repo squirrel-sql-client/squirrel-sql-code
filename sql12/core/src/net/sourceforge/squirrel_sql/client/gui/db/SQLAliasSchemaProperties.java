@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 
 import java.io.Serializable;
@@ -432,6 +433,7 @@ public class SQLAliasSchemaProperties implements Serializable
       return schemaNames;
    }
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_byLikeStringInclude)
    public String getByLikeStringInclude()
    {
       return _byLikeStringInclude;
@@ -443,6 +445,7 @@ public class SQLAliasSchemaProperties implements Serializable
       _byLikeStringInclude = byLikeStringInclude;
    }
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_byLikeStringExclude)
    public String getByLikeStringExclude()
    {
       return _byLikeStringExclude;

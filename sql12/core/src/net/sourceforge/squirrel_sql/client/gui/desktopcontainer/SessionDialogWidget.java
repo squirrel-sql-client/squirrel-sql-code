@@ -1,12 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameEvent;
-import java.awt.*;
 
 public abstract class SessionDialogWidget extends DialogWidget implements ISessionWidget
 {
@@ -14,7 +9,7 @@ public abstract class SessionDialogWidget extends DialogWidget implements ISessi
 
    public SessionDialogWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, ISession session)
    {
-      super(title, resizeable, closeable, maximizeable, iconifiable, session.getApplication(), SessionUtils.getOwningFrame(session));
+      super(title, resizeable, closeable, maximizeable, iconifiable, SessionUtils.getOwningFrame(session));
       _session = session;
 
       setupSheet();

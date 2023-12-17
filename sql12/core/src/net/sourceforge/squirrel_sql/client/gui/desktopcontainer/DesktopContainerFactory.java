@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
 
 import java.awt.*;
@@ -20,9 +21,9 @@ public class DesktopContainerFactory
    }
 
 
-   public static IDialogDelegate createDialogDelegate(IApplication app, Window parent, String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, DialogWidget dialogClient)
+   public static IDialogDelegate createDialogDelegate(Window parent, String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, DialogWidget dialogClient)
    {
-      if(app.getDesktopStyle().isDockTabStyle())
+      if(Main.getApplication().getDesktopStyle().isDockTabStyle())
       {
          return new DialogDelegate(title, resizeable, closeable, maximizeable, iconifiable, dialogClient, parent);
       }

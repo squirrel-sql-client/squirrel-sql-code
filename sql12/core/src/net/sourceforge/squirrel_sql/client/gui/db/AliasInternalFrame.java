@@ -20,11 +20,12 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.AliasPropertiesController;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.db.passwordaccess.PasswordInAliasCtrl;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -61,20 +62,6 @@ import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALI
 @SuppressWarnings("serial")
 public class AliasInternalFrame extends DialogWidget
 {
-	/**
-	 * Maintenance types.
-	 */
-	public interface IMaintenanceType
-	{
-		/** A new alias is being created. */
-		int NEW = 1;
-
-		/** An existing alias is being maintained. */
-		int MODIFY = 2;
-
-		/** A new alias is being created as a copy of an existing one. */
-		int COPY = 3;
-	}
 
 	private static final StringManager s_stringMgr =  StringManagerFactory.getStringManager(AliasInternalFrame.class);
 
@@ -91,9 +78,10 @@ public class AliasInternalFrame extends DialogWidget
 
 	/**
 	 * The requested type of maintenace.
-	 * @see IMaintenanceType
+	 * @see AliasMaintenanceType
 	 */
-	private final int _maintType;
+	private final AliasMaintenanceType _maintType;
+	private final Window _parentWindow;
 
 	/** Listener to the drivers cache. */
 	private DriversCacheListener _driversCacheLis;
@@ -123,6 +111,7 @@ public class AliasInternalFrame extends DialogWidget
 
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _btnAliasProps = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
+	private AliasSheetOkListener _aliasSheetOkListener;
 
 
 	/**
@@ -136,19 +125,18 @@ public class AliasInternalFrame extends DialogWidget
 	 * 			<TT>SQLAlias</TT> or an invalid value passed for
 	 *			<TT>maintType</TT>.
 	 */
-	AliasInternalFrame(SQLAlias sqlAlias, int maintType)
+	AliasInternalFrame(SQLAlias sqlAlias, AliasMaintenanceType maintType)
 	{
-		super("", true, Main.getApplication());
+		this(sqlAlias, maintType, Main.getApplication().getMainFrame());
+	}
+	AliasInternalFrame(SQLAlias sqlAlias, AliasMaintenanceType maintType, Window parent)
+	{
+		super("", true, true, true, true, null != parent ? parent : Main.getApplication().getMainFrame());
+		_parentWindow = parent;
 
 		if (sqlAlias == null)
 		{
 			throw new IllegalArgumentException("SQLAlias == null");
-		}
-		if (maintType < IMaintenanceType.NEW || maintType > IMaintenanceType.COPY)
-		{
-            // i18n[AliasInternalFrame.illegalValue=Illegal value of {0} passed for Maintenance type]
-			final String msg = s_stringMgr.getString("AliasInternalFrame.illegalValue", Integer.valueOf(maintType));
-			throw new IllegalArgumentException(msg);
 		}
 
 		_sqlAlias = sqlAlias;
@@ -208,7 +196,7 @@ public class AliasInternalFrame extends DialogWidget
 		_chkSavePasswordEncrypted.setSelected(_sqlAlias.isEncryptPassword());
 		//_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
-		if (_maintType != IMaintenanceType.NEW)
+		if (_maintType != AliasMaintenanceType.NEW)
 		{
 			_drivers.setSelectedItem(_sqlAlias.getDriverIdentifier());
 			_txtUrl.setText(_sqlAlias.getUrl());
@@ -238,12 +226,17 @@ public class AliasInternalFrame extends DialogWidget
 		try
 		{
 			applyFromDialog(_sqlAlias);
-			if (_maintType == IMaintenanceType.NEW || _maintType == IMaintenanceType.COPY)
+			if (_maintType == AliasMaintenanceType.NEW || _maintType == AliasMaintenanceType.COPY)
 			{
 				Main.getApplication().getAliasesAndDriversManager().addAlias(_sqlAlias);
 			}
          Main.getApplication().savePreferences(ALIAS_DEFINITIONS);
 			dispose();
+
+			if(null != _aliasSheetOkListener)
+			{
+				_aliasSheetOkListener.aliasSheetClosedByOkButton();
+			}
 		}
 		catch (ValidationException ex)
 		{
@@ -284,8 +277,8 @@ public class AliasInternalFrame extends DialogWidget
 	{
 		try
 		{
-         applyFromDialog(_sqlAlias);
-         new AliasPropertiesCommand(_sqlAlias, Main.getApplication()).execute();
+			applyFromDialog(_sqlAlias);
+			AliasPropertiesController.showAliasProperties(_sqlAlias, _parentWindow);
 		}
 		catch (Exception ex)
 		{
@@ -305,7 +298,7 @@ public class AliasInternalFrame extends DialogWidget
       makeToolWindow(true);
 
 		String winTitle; 
-		if (_maintType == IMaintenanceType.MODIFY)
+		if (_maintType == AliasMaintenanceType.MODIFY)
 		{
 			winTitle = s_stringMgr.getString("AliasInternalFrame.changealias", _sqlAlias.getName());
 		}
@@ -379,7 +372,7 @@ public class AliasInternalFrame extends DialogWidget
 		GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.name"), SwingConstants.RIGHT), gbc);
+      pnl.add(new JLabel(SQLAliasPropI18nEnum.aliasName.getString(), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_txtAliasName, gbc);
@@ -542,6 +535,11 @@ public class AliasInternalFrame extends DialogWidget
 
 			new ConnectToAliasCommand(alias, false, new ConnectionTestCallBack(Main.getApplication(), alias)).execute();
 		}
+	}
+
+	public void setOkListener(AliasSheetOkListener aliasSheetOkListener)
+	{
+		_aliasSheetOkListener = aliasSheetOkListener;
 	}
 
 	private final class DriversComboItemListener implements ItemListener

@@ -16,36 +16,21 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.ui;
 
-import static javax.swing.GroupLayout.DEFAULT_SIZE;
-import static javax.swing.GroupLayout.PREFERRED_SIZE;
-import static javax.swing.GroupLayout.Alignment.BASELINE;
-import static javax.swing.GroupLayout.Alignment.LEADING;
-import static javax.swing.GroupLayout.Alignment.TRAILING;
-import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.control.GenerateControlFileActionListener;
 
-import java.awt.Container;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.EventListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JRootPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.control.GenerateControlFileActionListener;
+import static javax.swing.GroupLayout.Alignment.*;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
 /**
  * This frame allows the user to specify settings for the generation of the
@@ -80,7 +65,7 @@ public class ControlFileGenerationFrame extends DialogWidget implements
 	 * @param session	database session
 	 */
 	public ControlFileGenerationFrame(String title, ISession session) {
-		super(title, true, true, true, true, session.getApplication());
+		super(title, true, true, true, true);
 		this.session = session;
 		initComponents();
 	}

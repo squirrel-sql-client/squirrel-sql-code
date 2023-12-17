@@ -53,7 +53,7 @@ class ScriptsSheet extends DialogWidget
 	private ScriptsSheet(SessionScriptPlugin plugin, IApplication app)
 	{
 		// i18n[sessionscript.startupScripts=Startup Scripts]
-		super(s_stringMgr.getString("sessionscript.startupScripts"), true, true, true, true, app);
+		super(s_stringMgr.getString("sessionscript.startupScripts"), true, true, true, true);
 		_plugin = plugin;
 		_app = app;
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 
 import javax.swing.*;
@@ -12,20 +12,20 @@ public class DialogWidget implements IWidget
 {
    private IDialogDelegate _delegate;
 
-   public DialogWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, IApplication app)
+   public DialogWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable)
    {
-      this(title, resizeable, closeable, maximizeable, iconifiable, app, app.getMainFrame());
+      this(title, resizeable, closeable, maximizeable, iconifiable, Main.getApplication().getMainFrame());
    }
 
-   public DialogWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, IApplication app, Window parent)
+   public DialogWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, Window parent)
    {
-      _delegate = DesktopContainerFactory.createDialogDelegate(app, parent, title, resizeable, closeable, maximizeable, iconifiable, this);
+      _delegate = DesktopContainerFactory.createDialogDelegate(parent, title, resizeable, closeable, maximizeable, iconifiable, this);
    }
 
 
-   public DialogWidget(String title, boolean resizeable, IApplication app)
+   public DialogWidget(String title, boolean resizeable)
    {
-      this(title, resizeable, true, false, false, app);
+      this(title, resizeable, true, false, false);
    }
 
 

@@ -34,26 +34,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
 import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.JTable.PrintMode;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
@@ -147,7 +134,7 @@ public class SmarttoolMissingIndicesFrame extends DialogWidget implements ISmart
 	 * @param tab
 	 */
 	public SmarttoolMissingIndicesFrame(ISession session, String title) {
-		super("Smarttool - " + title, true, true, true, true, session.getApplication());
+		super("Smarttool - " + title, true, true, true, true);
 		this.session = session;
 
 		initLayout();

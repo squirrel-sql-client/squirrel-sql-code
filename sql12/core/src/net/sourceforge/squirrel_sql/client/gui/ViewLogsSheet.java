@@ -105,7 +105,7 @@ public class ViewLogsSheet extends DialogWidget
 	 */
 	private ViewLogsSheet(IApplication app)
 	{
-		super(s_stringMgr.getString("ViewLogsSheet.title"), true, true, true, true, app);
+		super(s_stringMgr.getString("ViewLogsSheet.title"), true, true, true, true);
 		if (app == null) { throw new IllegalArgumentException("IApplication == null"); }
 
 		_app = app;

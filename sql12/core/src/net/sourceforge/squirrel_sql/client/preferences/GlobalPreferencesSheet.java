@@ -87,7 +87,7 @@ public class GlobalPreferencesSheet extends DialogWidget
    }
    private GlobalPreferencesSheet(boolean toUseByPreferencesFinderOnly)
    {
-      super(s_stringMgr.getString("GlobalPreferencesSheet.title"), true, Main.getApplication());
+      super(s_stringMgr.getString("GlobalPreferencesSheet.title"), true);
 
       createGUI();
 

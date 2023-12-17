@@ -17,9 +17,12 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.HashMap;
-import java.util.Map;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -29,18 +32,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import java.util.HashMap;
+import java.util.Map;
 /**
  * TODO: Move all code other than for window creation up to AliasWindowManager
  * Factory to handle creation of maintenance sheets for SQL Driver objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
+class DriverWindowFactory
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
@@ -100,7 +100,7 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 		DriverInternalFrame sheet = get(driver);
 		if (sheet == null)
 		{
-			sheet = new DriverInternalFrame(_app, driver, MODIFY);
+			sheet = new DriverInternalFrame(_app, driver, DriverMaintenanceType.MODIFY);
 			_modifySheets.put(driver.getIdentifier(), sheet);
 			_app.getMainFrame().addWidget(sheet);
 
@@ -133,7 +133,7 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 		final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
-		final DriverInternalFrame sheet = new DriverInternalFrame(_app, driver, NEW);
+		final DriverInternalFrame sheet = new DriverInternalFrame(_app, driver, DriverMaintenanceType.NEW);
 		_app.getMainFrame().addWidget(sheet);
 		DialogWidget.centerWithinDesktop(sheet);
 		return sheet;
@@ -166,8 +166,7 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
             // i18n[DriverWindowFactory.error.copyingdriver=Error occurred copying the driver]
 			s_log.error(s_stringMgr.getString("DriverWindowFactory.error.copyingdriver"), ex);
 		}
-		final DriverInternalFrame sheet =
-			new DriverInternalFrame(_app, newDriver, COPY);
+		final DriverInternalFrame sheet = new DriverInternalFrame(_app, newDriver, DriverMaintenanceType.COPY);
 		_app.getMainFrame().addWidget(sheet);
 		DialogWidget.centerWithinDesktop(sheet);
 

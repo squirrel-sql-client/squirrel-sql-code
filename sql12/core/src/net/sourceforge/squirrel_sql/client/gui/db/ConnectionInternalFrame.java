@@ -136,7 +136,7 @@ public class ConnectionInternalFrame extends DialogWidget
 	public ConnectionInternalFrame(IApplication app, SQLAlias alias,
 									IHandler handler)
 	{
-		super("", true, app);
+		super("", true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -509,7 +509,7 @@ public class ConnectionInternalFrame extends DialogWidget
 
 	private void showDriverPropertiesDialog()
 	{
-      new AliasPropertiesCommand(_alias, _app).execute();
+      new AliasPropertiesCommand(_alias).execute();
 	}
 
 

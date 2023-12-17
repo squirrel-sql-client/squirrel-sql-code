@@ -1,25 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
@@ -27,6 +9,9 @@ import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoBu
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class SchemaPropertiesPanel extends JPanel
 {
@@ -162,7 +147,7 @@ public class SchemaPropertiesPanel extends JPanel
       JPanel pnlRight = new JPanel(new GridLayout(1,2,5,5));
 
       JPanel pnlInclude = new JPanel(new BorderLayout(5,5));
-      pnlInclude.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.include")), BorderLayout.WEST);
+      pnlInclude.add(new JLabel(SQLAliasPropI18nEnum.schemaProp_byLikeStringInclude.getString()), BorderLayout.WEST);
 
       txtSchemasByLikeStringInclude = new JTextField();
       pnlInclude.add(txtSchemasByLikeStringInclude, BorderLayout.CENTER);
@@ -171,7 +156,7 @@ public class SchemaPropertiesPanel extends JPanel
 
 
       JPanel pnlExclude = new JPanel(new BorderLayout(5,5));
-      pnlExclude.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.exclude")), BorderLayout.WEST);
+      pnlExclude.add(new JLabel(SQLAliasPropI18nEnum.schemaProp_byLikeStringExclude.getString()), BorderLayout.WEST);
 
       txtSchemasByLikeStringExclude = new JTextField();
       pnlExclude.add(txtSchemasByLikeStringExclude, BorderLayout.CENTER);

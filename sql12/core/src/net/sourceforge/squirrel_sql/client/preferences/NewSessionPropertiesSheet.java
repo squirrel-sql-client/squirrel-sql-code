@@ -34,15 +34,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -76,7 +69,7 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	}
 	private NewSessionPropertiesSheet(boolean toUseByPropertiesFinderOnly)
 	{
-		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true, Main.getApplication());
+		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true);
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		createGUI();

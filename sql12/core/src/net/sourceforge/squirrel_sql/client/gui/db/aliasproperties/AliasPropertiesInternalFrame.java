@@ -1,20 +1,12 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 public class AliasPropertiesInternalFrame extends DialogWidget
 {
@@ -28,9 +20,9 @@ public class AliasPropertiesInternalFrame extends DialogWidget
    JButton btnOk;
    JButton btnClose;
 
-   AliasPropertiesInternalFrame(String title)
+   AliasPropertiesInternalFrame(String title, Window parentWindow)
    {
-      super(s_stringMgr.getString("AliasPropertiesInternalFrame.title", title), true, Main.getApplication());
+      super(s_stringMgr.getString("AliasPropertiesInternalFrame.title", title), true, true, true, true, parentWindow);
 
       setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
       makeToolWindow(true);

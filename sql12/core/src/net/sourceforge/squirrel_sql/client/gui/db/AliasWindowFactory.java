@@ -30,10 +30,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
+public class AliasWindowFactory
 {
 	private static final ILogger s_log = LoggerController.createLogger(AliasWindowFactory.class);
 
@@ -60,10 +61,21 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 */
 	public static AliasInternalFrame getModifySheet(SQLAlias alias)
 	{
+		return _getModifySheet(alias, AliasMaintenanceType.MODIFY, Main.getApplication().getMainFrame());
+	}
+
+	public static AliasInternalFrame getModifyMultipleSheet(SQLAlias alias, Window parent)
+	{
+		return _getModifySheet(alias, AliasMaintenanceType.MODIFY_MULTIPLE, parent);
+	}
+
+
+	private static AliasInternalFrame _getModifySheet(SQLAlias alias, AliasMaintenanceType aliasMaintenanceType, Window parent)
+	{
 		AliasInternalFrame sheet = _modifySheets.get(alias.getIdentifier());
 		if (sheet == null)
 		{
-			sheet = new AliasInternalFrame(alias, MODIFY);
+			sheet = new AliasInternalFrame(alias, aliasMaintenanceType, parent);
 			_modifySheets.put(alias.getIdentifier(), sheet);
 			Main.getApplication().getMainFrame().addWidget(sheet);
 
@@ -71,14 +83,14 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 			{
 				public void widgetClosed(WidgetEvent evt)
 				{
-					AliasInternalFrame frame = (AliasInternalFrame)evt.getWidget();
+					AliasInternalFrame frame = (AliasInternalFrame) evt.getWidget();
 					_modifySheets.remove(frame.getSQLAlias().getIdentifier());
 				}
-         });
+			});
 
 			initAliasWidgetListener(sheet);
 
-         DialogWidget.centerWithinDesktop(sheet);
+			DialogWidget.centerWithinDesktop(sheet);
 		}
 
 		return sheet;
@@ -109,7 +121,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 		final AliasesAndDriversManager cache = Main.getApplication().getAliasesAndDriversManager();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final SQLAlias alias = cache.createAlias(factory.createIdentifier());
-		final AliasInternalFrame sheet = new AliasInternalFrame(alias, NEW);
+		final AliasInternalFrame sheet = new AliasInternalFrame(alias, AliasMaintenanceType.NEW);
 		Main.getApplication().getMainFrame().addWidget(sheet);
       DialogWidget.centerWithinDesktop(sheet);
 
@@ -144,7 +156,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 		}
 
 		Main.getApplication().getPluginManager().aliasCopied(alias, newAlias);
-		final AliasInternalFrame sheet = new AliasInternalFrame(newAlias, COPY);
+		final AliasInternalFrame sheet = new AliasInternalFrame(newAlias, AliasMaintenanceType.COPY);
 		Main.getApplication().getMainFrame().addWidget(sheet);
 		DialogWidget.centerWithinDesktop(sheet);
 

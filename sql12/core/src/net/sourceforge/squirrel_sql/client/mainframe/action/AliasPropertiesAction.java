@@ -26,7 +26,7 @@ public class AliasPropertiesAction  extends SquirrelAction
          return;
       }
 
-      new AliasPropertiesCommand(selectedAlias, getApplication()).execute();
+      new AliasPropertiesCommand(selectedAlias).execute();
    }
 
 }

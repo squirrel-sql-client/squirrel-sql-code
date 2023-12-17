@@ -114,7 +114,7 @@ public class RecentAliasesListCtrl
          return;
       }
 
-      new AliasPropertiesCommand(selectedAlias, Main.getApplication()).execute();
+      new AliasPropertiesCommand(selectedAlias).execute();
    }
 
    private void onModifyAlias()

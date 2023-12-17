@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.ModifyMultipleAliasesAction;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -72,6 +73,8 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory<AliasesLi
       _pm.add(actions.get(ExpandSelectedAliasFolderAction.class));
       _pm.addSeparator();
       _pm.add(actions.get(TransferAliasAction.class));
+      _pm.addSeparator();
+      _pm.add(actions.get(ModifyMultipleAliasesAction.class));
 
       _app.addApplicationListener(() -> onSaveApplicationState());
 
@@ -181,6 +184,8 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory<AliasesLi
       _toolBar.add(actions.get(ExpandSelectedAliasFolderAction.class));
       _toolBar.addSeparator();
       _toolBar.add(actions.get(TransferAliasAction.class));
+      _toolBar.addSeparator();
+      _toolBar.add(actions.get(ModifyMultipleAliasesAction.class));
    }
 
 

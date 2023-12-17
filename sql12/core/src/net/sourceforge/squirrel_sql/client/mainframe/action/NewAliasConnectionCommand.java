@@ -27,11 +27,11 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
  *
  * @author jarmolow
  */
-public class CloneAliasCommand implements ICommand
+public class NewAliasConnectionCommand implements ICommand
 {
 	private final ConnectToAliasCommand connectToAliasCommand;
 
-	public CloneAliasCommand(SQLAlias sqlAlias)
+	public NewAliasConnectionCommand(SQLAlias sqlAlias)
 	{
 		connectToAliasCommand = new ConnectToAliasCommand(sqlAlias, true, null);
 	}

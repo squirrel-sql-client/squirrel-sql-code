@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,12 +24,12 @@ public class AliasPropertiesController
    private ArrayList<IAliasPropertiesPanelController> _iAliasPropertiesPanelControllers = new ArrayList<>();
    private SQLAlias _alias;
 
-   public static void showAliasProperties(SQLAlias selectedAlias)
+   public static void showAliasProperties(SQLAlias selectedAlias, Window parentWindow)
    {
       AliasPropertiesController openProps = s_currentlyOpenInstancesByAliasID.get(selectedAlias.getIdentifier());
       if(null == openProps)
       {
-         s_currentlyOpenInstancesByAliasID.put(selectedAlias.getIdentifier(), new AliasPropertiesController(selectedAlias));
+         s_currentlyOpenInstancesByAliasID.put(selectedAlias.getIdentifier(), new AliasPropertiesController(selectedAlias, parentWindow));
       }
       else
       {
@@ -52,28 +53,28 @@ public class AliasPropertiesController
 
       if(ofOpenDialog)
       {
-         showAliasProperties(firstAlias);
+         showAliasProperties(firstAlias, Main.getApplication().getMainFrame());
       }
 
       AliasPropertiesController aliasPropertiesController = s_currentlyOpenInstancesByAliasID.get(firstAlias.getIdentifier());
       if(null == aliasPropertiesController)
       {
-         aliasPropertiesController = new AliasPropertiesController(firstAlias, true);
+         aliasPropertiesController = new AliasPropertiesController(firstAlias, true, Main.getApplication().getMainFrame());
       }
 
       return new AliasPropertiesDialogFindInfo(aliasPropertiesController._frame.getTitle(), aliasPropertiesController._frame.tabPane);
    }
 
 
-   private AliasPropertiesController(SQLAlias alias)
+   private AliasPropertiesController(SQLAlias alias, Window parentWindow)
    {
-      this(alias, false);
+      this(alias, false, parentWindow);
    }
 
-   private AliasPropertiesController(SQLAlias selectedAlias, boolean toUseByPreferencesFinderOnly)
+   private AliasPropertiesController(SQLAlias selectedAlias, boolean toUseByPreferencesFinderOnly, Window parentWindow)
    {
       _alias = selectedAlias;
-      _frame = new AliasPropertiesInternalFrame(_alias.getName());
+      _frame = new AliasPropertiesInternalFrame(_alias.getName(), parentWindow);
 
       Main.getApplication().getMainFrame().addWidget(_frame);
 

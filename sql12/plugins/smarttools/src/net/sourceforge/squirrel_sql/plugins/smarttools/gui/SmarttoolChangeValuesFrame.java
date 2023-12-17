@@ -32,24 +32,11 @@ import net.sourceforge.squirrel_sql.plugins.smarttools.STDataType;
 import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
 import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
 
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -180,7 +167,7 @@ public class SmarttoolChangeValuesFrame extends DialogWidget implements ISmartto
 	 */
 	public SmarttoolChangeValuesFrame(ISession session, String title)
 	{
-		super("Smarttool - " + title, true, true, true, true, session.getApplication());
+		super("Smarttool - " + title, true, true, true, true);
 		this.session = session;
 
 		initLayout();

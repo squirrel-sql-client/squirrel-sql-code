@@ -26,7 +26,7 @@ public class OverviewFrame extends DialogWidget
 
    public OverviewFrame(DataSetViewerTablePanel simpleTable, IApplication app, Window parent)
    {
-      super(s_stringMgr.getString("OverviewFrame.title"), true, true, true, true, app, parent);
+      super(s_stringMgr.getString("OverviewFrame.title"), true, true, true, true, parent);
 
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 

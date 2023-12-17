@@ -19,45 +19,9 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.ListModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.fw.gui.DefaultFileListBoxModel;
-import net.sourceforge.squirrel_sql.fw.gui.FileListBox;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.IFileListBoxModel;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.*;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -67,6 +31,18 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
 
@@ -78,15 +54,6 @@ import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRI
 @SuppressWarnings("serial")
 public class DriverInternalFrame extends DialogWidget
 {
-	/** Different types of maintenance that can be done. */
-	public interface MaintenanceType
-	{
-		int NEW = 1;
-
-		int MODIFY = 2;
-
-		int COPY = 3;
-	}
 
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverInternalFrame.class);
 
@@ -108,7 +75,7 @@ public class DriverInternalFrame extends DialogWidget
 	private final ISQLDriver _sqlDriver;
 
 	/** Type of maintenance being done. @see MaintenanceType. */
-	private final int _maintType;
+	private final DriverMaintenanceType _maintType;
 
 	/** Frame title. */
 	private final JLabel _titleLbl = new JLabel();
@@ -159,14 +126,11 @@ public class DriverInternalFrame extends DialogWidget
 	 *            Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>sqlDriver</TT> or an invalid value
 	 *            passed for <TT>maintType</TT>.
 	 */
-	DriverInternalFrame(IApplication app, ISQLDriver sqlDriver, int maintType)
+	DriverInternalFrame(IApplication app, ISQLDriver sqlDriver, DriverMaintenanceType maintType)
 	{
-		super("", true, app);
+		super("", true);
 		if (app == null) { throw new IllegalArgumentException("Null IApplication passed"); }
 		if (sqlDriver == null) { throw new IllegalArgumentException("Null ISQLDriver passed"); }
-		if (maintType < MaintenanceType.NEW || maintType > MaintenanceType.COPY) { throw new IllegalArgumentException(
-		// i18n[DriverInternalFrame.error.illegalvalue=Illegal value of {0} passed for Maintenance type]
-			s_stringMgr.getString("DriverInternalFrame.error.illegalvalue", maintType)); }
 
 		_app = app;
 		_sqlDriver = sqlDriver;
@@ -240,7 +204,7 @@ public class DriverInternalFrame extends DialogWidget
 		try
 		{
 			applyFromDialog();
-			if (_maintType == MaintenanceType.NEW || _maintType == MaintenanceType.COPY)
+			if (_maintType == DriverMaintenanceType.NEW || _maintType == DriverMaintenanceType.COPY)
 			{
 				_app.getAliasesAndDriversManager().addDriver(_sqlDriver, _app.getMessageHandler());
 			}
@@ -299,7 +263,7 @@ public class DriverInternalFrame extends DialogWidget
 		makeToolWindow(true);
 
 		String winTitle;
-		if (_maintType == MaintenanceType.MODIFY)
+		if (_maintType == DriverMaintenanceType.MODIFY)
 		{
 			winTitle = s_stringMgr.getString("DriverInternalFrame.changedriver", _sqlDriver.getName());
 		}
