@@ -106,7 +106,7 @@ public class SchemaPropertiesPanel extends JPanel
 
 
       // i18n[SchemaPropertiesPanel.CacheSchemaIndependentMetaData=Cache Schema independent meta data (Catalogs, Keywords, Data types, Global functions)]
-      chkCacheSchemaIndepndentMetaData = new JCheckBox(s_stringMgr.getString("SchemaPropertiesPanel.CacheSchemaIndependentMetaData"));
+      chkCacheSchemaIndepndentMetaData = new JCheckBox(SQLAliasPropI18nEnum.schemaProp_cacheSchemaIndependentMetaData.getString());
       gbc = new GridBagConstraints(0,9,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
       add(chkCacheSchemaIndepndentMetaData, gbc);
 

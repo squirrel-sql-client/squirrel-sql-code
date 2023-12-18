@@ -102,12 +102,12 @@ public class AliasInternalFrame extends DialogWidget
 	private PasswordInAliasCtrl _passwordInAliasCtrl = new PasswordInAliasCtrl();
 
 	/** Autologon checkbox. */
-	private final JCheckBox _chkAutoLogon = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.autologon"));
+	private final JCheckBox _chkAutoLogon = new JCheckBox(SQLAliasPropI18nEnum.autoLogon.getString());
 
 	/** Connect at startup checkbox. */
-	private final JCheckBox _chkConnectAtStartup = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.connectatstartup"));
+	private final JCheckBox _chkConnectAtStartup = new JCheckBox(SQLAliasPropI18nEnum.connectAtStartup.getString());
 
-	private JCheckBox _chkSavePasswordEncrypted = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.password.encrypted"));
+	private JCheckBox _chkSavePasswordEncrypted = new JCheckBox(SQLAliasPropI18nEnum.encryptPassword.getString());
 
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _btnAliasProps = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
@@ -379,8 +379,7 @@ public class AliasInternalFrame extends DialogWidget
 
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.driver"), SwingConstants.RIGHT), gbc);
-
+      pnl.add(new JLabel(SQLAliasPropI18nEnum.driverIdentifier.getString(), SwingConstants.RIGHT), gbc);
 
       _drivers = new DriversCombo();
 		_drivers.addItemListener(new DriversComboItemListener());
@@ -396,19 +395,19 @@ public class AliasInternalFrame extends DialogWidget
 		pnl.add(driverPnl, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.url"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(SQLAliasPropI18nEnum.jdbcUrl.getString(), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_txtUrl, gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.username"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(SQLAliasPropI18nEnum.userName.getString(), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_txtUserName, gbc);
 
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.password"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(SQLAliasPropI18nEnum.password.getString(), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_passwordInAliasCtrl.getPanel(), gbc);

@@ -124,7 +124,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       _connectionProperties.acceptAliasVersioner(_versioner);
    }
 
-   public synchronized void assignFrom(SQLAlias sqlAlias, boolean withIdentifier)
+   public void assignFrom(SQLAlias sqlAlias, boolean withIdentifier)
    {
       try
       {
@@ -198,7 +198,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
    /**
     * Returns a hash code value for this object.
     */
-   public synchronized int hashCode()
+   public int hashCode()
    {
       return getIdentifier().hashCode();
    }
@@ -227,7 +227,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
     * Returns <CODE>true</CODE> if this object is valid.<P>
     * Implementation for <CODE>IPersistable</CODE>.
     */
-   public synchronized boolean isValid()
+   public  boolean isValid()
    {
       return _name != null
                  && _name.length() > 0 
@@ -247,21 +247,25 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       return _name;
    }
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.driverIdentifier)
    public IIdentifier getDriverIdentifier()
    {
       return _driverId;
    }
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.jdbcUrl)
    public String getUrl()
    {
       return _url;
    }
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.userName)
    public String getUserName()
    {
       return _userName;
    }
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.password)
    public String getPassword()
    {
       return _password;
@@ -274,6 +278,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       _password = data;
    }
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.encryptPassword)
    public boolean isEncryptPassword()
    {
       return _encryptPassword;
@@ -306,6 +311,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
     * @return	<TT>true</TT> is this alias should be logged on automatically
     * 			else <TT>false</TT>.
     */
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.autoLogon)
    public boolean isAutoLogon()
    {
       return _autoLogon;
@@ -329,6 +335,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
     * @return	<TT>true</TT> if this alias should be connected when the
     *			application is started up.
     */
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.connectAtStartup)
    public boolean isConnectAtStartup()
    {
       return _connectAtStartup;
@@ -349,6 +356,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
    /**
     * Returns whether this alias uses driver properties.
     */
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.useDriverProperties)
    public boolean getUseDriverProperties()
    {
       return _useDriverProperties;
@@ -410,12 +418,13 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
     *
     * @return	the SQL driver properties.
     */
-   public synchronized SQLDriverPropertyCollection getDriverPropertiesClone()
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.driverPropertyCollection)
+   public SQLDriverPropertyCollection getDriverPropertiesClone()
    {
       return getDriverPropertiesClone(false);
    }
 
-   public synchronized SQLDriverPropertyCollection getDriverPropertiesClone(boolean includeVersioner)
+   public SQLDriverPropertyCollection getDriverPropertiesClone(boolean includeVersioner)
    {
       final int count = _driverProps.size();
       SQLDriverProperty[] newar = new SQLDriverProperty[count];
@@ -433,22 +442,19 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       return coll;
    }
 
-   public synchronized void setDriverProperties(SQLDriverPropertyCollection value)
+   public void setDriverProperties(SQLDriverPropertyCollection value)
    {
       _driverProps.clear();
       if (value != null)
       {
-         synchronized (value)
+         final int count = value.size();
+         SQLDriverProperty[] newar = new SQLDriverProperty[count];
+         for (int i = 0; i < count; ++i)
          {
-            final int count = value.size();
-            SQLDriverProperty[] newar = new SQLDriverProperty[count];
-            for (int i = 0; i < count; ++i)
-            {
-               newar[i] = (SQLDriverProperty)value.getDriverProperty(i).clone();
+            newar[i] = (SQLDriverProperty)value.getDriverProperty(i).clone();
 
-            }
-            _driverProps.setDriverProperties(newar);
          }
+         _driverProps.setDriverProperties(newar);
       }
    }
 

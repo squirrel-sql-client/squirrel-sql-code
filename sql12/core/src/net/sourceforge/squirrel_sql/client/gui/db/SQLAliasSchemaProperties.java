@@ -22,6 +22,8 @@ public class SQLAliasSchemaProperties implements Serializable
    private String _byLikeStringExclude;
    private SQLAliasVersioner _versioner = new SQLAliasVersioner();
 
+
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_schemaDetails)
    public SQLAliasSchemaDetailProperties[] getSchemaDetails()
    {
       return _schemaDetails;
@@ -34,6 +36,7 @@ public class SQLAliasSchemaProperties implements Serializable
    }
 
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_globalState)
    public int getGlobalState()
    {
       return _globalState;
@@ -46,6 +49,7 @@ public class SQLAliasSchemaProperties implements Serializable
    }
 
 
+   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_cacheSchemaIndependentMetaData)
    public boolean isCacheSchemaIndependentMetaData()
    {
       return _cacheSchemaIndependentMetaData;

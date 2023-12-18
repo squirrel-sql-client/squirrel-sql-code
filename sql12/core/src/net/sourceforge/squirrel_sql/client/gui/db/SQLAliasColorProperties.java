@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
+
 import java.io.Serializable;
 
 public class SQLAliasColorProperties implements Serializable
@@ -46,6 +48,7 @@ public class SQLAliasColorProperties implements Serializable
 	/**
 	 * @return the overrideToolbarBackgroundColor
 	 */
+	@SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.colorProp_overrideToolbarBackgroundColor)
 	public boolean isOverrideToolbarBackgroundColor()
 	{
 		return _overrideToolbarBackgroundColor;
@@ -63,6 +66,7 @@ public class SQLAliasColorProperties implements Serializable
 	/**
 	 * @return the toolbarBackgroundColor
 	 */
+	@SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.colorProp_toolbarBackgroundColor)
 	public int getToolbarBackgroundColorRgbValue()
 	{
 		return _toolbarBackgroundColorRgbValue;
@@ -80,6 +84,7 @@ public class SQLAliasColorProperties implements Serializable
 	/**
 	 * @return the overrideObjectTreeBackgroundColor
 	 */
+	@SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.colorProp_overrideObjectTreeBackgroundColor)
 	public boolean isOverrideObjectTreeBackgroundColor()
 	{
 		return _overrideObjectTreeBackgroundColor;
@@ -97,6 +102,7 @@ public class SQLAliasColorProperties implements Serializable
 	/**
 	 * @return the objectTreeBackgroundColorRgbValue
 	 */
+	@SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.colorProp_objectTreeBackgroundColor)
 	public int getObjectTreeBackgroundColorRgbValue()
 	{
 		return _objectTreeBackgroundColorRgbValue;
@@ -114,6 +120,7 @@ public class SQLAliasColorProperties implements Serializable
 	/**
 	 * @return the overrideStatusBarBackgroundColor
 	 */
+	@SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.colorProp_overrideStatusBarBackgroundColor)
 	public boolean isOverrideStatusBarBackgroundColor()
 	{
 		return _overrideStatusBarBackgroundColor;
@@ -131,6 +138,7 @@ public class SQLAliasColorProperties implements Serializable
 	/**
 	 * @return the statusBarBackgroundColorRgbValue
 	 */
+	@SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.colorProp_statusBarBackgroundColor)
 	public int getStatusBarBackgroundColorRgbValue()
 	{
 		return _statusBarBackgroundColorRgbValue;
@@ -147,6 +155,7 @@ public class SQLAliasColorProperties implements Serializable
 
 
 
+	@SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.colorProp_overrideAliasBackgroundColor)
 	public boolean isOverrideAliasBackgroundColor()
 	{
 		return _overrideAliasBackgroundColor;
@@ -158,6 +167,7 @@ public class SQLAliasColorProperties implements Serializable
 		_overrideAliasBackgroundColor = overrideStatusBarBackgroundColor;
 	}
 
+	@SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.colorProp_aliasBackgroundColor)
 	public int getAliasBackgroundColorRgbValue()
 	{
 		return _aliasBackgroundColorRgbValue;

@@ -22,6 +22,12 @@ public class AliasChangesReport
 
    }
 
+   public void unindentInnerBean(PropertyDescriptor pd)
+   {
+
+   }
+
+
    public void addChange(SQLAliasProp sqlAliasProp, Object previousAliasPropValue, Object editedAliasPropValue)
    {
       _changes.append(sqlAliasProp.sqlAliasPropI18n().getString() + " changed from \"" + previousAliasPropValue + "\" to \"" + editedAliasPropValue);

@@ -21,27 +21,17 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This panel allows the user to review and maintain the color properties for an Alias. Background colors can
@@ -109,45 +99,6 @@ public class ColorPropertiesPanel extends JPanel
 	{
 		// i18n[ColorPropertiesPanel.backgroundColorLabel=Background Color]
 		String BACKGROUND_COLOR_LABEL = s_stringMgr.getString("ColorPropertiesPanel.backgroundColorLabel");
-
-		// i18n[ColorPropertiesPanel.instructions=These settings control the background colors...]
-		String INSTRUCTIONS = s_stringMgr.getString("ColorPropertiesPanel.instructions");
-
-		// i18n[ColorPropertiesPanel.objectTreeBackgroundColorChooserDialogTitle=Select Background Color for
-		// Object Tree]
-		String OBJECT_TREE_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE =
-			s_stringMgr.getString("ColorPropertiesPanel.objectTreeBackgroundColorChooserDialogTitle");
-
-		// i18n[ColorPropertiesPanel.statusBarBackgroundColorBtnLabel=Choose Status Bar Color]
-		String STATUS_BAR_BACKGROUND_COLOR_BUTTON_LABEL =
-			s_stringMgr.getString("ColorPropertiesPanel.statusBarBackgroundColorBtnLabel");
-
-		// i18n[ColorPropertiesPanel.statusBarBackgroundColorBtnLabel=Choose Status Bar Color]
-		String ALIAS_BACKGROUND_COLOR_BUTTON_LABEL =
-			s_stringMgr.getString("ColorPropertiesPanel.aliasBackgroundColorBtnLabel");
-
-		// i18n[ColorPropertiesPanel.toolbarBackgroundColorChooserDialogTitle=Select Background Color for
-		// Toolbar]
-		String TOOLBAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE =
-			s_stringMgr.getString("ColorPropertiesPanel.toolbarBackgroundColorChooserDialogTitle");
-
-		// i18n[ColorPropertiesPanel.toolbarBackgroundColorBtnLabel=Choose Toolbar Color]
-		String TOOLBAR_BACKGROUND_COLOR_BUTTON_LABEL =
-			s_stringMgr.getString("ColorPropertiesPanel.toolbarBackgroundColorBtnLabel");
-
-		// i18n[ColorPropertiesPanel.syncComponentBackgroundColorChkLabel=Use toolbar background color for all
-		// components]
-		String SYNC_COMPONENT_BACKGROUND_COLOR_CHK_LABEL =
-			s_stringMgr.getString("ColorPropertiesPanel.syncComponentBackgroundColorChkLabel");
-
-		// i18n[ColorPropertiesPanel.objectTreeBackgroundColorButtonLabel=Choose Object Tree Color]
-		String OBJECT_TREE_BACKGROUND_COLOR_BUTTON_LABEL =
-			s_stringMgr.getString("ColorPropertiesPanel.objectTreeBackgroundColorButtonLabel");
-
-		// i18n[ColorPropertiesPanel.statusBarBackgroundColorChooserDialogTitle=Select Background Color for
-		// Status Bar]
-		String STATUS_BAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE =
-			s_stringMgr.getString("ColorPropertiesPanel.statusBarBackgroundColorChooserDialogTitle");
 
 		String ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE =
 			s_stringMgr.getString("ColorPropertiesPanel.aliasBackgroundColorChooserDialogTitle");
@@ -270,7 +221,7 @@ public class ColorPropertiesPanel extends JPanel
 	{
 		++gbc.gridx;
 		gbc.gridwidth = 2;
-		syncComponentBackgroundColorBtn = new JButton(i18n.SYNC_COMPONENT_BACKGROUND_COLOR_CHK_LABEL);
+		syncComponentBackgroundColorBtn = new JButton(s_stringMgr.getString("ColorPropertiesPanel.syncComponentBackgroundColorChkLabel"));
 		add(syncComponentBackgroundColorBtn, gbc);
 
 		syncComponentBackgroundColorBtn.addActionListener(new ActionListener()
@@ -311,7 +262,7 @@ public class ColorPropertiesPanel extends JPanel
 
 		// Set object tree color button
 		++gbc.gridx;
-		statusBarBackgroundColorBtn = new JButton(i18n.STATUS_BAR_BACKGROUND_COLOR_BUTTON_LABEL);
+		statusBarBackgroundColorBtn = new JButton(s_stringMgr.getString("ColorPropertiesPanel.statusBarBackgroundColorBtnLabel"));
 		add(statusBarBackgroundColorBtn, gbc);
 
 		// Set object tree color panel
@@ -363,7 +314,7 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = statusBarBackgroundColor == null ? Color.WHITE : statusBarBackgroundColor;
 				Color newColor =
-						JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), i18n.STATUS_BAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+						JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), s_stringMgr.getString("ColorPropertiesPanel.statusBarBackgroundColorChooserDialogTitle"), startColor);
 
 				if (newColor != null)
 				{
@@ -383,7 +334,7 @@ public class ColorPropertiesPanel extends JPanel
 
 		// Set object tree color button
 		++gbc.gridx;
-		aliasBackgroundColorBtn = new JButton(i18n.ALIAS_BACKGROUND_COLOR_BUTTON_LABEL);
+		aliasBackgroundColorBtn = new JButton(s_stringMgr.getString("ColorPropertiesPanel.aliasBackgroundColorBtnLabel"));
 		add(aliasBackgroundColorBtn, gbc);
 
 		// Set object tree color panel
@@ -465,7 +416,7 @@ public class ColorPropertiesPanel extends JPanel
 
 		// Set object tree color button
 		++gbc.gridx;
-		objectTreeBackgroundColorBtn = new JButton(i18n.OBJECT_TREE_BACKGROUND_COLOR_BUTTON_LABEL);
+		objectTreeBackgroundColorBtn = new JButton(s_stringMgr.getString("ColorPropertiesPanel.objectTreeBackgroundColorButtonLabel"));
 		add(objectTreeBackgroundColorBtn, gbc);
 
 		// Set object tree color panel
@@ -514,7 +465,7 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = objectTreeBackgroundColor == null ? Color.WHITE : objectTreeBackgroundColor;
 				Color newColor =
-					JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), i18n.OBJECT_TREE_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE,
+					JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), s_stringMgr.getString("ColorPropertiesPanel.objectTreeBackgroundColorChooserDialogTitle"),
 						startColor);
 				if (newColor != null)
 				{
@@ -535,7 +486,7 @@ public class ColorPropertiesPanel extends JPanel
 
 		// Set toolbar color button
 		++gbc.gridx;
-		toolbarBackgroundColorBtn = new JButton(i18n.TOOLBAR_BACKGROUND_COLOR_BUTTON_LABEL);
+		toolbarBackgroundColorBtn = new JButton(s_stringMgr.getString("ColorPropertiesPanel.toolbarBackgroundColorBtnLabel"));
 		add(toolbarBackgroundColorBtn, gbc);
 
 		// Set toolbar color panel
@@ -584,7 +535,7 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = toolbarBackgroundColor == null ? Color.WHITE : toolbarBackgroundColor;
 				Color newColor =
-					JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), i18n.TOOLBAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+					JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), s_stringMgr.getString("ColorPropertiesPanel.toolbarBackgroundColorChooserDialogTitle"), startColor);
 				if (newColor != null)
 				{
 					toolbarBackgroundColor = newColor;
@@ -599,7 +550,7 @@ public class ColorPropertiesPanel extends JPanel
 	private Box createInfoPanel()
 	{
 		final Box pnl = new Box(BoxLayout.X_AXIS);
-		pnl.add(new MultipleLineLabel(i18n.INSTRUCTIONS));
+		pnl.add(new MultipleLineLabel(s_stringMgr.getString("ColorPropertiesPanel.instructions")));
 		return pnl;
 	}
 

@@ -17,19 +17,18 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
-import javax.swing.*;
-import javax.swing.table.TableCellEditor;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
 /**
  * This panel allows the user to review and maintain
  * the properties for a JDBC driver.
@@ -41,7 +40,7 @@ public class DriverPropertiesPanel extends JPanel
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverPropertiesPanel.class);
 
    // i18n[DriverPropertiesPanel.useDriverProperties=Use driver properties]
-   JCheckBox chkUseDriverProperties = new JCheckBox(s_stringMgr.getString("DriverPropertiesPanel.useDriverProperties"));
+   JCheckBox chkUseDriverProperties = new JCheckBox(SQLAliasPropI18nEnum.useDriverProperties.getString());
 
    private interface i18n
    {

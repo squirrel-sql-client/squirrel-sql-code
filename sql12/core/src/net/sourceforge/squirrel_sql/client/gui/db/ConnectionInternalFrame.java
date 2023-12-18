@@ -423,56 +423,6 @@ public class ConnectionInternalFrame extends DialogWidget
 		gbc = new GridBagConstraints(0, 9, 2, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
 		ret.add(_btnsPnl, gbc);
 
-
-//		final FormLayout layout = new FormLayout(
-//			// Columns
-//			"right:pref, 8dlu, left:min(100dlu;pref):grow",
-//			// Rows
-//			"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, "
-//		+	"pref, 6dlu, pref, 6dlu, pref, 3dlu, pref, 3dlu, pref");
-//
-//		PanelBuilder builder = new PanelBuilder(layout);
-//		CellConstraints cc = new CellConstraints();
-//		builder.setDefaultDialogBorder();
-//
-//		int y = 1;
-//		builder.addSeparator(getTitle(), cc.xywh(1, y, 3, 1));
-//
-//		y += 2;
-//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.alias"), cc.xy(1, y));
-//		builder.add(_aliasName, cc.xywh(3, y, 1, 1));
-//
-//		y += 2;
-//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.driver"), cc.xy(1, y));
-//		builder.add(_driverName, cc.xywh(3, y, 1, 1));
-//
-//		y += 2;
-//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.url"), cc.xy(1, y));
-//		builder.add(_url, cc.xywh(3, y, 1, 1));
-//
-//		y += 2;
-//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.user"), cc.xy(1, y));
-//		builder.add(_user, cc.xywh(3, y, 1, 1));
-//
-//		y += 2;
-//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.password"), cc.xy(1, y));
-//		builder.add(_password, cc.xywh(3, y, 1, 1));
-//
-//		y += 2;
-//      _aliasPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
-//      builder.add(_aliasPropsBtn, cc.xywh(3, y, 1, 1));
-//
-//		y += 2;
-//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.warningcapslock"),
-//							cc.xywh(1, y, 3, 1));
-//
-//		y += 2;
-//		builder.addSeparator("", cc.xywh(1, y, 3, 1));
-//
-//		y += 2;
-//		builder.add(_btnsPnl, cc.xywh(1, y, 3, 1));
-
-
 		// Set focus to password control if default user name has been setup.
 		addWidgetListener(new WidgetAdapter()
 		{
