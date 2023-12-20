@@ -18,7 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
@@ -241,31 +241,31 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       return _id;
    }
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.aliasName)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.aliasName)
    public String getName()
    {
       return _name;
    }
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.driverIdentifier)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.driverIdentifier)
    public IIdentifier getDriverIdentifier()
    {
       return _driverId;
    }
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.jdbcUrl)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.jdbcUrl)
    public String getUrl()
    {
       return _url;
    }
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.userName)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.userName)
    public String getUserName()
    {
       return _userName;
    }
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.password)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.password)
    public String getPassword()
    {
       return _password;
@@ -278,7 +278,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       _password = data;
    }
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.encryptPassword)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.encryptPassword)
    public boolean isEncryptPassword()
    {
       return _encryptPassword;
@@ -311,7 +311,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
     * @return	<TT>true</TT> is this alias should be logged on automatically
     * 			else <TT>false</TT>.
     */
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.autoLogon)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.autoLogon)
    public boolean isAutoLogon()
    {
       return _autoLogon;
@@ -335,7 +335,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
     * @return	<TT>true</TT> if this alias should be connected when the
     *			application is started up.
     */
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.connectAtStartup)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.connectAtStartup)
    public boolean isConnectAtStartup()
    {
       return _connectAtStartup;
@@ -356,7 +356,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
    /**
     * Returns whether this alias uses driver properties.
     */
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.useDriverProperties)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.driverProp_useDriverProperties)
    public boolean getUseDriverProperties()
    {
       return _useDriverProperties;
@@ -418,7 +418,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
     *
     * @return	the SQL driver properties.
     */
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.driverPropertyCollection)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.driverProp_driverPropertyCollection)
    public SQLDriverPropertyCollection getDriverPropertiesClone()
    {
       return getDriverPropertiesClone(false);

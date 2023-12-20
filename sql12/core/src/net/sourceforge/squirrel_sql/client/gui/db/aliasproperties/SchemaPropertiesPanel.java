@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
@@ -106,7 +106,7 @@ public class SchemaPropertiesPanel extends JPanel
 
 
       // i18n[SchemaPropertiesPanel.CacheSchemaIndependentMetaData=Cache Schema independent meta data (Catalogs, Keywords, Data types, Global functions)]
-      chkCacheSchemaIndepndentMetaData = new JCheckBox(SQLAliasPropI18nEnum.schemaProp_cacheSchemaIndependentMetaData.getString());
+      chkCacheSchemaIndepndentMetaData = new JCheckBox(SQLAliasPropType.schemaProp_cacheSchemaIndependentMetaData.getI18nString());
       gbc = new GridBagConstraints(0,9,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
       add(chkCacheSchemaIndepndentMetaData, gbc);
 
@@ -147,7 +147,7 @@ public class SchemaPropertiesPanel extends JPanel
       JPanel pnlRight = new JPanel(new GridLayout(1,2,5,5));
 
       JPanel pnlInclude = new JPanel(new BorderLayout(5,5));
-      pnlInclude.add(new JLabel(SQLAliasPropI18nEnum.schemaProp_byLikeStringInclude.getString()), BorderLayout.WEST);
+      pnlInclude.add(new JLabel(SQLAliasPropType.schemaProp_byLikeStringInclude.getI18nString()), BorderLayout.WEST);
 
       txtSchemasByLikeStringInclude = new JTextField();
       pnlInclude.add(txtSchemasByLikeStringInclude, BorderLayout.CENTER);
@@ -156,7 +156,7 @@ public class SchemaPropertiesPanel extends JPanel
 
 
       JPanel pnlExclude = new JPanel(new BorderLayout(5,5));
-      pnlExclude.add(new JLabel(SQLAliasPropI18nEnum.schemaProp_byLikeStringExclude.getString()), BorderLayout.WEST);
+      pnlExclude.add(new JLabel(SQLAliasPropType.schemaProp_byLikeStringExclude.getI18nString()), BorderLayout.WEST);
 
       txtSchemasByLikeStringExclude = new JTextField();
       pnlExclude.add(txtSchemasByLikeStringExclude, BorderLayout.CENTER);

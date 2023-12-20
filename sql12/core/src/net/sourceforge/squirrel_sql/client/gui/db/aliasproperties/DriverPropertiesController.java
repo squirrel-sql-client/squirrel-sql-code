@@ -89,7 +89,7 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
       }
 
       SQLDriverPropertyCollection driverPropertiesClone = alias.getDriverPropertiesClone(true);
-      driverPropertiesClone.applyDriverPropertynfo(infoAr);
+      driverPropertiesClone.applyDriverPropertyInfo(infoAr);
       _propsPnl = new DriverPropertiesPanel(driverPropertiesClone);
 
       _propsPnl.chkUseDriverProperties.setSelected(alias.getUseDriverProperties());

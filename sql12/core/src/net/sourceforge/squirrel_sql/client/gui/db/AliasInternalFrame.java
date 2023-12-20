@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandle
 import net.sourceforge.squirrel_sql.client.gui.db.passwordaccess.PasswordInAliasCtrl;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -102,12 +102,12 @@ public class AliasInternalFrame extends DialogWidget
 	private PasswordInAliasCtrl _passwordInAliasCtrl = new PasswordInAliasCtrl();
 
 	/** Autologon checkbox. */
-	private final JCheckBox _chkAutoLogon = new JCheckBox(SQLAliasPropI18nEnum.autoLogon.getString());
+	private final JCheckBox _chkAutoLogon = new JCheckBox(SQLAliasPropType.autoLogon.getI18nString());
 
 	/** Connect at startup checkbox. */
-	private final JCheckBox _chkConnectAtStartup = new JCheckBox(SQLAliasPropI18nEnum.connectAtStartup.getString());
+	private final JCheckBox _chkConnectAtStartup = new JCheckBox(SQLAliasPropType.connectAtStartup.getI18nString());
 
-	private JCheckBox _chkSavePasswordEncrypted = new JCheckBox(SQLAliasPropI18nEnum.encryptPassword.getString());
+	private JCheckBox _chkSavePasswordEncrypted = new JCheckBox(SQLAliasPropType.encryptPassword.getI18nString());
 
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _btnAliasProps = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
@@ -372,14 +372,14 @@ public class AliasInternalFrame extends DialogWidget
 		GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      pnl.add(new JLabel(SQLAliasPropI18nEnum.aliasName.getString(), SwingConstants.RIGHT), gbc);
+      pnl.add(new JLabel(SQLAliasPropType.aliasName.getI18nString(), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_txtAliasName, gbc);
 
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      pnl.add(new JLabel(SQLAliasPropI18nEnum.driverIdentifier.getString(), SwingConstants.RIGHT), gbc);
+      pnl.add(new JLabel(SQLAliasPropType.driverIdentifier.getI18nString(), SwingConstants.RIGHT), gbc);
 
       _drivers = new DriversCombo();
 		_drivers.addItemListener(new DriversComboItemListener());
@@ -395,19 +395,19 @@ public class AliasInternalFrame extends DialogWidget
 		pnl.add(driverPnl, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(new JLabel(SQLAliasPropI18nEnum.jdbcUrl.getString(), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(SQLAliasPropType.jdbcUrl.getI18nString(), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_txtUrl, gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(new JLabel(SQLAliasPropI18nEnum.userName.getString(), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(SQLAliasPropType.userName.getI18nString(), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_txtUserName, gbc);
 
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(new JLabel(SQLAliasPropI18nEnum.password.getString(), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(SQLAliasPropType.password.getI18nString(), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_passwordInAliasCtrl.getPanel(), gbc);

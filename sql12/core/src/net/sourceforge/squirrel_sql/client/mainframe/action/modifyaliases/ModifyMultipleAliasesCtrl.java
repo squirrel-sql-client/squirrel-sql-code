@@ -46,8 +46,9 @@ public class ModifyMultipleAliasesCtrl
    {
       try
       {
-         AliasChangesReport changes = AliasChangesHandler.findChanges(templateAlias, editedAlias);
+         AliasChangesHandler changes = AliasChangesFinder.findChanges(templateAlias, editedAlias);
 
+         _dlg.txtChangeReport.setText(null);
          if(false == changes.isEmpty())
          {
             _dlg.txtChangeReport.setText(changes.getReport());

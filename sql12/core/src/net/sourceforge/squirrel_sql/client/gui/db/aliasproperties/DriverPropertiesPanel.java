@@ -18,7 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -40,7 +40,7 @@ public class DriverPropertiesPanel extends JPanel
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverPropertiesPanel.class);
 
    // i18n[DriverPropertiesPanel.useDriverProperties=Use driver properties]
-   JCheckBox chkUseDriverProperties = new JCheckBox(SQLAliasPropI18nEnum.useDriverProperties.getString());
+   JCheckBox chkUseDriverProperties = new JCheckBox(SQLAliasPropType.driverProp_useDriverProperties.getI18nString());
 
    private interface i18n
    {

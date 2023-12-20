@@ -465,7 +465,7 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = objectTreeBackgroundColor == null ? Color.WHITE : objectTreeBackgroundColor;
 				Color newColor =
-					JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), s_stringMgr.getString("ColorPropertiesPanel.objectTreeBackgroundColorChooserDialogTitle"),
+					JColorChooser.showDialog(GUIUtils.getOwningWindow(ColorPropertiesPanel.this), s_stringMgr.getString("ColorPropertiesPanel.objectTreeBackgroundColorChooserDialogTitle"),
 						startColor);
 				if (newColor != null)
 				{

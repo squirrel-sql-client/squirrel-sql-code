@@ -17,15 +17,13 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasVersioner;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.sql.DriverPropertyInfo;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
 /**
  * A collection of <TT>SQLDriverDriverProperty</TT> objects.
  *
@@ -56,7 +54,7 @@ public class SQLDriverPropertyCollection implements Serializable
 	/**
 	 * Clear all entries from this collection.
 	 */
-	public synchronized void clear()
+	public void clear()
 	{
 		_objectsIndexMap.clear();
 		_objectsList.clear();
@@ -72,7 +70,7 @@ public class SQLDriverPropertyCollection implements Serializable
 		return _objectsList.size();
 	}
 
-	public synchronized void applyTo(Properties props)
+	public void applyTo(Properties props)
 	{
 		for (int i = 0, limit = size(); i < limit; ++i)
 		{
@@ -95,18 +93,24 @@ public class SQLDriverPropertyCollection implements Serializable
 	 * @return	an array of the <TT>SQLDriverProperty</TT> objects contained
 	 *			in this collection.
 	 */
-	public synchronized SQLDriverProperty[] getDriverProperties()
+	public SQLDriverProperty[] getDriverProperties()
 	{
 		SQLDriverProperty[] ar = new SQLDriverProperty[_objectsList.size()];
 		return _objectsList.toArray(ar);
 	}
 
-	public synchronized SQLDriverProperty getDriverProperty(int idx)
+	public SQLDriverProperty getDriverProperty(int idx)
 	{
 		return _objectsList.get(idx);
 	}
 
-	public synchronized void setDriverProperties(SQLDriverProperty[] values)
+	public SQLDriverProperty getDriverPropertyByName(String name)
+	{
+		return _objectsList.stream().filter(p -> StringUtils.equals(p.getName(), name)).findFirst().orElse(null);
+	}
+
+
+	public void setDriverProperties(SQLDriverProperty[] values)
 	{
 		_objectsIndexMap.clear();
 		_objectsList.clear();
@@ -117,12 +121,12 @@ public class SQLDriverPropertyCollection implements Serializable
 		}
 	}
 
-	public synchronized void addDriverProperty(SQLDriverProperty value) {
+	public void addDriverProperty(SQLDriverProperty value) {
 		_objectsList.add(value);
 		_objectsIndexMap.put(value.getName(), value);		
 	}
 	
-	public synchronized void removeDriverProperty(String name) {
+	public void removeDriverProperty(String name) {
 		SQLDriverProperty prop = _objectsIndexMap.remove(name);
 		_objectsList.remove(prop);
 	}
@@ -130,13 +134,13 @@ public class SQLDriverPropertyCollection implements Serializable
 	/**
 	 * Warning - should only be used when loading javabean from XML.
 	 */
-	public synchronized void setDriverProperty(int idx, SQLDriverProperty value)
+	public void setDriverProperty(int idx, SQLDriverProperty value)
 	{
 		_objectsList.add(idx, value);
 		_objectsIndexMap.put(value.getName(), value);
 	}
 
-	public synchronized void applyDriverPropertynfo(DriverPropertyInfo[] infoAr)
+	public void applyDriverPropertyInfo(DriverPropertyInfo[] infoAr)
 	{
 		if (infoAr == null || infoAr.length == 0)
 		{

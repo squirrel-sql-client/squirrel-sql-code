@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropI18nEnum;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 
 import java.io.Serializable;
@@ -23,7 +23,7 @@ public class SQLAliasSchemaProperties implements Serializable
    private SQLAliasVersioner _versioner = new SQLAliasVersioner();
 
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_schemaDetails)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_schemaDetails)
    public SQLAliasSchemaDetailProperties[] getSchemaDetails()
    {
       return _schemaDetails;
@@ -36,7 +36,7 @@ public class SQLAliasSchemaProperties implements Serializable
    }
 
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_globalState)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_globalState)
    public int getGlobalState()
    {
       return _globalState;
@@ -49,7 +49,7 @@ public class SQLAliasSchemaProperties implements Serializable
    }
 
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_cacheSchemaIndependentMetaData)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_cacheSchemaIndependentMetaData)
    public boolean isCacheSchemaIndependentMetaData()
    {
       return _cacheSchemaIndependentMetaData;
@@ -437,7 +437,7 @@ public class SQLAliasSchemaProperties implements Serializable
       return schemaNames;
    }
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_byLikeStringInclude)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_byLikeStringInclude)
    public String getByLikeStringInclude()
    {
       return _byLikeStringInclude;
@@ -449,7 +449,7 @@ public class SQLAliasSchemaProperties implements Serializable
       _byLikeStringInclude = byLikeStringInclude;
    }
 
-   @SQLAliasProp(sqlAliasPropI18n = SQLAliasPropI18nEnum.schemaProp_byLikeStringExclude)
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_byLikeStringExclude)
    public String getByLikeStringExclude()
    {
       return _byLikeStringExclude;

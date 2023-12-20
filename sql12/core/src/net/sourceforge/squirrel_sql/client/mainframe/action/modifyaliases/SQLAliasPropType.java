@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverProperti
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.SchemaPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public enum SQLAliasPropI18nEnum
+public enum SQLAliasPropType
 {
    aliasName("AliasInternalFrame.name", AliasInternalFrame.class),
    jdbcUrl("AliasInternalFrame.url", AliasInternalFrame.class),
@@ -15,8 +15,8 @@ public enum SQLAliasPropI18nEnum
    encryptPassword("AliasInternalFrame.password.encrypted", AliasInternalFrame.class),
    autoLogon("AliasInternalFrame.autologon", AliasInternalFrame.class),
    connectAtStartup("AliasInternalFrame.connectatstartup", AliasInternalFrame.class),
-   useDriverProperties("DriverPropertiesPanel.useDriverProperties", DriverPropertiesPanel.class),
-   driverPropertyCollection,
+   driverProp_useDriverProperties("DriverPropertiesPanel.useDriverProperties", DriverPropertiesPanel.class),
+   driverProp_driverPropertyCollection,
    schemaProp_schemaDetails,
    schemaProp_globalState,
    schemaProp_byLikeStringInclude("SchemaPropertiesPanel.specifySchemasByLikeString.include", SchemaPropertiesPanel.class),
@@ -35,20 +35,46 @@ public enum SQLAliasPropI18nEnum
    private final String _i18nKey;
    private final Class _i18nSourceClass;
 
-   SQLAliasPropI18nEnum(String i18nKey, Class i18nSourceClass)
+   SQLAliasPropType(String i18nKey, Class i18nSourceClass)
    {
       _i18nKey = i18nKey;
       _i18nSourceClass = i18nSourceClass;
    }
 
-   SQLAliasPropI18nEnum()
+   SQLAliasPropType()
    {
       this(null, null);
    }
 
-   public String getString()
+   public String getI18nString()
    {
       return StringManagerFactory.getStringManager(_i18nSourceClass).getString(_i18nKey);
    }
 
+   public boolean isSchemaProp()
+   {
+      return this == schemaProp_schemaDetails ||
+            this == schemaProp_globalState ||
+            this == schemaProp_byLikeStringInclude ||
+            this == schemaProp_byLikeStringExclude ||
+            this == schemaProp_cacheSchemaIndependentMetaData;
+   }
+
+   public boolean isDriverProp()
+   {
+      return this == driverProp_useDriverProperties ||
+            this == driverProp_driverPropertyCollection;
+   }
+
+   public boolean isColorProp()
+   {
+      return this == colorProp_overrideToolbarBackgroundColor ||
+            this == colorProp_toolbarBackgroundColor ||
+            this == colorProp_overrideObjectTreeBackgroundColor ||
+            this == colorProp_objectTreeBackgroundColor ||
+            this == colorProp_overrideStatusBarBackgroundColor ||
+            this == colorProp_statusBarBackgroundColor ||
+            this == colorProp_overrideAliasBackgroundColor ||
+            this == colorProp_aliasBackgroundColor;
+   }
 }
