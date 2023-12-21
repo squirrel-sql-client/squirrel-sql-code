@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
+
 import java.io.Serializable;
 
 public class SQLAliasConnectionProperties implements Serializable
@@ -39,6 +41,7 @@ public class SQLAliasConnectionProperties implements Serializable
 	/**
 	 * @return the isEnableConnectionKeepAlive
 	 */
+	@SQLAliasProp(sqlAliasPropType = SQLAliasPropType.connectionProp_keepAlive)
 	public boolean isEnableConnectionKeepAlive()
 	{
 		return _enableConnectionKeepAlive;
@@ -56,6 +59,7 @@ public class SQLAliasConnectionProperties implements Serializable
 	/**
 	 * @return the keepAliveSleepTimeSeconds
 	 */
+	@SQLAliasProp(sqlAliasPropType = SQLAliasPropType.connectionProp_keepAliveSleepSeconds)
 	public int getKeepAliveSleepTimeSeconds()
 	{
 		return _keepAliveSleepTimeSeconds;
@@ -73,6 +77,7 @@ public class SQLAliasConnectionProperties implements Serializable
 	/**
 	 * @return the keepAliveSqlStatement
 	 */
+	@SQLAliasProp(sqlAliasPropType = SQLAliasPropType.connectionProp_keepAliveSqlStatement)
 	public String getKeepAliveSqlStatement()
 	{
 		return _keepAliveSqlStatement;

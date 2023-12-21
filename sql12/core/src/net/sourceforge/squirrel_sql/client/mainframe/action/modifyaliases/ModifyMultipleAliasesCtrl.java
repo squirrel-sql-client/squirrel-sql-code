@@ -51,7 +51,7 @@ public class ModifyMultipleAliasesCtrl
          _dlg.txtChangeReport.setText(null);
          if(false == changes.isEmpty())
          {
-            _dlg.txtChangeReport.setText(changes.getReport());
+            _dlg.txtChangeReport.setText(changes.getChangeReport().getString());
          }
       }
       catch (Exception e)

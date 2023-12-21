@@ -1,9 +1,14 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases;
 
 import net.sourceforge.squirrel_sql.client.gui.db.AliasInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ConnectionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.SchemaPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.util.Objects;
 
 public enum SQLAliasPropType
 {
@@ -29,7 +34,10 @@ public enum SQLAliasPropType
    colorProp_overrideStatusBarBackgroundColor,
    colorProp_statusBarBackgroundColor,
    colorProp_overrideAliasBackgroundColor,
-   colorProp_aliasBackgroundColor;
+   colorProp_aliasBackgroundColor,
+   connectionProp_keepAlive("ConnectionPropertiesPanel.enableKeepAliveMsg", ConnectionPropertiesPanel.class),
+   connectionProp_keepAliveSleepSeconds("ConnectionPropertiesPanel.sleepForLabel", ConnectionPropertiesPanel.class),
+   connectionProp_keepAliveSqlStatement;
 
 
    private final String _i18nKey;
@@ -76,5 +84,35 @@ public enum SQLAliasPropType
             this == colorProp_statusBarBackgroundColor ||
             this == colorProp_overrideAliasBackgroundColor ||
             this == colorProp_aliasBackgroundColor;
+   }
+
+   public boolean isConnectionProp()
+   {
+      return this == connectionProp_keepAliveSqlStatement ||
+            this == connectionProp_keepAlive ||
+            this == connectionProp_keepAliveSleepSeconds;
+   }
+
+   public boolean equals(Object previousAliasPropValue, Object editedAliasPropValue)
+   {
+      if(this == schemaProp_schemaDetails)
+      {
+         ChangeReport changeReport = new ChangeReport();
+         AliasChangesUtil.compareSchemaDetailProperties((SQLAliasSchemaDetailProperties[]) editedAliasPropValue, (SQLAliasSchemaDetailProperties[]) previousAliasPropValue, changeReport);
+
+         return 0 == changeReport.length();
+
+      }
+      else if(this == driverProp_driverPropertyCollection)
+      {
+         ChangeReport changeReport = new ChangeReport();
+         AliasChangesUtil.compareSQLDriverPropertyCollection((SQLDriverPropertyCollection) editedAliasPropValue, (SQLDriverPropertyCollection) previousAliasPropValue, changeReport);
+
+         return 0 == changeReport.length();
+      }
+      else
+      {
+         return Objects.equals(previousAliasPropValue, editedAliasPropValue);
+      }
    }
 }

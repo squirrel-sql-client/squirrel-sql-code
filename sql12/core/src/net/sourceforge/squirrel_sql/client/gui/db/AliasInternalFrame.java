@@ -278,7 +278,7 @@ public class AliasInternalFrame extends DialogWidget
 		try
 		{
 			applyFromDialog(_sqlAlias);
-			AliasPropertiesController.showAliasProperties(_sqlAlias, _parentWindow);
+			AliasPropertiesController.showAliasProperties(_sqlAlias, getDelegate().getParentWindow());
 		}
 		catch (Exception ex)
 		{

@@ -22,24 +22,14 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
+import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerNumberModel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -62,25 +52,6 @@ public class ConnectionPropertiesPanel extends JPanel
 	private JLabel executeLabel = null;
 
 	private JTextArea sqlTextArea = new JTextArea();
-
-	public interface i18n
-	{
-		// i18n[ConnectionPropertiesPanel.enableKeepAliveMsg=Enable Keep-Alive]
-		String ENABLE_KEEP_ALIVE_MSG = s_stringMgr.getString("ConnectionPropertiesPanel.enableKeepAliveMsg");		
-		
-		// i18n[ConnectionPropertiesPanel.instructions=These settings control whether or not...]
-		String INSTRUCTIONS = s_stringMgr.getString("ConnectionPropertiesPanel.instructions");
-
-		// i18n[ConnectionPropertiesPanel.secondsLabel=seconds]
-		String SECONDS_LABEL = s_stringMgr.getString("ConnectionPropertiesPanel.secondsLabel");
-
-		// i18n[ConnectionPropertiesPanel.executeLabel=Execute the following SQL statement:]
-		String EXECUTE_LABEL = s_stringMgr.getString("ConnectionPropertiesPanel.executeLabel");
-
-		// i18n[ConnectionPropertiesPanel.sleepForLabel=Sleep for]
-		String SLEEP_FOR_LABEL = s_stringMgr.getString("ConnectionPropertiesPanel.sleepForLabel");
-
-	}
 
 	private SQLAliasConnectionProperties _props = null;
 
@@ -164,7 +135,7 @@ public class ConnectionPropertiesPanel extends JPanel
 
 	private void addExecuteLabel(GridBagConstraints gbc)
 	{
-		executeLabel = new JLabel(i18n.EXECUTE_LABEL);
+		executeLabel = new JLabel(s_stringMgr.getString("ConnectionPropertiesPanel.executeLabel"));
 		// We want the text to line up with the text of the enable checkbox to give a hint that the
 		// the checkbox controls enabling this component.
 		Insets orig = gbc.insets;
@@ -178,12 +149,7 @@ public class ConnectionPropertiesPanel extends JPanel
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.BOTH;
 
-		MultipleLineLabel label = new MultipleLineLabel(i18n.INSTRUCTIONS);
-
-		// Instructions
-		final JPanel pnl = new JPanel();
-		pnl.add(new MultipleLineLabel(i18n.INSTRUCTIONS));
-
+		MultipleLineLabel label = new MultipleLineLabel(s_stringMgr.getString("ConnectionPropertiesPanel.instructions"));
 		add(label, gbc);
 
 	}
@@ -217,7 +183,7 @@ public class ConnectionPropertiesPanel extends JPanel
 		sleepTime = new JSpinner(spinnerNumberModel);
 		sleepTime.setPreferredSize(new Dimension(75, 25));
 
-		sleepForLabel = new JLabel(i18n.SLEEP_FOR_LABEL);
+		sleepForLabel = new JLabel(SQLAliasPropType.connectionProp_keepAliveSleepSeconds.getI18nString());
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.EAST;
@@ -232,7 +198,7 @@ public class ConnectionPropertiesPanel extends JPanel
 		gbc.weightx = .05;
 		sleepTimePanel.add(sleepTime, gbc);
 
-		secondsLabel = new JLabel(i18n.SECONDS_LABEL);
+		secondsLabel = new JLabel(s_stringMgr.getString("ConnectionPropertiesPanel.secondsLabel"));
 		
 		gbc.anchor = GridBagConstraints.WEST;
 		gbc.gridx++;
@@ -249,7 +215,7 @@ public class ConnectionPropertiesPanel extends JPanel
 		gbc.insets = new Insets(10, 25, 10, 10);
 		JPanel textPanel = new JPanel();
 		textPanel.setLayout(new BorderLayout());
-		textPanel.add(sqlTextArea, BorderLayout.CENTER);
+		textPanel.add(new JScrollPane(sqlTextArea), BorderLayout.CENTER);
 		add(textPanel, gbc);
 	}
 
@@ -264,7 +230,7 @@ public class ConnectionPropertiesPanel extends JPanel
 	
 	private void setupEnabledCheckbox()
 	{		
-		enableConnectionKeepAliveChk = new JCheckBox(i18n.ENABLE_KEEP_ALIVE_MSG);
+		enableConnectionKeepAliveChk = new JCheckBox(SQLAliasPropType.connectionProp_keepAlive.getI18nString());
 		enableConnectionKeepAliveChk.addActionListener(new ActionListener()
 		{
 

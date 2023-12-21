@@ -57,7 +57,7 @@ public class AliasChangesFinder
                   Object previousAliasPropValue = getter.invoke(template);
                   Object editedAliasPropValue = getter.invoke(edited);
 
-                  if (false == Objects.equals(previousAliasPropValue, editedAliasPropValue))
+                  if (false == sqlAliasProp.sqlAliasPropType().equals(previousAliasPropValue, editedAliasPropValue))
                   {
                      changesHandler.addChange(sqlAliasProp.sqlAliasPropType(), pd, previousAliasPropValue, editedAliasPropValue);
                   }
