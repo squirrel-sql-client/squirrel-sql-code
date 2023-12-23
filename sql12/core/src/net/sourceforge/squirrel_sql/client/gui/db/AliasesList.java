@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -46,7 +47,12 @@ public class AliasesList implements IToogleableAliasesList
    private JTreeAliasesListImpl _jTreeImpl;
    private boolean _viewAsTree;
 
-   public AliasesList(IApplication app)
+   /**
+    * To be used by {@link net.sourceforge.squirrel_sql.client.gui.WindowManager} only.
+    * To access the global {@link AliasesList} instance call
+    * {@link WindowManager#getAliasesListInternalFrame()#getSelectedAlias(MouseEvent)}
+    */
+   public AliasesList(IApplication app)  // DO NOT USE EXCEPT IN WindowManager
 	{
       AliasesListModel listModel = new AliasesListModel(app);
       _jListImpl= new JListAliasesListImpl(app, listModel, item -> onAliasSelected(item));

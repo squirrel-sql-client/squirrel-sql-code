@@ -14,6 +14,7 @@ public class ModifyMultipleAliasesCtrl
 
    private final ModifyMultipleAliasesDlg _dlg;
    private final SQLAlias _selectedAlias;
+   private AliasChangesHandler _aliasChangesHandler;
 
    public ModifyMultipleAliasesCtrl(SQLAlias selectedAlias)
    {
@@ -24,8 +25,33 @@ public class ModifyMultipleAliasesCtrl
       GUIUtils.enableCloseByEscape(_dlg);
 
       _dlg.btnEditAliases.addActionListener(e -> onEditAliases());
+      _dlg.btnApplyChanges.addActionListener(e -> onApplyChanges());
+
+      updateApplyButton();
 
       _dlg.setVisible(true);
+   }
+
+   private void onApplyChanges()
+   {
+      // FOR AliasChangesHandler.applyChanges() TEST ONLY
+
+      //SQLAlias newSelectedAlias = new AliasesList(Main.getApplication()).getSelectedAlias(null);
+      SQLAlias newSelectedAlias = Main.getApplication().getWindowManager().getAliasesListInternalFrame().getAliasesList().getSelectedAlias(null);
+
+      IIdentifierFactory factory = IdentifierFactory.getInstance();
+      SQLAlias newAlias = Main.getApplication().getAliasesAndDriversManager().createAlias(factory.createIdentifier());
+      newAlias.assignFrom(newSelectedAlias, false);
+
+
+      _aliasChangesHandler.applyChanges(newAlias);
+
+      AliasInternalFrame modifyMultipleSheet = AliasWindowFactory.getModifyMultipleSheet(newAlias, _dlg);
+      modifyMultipleSheet.setVisible(true);
+
+
+      //_aliasChangesHandler = null;
+      //updateApplyButton();
    }
 
    private void onEditAliases()
@@ -35,9 +61,7 @@ public class ModifyMultipleAliasesCtrl
       newAlias.assignFrom(_selectedAlias, false);
 
       AliasInternalFrame modifyMultipleSheet = AliasWindowFactory.getModifyMultipleSheet(newAlias, _dlg);
-
       modifyMultipleSheet.setOkListener(() -> onAliasSheetOk(_selectedAlias, newAlias));
-
       modifyMultipleSheet.setVisible(true);
 
    }
@@ -46,18 +70,27 @@ public class ModifyMultipleAliasesCtrl
    {
       try
       {
-         AliasChangesHandler changes = AliasChangesFinder.findChanges(templateAlias, editedAlias);
+         AliasChangesHandler aliasChangesHandler = AliasChangesFinder.findChanges(templateAlias, editedAlias);
 
          _dlg.txtChangeReport.setText(null);
-         if(false == changes.isEmpty())
+         if(false == aliasChangesHandler.isEmpty())
          {
-            _dlg.txtChangeReport.setText(changes.getChangeReport().getString());
+            _dlg.txtChangeReport.setText(aliasChangesHandler.getChangeReport().getString());
+            _aliasChangesHandler = aliasChangesHandler;
+            updateApplyButton();
          }
+
+
       }
       catch (Exception e)
       {
          throw Utilities.wrapRuntime(e);
       }
+   }
+
+   private void updateApplyButton()
+   {
+      _dlg.btnApplyChanges.setEnabled(null != _aliasChangesHandler);
    }
 
 }

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -54,7 +55,7 @@ public class AliasChangesHandler
 
    public void addChange(SQLAliasPropType sqlAliasPropType, PropertyDescriptor pd, Object previousAliasPropValue, Object editedAliasPropValue)
    {
-      _aliasChanges.add(new AliasChange(sqlAliasPropType, pd, editedAliasPropValue));
+      _aliasChanges.add(new AliasChange(pd, sqlAliasPropType, editedAliasPropValue));
 
       _changeReport.append(_indent);
 
@@ -246,5 +247,10 @@ public class AliasChangesHandler
          _changeReport.append(s_stringMgr.getString("AliasChangesHandler.aliasBackground.color.prop.changeFromTo", new Color((Integer) previousAliasPropValue), new Color((Integer) editedAliasPropValue)));
       }
       _changeReport.append('\n');
+   }
+
+   public void applyChanges(SQLAlias newSelectedAlias)
+   {
+      _aliasChanges.forEach(aliasChange -> aliasChange.applyChange(newSelectedAlias));
    }
 }

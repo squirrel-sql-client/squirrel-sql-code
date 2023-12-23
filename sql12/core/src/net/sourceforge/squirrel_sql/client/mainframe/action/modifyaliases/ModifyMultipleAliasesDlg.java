@@ -12,6 +12,7 @@ public class ModifyMultipleAliasesDlg extends JDialog
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ModifyMultipleAliasesDlg.class);
    final JTextArea txtChangeReport;
    final JButton btnEditAliases;
+   final JButton btnApplyChanges;
 
    public ModifyMultipleAliasesDlg()
    {
@@ -23,7 +24,15 @@ public class ModifyMultipleAliasesDlg extends JDialog
       txtChangeReport.setEditable(false);
       getContentPane().add(new JScrollPane(txtChangeReport), BorderLayout.CENTER);
 
-      btnEditAliases = new JButton(s_stringMgr.getString("ModifyMultipleAliasesDlg.edit.aliases"));
-      getContentPane().add(btnEditAliases, BorderLayout.SOUTH);
+      JPanel pnlSouth = new JPanel(new GridLayout(1, 2));
+
+      btnEditAliases = new JButton(s_stringMgr.getString("ModifyMultipleAliasesDlg.edit.template.alias"));
+      pnlSouth.add(btnEditAliases);
+
+      btnApplyChanges = new JButton(s_stringMgr.getString("ModifyMultipleAliasesDlg.apply.changes"));
+      pnlSouth.add(btnApplyChanges);
+
+
+      getContentPane().add(pnlSouth, BorderLayout.SOUTH);
    }
 }
