@@ -24,7 +24,7 @@ public class ModifyMultipleAliasesCtrl
       GUIUtils.initLocation(_dlg, 400, 400);
       GUIUtils.enableCloseByEscape(_dlg);
 
-      _dlg.btnEditAliases.addActionListener(e -> onEditAliases());
+      _dlg.btnEditTemplateAlias.addActionListener(e -> onEditAliases());
       _dlg.btnApplyChanges.addActionListener(e -> onApplyChanges());
 
       updateApplyButton();
