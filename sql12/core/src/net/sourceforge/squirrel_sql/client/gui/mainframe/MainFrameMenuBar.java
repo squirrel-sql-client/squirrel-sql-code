@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAltAcceleratorAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPreferencesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.ModifyMultipleAliasesAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;

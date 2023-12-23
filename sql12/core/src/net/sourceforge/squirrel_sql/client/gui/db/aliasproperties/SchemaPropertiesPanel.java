@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
+import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;

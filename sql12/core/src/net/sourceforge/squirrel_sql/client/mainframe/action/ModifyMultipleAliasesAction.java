@@ -1,9 +1,9 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases;
+package net.sourceforge.squirrel_sql.client.mainframe.action;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasAction;
+import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.ModifyMultipleAliasesCtrl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 

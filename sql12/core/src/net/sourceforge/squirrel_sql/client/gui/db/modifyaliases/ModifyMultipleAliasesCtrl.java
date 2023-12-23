@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases;
+package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasInternalFrame;
@@ -21,7 +21,7 @@ public class ModifyMultipleAliasesCtrl
       _selectedAlias = selectedAlias;
       _dlg = new ModifyMultipleAliasesDlg();
 
-      GUIUtils.initLocation(_dlg, 400, 400);
+      GUIUtils.initLocation(_dlg, 800, 800);
       GUIUtils.enableCloseByEscape(_dlg);
 
       _dlg.btnEditTemplateAlias.addActionListener(e -> onEditAliases());

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
+import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 
 import java.io.Serializable;

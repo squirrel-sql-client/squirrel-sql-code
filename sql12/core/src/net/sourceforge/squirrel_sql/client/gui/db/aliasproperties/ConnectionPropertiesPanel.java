@@ -22,7 +22,7 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
-import net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases.SQLAliasPropType;
+import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

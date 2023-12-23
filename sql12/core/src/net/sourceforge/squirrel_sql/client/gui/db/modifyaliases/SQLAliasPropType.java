@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases;
+package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
 import net.sourceforge.squirrel_sql.client.gui.db.AliasInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;

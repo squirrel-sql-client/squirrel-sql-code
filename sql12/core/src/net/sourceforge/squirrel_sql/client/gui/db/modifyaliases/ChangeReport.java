@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action.modifyaliases;
+package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
 public class ChangeReport
 {
