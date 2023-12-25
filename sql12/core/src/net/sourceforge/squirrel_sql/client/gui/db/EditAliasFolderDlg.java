@@ -7,16 +7,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 public class EditAliasFolderDlg extends JDialog
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(EditAliasFolderDlg.class);
-
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(EditAliasFolderDlg.class);
 
    private JTextField _txtFolderName = new JTextField();
 

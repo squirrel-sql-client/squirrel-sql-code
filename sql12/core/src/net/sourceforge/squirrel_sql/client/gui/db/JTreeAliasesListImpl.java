@@ -3,8 +3,8 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
-import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndExport;
-import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndImport;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree.AliasDndExport;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree.AliasDndImport;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.gui.*;
@@ -196,7 +196,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private void initAliasExportDnd()
    {
-      TransferHandler aliasExportDndTransferHandler = new TransferHandler(AliasDndExport.EXPORT_PROPERTY_NAME){
+      TransferHandler aliasDndTransferHandler = new TransferHandler(AliasDndExport.ALIAS_DND_EXPORT_PROPERTY_NAME){
          @Override
          protected Transferable createTransferable(JComponent c)
          {
@@ -209,7 +209,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          }
       };
 
-      _tree.setTransferHandler(aliasExportDndTransferHandler);
+      _tree.setTransferHandler(aliasDndTransferHandler);
    }
 
    private TreePath[] onGetPasteTreeNodesFromInternalTransfer(DropTargetDropEvent dtde)
@@ -1012,6 +1012,17 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    public List<AliasFolder> getAllAliasFolders()
    {
       return AliasTreeUtil.getAllAliasFolders(_tree);
+   }
+
+   @Override
+   public void aliasNodeChanged(SQLAlias sqlAlias)
+   {
+      DefaultTreeModel defaultTreeModel = (DefaultTreeModel) _tree.getModel();
+
+      DefaultMutableTreeNode aliasNode =
+            AliasTreeUtil.findAliasNode(sqlAlias, (DefaultMutableTreeNode) _tree.getModel().getRoot());
+
+      defaultTreeModel.nodeStructureChanged(aliasNode);
    }
 
    @Override

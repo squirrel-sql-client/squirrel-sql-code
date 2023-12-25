@@ -22,4 +22,8 @@ public interface IAliasTreeInterface
 
    List<AliasFolder> getAllAliasFolders();
 
+   /**
+    * Repaints tree nodes
+    */
+   void aliasNodeChanged(SQLAlias sqlAlias);
 }

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.gui.db.aliastransfer;
+package net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AliasDndExport
 {
-   public static final String EXPORT_PROPERTY_NAME = "aliasExportImport->AliasDnd_EXPORT";
+   public static final String ALIAS_DND_EXPORT_PROPERTY_NAME = "aliasDnd->AliasDnd_EXPORT";
    ;
 
    private List<TreePath> _treeSelectionPaths;

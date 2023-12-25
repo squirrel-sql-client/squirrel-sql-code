@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.gui.db.aliastransfer;
+package net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
@@ -11,11 +11,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.activation.DataHandler;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTree;
-import javax.swing.TransferHandler;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -24,9 +20,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -34,26 +28,26 @@ import java.util.List;
 import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
 
-public class ExportImportTreeHandler
+public class AliasDndTreeHandler
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportImportTreeHandler.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasDndTreeHandler.class);
 
-   private JTree _treeExportedAliases;
+   private JTree _treeDndAliases;
 
-   public ExportImportTreeHandler(JTree treeExportedAliases)
+   public AliasDndTreeHandler(JTree treeDndAliases)
    {
-      _treeExportedAliases = treeExportedAliases;
-      _treeExportedAliases.setRootVisible(false);
+      _treeDndAliases = treeDndAliases;
+      _treeDndAliases.setRootVisible(false);
       DefaultMutableTreeNode rootNode = getRootNode();
 
       rootNode.removeAllChildren();
       getDefaultTreeModel().nodeStructureChanged(rootNode);
-      rootNode.setUserObject(new AliasFolder("ExportAliasRootNode", AliasFolder.NO_COLOR_RGB));
+      rootNode.setUserObject(new AliasFolder("AliasDndTreeRootNode", AliasFolder.NO_COLOR_RGB));
 
       initAliasDrop();
       initAliasDrag();
 
-      _treeExportedAliases.addMouseListener(new MouseAdapter() {
+      _treeDndAliases.addMouseListener(new MouseAdapter() {
          @Override
          public void mousePressed(MouseEvent e)
          {
@@ -71,24 +65,24 @@ public class ExportImportTreeHandler
    private void onTriggerPopup(MouseEvent me)
    {
       if(false == me.isPopupTrigger()
-            || null == _treeExportedAliases.getSelectionPaths()
-            || 0 == _treeExportedAliases.getSelectionPaths().length)
+            || null == _treeDndAliases.getSelectionPaths()
+            || 0 == _treeDndAliases.getSelectionPaths().length)
       {
          return;
       }
 
       JPopupMenu popupMenu = new JPopupMenu();
 
-      JMenuItem mnuRemoveSelectedNodes = new JMenuItem(s_stringMgr.getString("ExportImportTreeHandler.remove.selected.nodes"));
+      JMenuItem mnuRemoveSelectedNodes = new JMenuItem(s_stringMgr.getString("AliasDndTreeHandler.remove.selected.nodes"));
       mnuRemoveSelectedNodes.addActionListener(e -> onRemoveSelectedNodes());
       popupMenu.add(mnuRemoveSelectedNodes);
 
-      popupMenu.show(_treeExportedAliases, me.getX(), me.getY());
+      popupMenu.show(_treeDndAliases, me.getX(), me.getY());
    }
 
    private void onRemoveSelectedNodes()
    {
-      for (TreePath selectionPath : _treeExportedAliases.getSelectionPaths())
+      for (TreePath selectionPath : _treeDndAliases.getSelectionPaths())
       {
          DefaultMutableTreeNode node = toDefaultNode(selectionPath.getLastPathComponent());
          TreeNode parent = node.getParent();
@@ -99,7 +93,7 @@ public class ExportImportTreeHandler
 
    private void initAliasDrag()
    {
-      TransferHandler aliasImportDndTransferHandler = new TransferHandler(AliasDndImport.IMPORT_PROPERTY_NAME){
+      TransferHandler aliasImportDndTransferHandler = new TransferHandler(AliasDndImport.ALIAS_DND_IMPORT_PROPERTY_NAME){
          @Override
          protected Transferable createTransferable(JComponent c)
          {
@@ -112,20 +106,20 @@ public class ExportImportTreeHandler
          }
       };
 
-      _treeExportedAliases.setTransferHandler(aliasImportDndTransferHandler);
+      _treeDndAliases.setTransferHandler(aliasImportDndTransferHandler);
 
    }
 
    private AliasDndImport createAliasDndImport()
    {
-      return new AliasDndImport(_treeExportedAliases.getSelectionPaths());
+      return new AliasDndImport(_treeDndAliases.getSelectionPaths());
    }
 
    private void initAliasDrop()
    {
       try
       {
-         _treeExportedAliases.setDragEnabled(true);
+         _treeDndAliases.setDragEnabled(true);
          DropTarget dt = new DropTarget();
 
          dt.addDropTargetListener(new DropTargetAdapter()
@@ -136,7 +130,7 @@ public class ExportImportTreeHandler
             }
          });
 
-         _treeExportedAliases.setDropTarget(dt);
+         _treeDndAliases.setDropTarget(dt);
       }
       catch (TooManyListenersException e)
       {
@@ -159,16 +153,16 @@ public class ExportImportTreeHandler
 
          if(null != aliasDndExport.getListSelectedAlias())
          {
-            if (isAlreadyExported(aliasDndExport.getListSelectedAlias().getIdentifier()))
+            if (isAlreadyContained(aliasDndExport.getListSelectedAlias().getIdentifier()))
             {
-               Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ExportImportTreeHandler.aliasAlreadyExported", aliasDndExport.getListSelectedAlias().getName()));
+               Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("AliasDndTreeHandler.aliasAlreadyContained", aliasDndExport.getListSelectedAlias().getName()));
                return;
             }
             getRootNode().add(new DefaultMutableTreeNode(aliasDndExport.getListSelectedAlias()));
          }
          else if(null != aliasDndExport.getTreeSelectionPaths())
          {
-            List<DefaultMutableTreeNode> clonedNodes = cloneAndCheckAlreadyExported(aliasDndExport.getTreeSelectionPaths());
+            List<DefaultMutableTreeNode> clonedNodes = cloneAndCheckAlreadyContained(aliasDndExport.getTreeSelectionPaths());
 
             for (DefaultMutableTreeNode clonedNode : clonedNodes)
             {
@@ -185,7 +179,7 @@ public class ExportImportTreeHandler
       }
    }
 
-   private List<DefaultMutableTreeNode> cloneAndCheckAlreadyExported(List<TreePath> treeSelectionPaths)
+   private List<DefaultMutableTreeNode> cloneAndCheckAlreadyContained(List<TreePath> treeSelectionPaths)
    {
       List<DefaultMutableTreeNode> ret = new ArrayList<>();
       for (TreePath path : treeSelectionPaths)
@@ -204,7 +198,7 @@ public class ExportImportTreeHandler
 
    /**
     * We intentionally do not create a clone of an {@link SQLAlias} here.
-    * Creating NO clone is required to make {@link #isAlreadyExported(IIdentifier)} work.
+    * Creating NO clone is required to make {@link #isAlreadyContained(IIdentifier)} work.
     *
     * Clones are created on import.
     */
@@ -215,9 +209,9 @@ public class ExportImportTreeHandler
       if(userObject instanceof SQLAlias)
       {
          SQLAlias sqlAlias = (SQLAlias) userObject;
-         if (isAlreadyExported(sqlAlias.getIdentifier()))
+         if (isAlreadyContained(sqlAlias.getIdentifier()))
          {
-            Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ExportImportTreeHandler.aliasAlreadyExported", sqlAlias.getName()));
+            Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("AliasDndTreeHandler.aliasAlreadyContained", sqlAlias.getName()));
             return null;
          }
       }
@@ -245,7 +239,7 @@ public class ExportImportTreeHandler
       return ret;
    }
 
-   private boolean isAlreadyExported(IIdentifier aliasIdentifier)
+   private boolean isAlreadyContained(IIdentifier aliasIdentifier)
    {
       DefaultMutableTreeNode node = getRootNode();
 
@@ -276,7 +270,7 @@ public class ExportImportTreeHandler
 
    private DefaultTreeModel getDefaultTreeModel()
    {
-      return (DefaultTreeModel) _treeExportedAliases.getModel();
+      return (DefaultTreeModel) _treeDndAliases.getModel();
    }
 
    private DefaultMutableTreeNode toDefaultNode(Object defaullMutableTreeNode)
@@ -287,7 +281,7 @@ public class ExportImportTreeHandler
 
    public AliasFolderState getAliasFolderState()
    {
-      return new AliasFolderState(getRootNode(), _treeExportedAliases);
+      return new AliasFolderState(getRootNode(), _treeDndAliases);
    }
 
    private DefaultMutableTreeNode getRootNode()
@@ -387,6 +381,24 @@ public class ExportImportTreeHandler
                getDefaultTreeModel().removeNodeFromParent(aliasNode);
             }
          }
+      }
+   }
+
+   public SQLAlias getSelectedAlias()
+   {
+      TreePath selectionPath = _treeDndAliases.getSelectionPath();
+      if(null == selectionPath)
+      {
+         return null;
+      }
+
+      if(toDefaultNode(selectionPath.getLastPathComponent()).getUserObject() instanceof SQLAlias)
+      {
+         return (SQLAlias) toDefaultNode(selectionPath.getLastPathComponent()).getUserObject();
+      }
+      else
+      {
+         return null;
       }
    }
 }

@@ -444,24 +444,24 @@ public class Application implements IApplication
 
 	/**
 	 * Saves alias definitions that are in memory to the aliases file.
+	 *
+	 * @return
 	 */
-	private void saveAliases()
+	@Override
+	public File saveAliases()
 	{
 		try
 		{
 			final File file = _appFiles.getDatabaseAliasesFile();
 			_aliasesAndDriversManager.saveAliases(file);
+			return file;
 		}
 		catch (Throwable th)
 		{
-			String thMsg = th.getMessage();
-			if (thMsg == null)
-			{
-				thMsg = "";
-			}
 			s_log.error("Error occurred saving Alias Definitions", th);
 			String msg = s_stringMgr.getString("Application.error.aliassave", Utilities.getExceptionStringSave(th));
 			showErrorDialog(msg, th);
+			return null;
 		}
 	}
 

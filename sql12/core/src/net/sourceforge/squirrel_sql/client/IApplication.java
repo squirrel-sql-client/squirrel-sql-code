@@ -56,6 +56,8 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
 import javax.swing.*;
+import java.io.File;
+
 /**
  * Defines the API to do callbacks on the application.
  */
@@ -75,6 +77,8 @@ public interface IApplication
 	 * @return	the dummy plugin used internally by the SQuirreL client.
 	 */
 	IPlugin getDummyAppPlugin();
+
+	File saveAliases();
 
 	/**
 	 * Return the plugin manager responsible for this applications plugins.

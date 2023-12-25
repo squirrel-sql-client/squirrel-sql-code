@@ -87,7 +87,8 @@ public class ApplicationFileWrappersImpl implements ApplicationFileWrappers
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers#getDatabaseAliasesTreeStructureFile()
 	 */
-	public FileWrapper getDatabaseAliasesTreeStructureFile() {
+	public FileWrapper getDatabaseAliasesTreeStructureFile()
+	{
 		return _fileWrapperFactory.create(_appFiles.getDatabaseAliasesTreeStructureFile());
 	}
 	

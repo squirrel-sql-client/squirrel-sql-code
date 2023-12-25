@@ -2,21 +2,22 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliastransfer;
 
 import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree.AliasDndTreeHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
-import javax.swing.JDialog;
+import javax.swing.*;
 import java.util.List;
 
 public class AliasImportUpdateCtrl
 {
    private static final String PREF_OPT_UPDATE_OLDER = "AliasImportUpdateCtrl.opt.update.older";
    private final AliasImportUpdateDlg _dlg;
-   private final ExportImportTreeHandler _exportImportTreeHandler;
+   private final AliasDndTreeHandler _exportImportTreeHandler;
    private final IToogleableAliasesList _aliasesList;
 
 
-   public AliasImportUpdateCtrl(JDialog parent, ExportImportTreeHandler exportImportTreeHandler, IToogleableAliasesList aliasesList)
+   public AliasImportUpdateCtrl(JDialog parent, AliasDndTreeHandler exportImportTreeHandler, IToogleableAliasesList aliasesList)
    {
       _dlg = new AliasImportUpdateDlg(parent);
       _exportImportTreeHandler = exportImportTreeHandler;

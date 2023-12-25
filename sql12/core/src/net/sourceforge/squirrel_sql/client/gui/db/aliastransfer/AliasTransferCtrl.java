@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliastransfer;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.*;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree.AliasDndTreeHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -40,7 +41,7 @@ public class AliasTransferCtrl
 
       locateDialogBesidesAliases();
 
-      ExportImportTreeHandler exportImportTreeHandler = new ExportImportTreeHandler(_dlg.treeExportedAliases);
+      AliasDndTreeHandler exportImportTreeHandler = new AliasDndTreeHandler(_dlg.treeExportedAliases);
 
       _dlg.btnExport.addActionListener(e -> onExport(exportImportTreeHandler));
       _dlg.btnImport.addActionListener(e -> onImport(exportImportTreeHandler));
@@ -51,12 +52,12 @@ public class AliasTransferCtrl
       _dlg.setVisible(true);
    }
 
-   private void onUpdate(ExportImportTreeHandler exportImportTreeHandler)
+   private void onUpdate(AliasDndTreeHandler exportImportTreeHandler)
    {
       new AliasImportUpdateCtrl(_dlg, exportImportTreeHandler, _aliasesList);
    }
 
-   private void onImport(ExportImportTreeHandler exportImportTreeHandler)
+   private void onImport(AliasDndTreeHandler exportImportTreeHandler)
    {
       JFileChooser importFC = createFileChooser();
 
@@ -143,7 +144,7 @@ public class AliasTransferCtrl
    }
 
 
-   private void onExport(ExportImportTreeHandler exportImportTreeHandler)
+   private void onExport(AliasDndTreeHandler exportImportTreeHandler)
    {
       try
       {

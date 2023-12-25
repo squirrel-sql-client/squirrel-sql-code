@@ -40,6 +40,8 @@ import java.util.Arrays;
 public class ApplicationFiles
 {
    public static final String STANDARD_RELATIVE_USER_DIR = ".squirrel-sql";
+   public static final String ALIASES_FILE_NAME = "SQLAliases23";
+   public static final String ALIASES_FILE_NAME_EXTENSION = "xml";
 
    private static ILogger s_log = LoggerController.createLogger(ApplicationFiles.class);
 
@@ -184,12 +186,18 @@ public class ApplicationFiles
     */
    public File getDatabaseAliasesFile()
    {
-      return new File(_userSettingsDir + File.separator + "SQLAliases23.xml");
+      return new File(_userSettingsDir + File.separator + ALIASES_FILE_NAME + "." + ALIASES_FILE_NAME_EXTENSION);
    }
+
+   public File getDatabaseAliasesBackupDir()
+   {
+      return new File(_userSettingsDir + File.separator + "sqlAliases23Backup" + File.separator);
+   }
+
 
    public File getDatabaseAliasesTreeStructureFile()
    {
-      return new File(_userSettingsDir + File.separator + "SQLAliases23_treeStructure.xml");
+      return new File(_userSettingsDir + File.separator + ALIASES_FILE_NAME + "_treeStructure.xml");
    }
 
    public File getRecentFilesXmlBeanFile_oldXmlVersion()

@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Multiple Alias modification:
+   In Aliases view toolbar button or right mouse menu "Modify multiple Aliases".
+
 Table cell data popup and the Object tree source tab searching now has a mark matches all button.
 
 Upgraded to latest RSyntax version 6.0.2.

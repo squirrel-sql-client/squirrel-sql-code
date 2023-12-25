@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.gui.db.aliastransfer;
+package net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class AliasDndImport
 {
-   public static final String IMPORT_PROPERTY_NAME = "aliasExportImport->AliasDnd_IMPORT";
+   public static final String ALIAS_DND_IMPORT_PROPERTY_NAME = "aliasDnd->AliasDnd_IMPORT";
 
    private ArrayList<DefaultMutableTreeNode> nodesToImport = new ArrayList<>();
 
