@@ -160,6 +160,9 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+Multiple Alias modification now respects the "Clear Schema table" button.
+  See menu Aliases --> Alias Properties --> middle of tab Schemas
+
 GIT revision display was missing scrollbars.
   For files committed to GIT see right mouse menu on SQL editor's left gutter -->
   "Show GIT revisions for file ..." --> tab Script.

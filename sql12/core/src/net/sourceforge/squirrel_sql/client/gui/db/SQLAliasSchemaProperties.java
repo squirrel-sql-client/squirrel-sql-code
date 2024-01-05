@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 
 public class SQLAliasSchemaProperties implements Serializable
 {
@@ -21,6 +21,12 @@ public class SQLAliasSchemaProperties implements Serializable
    private String _byLikeStringInclude;
    private String _byLikeStringExclude;
    private SQLAliasVersioner _versioner = new SQLAliasVersioner();
+
+
+   /**
+    * Transient, just to be used by {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler)}
+    */
+   private boolean _schemaTableWasCleared;
 
 
    @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_schemaDetails)
@@ -464,5 +470,22 @@ public class SQLAliasSchemaProperties implements Serializable
    public void acceptAliasVersioner(SQLAliasVersioner versioner)
    {
       _versioner = versioner;
+   }
+
+   /**
+    * Transient, just to be used by {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler)}
+    */
+   public void setSchemaTableWasCleared(boolean schemaTableWasCleared)
+   {
+      _schemaTableWasCleared = schemaTableWasCleared;
+   }
+
+   /**
+    * Transient, just to be used by {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler)}
+    */
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_schemaTableWasCleared)
+   public boolean isSchemaTableWasCleared()
+   {
+      return _schemaTableWasCleared;
    }
 }

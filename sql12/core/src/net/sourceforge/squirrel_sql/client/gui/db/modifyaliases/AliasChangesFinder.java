@@ -1,9 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasProp;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import org.apache.commons.lang3.StringUtils;
-
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -11,29 +7,34 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasProp;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import org.apache.commons.lang3.StringUtils;
+
 public class AliasChangesFinder
 {
-   public static AliasChangesHandler findChanges(Object template, Object edited)
+   public static AliasChangesHandler findChanges(SQLAlias uneditedAlias, SQLAlias editedAlias)
    {
       AliasChangesHandler changesHandler = new AliasChangesHandler();
-      _findChanges(template, edited, changesHandler);
+      _findChanges(uneditedAlias, editedAlias, changesHandler);
       return changesHandler;
 
    }
-   private static void _findChanges(Object template, Object edited, AliasChangesHandler changesHandler)
+   private static void _findChanges(Object unedited, Object edited, AliasChangesHandler changesHandler)
    {
       try
       {
-         if (false == Objects.equals(template.getClass(), edited.getClass()))
+         if (false == Objects.equals(unedited.getClass(), edited.getClass()))
          {
             String msg =
-                  "template(class=" + template.getClass().getName() +
+                  "unedited(class=" + unedited.getClass().getName() +
                         ") and edited(class=" + edited.getClass().getName() + ") " +
                         "are of different classes.";
             throw new IllegalArgumentException(msg);
          }
 
-         BeanInfo beanInfo = Introspector.getBeanInfo(template.getClass());
+         BeanInfo beanInfo = Introspector.getBeanInfo(unedited.getClass());
 
          PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
          for (PropertyDescriptor pd : propertyDescriptors)
@@ -41,9 +42,7 @@ public class AliasChangesFinder
             if (false == pd.getPropertyType().isPrimitive()
                   && StringUtils.containsIgnoreCase(pd.getPropertyType().getTypeName(), "squirrel"))
             {
-               changesHandler.indentInnerBean();
-               _findChanges(pd.getReadMethod().invoke(template), pd.getReadMethod().invoke(edited), changesHandler);
-               changesHandler.unindentInnerBean();
+               _findChanges(pd.getReadMethod().invoke(unedited), pd.getReadMethod().invoke(edited), changesHandler);
             }
 
             Method getter = pd.getReadMethod();
@@ -54,12 +53,12 @@ public class AliasChangesFinder
                {
                   SQLAliasProp sqlAliasProp = (SQLAliasProp) annotation;
 
-                  Object previousAliasPropValue = getter.invoke(template);
+                  Object uneditedAliasPropValue = getter.invoke(unedited);
                   Object editedAliasPropValue = getter.invoke(edited);
 
-                  if (false == sqlAliasProp.sqlAliasPropType().equals(previousAliasPropValue, editedAliasPropValue))
+                  if (false == sqlAliasProp.sqlAliasPropType().equals(uneditedAliasPropValue, editedAliasPropValue))
                   {
-                     changesHandler.addChange(sqlAliasProp.sqlAliasPropType(), pd, previousAliasPropValue, editedAliasPropValue);
+                     changesHandler.addChange(sqlAliasProp.sqlAliasPropType(), pd, uneditedAliasPropValue, editedAliasPropValue);
                   }
                }
             }

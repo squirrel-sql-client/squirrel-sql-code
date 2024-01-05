@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
+import java.util.Objects;
+
 import net.sourceforge.squirrel_sql.client.gui.db.AliasInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ConnectionPropertiesPanel;
@@ -7,8 +9,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverProperti
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.SchemaPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.util.Objects;
 
 public enum SQLAliasPropType
 {
@@ -27,6 +27,8 @@ public enum SQLAliasPropType
    schemaProp_byLikeStringInclude("SchemaPropertiesPanel.specifySchemasByLikeString.include", SchemaPropertiesPanel.class),
    schemaProp_byLikeStringExclude("SchemaPropertiesPanel.specifySchemasByLikeString.exclude", SchemaPropertiesPanel.class),
    schemaProp_cacheSchemaIndependentMetaData("SchemaPropertiesPanel.CacheSchemaIndependentMetaData", SchemaPropertiesPanel.class),
+   schemaProp_schemaTableWasCleared,
+   connectionProp_keepAliveSqlStatement,
    colorProp_overrideToolbarBackgroundColor,
    colorProp_toolbarBackgroundColor,
    colorProp_overrideObjectTreeBackgroundColor,
@@ -36,8 +38,7 @@ public enum SQLAliasPropType
    colorProp_overrideAliasBackgroundColor,
    colorProp_aliasBackgroundColor,
    connectionProp_keepAlive("ConnectionPropertiesPanel.enableKeepAliveMsg", ConnectionPropertiesPanel.class),
-   connectionProp_keepAliveSleepSeconds("ConnectionPropertiesPanel.sleepForLabel", ConnectionPropertiesPanel.class),
-   connectionProp_keepAliveSqlStatement;
+   connectionProp_keepAliveSleepSeconds("ConnectionPropertiesPanel.sleepForLabel", ConnectionPropertiesPanel.class);
 
 
    private final String _i18nKey;
@@ -65,7 +66,8 @@ public enum SQLAliasPropType
             this == schemaProp_globalState ||
             this == schemaProp_byLikeStringInclude ||
             this == schemaProp_byLikeStringExclude ||
-            this == schemaProp_cacheSchemaIndependentMetaData;
+            this == schemaProp_cacheSchemaIndependentMetaData ||
+            this == schemaProp_schemaTableWasCleared;
    }
 
    public boolean isDriverProp()
@@ -114,5 +116,10 @@ public enum SQLAliasPropType
       {
          return Objects.equals(previousAliasPropValue, editedAliasPropValue);
       }
+   }
+
+   public boolean isNested()
+   {
+      return isColorProp() || isConnectionProp() || isSchemaProp() || isDriverProp();
    }
 }

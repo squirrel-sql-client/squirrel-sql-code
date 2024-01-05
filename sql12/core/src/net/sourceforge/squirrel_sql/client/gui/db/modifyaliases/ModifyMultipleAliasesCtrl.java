@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowFactory;
@@ -14,13 +21,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class ModifyMultipleAliasesCtrl
 {
@@ -160,11 +160,11 @@ public class ModifyMultipleAliasesCtrl
       modifyMultipleSheet.setVisible(true);
    }
 
-   private void onAliasSheetOk(SQLAlias templateAlias, SQLAlias editedAlias)
+   private void onAliasSheetOk(SQLAlias uneditedAlias, SQLAlias editedAlias)
    {
       try
       {
-         AliasChangesHandler aliasChangesHandler = AliasChangesFinder.findChanges(templateAlias, editedAlias);
+         AliasChangesHandler aliasChangesHandler = AliasChangesFinder.findChanges(uneditedAlias, editedAlias);
 
          _dlg.txtChangeReport.setText(null);
          if(false == aliasChangesHandler.isEmpty())

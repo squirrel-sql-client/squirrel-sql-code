@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
+import java.awt.Color;
+import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
@@ -9,11 +14,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import java.awt.*;
-import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
-import java.util.List;
-
 public class AliasChangesHandler
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasChangesHandler.class);
@@ -21,9 +21,8 @@ public class AliasChangesHandler
 
    private ChangeReport _changeReport = new ChangeReport();
 
-   private String _indent = "";
-
    private List<AliasChange> _aliasChanges = new ArrayList<>();
+   private boolean _schemaTableWasCleared;
 
 
    public AliasChangesHandler()
@@ -40,48 +39,36 @@ public class AliasChangesHandler
       return _changeReport;
    }
 
-   public void indentInnerBean()
-   {
-      // As SQLAlias does not have inner-inner beans that's all we need.
-      _indent = AliasChangesUtil.INDENT;
-   }
 
-   public void unindentInnerBean()
-   {
-      // As SQLAlias does not have inner-inner beans that's all we need.
-      _indent = "";
-   }
-
-
-   public void addChange(SQLAliasPropType sqlAliasPropType, PropertyDescriptor pd, Object previousAliasPropValue, Object editedAliasPropValue)
+   public void addChange(SQLAliasPropType sqlAliasPropType, PropertyDescriptor pd, Object uneditedAliasPropValue, Object editedAliasPropValue)
    {
       _aliasChanges.add(new AliasChange(pd, sqlAliasPropType, editedAliasPropValue));
 
-      _changeReport.append(_indent);
+      _changeReport.append(sqlAliasPropType.isNested() ? AliasChangesUtil.INDENT : "");
 
       if (sqlAliasPropType.isSchemaProp())
       {
-         writeSchemaPropertyChangeReport(sqlAliasPropType, previousAliasPropValue, editedAliasPropValue);
+         writeSchemaPropertyChangeReport(sqlAliasPropType, uneditedAliasPropValue, editedAliasPropValue);
       }
       else if(sqlAliasPropType.isDriverProp())
       {
-         writeDriverPropertyChangeReport(sqlAliasPropType, previousAliasPropValue, editedAliasPropValue);
+         writeDriverPropertyChangeReport(sqlAliasPropType, uneditedAliasPropValue, editedAliasPropValue);
       }
       else if(sqlAliasPropType.isColorProp())
       {
-         writeColorPropertyChangeReport(sqlAliasPropType, previousAliasPropValue, editedAliasPropValue);
+         writeColorPropertyChangeReport(sqlAliasPropType, uneditedAliasPropValue, editedAliasPropValue);
       }
       else if(sqlAliasPropType.isConnectionProp())
       {
-         writeConnectionPropertyChangeReport(sqlAliasPropType, previousAliasPropValue, editedAliasPropValue);
+         writeConnectionPropertyChangeReport(sqlAliasPropType, uneditedAliasPropValue, editedAliasPropValue);
       }
       else
       {
-         writeAliasPropertyChangeReport(sqlAliasPropType, previousAliasPropValue, editedAliasPropValue);
+         writeAliasPropertyChangeReport(sqlAliasPropType, uneditedAliasPropValue, editedAliasPropValue);
       }
    }
 
-   private void writeAliasPropertyChangeReport(SQLAliasPropType sqlAliasPropType, Object previousAliasPropValue, Object editedAliasPropValue)
+   private void writeAliasPropertyChangeReport(SQLAliasPropType sqlAliasPropType, Object uneditedAliasPropValue, Object editedAliasPropValue)
    {
       _changeReport.append(s_stringMgr.getString("AliasChangesHandler.alias.prefix")).append(" ");
 
@@ -90,13 +77,13 @@ public class AliasChangesHandler
       {
          changeMsg = s_stringMgr.getString(I18N_ALIAS_CHANGES_HANDLER_CHANGE_FROM_TO,
                                            sqlAliasPropType.getI18nString(),
-                                           getDriverNameByIdentifier((IIdentifier)previousAliasPropValue), getDriverNameByIdentifier((IIdentifier)editedAliasPropValue));
+                                           getDriverNameByIdentifier((IIdentifier)uneditedAliasPropValue), getDriverNameByIdentifier((IIdentifier)editedAliasPropValue));
       }
       else
       {
          changeMsg = s_stringMgr.getString(I18N_ALIAS_CHANGES_HANDLER_CHANGE_FROM_TO,
                                            sqlAliasPropType.getI18nString(),
-                                           previousAliasPropValue, editedAliasPropValue);
+                                           uneditedAliasPropValue, editedAliasPropValue);
       }
 
       _changeReport.append(changeMsg).append('\n');
@@ -112,7 +99,7 @@ public class AliasChangesHandler
       return Main.getApplication().getAliasesAndDriversManager().getDriver(driverIdentifier).getName();
    }
 
-   private void writeConnectionPropertyChangeReport(SQLAliasPropType sqlAliasPropType, Object previousAliasPropValue, Object editedAliasPropValue)
+   private void writeConnectionPropertyChangeReport(SQLAliasPropType sqlAliasPropType, Object uneditedAliasPropValue, Object editedAliasPropValue)
    {
 
       String changeMsg;
@@ -121,14 +108,14 @@ public class AliasChangesHandler
          _changeReport.append(s_stringMgr.getString(AliasChangesUtil.I18N_ALIAS_CHANGES_UTIL_DRIVER_PROP_PREFIX)).append(" ");
          changeMsg = s_stringMgr.getString(I18N_ALIAS_CHANGES_HANDLER_CHANGE_FROM_TO,
                                            s_stringMgr.getString("AliasChangesHandler.connectionProp.keepAliveSql"),
-                                           previousAliasPropValue, editedAliasPropValue);
+                                           uneditedAliasPropValue, editedAliasPropValue);
       }
       else
       {
          _changeReport.append(s_stringMgr.getString(AliasChangesUtil.I18N_ALIAS_CHANGES_UTIL_DRIVER_PROP_PREFIX)).append(" ");
          changeMsg = s_stringMgr.getString(I18N_ALIAS_CHANGES_HANDLER_CHANGE_FROM_TO,
                                            sqlAliasPropType.getI18nString(),
-                                           previousAliasPropValue, editedAliasPropValue);
+                                           uneditedAliasPropValue, editedAliasPropValue);
       }
 
       _changeReport.append(changeMsg).append('\n');
@@ -152,24 +139,33 @@ public class AliasChangesHandler
       }
    }
 
-   private void writeSchemaPropertyChangeReport(SQLAliasPropType sqlAliasPropType, Object previousAliasPropValue, Object editedAliasPropValue)
+   private void writeSchemaPropertyChangeReport(SQLAliasPropType sqlAliasPropType, Object uneditedAliasPropValue, Object editedAliasPropValue)
    {
       if (sqlAliasPropType == SQLAliasPropType.schemaProp_globalState)
       {
          _changeReport.append(s_stringMgr.getString(AliasChangesUtil.I18N_ALIAS_CHANGES_UTIL_SCHEMA_PROP_PREFIX)).append(" ");
 
          String changeMsg = s_stringMgr.getString("AliasChangesHandler.globalState.changeFromTo",
-                                                  getGlobalSchemaLoadingState((Integer) previousAliasPropValue),
+                                                  getGlobalSchemaLoadingState((Integer) uneditedAliasPropValue),
                                                   getGlobalSchemaLoadingState((Integer) editedAliasPropValue));
 
          _changeReport.append(changeMsg).append('\n');
       }
       else if (sqlAliasPropType == SQLAliasPropType.schemaProp_schemaDetails)
       {
-         SQLAliasSchemaDetailProperties[] previousSchemaDetails = (SQLAliasSchemaDetailProperties[]) previousAliasPropValue;
+         SQLAliasSchemaDetailProperties[] uneditedSchemaDetails = (SQLAliasSchemaDetailProperties[]) uneditedAliasPropValue;
          SQLAliasSchemaDetailProperties[] editedSchemaDetails = (SQLAliasSchemaDetailProperties[]) editedAliasPropValue;
 
-         AliasChangesUtil.compareSchemaDetailProperties(editedSchemaDetails, previousSchemaDetails, _changeReport);
+         AliasChangesUtil.compareSchemaDetailProperties(editedSchemaDetails, uneditedSchemaDetails, _changeReport);
+      }
+      else if (sqlAliasPropType == SQLAliasPropType.schemaProp_schemaTableWasCleared)
+      {
+         if( (Boolean) editedAliasPropValue )
+         {
+            _schemaTableWasCleared = true;
+            _changeReport.append(s_stringMgr.getString(AliasChangesUtil.I18N_ALIAS_CHANGES_UTIL_SCHEMA_PROP_PREFIX)).append(" ");
+            _changeReport.append(s_stringMgr.getString("AliasChangesHandler.aliasBackground.color.prop.schemaTableWasCleared")).append('\n');
+         }
       }
       else
       {
@@ -177,7 +173,7 @@ public class AliasChangesHandler
 
          String changeMsg = s_stringMgr.getString(I18N_ALIAS_CHANGES_HANDLER_CHANGE_FROM_TO,
                                                   sqlAliasPropType.getI18nString(),
-                                                  previousAliasPropValue, editedAliasPropValue);
+                                                  uneditedAliasPropValue, editedAliasPropValue);
 
          _changeReport.append(changeMsg).append('\n');
       }
@@ -206,45 +202,45 @@ public class AliasChangesHandler
       return previousGlobalState;
    }
 
-   private void writeColorPropertyChangeReport(SQLAliasPropType sqlAliasPropType, Object previousAliasPropValue, Object editedAliasPropValue)
+   private void writeColorPropertyChangeReport(SQLAliasPropType sqlAliasPropType, Object uneditedAliasPropValue, Object editedAliasPropValue)
    {
       _changeReport.append(s_stringMgr.getString("AliasChangesHandler.color.prop.prefix")).append(" ");
 
       // Toolbar
       if(sqlAliasPropType == SQLAliasPropType.colorProp_overrideToolbarBackgroundColor)
       {
-         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.toolbarBackground.color.prop.override.changeFromTo", previousAliasPropValue, editedAliasPropValue));
+         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.toolbarBackground.color.prop.override.changeFromTo", uneditedAliasPropValue, editedAliasPropValue));
       }
       else if(sqlAliasPropType == SQLAliasPropType.colorProp_toolbarBackgroundColor)
       {
-         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.toolbarBackground.color.prop.changeFromTo", new Color((Integer) previousAliasPropValue), new Color((Integer) editedAliasPropValue)));
+         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.toolbarBackground.color.prop.changeFromTo", new Color((Integer) uneditedAliasPropValue), new Color((Integer) editedAliasPropValue)));
       }
       // ObjectTree
       else if(sqlAliasPropType == SQLAliasPropType.colorProp_overrideObjectTreeBackgroundColor)
       {
-         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.objectTreeBackground.color.prop.override.changeFromTo", previousAliasPropValue, editedAliasPropValue));
+         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.objectTreeBackground.color.prop.override.changeFromTo", uneditedAliasPropValue, editedAliasPropValue));
       }
       else if(sqlAliasPropType == SQLAliasPropType.colorProp_objectTreeBackgroundColor)
       {
-         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.objectTreeBackground.color.prop.changeFromTo", new Color((Integer) previousAliasPropValue), new Color((Integer) editedAliasPropValue)));
+         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.objectTreeBackground.color.prop.changeFromTo", new Color((Integer) uneditedAliasPropValue), new Color((Integer) editedAliasPropValue)));
       }
       // StatusBar
       else if(sqlAliasPropType == SQLAliasPropType.colorProp_overrideStatusBarBackgroundColor)
       {
-         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.statusBarBackground.color.prop.override.changeFromTo", previousAliasPropValue, editedAliasPropValue));
+         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.statusBarBackground.color.prop.override.changeFromTo", uneditedAliasPropValue, editedAliasPropValue));
       }
       else if(sqlAliasPropType == SQLAliasPropType.colorProp_statusBarBackgroundColor)
       {
-         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.statusBarBackground.color.prop.changeFromTo", new Color((Integer) previousAliasPropValue), new Color((Integer) editedAliasPropValue)));
+         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.statusBarBackground.color.prop.changeFromTo", new Color((Integer) uneditedAliasPropValue), new Color((Integer) editedAliasPropValue)));
       }
       // Alias
       else if(sqlAliasPropType == SQLAliasPropType.colorProp_overrideAliasBackgroundColor)
       {
-         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.aliasBackground.color.prop.override.changeFromTo", previousAliasPropValue, editedAliasPropValue));
+         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.aliasBackground.color.prop.override.changeFromTo", uneditedAliasPropValue, editedAliasPropValue));
       }
       else if(sqlAliasPropType == SQLAliasPropType.colorProp_aliasBackgroundColor)
       {
-         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.aliasBackground.color.prop.changeFromTo", new Color((Integer) previousAliasPropValue), new Color((Integer) editedAliasPropValue)));
+         _changeReport.append(s_stringMgr.getString("AliasChangesHandler.aliasBackground.color.prop.changeFromTo", new Color((Integer) uneditedAliasPropValue), new Color((Integer) editedAliasPropValue)));
       }
       _changeReport.append('\n');
    }
@@ -252,5 +248,10 @@ public class AliasChangesHandler
    public void applyChanges(SQLAlias newSelectedAlias)
    {
       _aliasChanges.forEach(aliasChange -> aliasChange.applyChange(newSelectedAlias));
+
+      if(_schemaTableWasCleared)
+      {
+         newSelectedAlias.getSchemaProperties().setSchemaDetails(new SQLAliasSchemaDetailProperties[0]);
+      }
    }
 }

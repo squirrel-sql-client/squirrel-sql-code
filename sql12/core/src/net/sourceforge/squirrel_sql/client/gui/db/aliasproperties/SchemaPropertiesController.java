@@ -1,5 +1,15 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.io.File;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -12,14 +22,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import java.awt.*;
-import java.io.File;
 
 public class SchemaPropertiesController implements IAliasPropertiesPanelController
 {
@@ -39,6 +41,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    private Color _origTblColor;
    private SQLAlias _alias;
    private SchemaTableModel _schemaTableModel;
+   private boolean _schemaTableWasCleared = false;
 
 
    public SchemaPropertiesController(SQLAlias alias)
@@ -206,7 +209,6 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
    /**
     * synchronized because the user may connect twice from within the Schema Properties Panel.
-    * @param conn
     */
    private synchronized void onConnected(ISQLConnection conn)
    {
@@ -215,6 +217,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
          String[] schemas = Main.getApplication().getSessionManager().getAllowedSchemas(conn, _alias, null);
 
          _schemaTableModel.updateSchemas(schemas);
+         _schemaTableWasCleared = false;
 
          updateEnabled();
       }
@@ -227,6 +230,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    private void onClearSchemaTable()
    {
       _schemaTableModel.clear();
+      _schemaTableWasCleared = true;
    }
 
    private void updateEnabled()
@@ -307,6 +311,8 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _alias.getSchemaProperties().setByLikeStringExclude(StringUtils.stripToNull(_pnl.txtSchemasByLikeStringExclude.getText()));
 
       _alias.getSchemaProperties().setSchemaDetails(_schemaTableModel.getData());
+
+      _alias.getSchemaProperties().setSchemaTableWasCleared(_schemaTableWasCleared);
 
       _alias.getSchemaProperties().setCacheSchemaIndependentMetaData(_pnl.chkCacheSchemaIndepndentMetaData.isSelected());
 
