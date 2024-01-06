@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Multiple Alias modification: Added progress dialog and old backups cleanup.
+
 Multiple Alias modification:
    In Aliases view toolbar button or right mouse menu "Modify multiple Aliases".
 

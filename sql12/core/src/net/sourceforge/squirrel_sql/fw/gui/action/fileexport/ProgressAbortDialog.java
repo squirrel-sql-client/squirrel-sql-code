@@ -119,7 +119,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     */
    private boolean finished;
 
-   public ProgressAbortDialog(Frame owningFrame, String title, UserCancelRequestListener userCancelRequestListener)
+   public ProgressAbortDialog(Window owningFrame, String title, UserCancelRequestListener userCancelRequestListener)
    {
       this(owningFrame, title, null, null, 0, userCancelRequestListener, null);
    }
@@ -138,7 +138,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     *                      needed. Otherwise null.
     * @see JProgressBar#setIndeterminate(boolean)
     */
-   public ProgressAbortDialog(Frame owningFrame, String title, String targetFile, String sql, int totalItems, UserCancelRequestListener userCancelRequestListener, DisplayReachedCallBack displayReachedCallBack)
+   public ProgressAbortDialog(Window owningFrame, String title, String targetFile, String sql, int totalItems, UserCancelRequestListener userCancelRequestListener, DisplayReachedCallBack displayReachedCallBack)
    {
       super(owningFrame, title);
 
@@ -476,6 +476,11 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
    }
 
    public void closeProgressDialog()
+   {
+      GUIUtils.processOnSwingEventThread(() -> _close());
+   }
+
+   private void _close()
    {
       setVisible(false);
       dispose();

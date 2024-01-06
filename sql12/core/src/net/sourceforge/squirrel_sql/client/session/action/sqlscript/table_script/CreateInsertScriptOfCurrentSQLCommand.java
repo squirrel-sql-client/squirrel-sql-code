@@ -70,7 +70,7 @@ public class CreateInsertScriptOfCurrentSQLCommand
       Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
       _progressDialog = new ProgressAbortDialog(owningFrame, s_stringMgr.getString("CreateInsertScriptOfCurrentSQLCommand.generating.inserts"), fileName, script, 0, () -> onCancel(), null);
 
-      _session.getApplication().getThreadPool().addTask(() -> doGenerateInserts(script, scriptBuilder, insertScriptFinishedCallBack, _progressDialog));
+      Main.getApplication().getThreadPool().addTask(() -> doGenerateInserts(script, scriptBuilder, insertScriptFinishedCallBack, _progressDialog));
       _progressDialog.setVisible(true);
    }
 
