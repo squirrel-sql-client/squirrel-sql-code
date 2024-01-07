@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 
 public class SQLAliasSchemaProperties implements Serializable
 {
@@ -24,9 +24,9 @@ public class SQLAliasSchemaProperties implements Serializable
 
 
    /**
-    * Transient, just to be used by {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler)}
+    * Transient, just to be used by package {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases)}
     */
-   private boolean _schemaTableWasCleared;
+   private boolean _schemaTableWasCleared_transientForMultiAliasModificationOnly;
 
 
    @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_schemaDetails)
@@ -475,17 +475,17 @@ public class SQLAliasSchemaProperties implements Serializable
    /**
     * Transient, just to be used by {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler)}
     */
-   public void setSchemaTableWasCleared(boolean schemaTableWasCleared)
+   public void setSchemaTableWasCleared_transientForMultiAliasModificationOnly(boolean schemaTableWasCleared_transientForMultiAliasModificationOnly)
    {
-      _schemaTableWasCleared = schemaTableWasCleared;
+      _schemaTableWasCleared_transientForMultiAliasModificationOnly = schemaTableWasCleared_transientForMultiAliasModificationOnly;
    }
 
    /**
     * Transient, just to be used by {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler)}
     */
-   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_schemaTableWasCleared)
-   public boolean isSchemaTableWasCleared()
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_schemaTableWasCleared_transientForMultiAliasModificationOnly)
+   public boolean isSchemaTableWasCleared_transientForMultiAliasModificationOnly()
    {
-      return _schemaTableWasCleared;
+      return _schemaTableWasCleared_transientForMultiAliasModificationOnly;
    }
 }

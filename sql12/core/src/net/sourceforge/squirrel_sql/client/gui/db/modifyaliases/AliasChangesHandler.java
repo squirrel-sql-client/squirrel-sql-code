@@ -1,10 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
-import java.awt.Color;
-import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
@@ -13,6 +8,11 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.awt.*;
+import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AliasChangesHandler
 {
@@ -158,7 +158,7 @@ public class AliasChangesHandler
 
          AliasChangesUtil.compareSchemaDetailProperties(editedSchemaDetails, uneditedSchemaDetails, _changeReport);
       }
-      else if (sqlAliasPropType == SQLAliasPropType.schemaProp_schemaTableWasCleared)
+      else if (sqlAliasPropType == SQLAliasPropType.schemaProp_schemaTableWasCleared_transientForMultiAliasModificationOnly)
       {
          if( (Boolean) editedAliasPropValue )
          {

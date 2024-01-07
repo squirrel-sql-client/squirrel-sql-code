@@ -197,11 +197,15 @@ public class ModifyMultipleAliasesCtrl
       }
 
       IIdentifierFactory factory = IdentifierFactory.getInstance();
-      SQLAlias newAlias = Main.getApplication().getAliasesAndDriversManager().createAlias(factory.createIdentifier());
-      newAlias.assignFrom(selectedAlias, false);
+      SQLAlias newAliasToEdit = Main.getApplication().getAliasesAndDriversManager().createAlias(factory.createIdentifier());
+      newAliasToEdit.assignFrom(selectedAlias, false);
 
-      AliasInternalFrame modifyMultipleSheet = AliasWindowFactory.getModifyMultipleSheet(newAlias, _dlg);
-      modifyMultipleSheet.setOkListener(() -> onAliasSheetOk(selectedAlias, newAlias));
+      // This flag might have the wrong initial value because it was saved.
+      // We initialize it here correctly.
+      newAliasToEdit.getSchemaProperties().setSchemaTableWasCleared_transientForMultiAliasModificationOnly(false);
+
+      AliasInternalFrame modifyMultipleSheet = AliasWindowFactory.getModifyMultipleSheet(newAliasToEdit, _dlg);
+      modifyMultipleSheet.setOkListener(() -> onAliasSheetOk(selectedAlias, newAliasToEdit));
       modifyMultipleSheet.setVisible(true);
    }
 
