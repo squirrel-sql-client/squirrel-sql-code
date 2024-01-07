@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Commit test
+ */
 public class SQLAliasSchemaProperties implements Serializable
 {
    SQLAliasSchemaDetailProperties[] _schemaDetails = new SQLAliasSchemaDetailProperties[0];
