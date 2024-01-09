@@ -236,11 +236,6 @@ public class WindowManager
 	 */
 	public synchronized void registerSessionSheet(ISessionWidget sheet)
 	{
-        //i18n[WindowManager.registerSessionSheet=Registering {0} in WindowManager]
-        String dbg = 
-            s_stringMgr.getString("WindowManager.registerSessionSheet",
-                                  sheet.getClass().getName());
-		s_log.debug(dbg);
 		final IIdentifier sessionIdentifier = sheet.getSession().getIdentifier();
 
 		// Store ptr to newly open window in list of windows per session.
@@ -249,9 +244,9 @@ public class WindowManager
 		// For all windows (other than the first one opened) for a session
 		// add a number on the end of the title to differentiate them in
 		// menus etc.
-		if ( idx > 1)
+		if (idx > 1)
 		{
-			sheet.setTitle(sheet.getTitle() + " (" + idx + ")");
+			sheet.setTitlePostFix(" (" + idx + ")");
 		}
 
 		sheet.addWidgetListener(_windowListener);
@@ -1053,7 +1048,8 @@ public class WindowManager
                   if (sessionSheets[i] == sessionWidget)
                   {
                      _sessionWindows.removeWindow(sessionSheets[i]);
-                     WindowManager.this.selectFrontWindow();
+                     selectFrontWindow();
+							sessionSheets[i].closeFrame(true);
                      break;
                   }
                }

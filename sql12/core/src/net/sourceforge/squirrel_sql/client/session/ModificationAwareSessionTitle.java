@@ -1,10 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ModificationAwareSessionTitle
 {
-   private ModificationAwareSessionTitleChangeListener _listener;
+   private List<ModificationAwareSessionTitleChangeListener> _listeners = new ArrayList<>();
 
    private String _title;
 
@@ -23,14 +25,21 @@ public class ModificationAwareSessionTitle
       String oldVal = _title;
       _title = newTitle;
 
-      if(null != _listener)
+      ModificationAwareSessionTitleChangeListener[] buf = _listeners.toArray(new ModificationAwareSessionTitleChangeListener[0]);
+      for (int i = 0; i < buf.length; i++)
       {
-         _listener.titleChanged(oldVal, _title);
+         buf[i].titleChanged(oldVal, _title);
       }
    }
 
-   public void setListener(ModificationAwareSessionTitleChangeListener listener)
+   public void addListener(ModificationAwareSessionTitleChangeListener listener)
    {
-      _listener = listener;
+      _listeners.remove(listener);
+      _listeners.add(listener);
+   }
+
+   public void removeListener(ModificationAwareSessionTitleChangeListener titleChangeListener)
+   {
+      _listeners.remove(titleChangeListener);
    }
 }

@@ -9,4 +9,6 @@ public interface ISessionWidget extends IWidget
    void closeFrame(boolean b);
 
    boolean hasSQLPanelAPI();
+
+   default void setTitlePostFix(String titlePostFix) {}
 }

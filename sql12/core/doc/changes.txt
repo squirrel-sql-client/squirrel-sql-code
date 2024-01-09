@@ -162,6 +162,8 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+Fixed IndexOutOfBoundsException when an additional Object Tree- or SQL-Tab was opened, closed and reopened.
+
 Multiple Alias modification now respects the "Clear Schema table" button.
   See menu Aliases --> Alias Properties --> middle of tab Schemas
 

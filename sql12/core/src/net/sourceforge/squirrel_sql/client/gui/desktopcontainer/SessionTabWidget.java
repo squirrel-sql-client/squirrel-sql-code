@@ -4,19 +4,23 @@ import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandle
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandlerUtil;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ModificationAwareSessionTitle;
+import net.sourceforge.squirrel_sql.client.session.ModificationAwareSessionTitleChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.io.File;
 
 public abstract class SessionTabWidget extends TabWidget implements ISessionWidget
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionTabWidget.class);
+   private final ModificationAwareSessionTitleChangeListener _titleChangeListener;
 
 
    private ISession _session;
    private ModificationAwareSessionTitle _titleWithoutFile;
    private TitleFilePathHandler _titleFileHandler;
+   private String _titlePostFix = "";
 
    public SessionTabWidget(ModificationAwareSessionTitle title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, ISession session)
    {
@@ -25,7 +29,8 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       _titleWithoutFile = title;
       setupSheet();
 
-      _titleWithoutFile.setListener((oldTitle, newTitle) -> setTitle(_titleWithoutFile.getTitle()));
+      _titleChangeListener = (oldTitle, newTitle) -> setTitle(_titleWithoutFile.getTitle());
+      _titleWithoutFile.addListener(_titleChangeListener);
       _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile.getTitle()));
    }
 
@@ -40,6 +45,8 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       {
          return;
       }
+
+      _titleWithoutFile.removeListener(_titleChangeListener);
       if (withEvents)
       {
          fireWidgetClosing();
@@ -52,7 +59,6 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       }
    }
 
-
    private final void setupSheet()
    {
       _session.getApplication().getWindowManager().registerSessionSheet(this);
@@ -64,9 +70,28 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
    public void setTitle(String title)
    {
       _titleWithoutFile.setTitle(title);
-      TitleFilePathHandlerUtil.setTitle(_titleWithoutFile.getTitle(), _titleFileHandler, this, super::setTitle);
+      updateTitle();
    }
 
+   @Override
+   public void setTitlePostFix(String titlePostFix)
+   {
+      if (StringUtilities.isEmpty(titlePostFix, true))
+      {
+         _titlePostFix = "";
+      }
+      else
+      {
+         _titlePostFix = titlePostFix;
+      }
+
+      updateTitle();
+   }
+
+   private void updateTitle()
+   {
+      TitleFilePathHandlerUtil.setTitle(_titleWithoutFile.getTitle() + _titlePostFix, _titleFileHandler, this, super::setTitle);
+   }
 
 
    public void setMainSqlFile(File sqlFile)
