@@ -17,13 +17,12 @@ public class FilterMatcher
 
          for (int i = 0; i < splits.length; i++)
          {
-
-
             if(0 < splits[i].trim().length())
             {
-               String regExStr = splits[i].replaceAll("\\.", "\\\\.")
+               String regExStr = splits[i].trim()
+                                          .replaceAll("\\.", "\\\\.")
                                           .replaceAll("%", ".*")
-                                          .replaceAll("_",".{1}");
+                                          .replaceAll("_", ".{1}");
 
                _includeFilterPatterns.add(Pattern.compile(regExStr, Pattern.CASE_INSENSITIVE));
 

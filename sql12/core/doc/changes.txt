@@ -162,6 +162,11 @@ Refactoring: The DBDiff-Plugin's functionality was moved to SQuirreL's core.
 
 Bug fixes:
 
+Alias schema properties: When schemas where filtered by comma separated names
+  whitespace before and after the commas are now ignored.
+  See right mouse click on Alias --> Alias Properties --> tab Schemas
+  --> Include/Exclude text fields behind radio button "Load schemas filtered by name".
+
 Fixed IndexOutOfBoundsException when an additional Object Tree- or SQL-Tab was opened, closed and reopened.
 
 Multiple Alias modification now respects the "Clear Schema table" button.
