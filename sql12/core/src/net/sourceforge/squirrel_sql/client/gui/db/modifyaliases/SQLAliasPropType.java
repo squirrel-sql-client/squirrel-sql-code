@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
+import java.util.Objects;
+
 import net.sourceforge.squirrel_sql.client.gui.db.AliasInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ConnectionPropertiesPanel;
@@ -7,8 +9,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverProperti
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.SchemaPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.util.Objects;
 
 public enum SQLAliasPropType
 {
@@ -26,6 +26,10 @@ public enum SQLAliasPropType
    schemaProp_globalState,
    schemaProp_byLikeStringInclude("SchemaPropertiesPanel.specifySchemasByLikeString.include", SchemaPropertiesPanel.class),
    schemaProp_byLikeStringExclude("SchemaPropertiesPanel.specifySchemasByLikeString.exclude", SchemaPropertiesPanel.class),
+   schemaProp_loadTables("SchemaPropertiesPanel.filter.by.name.tables", SchemaPropertiesPanel.class),
+   schemaProp_loadViews("SchemaPropertiesPanel.filter.by.name.views", SchemaPropertiesPanel.class),
+   schemaProp_loadProcedures("SchemaPropertiesPanel.filter.by.name.procedures", SchemaPropertiesPanel.class),
+   schemaProp_loadUDTs("SchemaPropertiesPanel.filter.by.name.udts", SchemaPropertiesPanel.class),
    schemaProp_cacheSchemaIndependentMetaData("SchemaPropertiesPanel.CacheSchemaIndependentMetaData", SchemaPropertiesPanel.class),
    schemaProp_schemaTableWasCleared_transientForMultiAliasModificationOnly,
    connectionProp_keepAliveSqlStatement,
@@ -63,36 +67,40 @@ public enum SQLAliasPropType
    public boolean isSchemaProp()
    {
       return this == schemaProp_schemaDetails ||
-            this == schemaProp_globalState ||
-            this == schemaProp_byLikeStringInclude ||
-            this == schemaProp_byLikeStringExclude ||
-            this == schemaProp_cacheSchemaIndependentMetaData ||
-            this == schemaProp_schemaTableWasCleared_transientForMultiAliasModificationOnly;
+             this == schemaProp_globalState ||
+             this == schemaProp_byLikeStringInclude ||
+             this == schemaProp_byLikeStringExclude ||
+             this == schemaProp_loadTables ||
+             this == schemaProp_loadViews ||
+             this == schemaProp_loadProcedures ||
+             this == schemaProp_loadUDTs ||
+             this == schemaProp_cacheSchemaIndependentMetaData ||
+             this == schemaProp_schemaTableWasCleared_transientForMultiAliasModificationOnly;
    }
 
    public boolean isDriverProp()
    {
       return this == driverProp_useDriverProperties ||
-            this == driverProp_driverPropertyCollection;
+             this == driverProp_driverPropertyCollection;
    }
 
    public boolean isColorProp()
    {
       return this == colorProp_overrideToolbarBackgroundColor ||
-            this == colorProp_toolbarBackgroundColor ||
-            this == colorProp_overrideObjectTreeBackgroundColor ||
-            this == colorProp_objectTreeBackgroundColor ||
-            this == colorProp_overrideStatusBarBackgroundColor ||
-            this == colorProp_statusBarBackgroundColor ||
-            this == colorProp_overrideAliasBackgroundColor ||
-            this == colorProp_aliasBackgroundColor;
+             this == colorProp_toolbarBackgroundColor ||
+             this == colorProp_overrideObjectTreeBackgroundColor ||
+             this == colorProp_objectTreeBackgroundColor ||
+             this == colorProp_overrideStatusBarBackgroundColor ||
+             this == colorProp_statusBarBackgroundColor ||
+             this == colorProp_overrideAliasBackgroundColor ||
+             this == colorProp_aliasBackgroundColor;
    }
 
    public boolean isConnectionProp()
    {
       return this == connectionProp_keepAliveSqlStatement ||
-            this == connectionProp_keepAlive ||
-            this == connectionProp_keepAliveSleepSeconds;
+             this == connectionProp_keepAlive ||
+             this == connectionProp_keepAliveSleepSeconds;
    }
 
    public boolean equals(Object previousAliasPropValue, Object editedAliasPropValue)

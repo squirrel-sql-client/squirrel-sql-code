@@ -1,5 +1,24 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -9,9 +28,6 @@ import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoBu
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class SchemaPropertiesPanel extends JPanel
 {
@@ -24,8 +40,17 @@ public class SchemaPropertiesPanel extends JPanel
    JRadioButton radLoadAndCacheAll;
 
    JRadioButton radSpecifySchemasByLikeString;
+   JLabel lblNamesInclude;
+   JLabel lblNamesExclude;
    JTextField txtSchemasByLikeStringInclude;
    JTextField txtSchemasByLikeStringExclude;
+   JLabel lblTypesToLoad;
+   JCheckBox chkLoadTables;
+   JCheckBox chkLoadViews;
+   JCheckBox chkLoadProcedures;
+   JCheckBox chkLoadUDTs;
+
+
 
    JRadioButton radSpecifySchemas;
    JButton btnUpdateSchemasTable;
@@ -44,7 +69,6 @@ public class SchemaPropertiesPanel extends JPanel
 
    JButton btnPrintCacheFileLocation;
    JButton btnDeleteCache;
-
 
    public SchemaPropertiesPanel()
    {
@@ -140,28 +164,62 @@ public class SchemaPropertiesPanel extends JPanel
       radSpecifySchemasByLikeString.setToolTipText(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.tooltip"));
       ret.add(radSpecifySchemasByLikeString, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
       ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.tooltip.long.html")).getButton(), gbc);
 
 
-      JPanel pnlRight = new JPanel(new GridLayout(1,2,5,5));
+
+      JPanel pnlRightUpper = new JPanel(new GridLayout(1,2,5,5));
 
       JPanel pnlInclude = new JPanel(new BorderLayout(5,5));
-      pnlInclude.add(new JLabel(SQLAliasPropType.schemaProp_byLikeStringInclude.getI18nString()), BorderLayout.WEST);
+      lblNamesInclude = new JLabel(SQLAliasPropType.schemaProp_byLikeStringInclude.getI18nString());
+      pnlInclude.add(lblNamesInclude, BorderLayout.WEST);
 
       txtSchemasByLikeStringInclude = new JTextField();
       pnlInclude.add(txtSchemasByLikeStringInclude, BorderLayout.CENTER);
-
-      pnlRight.add(pnlInclude);
-
+      pnlRightUpper.add(pnlInclude);
 
       JPanel pnlExclude = new JPanel(new BorderLayout(5,5));
-      pnlExclude.add(new JLabel(SQLAliasPropType.schemaProp_byLikeStringExclude.getI18nString()), BorderLayout.WEST);
+      lblNamesExclude = new JLabel(SQLAliasPropType.schemaProp_byLikeStringExclude.getI18nString());
+      pnlExclude.add(lblNamesExclude, BorderLayout.WEST);
 
       txtSchemasByLikeStringExclude = new JTextField();
       pnlExclude.add(txtSchemasByLikeStringExclude, BorderLayout.CENTER);
+      pnlRightUpper.add(pnlExclude);
 
-      pnlRight.add(pnlExclude);
+
+      JPanel pnlRightLower = new JPanel(new GridBagLayout());
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      lblTypesToLoad = new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.filter.by.name.types.to.load"));
+      pnlRightLower.add(lblTypesToLoad, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
+      chkLoadTables = new JCheckBox(SQLAliasPropType.schemaProp_loadTables.getI18nString());
+      pnlRightLower.add(chkLoadTables, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      chkLoadViews = new JCheckBox(SQLAliasPropType.schemaProp_loadViews.getI18nString());
+      pnlRightLower.add(chkLoadViews, gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      chkLoadProcedures = new JCheckBox(SQLAliasPropType.schemaProp_loadProcedures.getI18nString());
+      pnlRightLower.add(chkLoadProcedures, gbc);
+
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      chkLoadUDTs = new JCheckBox(SQLAliasPropType.schemaProp_loadUDTs.getI18nString());
+      pnlRightLower.add(chkLoadUDTs, gbc);
+
+      gbc = new GridBagConstraints(5,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
+      pnlRightLower.add(new JPanel(), gbc);
+
+
+      JPanel pnlRight = new JPanel(new GridLayout(2,1,2,2));
+      pnlRight.add(pnlRightUpper);
+      pnlRight.add(pnlRightLower);
+      //pnlRight.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+      //pnlRight.setBorder(BorderFactory.createEtchedBorder());
+
 
       gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
       ret.add(pnlRight, gbc);

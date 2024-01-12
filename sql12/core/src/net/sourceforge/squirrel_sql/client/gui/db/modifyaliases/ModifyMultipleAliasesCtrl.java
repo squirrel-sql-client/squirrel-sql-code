@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowFactory;
@@ -16,13 +23,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.*;
-import java.io.File;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
 
 public class ModifyMultipleAliasesCtrl
 {
@@ -137,12 +137,14 @@ public class ModifyMultipleAliasesCtrl
    {
       try
       {
+         progressAbortDialog.setTaskStatus(s_stringMgr.getString("ModifyMultipleAliasesCtrl.prepare.aliases.backup.begin.save.existing"));
          File aliasesFileToBackUp = Main.getApplication().saveAliases();
-         String datePostfix = LocalDateTime.now().format(DateTimeFormatter.ofPattern("__yyyy-MM-dd__HH-mm-ss"));
+         progressAbortDialog.setTaskStatus(s_stringMgr.getString("ModifyMultipleAliasesCtrl.prepare.aliases.backup.finished.save.existing"));
 
+         progressAbortDialog.setTaskStatus(s_stringMgr.getString("ModifyMultipleAliasesCtrl.preparing.aliases.backup.file"));
+         String datePostfix = LocalDateTime.now().format(DateTimeFormatter.ofPattern("__yyyy-MM-dd__HH-mm-ss"));
          File databaseAliasesBackupDir = new ApplicationFiles().getDatabaseAliasesBackupDir();
          String aliasesBackupFileName = ApplicationFiles.ALIASES_FILE_NAME + datePostfix + "." +  ApplicationFiles.ALIASES_FILE_NAME_EXTENSION;
-
          databaseAliasesBackupDir.mkdirs();
 
          File backupFile = new File(databaseAliasesBackupDir, aliasesBackupFileName);

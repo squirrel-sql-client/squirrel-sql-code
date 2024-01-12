@@ -1,5 +1,15 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.io.File;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -12,14 +22,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import java.awt.*;
-import java.io.File;
 
 public class SchemaPropertiesController implements IAliasPropertiesPanelController
 {
@@ -90,6 +92,10 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _pnl.radSpecifySchemasByLikeString.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS_BY_LIKE_STRING);
       _pnl.txtSchemasByLikeStringInclude.setText(alias.getSchemaProperties().getByLikeStringInclude());
       _pnl.txtSchemasByLikeStringExclude.setText(alias.getSchemaProperties().getByLikeStringExclude());
+      _pnl.chkLoadTables.setSelected(alias.getSchemaProperties().isLoadTables());
+      _pnl.chkLoadViews.setSelected(alias.getSchemaProperties().isLoadViews());
+      _pnl.chkLoadProcedures.setSelected(alias.getSchemaProperties().isLoadProcedures());
+      _pnl.chkLoadUDTs.setSelected(alias.getSchemaProperties().isLoadUDTs());
 
       _pnl.radSpecifySchemas.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS);
 
@@ -252,6 +258,14 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _pnl.txtSchemasByLikeStringInclude.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
       _pnl.txtSchemasByLikeStringExclude.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
 
+      _pnl.chkLoadTables.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
+      _pnl.chkLoadViews.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
+      _pnl.chkLoadProcedures.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
+      _pnl.chkLoadUDTs.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
+      _pnl.lblNamesInclude.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
+      _pnl.lblNamesExclude.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
+      _pnl.lblTypesToLoad.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
+
       if(_pnl.radSpecifySchemas.isSelected())
       {
          _pnl.tblSchemas.setForeground(_origTblColor);
@@ -307,6 +321,10 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       _alias.getSchemaProperties().setByLikeStringInclude(StringUtils.stripToNull(_pnl.txtSchemasByLikeStringInclude.getText()));
       _alias.getSchemaProperties().setByLikeStringExclude(StringUtils.stripToNull(_pnl.txtSchemasByLikeStringExclude.getText()));
+      _alias.getSchemaProperties().setLoadTables(_pnl.chkLoadTables.isSelected());
+      _alias.getSchemaProperties().setLoadViews(_pnl.chkLoadViews.isSelected());
+      _alias.getSchemaProperties().setLoadProcedures(_pnl.chkLoadProcedures.isSelected());
+      _alias.getSchemaProperties().setLoadUDTs(_pnl.chkLoadUDTs.isSelected());
 
       _alias.getSchemaProperties().setSchemaDetails(_schemaTableModel.getData());
 

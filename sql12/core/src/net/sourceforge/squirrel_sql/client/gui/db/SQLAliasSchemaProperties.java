@@ -1,11 +1,13 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler;
+import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class SQLAliasSchemaProperties implements Serializable
 {
@@ -20,6 +22,12 @@ public class SQLAliasSchemaProperties implements Serializable
    private boolean _cacheSchemaIndependentMetaData;
    private String _byLikeStringInclude;
    private String _byLikeStringExclude;
+   private boolean _loadTables = true;
+   private boolean _loadViews = true;
+   private boolean _loadProcedures = true;
+   private boolean _loadUDTs = true;
+
+
    private SQLAliasVersioner _versioner = new SQLAliasVersioner();
 
 
@@ -115,7 +123,7 @@ public class SQLAliasSchemaProperties implements Serializable
       if(GLOBAL_STATE_LOAD_ALL_CACHE_NONE == _globalState || GLOBAL_STATE_LOAD_AND_CACHE_ALL== _globalState)
       {
          // Means load all Schemas from database.
-         return new SchemaLoadInfo[]{new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes))};
+         return new SchemaLoadInfo[]{new SchemaLoadInfo(ArrayUtils.addAll(tableTypes, viewTypes))};
       }
       else if(GLOBAL_STATE_SPECIFY_SCHEMAS_BY_LIKE_STRING == _globalState)
       {
@@ -139,7 +147,7 @@ public class SQLAliasSchemaProperties implements Serializable
       {
          SQLAliasSchemaDetailProperties cachedDetailProp = fetchMatchingDetail(_schemaDetails[i].getSchemaName(), schemaPropsCacheIsBasedOn._schemaDetails);
 
-         SchemaLoadInfo buf = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
+         SchemaLoadInfo buf = new SchemaLoadInfo(ArrayUtils.addAll(tableTypes, viewTypes));
          buf.setSchemaName(_schemaDetails[i].getSchemaName());
 
          ArrayList<String> tableTypesToLoad = new ArrayList<String>();
@@ -195,18 +203,20 @@ public class SQLAliasSchemaProperties implements Serializable
             continue;
          }
 
-         SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
+         SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo(ArrayUtils.addAll(tableTypes, viewTypes));
          schemaLoadInfo.setSchemaName(_schemaDetails[i].getSchemaName());
          schemaLoadInfo.setTableTypes(new String[0]);
 
          if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getTable())
          {
-            schemaLoadInfo.setTableTypes(addStringArrays(schemaLoadInfo.getTableTypes(), tableTypes));
+            String[] tableTypes1 = schemaLoadInfo.getTableTypes();
+            schemaLoadInfo.setTableTypes(ArrayUtils.addAll(tableTypes1, tableTypes));
          }
 
          if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getView())
          {
-            schemaLoadInfo.setTableTypes(addStringArrays(schemaLoadInfo.getTableTypes(), viewTypes));
+            String[] tableTypes1 = schemaLoadInfo.getTableTypes();
+            schemaLoadInfo.setTableTypes(ArrayUtils.addAll(tableTypes1, viewTypes));
          }
 
          if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getProcedure())
@@ -237,9 +247,29 @@ public class SQLAliasSchemaProperties implements Serializable
    {
       ArrayList<SchemaLoadInfo> ret = new ArrayList<>();
 
-      for (String schemaName : getSchemaNamesMatchingLikeStrings(allSchemas))
+      for (String schemaName : fetchSchemaNamesMatchingLikeStrings(allSchemas))
       {
-         SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
+         SchemaLoadInfo schemaLoadInfo;
+         if( _loadTables && _loadViews )
+         {
+            schemaLoadInfo = new SchemaLoadInfo(ArrayUtils.addAll(tableTypes, viewTypes));
+         }
+         else if (_loadTables)
+         {
+            schemaLoadInfo = new SchemaLoadInfo(tableTypes);
+         }
+         else if (_loadViews)
+         {
+            schemaLoadInfo = new SchemaLoadInfo(viewTypes);
+         }
+         else
+         {
+            schemaLoadInfo = new SchemaLoadInfo(new String[0]);
+         }
+
+         schemaLoadInfo.setLoadProcedures(_loadProcedures);
+         schemaLoadInfo.setLoadUDTs(_loadUDTs);
+
          schemaLoadInfo.setSchemaName(schemaName);
          ret.add(schemaLoadInfo);
       }
@@ -247,15 +277,6 @@ public class SQLAliasSchemaProperties implements Serializable
       return ret.toArray(new SchemaLoadInfo[0]);
    }
 
-
-   private String[] addStringArrays(String[] tableTypes, String[] viewTypes)
-   {
-      ArrayList<String> ret = new ArrayList<>();
-      ret.addAll(Arrays.asList(tableTypes));
-      ret.addAll(Arrays.asList(viewTypes));
-
-      return ret.toArray(new String[ret.size()]);
-   }
 
    private boolean needsLoading(int loadingID, Integer cachedLoadingID)
    {
@@ -397,7 +418,7 @@ public class SQLAliasSchemaProperties implements Serializable
       {
          ret.state = SchemaNameLoadInfo.STATE_USES_PROVIDED_SCHEMA_NAMES;
 
-         ArrayList<String> schemaNames = getSchemaNamesMatchingLikeStrings(allSchemas);
+         ArrayList<String> schemaNames = fetchSchemaNamesMatchingLikeStrings(allSchemas);
 
          ret.schemaNames = schemaNames.toArray(new String[0]);
       }
@@ -429,7 +450,7 @@ public class SQLAliasSchemaProperties implements Serializable
       return ret;
    }
 
-   private ArrayList<String> getSchemaNamesMatchingLikeStrings(String[] allSchemas)
+   private ArrayList<String> fetchSchemaNamesMatchingLikeStrings(String[] allSchemas)
    {
       ArrayList<String> schemaNames = new ArrayList<>();
       FilterMatcher filterMatcher = new FilterMatcher(_byLikeStringInclude, _byLikeStringExclude);
@@ -461,6 +482,50 @@ public class SQLAliasSchemaProperties implements Serializable
       return _byLikeStringExclude;
    }
 
+   public void setLoadTables(boolean loadTables)
+   {
+      _loadTables = loadTables;
+   }
+
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_loadTables)
+   public boolean isLoadTables()
+   {
+      return _loadTables;
+   }
+
+   public void setLoadViews(boolean loadViews)
+   {
+      _loadViews = loadViews;
+   }
+
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_loadViews)
+   public boolean isLoadViews()
+   {
+      return _loadViews;
+   }
+
+   public void setLoadProcedures(boolean loadProcedures)
+   {
+      _loadProcedures = loadProcedures;
+   }
+
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_loadProcedures)
+   public boolean isLoadProcedures()
+   {
+      return _loadProcedures;
+   }
+
+   public void setLoadUDTs(boolean loadUDTs)
+   {
+      _loadUDTs = loadUDTs;
+   }
+
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_loadUDTs)
+   public boolean isLoadUDTs()
+   {
+      return _loadUDTs;
+   }
+
    public void setByLikeStringExclude(String byLikeStringExclude)
    {
       _versioner.trigger(_byLikeStringExclude, byLikeStringExclude);
@@ -473,7 +538,7 @@ public class SQLAliasSchemaProperties implements Serializable
    }
 
    /**
-    * Transient, just to be used by {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler)}
+    * Transient, just to be used by {@link AliasChangesHandler)}
     */
    public void setSchemaTableWasCleared_transientForMultiAliasModificationOnly(boolean schemaTableWasCleared_transientForMultiAliasModificationOnly)
    {
@@ -481,7 +546,7 @@ public class SQLAliasSchemaProperties implements Serializable
    }
 
    /**
-    * Transient, just to be used by {@link net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.AliasChangesHandler)}
+    * Transient, just to be used by {@link AliasChangesHandler)}
     */
    @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.schemaProp_schemaTableWasCleared_transientForMultiAliasModificationOnly)
    public boolean isSchemaTableWasCleared_transientForMultiAliasModificationOnly()

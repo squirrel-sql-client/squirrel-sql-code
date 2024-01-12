@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Alias schema properties: When schemas where filtered by comma separated names
+  There are new options to specify if tables, views, procedures, UDTs should be loaded.
+  See right mouse click on Alias --> Alias Properties --> tab Schemas
+  --> Checkboxes behind radio button "Load schemas filtered by name"
+
 Multiple Alias modification: Added progress dialog and old backups cleanup.
 
 Multiple Alias modification:
