@@ -41,17 +41,21 @@
 	<tr>
       <td class="body_left_border">&nbsp;</td>
       <td width='100%' class="body" bgcolor="white" valign="top">
-         <h3 class="body"><A name="newfeatures">Feature highlights of 4.6.0:</A></h3>
+         <h3 class="body"><A name="newfeatures">Feature highlights of 4.7.1:</A></h3>
 		 <ul>
-			 <li>Data compare function</li>
-			 <li>Search function for preferences/configurations</li>
-			 <li>Enhanced BLOB and CLOB loading configuration</li>
-			 <li>Export of multiple SQL results</li>
-			 <li>Java 20 compatibility</li>
+			 <li>Multiple Alias modification</li>
+			 <li>Code completion offers contains mode</li>
+			 <li>Timeout for SQL executions</li>
+			 <li>Object tree: Save and restore selected nodes</li>
+			 <li>Data compare to clipboard</li>
+			 <li>Search function for table cell data popup</li>
+			 <li>Edit toggle button on SQL result tabs</li>
+			 <li>Graph Plugin (ER diagrams) allows to hide columns</li>
+			 <li>Caret/Cursor position in SQL is displayed</li>
+			 <li>Java 21 compatibility</li>
 			 <li>Many more features and bug fixes</li>
-
 		 </ul>
-		 All new features and bug fixes of the 4.6.0 release can be found in our change log at
+		 All new features and bug fixes of the 4.7.1 release can be found in our change log at
 			  <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
 			  or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.
 
@@ -104,6 +108,32 @@
 
 			<center>
 				<h3 class="body">
+					<font size="+2">SQuirreL 4.7.1 is released (02/20/2024), feature highlights of 4.7.1:</font>
+					<table>
+						<tr><td><b>&rArr; Multiple Alias modification</b></td></tr>
+						<tr><td><b>&rArr; Code completion offers contains mode</b></td></tr>
+						<tr><td><b>&rArr; Timeout for SQL executions</b></td></tr>
+						<tr><td><b>&rArr; Object tree: Save and restore selected nodes</b></td></tr>
+						<tr><td><b>&rArr; Data compare to clipboard</b></td></tr>
+						<tr><td><b>&rArr; Search function for table cell data popup</b></td></tr>
+						<tr><td><b>&rArr; Edit toggle button on SQL result tabs</b></td></tr>
+						<tr><td><b>&rArr; Graph Plugin (ER diagrams) allows to hide columns</b></td></tr>
+						<tr><td><b>&rArr; Caret/Cursor position in SQL is displayed</b></td></tr>
+						<tr><td><b>&rArr; Java 21 compatibility</b></td></tr>
+						<tr><td><b>&rArr; Many more features and bug fixes</b></td></tr>
+					</table>
+					For all new features and bug fixes see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
+					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
+					<br>
+					4.7.1 releases on SourceForge:<br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/4.7.1/squirrel-sql-4.7.1-standard.jar/download">Download installer for Windows/Linux/others</a><br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/4.7.1/squirrel-sql-4.7.1-MACOSX-install.jar/download">Download installer for Mac OS </a><br><br>
+					4.7.1 releases on GitHub:<br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.7.1-installer/squirrel-sql-4.7.1-standard.jar">Download installer for Windows/Linux/others</a><br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.7.1-installer/squirrel-sql-4.7.1-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
+				</h3>
+				<div style="border-top: 3px solid grey"></div>
+				<h3 class="body">
 					The new snapshot snapshot-20240114_1941 is a release candidate for the coming 4.7.0 release.<br>
 					It would be nice if you gave it a try.<br>
 					Here are some highlights of the snapshot and the coming release:
@@ -136,42 +166,6 @@
 					or<br>
 					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots">https://sourceforge.net/projects/squirrel-sql/files/3-snapshots</A><br>
 					for the latest snapshots regularly.<br>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					New snapshot snapshot-20230613_2108 that fixes missing user text field in the login dialog.<br>
-					This is relevant if the username is not saved in the Alias definition. See <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/issues/14">GitHub issue 14</a>.<br>
-					New feature: The SQL editor offers to compare selected text or complete editor content to clipboard.<br>
-					For details see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br><br>
-					The snapshot releases on SourceForge are:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20230613_2108/squirrel-sql-snapshot-20230613_2108-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20230613_2108/squirrel-sql-snapshot-20230613_2108-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
-					The snapshot releases on GitHub are:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20230613_2108/squirrel-sql-snapshot-20230613_2108-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20230613_2108/squirrel-sql-snapshot-20230613_2108-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					<font size="+2">SQuirreL 4.6.0 is released (06/04/2023)</font><br><br>
-					Feature highlights of 4.6.0:<br>
-					<table>
-						<tr><td><b>&rArr; Data compare function</b></td></tr>
-						<tr><td><b>&rArr; Search function for preferences/configurations</b></td></tr>
-						<tr><td><b>&rArr; Enhanced BLOB and CLOB loading configuration</b></td></tr>
-						<tr><td><b>&rArr; Export of multiple SQL results</b></td></tr>
-						<tr><td><b>&rArr; Java 20 compatibility</b></td></tr>
-						<tr><td><b>&rArr; Many more features and bug fixes</b></td></tr>
-					</table>
-					For all new features and bug fixes see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
-					<br>
-					4.6.0 releases on SourceForge:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/4.6.0/squirrel-sql-4.6.0-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/4.6.0/squirrel-sql-4.6.0-MACOSX-install.jar/download">Download installer for Mac OS </a><br><br>
-					4.6.0 releases on GitHub:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.6.0-installer/squirrel-sql-4.6.0-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.6.0-installer/squirrel-sql-4.6.0-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
 				</h3>
 			</center>
 		</td>
@@ -246,19 +240,19 @@
 				<tr>
 					<td>
 						<UL>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.6.0/squirrel-sql-4.6.0-standard.jar/download">Install jar of SQuirreL 4.6.0 for Windows/Linux/others</a></B></LI>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.6.0/squirrel-sql-4.6.0-MACOSX-install.jar/download">Install jar of SQuirreL 4.6.0 for MacOS X</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.7.1/squirrel-sql-4.7.1-standard.jar/download">Install jar of SQuirreL 4.7.1 for Windows/Linux/others</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.7.1/squirrel-sql-4.7.1-MACOSX-install.jar/download">Install jar of SQuirreL 4.7.1 for MacOS X</a></B></LI>
 							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/3-snapshots/">Install jars of latest snapshots</a></B></LI>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.6.0-plainzip/">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.7.1-plainzip/">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
 							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/">Overview of all available downloads</a></B></LI>
 						</UL>
 					</td>
 					<td>
 						<UL>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.6.0-installer/squirrel-sql-4.6.0-standard.jar">Install jar of SQuirreL 4.6.0 for Windows/Linux/others</a></B></LI>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.6.0-installer/squirrel-sql-4.6.0-MACOSX-install.jar">Install jar of SQuirreL 4.6.0 for MacOS X</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.7.1-installer/squirrel-sql-4.7.1-standard.jar">Install jar of SQuirreL 4.7.1 for Windows/Linux/others</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.7.1-installer/squirrel-sql-4.7.1-MACOSX-install.jar">Install jar of SQuirreL 4.7.1 for MacOS X</a></B></LI>
 							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases">Install jars of latest snapshots</a></B></LI>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/tag/4.6.0-a_plainzip">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/tag/4.7.1-a_plainzip">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
 							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases">Overview of all stable releases</a></B></LI>
 						</UL>
 					</td>
