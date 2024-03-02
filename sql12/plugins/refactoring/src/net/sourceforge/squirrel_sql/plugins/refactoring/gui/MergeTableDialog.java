@@ -23,23 +23,11 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Types;
@@ -555,32 +543,73 @@ public class MergeTableDialog extends AbstractRefactoringTabbedDialog implements
         HashMap<String, TableColumnInfo[]> tables = new HashMap<String, TableColumnInfo[]>();
         ArrayList<TableColumnInfo> tableColumnInfo = new ArrayList<TableColumnInfo>();
 
-        for (String column : employeeIdentificationColumns) {
-            TableColumnInfo newColumn = new TableColumnInfo(
-                    catalog, schema, employeIdentifactionTable, column,
-                    Types.VARCHAR, JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR), 30,
-                    0, 0, 1, null, null, 0, 1, "YES");
+        for (String column : employeeIdentificationColumns)
+        {
+            TableColumnInfo newColumn = new TableColumnInfo(catalog,
+                                                            schema,
+                                                            employeIdentifactionTable,
+                                                            column,
+                                                            Types.VARCHAR,
+                                                            JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR),
+                                                            30,
+                                                            0,
+                                                            0,
+                                                            1,
+                                                            null,
+                                                            null,
+                                                            0,
+                                                            1,
+                                                            "YES",
+                                                            null, null);
+
             tableColumnInfo.add(newColumn);
         }
         tables.put(employeIdentifactionTable, tableColumnInfo.toArray(new TableColumnInfo[]{}));
 
         tableColumnInfo.clear();
         ArrayList<TableColumnInfo> employeColumnsInfo = new ArrayList<TableColumnInfo>();
-        for (String column : employeeColumns) {
-            TableColumnInfo newColumn = new TableColumnInfo(
-                    catalog, schema, employeIdentifactionTable, column,
-                    Types.VARCHAR, JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR), 30,
-                    0, 0, 1, null, null, 0, 1, "YES");
+        for (String column : employeeColumns)
+        {
+            TableColumnInfo newColumn = new TableColumnInfo(catalog,
+                                                            schema,
+                                                            employeIdentifactionTable,
+                                                            column,
+                                                            Types.VARCHAR,
+                                                            JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR),
+                                                            30,
+                                                            0,
+                                                            0,
+                                                            1,
+                                                            null,
+                                                            null,
+                                                            0,
+                                                            1,
+                                                            "YES",
+                                                            null, null);
             employeColumnsInfo.add(newColumn);
         }
 
 
         tableColumnInfo.clear();
-        for (String column : customerColumns) {
-            TableColumnInfo newColumn = new TableColumnInfo(
-                    catalog, schema, employeIdentifactionTable, column,
-                    Types.VARCHAR, JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR), 30,
-                    0, 0, 1, null, null, 0, 1, "YES");
+        for (String column : customerColumns)
+        {
+            TableColumnInfo newColumn = new TableColumnInfo(catalog,
+                                                            schema,
+                                                            employeIdentifactionTable,
+                                                            column,
+                                                            Types.VARCHAR,
+                                                            JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR),
+                                                            30,
+                                                            0,
+                                                            0,
+                                                            1,
+                                                            null,
+                                                            null,
+                                                            0,
+                                                            1,
+                                                            "YES",
+                                                            null, null);
+
             tableColumnInfo.add(newColumn);
         }
         tables.put(customerTableName, tableColumnInfo.toArray(new TableColumnInfo[]{}));

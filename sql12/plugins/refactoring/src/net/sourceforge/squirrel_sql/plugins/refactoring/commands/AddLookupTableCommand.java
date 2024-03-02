@@ -19,6 +19,18 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddLookupTableDialog;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -26,24 +38,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.SessionUtils;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddLookupTableDialog;
 
 public class AddLookupTableCommand extends AbstractRefactoringCommand
 {
@@ -119,61 +113,61 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 		if (_customDialog.getMode() == AddLookupTableDialog.MODE_KEEP)
 		{
 			TableColumnInfo pk =
-				new TableColumnInfo(	catalog,
-											schema,
-											lookupTableName,
-											lookupPrimaryKey,
-											sourceColumn.getDataType(),
-											sourceColumn.getTypeName(),
-											sourceColumn.getColumnSize(),
-											sourceColumn.getDecimalDigits(),
-											sourceColumn.getRadix(),
-											sourceColumn.isNullAllowed(),
-											sourceColumn.getRemarks(),
-											sourceColumn.getDefaultValue(),
-											sourceColumn.getOctetLength(),
-											1,
-											sourceColumn.isNullable(),
-											md);
+				new TableColumnInfo(catalog,
+										  schema,
+										  lookupTableName,
+										  lookupPrimaryKey,
+										  sourceColumn.getDataType(),
+										  sourceColumn.getTypeName(),
+										  sourceColumn.getColumnSize(),
+										  sourceColumn.getDecimalDigits(),
+										  sourceColumn.getRadix(),
+										  sourceColumn.isNullAllowed(),
+										  sourceColumn.getRemarks(),
+										  sourceColumn.getDefaultValue(),
+										  sourceColumn.getOctetLength(),
+										  1,
+										  sourceColumn.isNullable(),
+										  null, md);
 			columns.add(pk);
 			primaryKeys.add(pk);
 		} else if (_customDialog.getMode() == AddLookupTableDialog.MODE_REPLACE)
 		{
 			TableColumnInfo pk =
-				new TableColumnInfo(	catalog,
-											schema,
-											lookupTableName,
-											lookupPrimaryKey,
-											Types.INTEGER,
-											JDBCTypeMapper.getJdbcTypeName(Types.INTEGER),
-											0,
-											0,
-											0,
-											0,
-											null,
-											null,
-											0,
-											1,
-											"NO",
-											md);
+				new TableColumnInfo(catalog,
+										  schema,
+										  lookupTableName,
+										  lookupPrimaryKey,
+										  Types.INTEGER,
+										  JDBCTypeMapper.getJdbcTypeName(Types.INTEGER),
+										  0,
+										  0,
+										  0,
+										  0,
+										  null,
+										  null,
+										  0,
+										  1,
+										  "NO",
+										  null, md);
 
 			TableColumnInfo second =
-				new TableColumnInfo(	catalog,
-											schema,
-											lookupTableName,
-											_customDialog.getLookupSecondColumn(),
-											sourceColumn.getDataType(),
-											sourceColumn.getTypeName(),
-											sourceColumn.getColumnSize(),
-											sourceColumn.getDecimalDigits(),
-											sourceColumn.getRadix(),
-											0,
-											sourceColumn.getRemarks(),
-											sourceColumn.getDefaultValue(),
-											sourceColumn.getOctetLength(),
-											2,
-											"NO",
-											md);
+				new TableColumnInfo(catalog,
+										  schema,
+										  lookupTableName,
+										  _customDialog.getLookupSecondColumn(),
+										  sourceColumn.getDataType(),
+										  sourceColumn.getTypeName(),
+										  sourceColumn.getColumnSize(),
+										  sourceColumn.getDecimalDigits(),
+										  sourceColumn.getRadix(),
+										  0,
+										  sourceColumn.getRemarks(),
+										  sourceColumn.getDefaultValue(),
+										  sourceColumn.getOctetLength(),
+										  2,
+										  "NO",
+										  null, md);
 
 			columns.add(pk);
 			columns.add(second);
@@ -245,43 +239,43 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 
 			// Renames the source column.
 			TableColumnInfo tempColumn =
-				new TableColumnInfo(	catalog,
-											schema,
-											sourceTableName,
-											sourceColumnName + "_temp",
-											sourceColumn.getDataType(),
-											sourceColumn.getTypeName(),
-											sourceColumn.getColumnSize(),
-											sourceColumn.getDecimalDigits(),
-											sourceColumn.getRadix(),
-											sourceColumn.isNullAllowed(),
-											sourceColumn.getRemarks(),
-											sourceColumn.getDefaultValue(),
-											sourceColumn.getOctetLength(),
-											sourceColumn.getOrdinalPosition(),
-											sourceColumn.isNullable(),
-											md);
+				new TableColumnInfo(catalog,
+										  schema,
+										  sourceTableName,
+										  sourceColumnName + "_temp",
+										  sourceColumn.getDataType(),
+										  sourceColumn.getTypeName(),
+										  sourceColumn.getColumnSize(),
+										  sourceColumn.getDecimalDigits(),
+										  sourceColumn.getRadix(),
+										  sourceColumn.isNullAllowed(),
+										  sourceColumn.getRemarks(),
+										  sourceColumn.getDefaultValue(),
+										  sourceColumn.getOctetLength(),
+										  sourceColumn.getOrdinalPosition(),
+										  sourceColumn.isNullable(),
+										  null, md);
 
 			results.add(_dialect.getColumnNameAlterSQL(sourceColumn, tempColumn, _qualifier, _sqlPrefs));
 
 			// Adds the new column (type: integer).
 			TableColumnInfo newColumn =
-				new TableColumnInfo(	catalog,
-											schema,
-											sourceTableName,
-											sourceColumnName,
-											Types.INTEGER,
-											JDBCTypeMapper.getJdbcTypeName(Types.INTEGER),
-											0,
-											0,
-											0,
-											1,
-											sourceColumn.getRemarks(),
-											null,
-											0,
-											sourceColumn.getOrdinalPosition(),
-											"YES",
-											md);
+				new TableColumnInfo(catalog,
+										  schema,
+										  sourceTableName,
+										  sourceColumnName,
+										  Types.INTEGER,
+										  JDBCTypeMapper.getJdbcTypeName(Types.INTEGER),
+										  0,
+										  0,
+										  0,
+										  1,
+										  sourceColumn.getRemarks(),
+										  null,
+										  0,
+										  sourceColumn.getOrdinalPosition(),
+										  "YES",
+										  null, md);
 			String[] addColumnResults = _dialect.getAddColumnSQL(newColumn, _qualifier, _sqlPrefs);
 			for (String addColumnResult : addColumnResults)
 			{
@@ -330,22 +324,22 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 			if (sourceColumn.isNullAllowed() == 0)
 			{
 				TableColumnInfo newColumnNotNull =
-					new TableColumnInfo(	catalog,
-												schema,
-												sourceTableName,
-												newColumn.getColumnName(),
-												newColumn.getDataType(),
-												newColumn.getTypeName(),
-												newColumn.getColumnSize(),
-												newColumn.getDecimalDigits(),
-												newColumn.getRadix(),
-												0,
-												newColumn.getRemarks(),
-												newColumn.getDefaultValue(),
-												newColumn.getOctetLength(),
-												newColumn.getOrdinalPosition(),
-												"NO",
-												md);
+					new TableColumnInfo(catalog,
+											  schema,
+											  sourceTableName,
+											  newColumn.getColumnName(),
+											  newColumn.getDataType(),
+											  newColumn.getTypeName(),
+											  newColumn.getColumnSize(),
+											  newColumn.getDecimalDigits(),
+											  newColumn.getRadix(),
+											  0,
+											  newColumn.getRemarks(),
+											  newColumn.getDefaultValue(),
+											  newColumn.getOctetLength(),
+											  newColumn.getOrdinalPosition(),
+											  "NO",
+											  null, md);
 				results.addAll(Arrays.asList(_dialect.getColumnNullableAlterSQL(newColumnNotNull,
 					_qualifier,
 					_sqlPrefs)));

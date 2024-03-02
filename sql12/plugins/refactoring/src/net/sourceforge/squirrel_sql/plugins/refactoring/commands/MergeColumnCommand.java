@@ -19,14 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.TreeSet;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
@@ -34,17 +26,20 @@ import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.MergeColumnDialog;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.TreeSet;
 
 public class MergeColumnCommand extends AbstractRefactoringCommand
 {
@@ -170,22 +165,22 @@ public class MergeColumnCommand extends AbstractRefactoringCommand
 			if (customDialog.isNewColumn())
 			{
 				TableColumnInfo newColumn =
-					new TableColumnInfo(	catalog,
-												schema,
-												table,
-												mergeInColumn,
-												Types.VARCHAR,
-												JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR),
-												typeLength,
-												0,
-												0,
-												1,
-												null,
-												null,
-												0,
-												1,
-												"YES",
-												md);
+					new TableColumnInfo(catalog,
+											  schema,
+											  table,
+											  mergeInColumn,
+											  Types.VARCHAR,
+											  JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR),
+											  typeLength,
+											  0,
+											  0,
+											  1,
+											  null,
+											  null,
+											  0,
+											  1,
+											  "YES",
+											  null, md);
 				results.addAll(Arrays.asList(_dialect.getAddColumnSQL(newColumn, qualifier, _sqlPrefs)));
 			}
 			results.addAll(updateResults);

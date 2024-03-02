@@ -33,17 +33,28 @@ public class TableColumnInfo extends DatabaseObjectInfo
 	private final int _octetLength;
 	private final int _ordinalPosition;
 	private final String _isNullable;
+	private final String _isAutoIncrement;
 
-	public TableColumnInfo(String catalog, String schema, String tableName,
-							String columnName, int dataType, String typeName,
-							int columnSize, int decimalDigits, int radix,
-							int isNullAllowed, String remarks, String defaultValue,
-							int octetLength, int ordinalPosition,
-							String isNullable, ISQLDatabaseMetaData md)
+	public TableColumnInfo(String catalog,
+								  String schema,
+								  String tableName,
+								  String columnName,
+								  int dataType,
+								  String typeName,
+								  int columnSize,
+								  int decimalDigits,
+								  int radix,
+								  int isNullAllowed,
+								  String remarks,
+								  String defaultValue,
+								  int octetLength,
+								  int ordinalPosition,
+								  String isNullable, // (values are YES or NO)
+								  String isAutoIncrement, // (values are YES or NO)
+								  ISQLDatabaseMetaData md)
 	{
-		super(catalog, schema, tableName + '.' + columnName,
-				DatabaseObjectType.COLUMN, md);
-        _tableName = tableName;
+		super(catalog, schema, tableName + '.' + columnName, DatabaseObjectType.COLUMN, md);
+		_tableName = tableName;
 		_columnName = columnName;
 		_dataType = dataType;
 		_typeName = typeName;
@@ -56,32 +67,10 @@ public class TableColumnInfo extends DatabaseObjectInfo
 		_octetLength = octetLength;
 		_ordinalPosition = ordinalPosition;
 		_isNullable = isNullable;
+		_isAutoIncrement = isAutoIncrement;
 	}
 
-    public TableColumnInfo(String catalog, String schema, String tableName,
-            String columnName, int dataType, String typeName,
-            int columnSize, int decimalDigits, int radix,
-            int isNullAllowed, String remarks, String defaultValue,
-            int octetLength, int ordinalPosition,
-            String isNullable)
-    {
-        super(catalog, schema, tableName);
-        _tableName = tableName;
-        _columnName = columnName;
-        _dataType = dataType;
-        _typeName = typeName;
-        _columnSize = columnSize;
-        _decimalDigits = decimalDigits;
-        _radix = radix;
-        _isNullAllowed = isNullAllowed;
-        _remarks = remarks;
-        _defaultValue = defaultValue;
-        _octetLength = octetLength;
-        _ordinalPosition = ordinalPosition;
-        _isNullable = isNullable;
-    }
-    
-    public String getTableName() {
+	public String getTableName() {
         return _tableName;
     }
     
@@ -143,5 +132,10 @@ public class TableColumnInfo extends DatabaseObjectInfo
 	public String isNullable()
 	{
 		return _isNullable;
+	}
+
+	public String isAutoIncrement()
+	{
+		return _isAutoIncrement;
 	}
 }

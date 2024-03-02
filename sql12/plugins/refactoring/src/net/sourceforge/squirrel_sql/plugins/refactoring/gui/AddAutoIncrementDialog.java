@@ -23,9 +23,8 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import java.awt.Frame;
+import javax.swing.*;
+import java.awt.*;
 import java.sql.Types;
 
 /**
@@ -126,10 +125,22 @@ public class AddAutoIncrementDialog extends AbstractRefactoringDialog {
         String employeIdentifactionTable = "EmployeeIdentification";
 
         String[] employeeColumns = {"EmployeeNumber", "Name", "PhoneNumber"};
-        TableColumnInfo newColumn = new TableColumnInfo(
-                catalog, schema, employeIdentifactionTable, employeeColumns[0],
-                Types.VARCHAR, JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR), 30,
-                0, 0, 1, null, null, 0, 1, "YES");
+        TableColumnInfo newColumn = new TableColumnInfo(catalog,
+                                                        schema,
+                                                        employeIdentifactionTable,
+                                                        employeeColumns[0],
+                                                        Types.VARCHAR,
+                                                        JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR),
+                                                        30,
+                                                        0,
+                                                        0,
+                                                        1,
+                                                        null,
+                                                        null,
+                                                        0,
+                                                        1,
+                                                        "YES",
+                                                        null, null);
 
         new AddAutoIncrementDialog(newColumn, null).setVisible(true);
     }

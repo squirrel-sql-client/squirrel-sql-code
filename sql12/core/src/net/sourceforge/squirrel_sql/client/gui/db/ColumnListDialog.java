@@ -24,27 +24,12 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -409,20 +394,21 @@ public class ColumnListDialog extends JDialog implements IDisposableDialog
       for (int i = 0; i < infos.length; i++)
       {
          infos[i] = new TableColumnInfo("aCat",
-               "aSchem",
-               "aTab",
-               data[i],
-               java.sql.Types.CHAR,
-               "character",
-               10,
-               0,
-               0,
-               0,
-               "a comment",
-               "defVal",
-               0,
-               0,
-               "YES");
+                                        "aSchem",
+                                        "aTab",
+                                        data[i],
+                                        java.sql.Types.CHAR,
+                                        "character",
+                                        10,
+                                        0,
+                                        0,
+                                        0,
+                                        "a comment",
+                                        "defVal",
+                                        0,
+                                        0,
+                                        "YES",
+                                        null, null);
       }
 
       final ColumnListDialog c = new ColumnListDialog(infos, 0);

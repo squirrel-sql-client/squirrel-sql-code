@@ -1579,10 +1579,22 @@ public class DialectUtils implements StringTemplateConstants
 	public static TableColumnInfo getRenamedColumn(TableColumnInfo info, String newColumnName)
 	{
 		final TableColumnInfo result =
-			new TableColumnInfo(info.getCatalogName(), info.getSchemaName(), info.getTableName(), newColumnName,
-				info.getDataType(), info.getTypeName(), info.getColumnSize(), info.getDecimalDigits(),
-				info.getRadix(), info.isNullAllowed(), info.getRemarks(), info.getDefaultValue(),
-				info.getOctetLength(), info.getOrdinalPosition(), info.isNullable());
+			new TableColumnInfo(info.getCatalogName(),
+									  info.getSchemaName(),
+									  info.getTableName(),
+									  newColumnName,
+									  info.getDataType(),
+									  info.getTypeName(),
+									  info.getColumnSize(),
+									  info.getDecimalDigits(),
+									  info.getRadix(),
+									  info.isNullAllowed(),
+									  info.getRemarks(),
+									  info.getDefaultValue(),
+									  info.getOctetLength(),
+									  info.getOrdinalPosition(),
+									  info.isNullable(),
+									  null, null);
 		return result;
 	}
 
@@ -1800,6 +1812,8 @@ public class DialectUtils implements StringTemplateConstants
 			{
 				Arrays.sort(infos);
 			}
+
+			StringBuilder colBuf = new StringBuilder();
 			for (final TableColumnInfo tcInfo : infos)
 			{
             final String columnNameFormatted = SQLScriptServices.formatColumnName(tcInfo);
@@ -1817,13 +1831,14 @@ public class DialectUtils implements StringTemplateConstants
 				}
 
 				result.append("\n   ");
-				result.append(columnNameFormatted);
-				result.append(" ");
-				result.append(columnType);
+
+				colBuf.setLength(0);
+				colBuf.append(columnNameFormatted).append(" ");
+				colBuf.append(columnType);
 				final String isNullable = tcInfo.isNullable();
 				if (pks.size() == 1 && pks.get(0).equals(tcInfo.getColumnName()))
 				{
-					result.append(" PRIMARY KEY");
+					colBuf.append(" PRIMARY KEY ");
 				}
 				else
 				{
@@ -1831,16 +1846,28 @@ public class DialectUtils implements StringTemplateConstants
 					// NULL
 					if (defaultVal != null && !"".equals(defaultVal))
 					{
-						result.append(" DEFAULT ");
-						result.append(defaultVal);
+						colBuf.append(" DEFAULT ");
+						colBuf.append(defaultVal);
 					}
 				}
 
+				// On https://github.com/squirrel-sql-client/squirrel-sql-code/issues/29
+				// There are a variety of mechanisms to define an auto increment column.
+				// These mechanisms are not limited to different syntaxes in the column definition clause.
+				// For details see
+				// https://www.w3schools.com/sql/sql_autoincrement.asp
+				// That is why we do not support it in SQuirreL's table scripting.
+				//if ("YES".equalsIgnoreCase(tcInfo.isAutoIncrement()))
+				//{
+				//	colBuf.append(" AUTO_INCREMENT ");
+				//}
+
 				if ("NO".equalsIgnoreCase(isNullable))
 				{
-					result.append(" NOT NULL");
+					colBuf.append(" NOT NULL");
 				}
-				result.append(",");
+
+				result.append(colBuf.toString().trim()).append(",");
 			}
 
 			if (pks.size() > 1)

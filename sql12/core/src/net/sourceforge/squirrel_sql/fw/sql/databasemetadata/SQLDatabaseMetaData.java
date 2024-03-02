@@ -1720,33 +1720,36 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 				// Workaround for DB2/AIX64 driver: COLUMN_SIZE is not CHAR_OCTET_LENGTH for double-bytes datatypes GRAPHIC/VARGRAPHIC
 				int columnSize = rdr.getLong(7).intValue();
-				if ("DB2/AIX64".equals(md.getDatabaseProductName())) {
+				if ("DB2/AIX64".equals(md.getDatabaseProductName()))
+				{
 					if (
 							(rdr.getLong(5).intValue() == 1 && rdr.getString(6).equals("GRAPHIC")
-							|| rdr.getLong(5).intValue() == 12 && rdr.getString(6).equals("VARGRAPHIC")) &&
-							rdr.getLong(7).intValue() == rdr.getLong(16).intValue() &&
-							rdr.getLong(7).intValue()%2 == 0
-					) {
+									|| rdr.getLong(5).intValue() == 12 && rdr.getString(6).equals("VARGRAPHIC")) &&
+									rdr.getLong(7).intValue() == rdr.getLong(16).intValue() &&
+									rdr.getLong(7).intValue() % 2 == 0
+					)
+					{
 						columnSize = columnSize / 2;
 					}
 				}
 
 				final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1), // TABLE_CAT
-					rdr.getString(2), // TABLE_SCHEM
-					rdr.getString(3), // TABLE_NAME
-					rdr.getString(4), // COLUMN_NAME
-					rdr.getLong(5).intValue(), // DATA_TYPE
-					rdr.getString(6), // TYPE_NAME
-					columnSize, // COLUMN_SIZE
-					rdr.getLong(9).intValue(), // DECIMAL_DIGITS
-					rdr.getLong(10).intValue(), // NUM_PREC_RADIX
-					isNullAllowed, // NULLABLE
-					rdr.getString(12), // REMARKS
-					rdr.getString(13), // COLUMN_DEF
-					rdr.getLong(16).intValue(), // CHAR_OCTET_LENGTH
-					rdr.getLong(17).intValue(), // ORDINAL_POSITION
-					rdr.getString(18), // IS_NULLABLE
-					this);
+																				rdr.getString(2), // TABLE_SCHEM
+																				rdr.getString(3), // TABLE_NAME
+																				rdr.getString(4), // COLUMN_NAME
+																				rdr.getLong(5).intValue(), // DATA_TYPE
+																				rdr.getString(6), // TYPE_NAME
+																				columnSize, // COLUMN_SIZE
+																				rdr.getLong(9).intValue(), // DECIMAL_DIGITS
+																				rdr.getLong(10).intValue(), // NUM_PREC_RADIX
+																				isNullAllowed, // NULLABLE
+																				rdr.getString(12), // REMARKS
+																				rdr.getString(13), // COLUMN_DEF
+																				rdr.getLong(16).intValue(), // CHAR_OCTET_LENGTH
+																				rdr.getLong(17).intValue(), // ORDINAL_POSITION
+																				rdr.getString(18), // IS_NULLABLE
+																				rdr.getString(23), // IS_AUTOINCREMENT (values are YES or NO)
+																				this);
 				// //////////////////////////////////////////////////////////////////////////////////////////
 				// The index is needed in case this method is called with schema = null, catalog = null
 				// and two tables with the same name in different schemas/catalogs.

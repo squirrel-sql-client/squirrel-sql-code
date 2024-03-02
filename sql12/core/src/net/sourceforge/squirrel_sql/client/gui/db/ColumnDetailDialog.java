@@ -27,36 +27,12 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.sql.DatabaseMetaData;
 
 /**
@@ -260,7 +236,7 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
         int radix = 1;
         
         TableColumnInfo result = 
-            new TableColumnInfo(catalog, 
+            new TableColumnInfo(catalog,
                                 schema,
                                 tableName,
                                 columnName,
@@ -274,8 +250,8 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
                                 defaultValue,
                                 octetLength,
                                 ordinalPosition,
-                                isNullable
-                                );
+                                isNullable,
+                                null, null);
         return result;
     }
     
