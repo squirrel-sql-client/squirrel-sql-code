@@ -18,6 +18,20 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -26,14 +40,6 @@ import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 /**
  * @author gwg
@@ -248,7 +254,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// IMPORTANT: this dialog is SYNCHRONOUS (ie. we do not proceed until
 			// user gives a response).  This is critical since this function provides
 			// a return value to its caller that depends on the user input.
-			int option = JOptionPane.showConfirmDialog(SwingUtilities.windowForComponent(getComponent()),
+			int option = JOptionPane.showConfirmDialog(GUIUtils.getOwningWindow(getComponent()),
 																	 message,
 																	 s_stringMgr.getString("baseDataSetViewerDestination.warning2"),
 																	 JOptionPane.YES_NO_OPTION,
@@ -272,7 +278,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if (message != null)
 		{
 			// tell user that there was a problem
-			JOptionPane.showMessageDialog(getComponent(),
+			JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(getComponent()),
 													message,
 													s_stringMgr.getString("baseDataSetViewerDestination.error"),
 													JOptionPane.ERROR_MESSAGE);
@@ -329,7 +335,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// Non-empty set of rows to delete.  Make sure user wants to delete
 		int option =
 				JOptionPane.showConfirmDialog(
-						SwingUtilities.windowForComponent(getComponent()),
+						GUIUtils.getOwningWindow(getComponent()),
 						msg, s_stringMgr.getString("dataSetViewerEditableTablePanel.warning"),
 						JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE);

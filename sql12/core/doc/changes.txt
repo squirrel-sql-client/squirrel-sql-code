@@ -1,6 +1,19 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository, snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+
+Bug fixes:
+
+Editable cell data popup: When updating data fails with a "No rows updated" message box
+  the message box was poorly positioned.
+
+
+
 4.7.1 (02/20/2024)
 ==================
 
