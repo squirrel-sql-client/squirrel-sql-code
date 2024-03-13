@@ -18,14 +18,18 @@ package net.sourceforge.squirrel_sql.plugins.postgres.gui;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class MessageDialog extends JDialog {
     /**
@@ -113,58 +117,11 @@ public class MessageDialog extends JDialog {
     }
 
 
-    public void setAutoScrolling(boolean autoScrolling) {
-        _autoScrolling = autoScrolling;
-    }
-
-
     public void scrollToBottom() {
         GUIUtils.processOnSwingEventThread(new Runnable() {
             public void run() {
                 _messageTextArea.setCaretPosition(_messageTextArea.getText().length());
             }
         });
-    }
-
-
-    public static void main(String[] args) {
-        final MessageDialog dialog = new MessageDialog();
-        dialog.replaceCloseListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                dialog.setVisible(true);
-            }
-        });
-
-        dialog.setAutoScrolling(false);
-        for (int i = 1; i <= 15; i++) {
-            dialog.writeLine("A line of text. (" + i + ")");
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        dialog.scrollToBottom();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        dialog.setAutoScrolling(true);
-        for (int i = 16; i <= 20; i++) {
-            dialog.writeLine("A line of text. (" + i + ")");
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        dialog.enableCloseButton();
     }
 }

@@ -19,21 +19,42 @@
 
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.DatabaseMetaData;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.DatabaseMetaData;
 
 /**
  * A dialog that can be used to get column info from the user for adding new 
@@ -492,30 +513,7 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
         result.add(cancelButton);
         return result;
     }
-    
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        ApplicationArguments.initialize(new String[] {});
-        final ColumnDetailDialog c = new ColumnDetailDialog(ADD_MODE);
-        c.setTableName("FooTable");
-        c.addComponentListener(new ComponentListener() {
-            public void componentHidden(ComponentEvent e) {}
-            public void componentMoved(ComponentEvent e) {}
-            public void componentResized(ComponentEvent e) {
-                System.out.println("Current size = "+c.getSize());
-            }
-            public void componentShown(ComponentEvent e) {}            
-        });
-        c.cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(1);
-            }
-        });
-        c.setVisible(true);
-        
-    }
+
     private class ColumnTypeListListener implements ItemListener {
 
         public void itemStateChanged(ItemEvent e) {

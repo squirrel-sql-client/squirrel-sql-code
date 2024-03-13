@@ -59,11 +59,9 @@ public class ShutdownTimer implements Runnable, IShutdownTimer
 		{
 			s_log.error("Shutdown timer thread was interrupted unexpectedly: "+e.getMessage(), e);
 		}
-		
-		if (s_log.isInfoEnabled()) {
-			s_log.info("ShutdownTimer is shutting down the application");
-		} 
-		
+
+		s_log.info("ShutdownTimer is shutting down the application");
+
 		System.exit(_app.shutdown(false) ? 0 : 1);
 	}
 

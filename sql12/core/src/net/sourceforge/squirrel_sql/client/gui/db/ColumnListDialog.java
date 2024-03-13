@@ -19,23 +19,34 @@
 
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.util.ArrayList;
-import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
 /**
@@ -374,75 +385,6 @@ public class ColumnListDialog extends JDialog implements IDisposableDialog
          }
       }
       return result;
-   }
-
-   /**
-    * @param args
-    */
-   public static void main(String[] args)
-   {
-      ApplicationArguments.initialize(new String[]{});
-      String[] data =
-            new String[]{"A_Really_Long_Nasty_Column_Called_ColumnA",
-                  "ColumnB", "ColumnC", "ColumnD", "ColumnE", "ColumnF",
-                  "ColumnG", "ColumnH", "ColumnI", "ColumnJ", "ColumnK",
-                  "ColumnL", "ColumnM", "ColumnN", "ColumnO", "ColumnP",
-                  "ColumnP", "ColumnQ", "ColumnR", "ColumnS", "ColumnT"};
-
-      TableColumnInfo[] infos = new TableColumnInfo[data.length];
-
-      for (int i = 0; i < infos.length; i++)
-      {
-         infos[i] = new TableColumnInfo("aCat",
-                                        "aSchem",
-                                        "aTab",
-                                        data[i],
-                                        java.sql.Types.CHAR,
-                                        "character",
-                                        10,
-                                        0,
-                                        0,
-                                        0,
-                                        "a comment",
-                                        "defVal",
-                                        0,
-                                        0,
-                                        "YES",
-                                        null, null);
-      }
-
-      final ColumnListDialog c = new ColumnListDialog(infos, 0);
-      c.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      c.setTableName("FooTable");
-      c.addComponentListener(new ComponentListener()
-      {
-         public void componentHidden(ComponentEvent e)
-         {
-         }
-
-         public void componentMoved(ComponentEvent e)
-         {
-         }
-
-         public void componentResized(ComponentEvent e)
-         {
-            System.out.println("Current size = " + c.getSize());
-         }
-
-         public void componentShown(ComponentEvent e)
-         {
-         }
-      });
-      c.cancelButton.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            System.exit(1);
-         }
-      });
-      c.setVisible(true);
-
-
    }
 
    private void enable(JButton button)
