@@ -12,6 +12,10 @@ Bug fixes:
 Editable cell data popup: When updating data fails with a "No rows updated" message box
   the message box was poorly positioned.
 
+When new users with fresh installations close SQuirreL with an open Session
+  they are shown the Session-close confirmation message box.
+  If then they check the confirmation message box to be not shown again
+  and close the message box by the No-button, SQuirreL lost their "not shown again" choice.
 
 
 4.7.1 (02/20/2024)

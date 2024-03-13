@@ -22,6 +22,30 @@ package net.sourceforge.squirrel_sql.client;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JOptionPane;
+import javax.swing.PopupFactory;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
@@ -76,19 +100,21 @@ import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
 import net.sourceforge.squirrel_sql.fw.resources.LazyResourceBundle;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
-import javax.swing.*;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.*;
-import java.sql.DriverManager;
-import java.util.*;
 /**
  * Defines the API to do callbacks on the application.
  * 
@@ -274,13 +300,25 @@ public class Application implements IApplication
 		_saveApplicationState_beforeWidgetClosing(begin);
       s_log.info("Application.shutdown: saveApplicationState() ELAPSED: " + (System.currentTimeMillis() - begin));
 
-      if (!closeAllSessions())
-      {
-         return false;
-      }
+		try
+		{
+			if (!closeAllSessions())
+			{
+				return false;
+			}
+		}
+		finally
+		{
+			// E.g. the SQL panel divider location didn't get saved on closing.
+			//
+			// The finally-block is here for the following:
+			// When new users with fresh installations close SQuirreL with an open Session
+			//  they are shown the Session-close confirmation message box.
+			//  If then they check the confirmation message box to be not shown again
+			//  and close the message box by the No-button, SQuirreL lost their "not shown again" choice.
+			_saveApplicationState_afterWidgetClosing(begin);
+		}
 
-      // E.g. the SQL panel divider location didn't get saved on closing.
-		_saveApplicationState_afterWidgetClosing(begin);
 
       _pluginManager.unloadPlugins();
       s_log.info("Application.shutdown: _pluginManager.unloadPlugins() ELAPSED: " + (System.currentTimeMillis() - begin));
