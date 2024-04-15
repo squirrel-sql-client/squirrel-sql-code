@@ -21,12 +21,35 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Frame;
+import java.util.ArrayList;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.ConvertToStringBuilderAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopySqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.CutSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteCurrentLineAction;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
+import net.sourceforge.squirrel_sql.client.session.action.InQuotesAction;
+import net.sourceforge.squirrel_sql.client.session.action.PasteFromHistoryAction;
+import net.sourceforge.squirrel_sql.client.session.action.PasteFromHistoryAltAcceleratorAction;
+import net.sourceforge.squirrel_sql.client.session.action.RemoveNewLinesAction;
+import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleMinimizeResultsAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
+import net.sourceforge.squirrel_sql.client.session.action.UndoRedoActionContext;
+import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
@@ -42,10 +65,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeT
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * This class is the API through which plugins can work with the SQL Panel.
@@ -97,7 +116,13 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
       ActionCollection ac = _panel.getSession().getApplication().getActionCollection();
 
-      Action toolsPopupAction = ac.get(ToolsPopupAction.class);
+      Action executeSqlAction = ac.get(ExecuteSqlAction.class);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(executeSqlAction);
+      resources.configureMenuItem(executeSqlAction, item);
+
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
+
+		Action toolsPopupAction = ac.get(ToolsPopupAction.class);
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(toolsPopupAction);
       resources.configureMenuItem(toolsPopupAction, item);
 

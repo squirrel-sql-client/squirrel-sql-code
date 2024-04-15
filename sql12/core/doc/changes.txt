@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL editor's right mouse menu offers to execute SQLs.
+
 
 Bug fixes:
 
