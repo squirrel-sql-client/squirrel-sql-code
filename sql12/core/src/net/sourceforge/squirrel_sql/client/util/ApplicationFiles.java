@@ -481,6 +481,10 @@ public class ApplicationFiles
    {
       return new File(getSavedSessionsDir(), "savedSessions.json");
    }
+   public File getSavedSessionGroupsJsonFile()
+   {
+      return new File(getSavedSessionsDir(), "savedSessionGroups.json");
+   }
 
    public File getSavedSessionsDir()
    {

@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesFindSupport;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.SavedSessionMoreDialogFindInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 
 public class SavedSessionMoreCtrlSingleton
 {
@@ -44,10 +45,10 @@ public class SavedSessionMoreCtrlSingleton
       }
    }
 
-   private static void onClosed(SavedSessionJsonBean ssjb, boolean newSess, SavedSessionMoreCtrlClosingListener listener)
+   private static void onClosed(SavedSessionGrouped ssg, boolean newSess, SavedSessionMoreCtrlClosingListener listener)
    {
       _openInstance = null;
-      listener.closed(ssjb, newSess);
+      listener.closed(ssg, newSess);
    }
 
    public static PreferencesFindSupport<SavedSessionMoreDialogFindInfo> getPreferencesFindSupport()

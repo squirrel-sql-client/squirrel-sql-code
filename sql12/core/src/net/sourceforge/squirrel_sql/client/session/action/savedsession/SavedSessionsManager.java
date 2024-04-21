@@ -2,6 +2,9 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGroupsJsonBean;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionsGroupJsonBean;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -11,10 +14,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,6 +32,7 @@ public class SavedSessionsManager
    private final static ILogger s_log = LoggerController.createLogger(SavedSessionsManager.class);
 
    private SavedSessionsJsonBean _savedSessionsJsonBean = null;
+   private SavedSessionGroupsJsonBean _savedSessionGroupsJsonBean = null;
    private ExecutorService _singleThreadJsonWriteExecutorService;
 
    public boolean doesNameExist(String newSessionName)
@@ -156,39 +162,117 @@ public class SavedSessionsManager
    }
 
 
-   public void endStore(SavedSessionJsonBean savedSessionJsonBean, SessionSaveProcessHandle sessionSaveProcessHandle)
+   public void endStore(SavedSessionJsonBean savedSessionJsonBean, SavedSessionsGroupJsonBean group, SessionSaveProcessHandle sessionSaveProcessHandle)
    {
+      if(    null != group
+         && false == _savedSessionGroupsJsonBean.getGroups().stream().anyMatch(g -> StringUtils.equals(g.getGroupId(), group.getGroupId())))
+      {
+         _savedSessionGroupsJsonBean.getGroups().add(group);
+      }
+
       sessionSaveProcessHandle.getToDelete(savedSessionJsonBean).forEach(b -> deleteInternallyStoredFile(b));
 
       _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSessionJsonBean);
       _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSessionJsonBean);
 
-      saveJsonBean();
+      saveJsonBeans();
    }
 
-   private void saveJsonBean()
+   private void saveJsonBeans()
    {
-      _singleThreadJsonWriteExecutorService.submit(() -> JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getSavedSessionsJsonFile(), _savedSessionsJsonBean));
+      _singleThreadJsonWriteExecutorService.submit(() -> saveFiles());
    }
 
-   public List<SavedSessionJsonBean> getSavedSessions()
+   private void saveFiles()
+   {
+      JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getSavedSessionsJsonFile(), _savedSessionsJsonBean);
+      JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getSavedSessionGroupsJsonFile(), _savedSessionGroupsJsonBean);
+   }
+
+   public List<SavedSessionGrouped> getSavedSessionsGrouped()
    {
       initSavedSessions();
-      return _savedSessionsJsonBean.getSavedSessionJsonBeans();
+
+      List<SavedSessionGrouped> ret = new ArrayList<>();
+
+      for (SavedSessionJsonBean savedSessionJsonBean : _savedSessionsJsonBean.getSavedSessionJsonBeans())
+      {
+         if(StringUtilities.isEmpty(savedSessionJsonBean.getGroupId(), true))
+         {
+            ret.add(new SavedSessionGrouped(savedSessionJsonBean));
+         }
+         else
+         {
+            SavedSessionsGroupJsonBean group = getGroup(savedSessionJsonBean.getGroupId());
+            SavedSessionGrouped savedSessionGrouped = ret.stream().filter(ssg -> matchGroup(ssg, group)).findFirst().orElse(null);
+
+            if (null != savedSessionGrouped)
+            {
+               savedSessionGrouped.addSavedSession(savedSessionJsonBean);
+            }
+            else
+            {
+               ret.add(new SavedSessionGrouped(savedSessionJsonBean, group));
+            }
+         }
+      }
+
+      return ret;
+   }
+
+   public SavedSessionGrouped getSavedSessionGrouped(String groupId)
+   {
+      return getSavedSessionsGrouped().stream()
+                                      .filter(g -> StringUtils.equals(g.getGroup().getGroupId(), groupId))
+                                      .findFirst().orElseThrow(() -> new IllegalArgumentException("Failed to find group by groupId=" + groupId));
+   }
+
+   public SavedSessionGrouped getSavedSessionGrouped(SavedSessionJsonBean savedSession)
+   {
+      if (StringUtilities.isEmpty(savedSession.getGroupId(), true))
+      {
+         return SavedSessionGrouped.of(savedSession);
+      }
+      else
+      {
+         return getSavedSessionGrouped(savedSession.getGroupId());
+      }
+   }
+
+
+
+   private static boolean matchGroup(SavedSessionGrouped gr1, SavedSessionsGroupJsonBean gr2)
+   {
+      if(null == gr1 || null == gr2)
+      {
+         return false;
+      }
+
+      return StringUtils.equals(gr1.getGroup().getGroupId(), gr2.getGroupId());
    }
 
    private void initSavedSessions()
    {
       if(null == _savedSessionsJsonBean)
       {
-         final File jsonFile = new ApplicationFiles().getSavedSessionsJsonFile();
-         if(jsonFile.exists())
+         final File savedSessionsJsonFile = new ApplicationFiles().getSavedSessionsJsonFile();
+         if(savedSessionsJsonFile.exists())
          {
-            _savedSessionsJsonBean = JsonMarshalUtil.readObjectFromFileSave(jsonFile, SavedSessionsJsonBean.class, new SavedSessionsJsonBean());
+            _savedSessionsJsonBean = JsonMarshalUtil.readObjectFromFileSave(savedSessionsJsonFile, SavedSessionsJsonBean.class, new SavedSessionsJsonBean());
          }
          else
          {
             _savedSessionsJsonBean = new SavedSessionsJsonBean();
+         }
+
+         final File jsonFile = new ApplicationFiles().getSavedSessionGroupsJsonFile();
+         if(jsonFile.exists())
+         {
+            _savedSessionGroupsJsonBean = JsonMarshalUtil.readObjectFromFileSave(jsonFile, SavedSessionGroupsJsonBean.class, new SavedSessionGroupsJsonBean());
+         }
+         else
+         {
+            _savedSessionGroupsJsonBean = new SavedSessionGroupsJsonBean();
          }
 
          _singleThreadJsonWriteExecutorService = Executors.newSingleThreadExecutor();
@@ -206,8 +290,8 @@ public class SavedSessionsManager
          return;
       }
 
-      final List<SavedSessionJsonBean> toDel =
-            _savedSessionsJsonBean.getSavedSessionJsonBeans().subList(_savedSessionsJsonBean.getMaxNumberSavedSessions(), _savedSessionsJsonBean.getSavedSessionJsonBeans().size());
+      List<SavedSessionGrouped> allSavedSessionsGrouped = getSavedSessionsGrouped();
+      final List<SavedSessionGrouped> toDel = allSavedSessionsGrouped.subList(_savedSessionsJsonBean.getMaxNumberSavedSessions(), allSavedSessionsGrouped.size());
 
       final String msg = s_stringMgr.getString("SavedSessionsManager.maximum.number.saved.sessions.exceeded", _savedSessionsJsonBean.getMaxNumberSavedSessions(), toDel.size());
       Main.getApplication().getMessageHandler().showMessage(msg);
@@ -216,42 +300,54 @@ public class SavedSessionsManager
       delete(toDel);
    }
 
-   public void moveToTop(SavedSessionJsonBean savedSession)
+   public void moveToTop(SavedSessionGrouped savedSessionGrouped)
    {
       initSavedSessions();
 
-      _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSession);
-      _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSession);
-
-      saveJsonBean();
+      for (SavedSessionJsonBean savedSession : savedSessionGrouped.getSavedSessions())
+      {
+         _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSession);
+         _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSession);
+      }
+      saveJsonBeans();
    }
 
-   public List<ISession> getOpenSessionsOfList(List<SavedSessionJsonBean> savedSessions)
+   public List<ISession> getOpenSessionsForSavedSessionsGrouped(List<SavedSessionGrouped> savedSessionsGrouped)
    {
       initSavedSessions();
 
-      return Main.getApplication().getSessionManager().getOpenSessions().stream().filter(s -> savedSessions.contains(s.getSavedSession())).collect(Collectors.toList());
+      List<ISession> ret = new ArrayList<>();
+
+      for (SavedSessionGrouped savedSessionGrouped : savedSessionsGrouped)
+      {
+         ret.addAll(Main.getApplication().getSessionManager().getOpenSessions().stream().filter(s -> savedSessionGrouped.getSavedSessions().contains(s.getSavedSession())).collect(Collectors.toList()));
+      }
+
+      return ret;
    }
 
-   public void delete(List<SavedSessionJsonBean> toDel)
+   public void delete(List<SavedSessionGrouped> toDelList)
    {
       initSavedSessions();
 
       for (ISession session : Main.getApplication().getSessionManager().getOpenSessions())
       {
-         if(toDel.contains(session.getSavedSession()))
+         for (SavedSessionGrouped toDel : toDelList)
          {
-            SavedSessionUtil.initSessionWithSavedSession(null, session);
+            if(toDel.contains(session.getSavedSession()))
+            {
+               SavedSessionUtil.initSessionWithSavedSession(null, session);
+            }
          }
       }
 
-      for (SavedSessionJsonBean savedSessionJsonBean : toDel)
+      for (SavedSessionGrouped toDel : toDelList)
       {
-         deleteAllInternallyStoredFiles(savedSessionJsonBean);
+         toDel.getSavedSessions().forEach(savedSess -> deleteAllInternallyStoredFiles(savedSess));
       }
-      _savedSessionsJsonBean.getSavedSessionJsonBeans().removeAll(toDel);
+      _savedSessionsJsonBean.getSavedSessionJsonBeans().removeAll(toDelList);
 
-      saveJsonBean();
+      saveJsonBeans();
    }
 
    public int getMaxNumberSavedSessions()
@@ -262,6 +358,11 @@ public class SavedSessionsManager
    public void setMaxNumberSavedSessions(int maxNumberSavedSessions)
    {
       _savedSessionsJsonBean.setMaxNumberSavedSessions(maxNumberSavedSessions);
-      saveJsonBean();
+      saveJsonBeans();
+   }
+
+   public SavedSessionsGroupJsonBean getGroup(String groupId)
+   {
+      return _savedSessionGroupsJsonBean.getGroups().stream().filter(g -> StringUtils.equals(g.getGroupId(), groupId)).findFirst().orElse(null);
    }
 }

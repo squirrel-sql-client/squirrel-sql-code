@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -61,7 +62,8 @@ public class SavedSessionLoader
 
       SavedSessionUtil.initSessionWithSavedSession(savedSessionJsonBean, sessionInternalFrame.getSession());
 
-      Main.getApplication().getSavedSessionsManager().moveToTop(savedSessionJsonBean);
+      SavedSessionGrouped savedSessionGrouped1 = Main.getApplication().getSavedSessionsManager().getSavedSessionGrouped(savedSessionJsonBean);
+      Main.getApplication().getSavedSessionsManager().moveToTop(savedSessionGrouped1);
 
       sqlEditorActivator.activate();
 

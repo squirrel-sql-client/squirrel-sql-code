@@ -26,19 +26,11 @@ package net.sourceforge.squirrel_sql.fw.id;
 public class UidIdentifierFactory implements IIdentifierFactory
 {
 	/**
-	 * Default ctor.
-	 */
-	public UidIdentifierFactory()
-	{
-		super();
-	}
-
-	/**
 	 * Create a new identifier.
 	 *
 	 * @return	The new identifier object.
 	 */
-	public synchronized IIdentifier createIdentifier()
+	public IIdentifier createIdentifier()
 	{
 		return new UidIdentifier();
 	}

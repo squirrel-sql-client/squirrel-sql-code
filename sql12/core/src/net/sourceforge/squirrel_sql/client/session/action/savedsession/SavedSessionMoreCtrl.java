@@ -1,15 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -32,7 +30,7 @@ public class SavedSessionMoreCtrl
    private final SavedSessionMoreDlg _dlg;
    private ISession _session;
    private SavedSessionMoreCtrlClosingListener _closingListener;
-   private SavedSessionJsonBean _savedSessionToOpen;
+   private SavedSessionGrouped _savedSessionGroupedToOpen;
 
    public SavedSessionMoreCtrl(ISession session,
                                SavedSessionMoreCtrlClosingListener closingListener,
@@ -190,71 +188,32 @@ public class SavedSessionMoreCtrl
    {
       String filterText = _dlg.txtToSearch.getText();
 
-      final List<SavedSessionJsonBean> savedSessions = Main.getApplication().getSavedSessionsManager().getSavedSessions();
+      final List<SavedSessionGrouped> savedSessionsGrouped = Main.getApplication().getSavedSessionsManager().getSavedSessionsGrouped();
 
-      List<SavedSessionJsonBean> matchingSavedSessions = new ArrayList<>();
-      for (SavedSessionJsonBean savedSession : savedSessions)
+      List<SavedSessionGrouped> matchingSavedSessionsGrouped = new ArrayList<>();
+      for (SavedSessionGrouped savedSession : savedSessionsGrouped)
       {
          if(matches(savedSession, filterText))
          {
-            matchingSavedSessions.add(savedSession);
+            matchingSavedSessionsGrouped.add(savedSession);
          }
       }
 
-      _dlg.lstSavedSessions.setListData(matchingSavedSessions.toArray(new SavedSessionJsonBean[0]));
+      _dlg.lstSavedSessions.setListData(matchingSavedSessionsGrouped.toArray(new SavedSessionGrouped[0]));
       if(0 < _dlg.lstSavedSessions.getModel().getSize())
       {
          _dlg.lstSavedSessions.setSelectedIndex(0);
       }
    }
 
-   private boolean matches(SavedSessionJsonBean savedSession, String filterText)
+   private boolean matches(SavedSessionGrouped savedSessionGrouped, String filterText)
    {
       if(StringUtilities.isEmpty(filterText, true))
       {
          return true;
       }
 
-      if(StringUtils.containsIgnoreCase(savedSession.getName(), filterText))
-      {
-         return true;
-      }
-
-      if(false == StringUtilities.isEmpty(savedSession.getDefaultAliasIdString(), true))
-      {
-         final SQLAlias alias = Main.getApplication().getAliasesAndDriversManager().getAlias(new UidIdentifier(savedSession.getDefaultAliasIdString()));
-
-         if(null != alias )
-         {
-            if((null != alias.getName() && StringUtils.containsIgnoreCase(alias.getName(), filterText))
-               || (null != alias.getUrl() && StringUtils.containsIgnoreCase(alias.getUrl(), filterText))
-               || (null != alias.getUserName() && StringUtils.containsIgnoreCase(alias.getUserName(), filterText))
-            )
-            {
-               return true;
-            }
-         }
-      }
-
-      for (SessionSqlJsonBean sessionSQL : savedSession.getSessionSQLs())
-      {
-         if(false == StringUtilities.isEmpty(sessionSQL.getInternalFileName(), true))
-         {
-            if(StringUtils.containsIgnoreCase(sessionSQL.getInternalFileName(), filterText))
-            {
-               return true;
-            }
-         }
-         else if(false == StringUtilities.isEmpty(sessionSQL.getExternalFilePath(), true))
-         {
-            if(StringUtils.containsIgnoreCase(sessionSQL.getExternalFilePath(), filterText))
-            {
-               return true;
-            }
-         }
-      }
-
-      return false;
+      return savedSessionGrouped.matchesFilterText(filterText);
    }
 
    private void maybeTriggerPopup(MouseEvent me)
@@ -280,40 +239,40 @@ public class SavedSessionMoreCtrl
 
    private void onPrintDetails()
    {
-      final SavedSessionJsonBean selectedSavedSession = _dlg.lstSavedSessions.getSelectedValue();
+      final SavedSessionGrouped selectedSavedSessionGrouped = _dlg.lstSavedSessions.getSelectedValue();
 
-      if(null == selectedSavedSession)
+      if(null == selectedSavedSessionGrouped)
       {
          Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SavedSessionMoreCtrl.no.section.to.print.details"));
       }
 
-      SavedSessionUtil.printSavedSessionDetails(selectedSavedSession);
+      SavedSessionUtil.printSavedSessionDetails(selectedSavedSessionGrouped);
    }
 
    private void onRename()
    {
-      final SavedSessionJsonBean selectedSavedSession = _dlg.lstSavedSessions.getSelectedValue();
-      if(null == selectedSavedSession)
+      final SavedSessionGrouped savedSessionGrouped = _dlg.lstSavedSessions.getSelectedValue();
+      if(null == savedSessionGrouped)
       {
          Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SavedSessionMoreCtrl.no.session.to.rename"));
       }
 
-      final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(_dlg, selectedSavedSession.getName());
+      final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(_dlg, savedSessionGrouped.getName());
 
       if(false == sessionSaveDlg.isOk())
       {
          return;
       }
 
-      selectedSavedSession.setName(sessionSaveDlg.getSavedSessionName());
-      Main.getApplication().getSavedSessionsManager().moveToTop(selectedSavedSession);
+      savedSessionGrouped.setName(sessionSaveDlg.getSavedSessionName());
+      Main.getApplication().getSavedSessionsManager().moveToTop(savedSessionGrouped);
 
       Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
    }
 
    private void onDeleteSelected()
    {
-      final List<SavedSessionJsonBean> selectedValuesList = _dlg.lstSavedSessions.getSelectedValuesList();
+      final List<SavedSessionGrouped> selectedValuesList = _dlg.lstSavedSessions.getSelectedValuesList();
 
       if(0 == selectedValuesList.size())
       {
@@ -321,7 +280,7 @@ public class SavedSessionMoreCtrl
          return;
       }
 
-      final List<ISession> openSessions = Main.getApplication().getSavedSessionsManager().getOpenSessionsOfList(selectedValuesList);
+      final List<ISession> openSessions = Main.getApplication().getSavedSessionsManager().getOpenSessionsForSavedSessionsGrouped(selectedValuesList);
       if(0 < openSessions.size())
       {
          if(JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("SavedSessionMoreCtrl.confirm.delete.including.used.in.open")))
@@ -341,7 +300,7 @@ public class SavedSessionMoreCtrl
 
       Main.getApplication().getSavedSessionsManager().delete(selectedValuesList);
 
-      _dlg.lstSavedSessions.setListData(Main.getApplication().getSavedSessionsManager().getSavedSessions().toArray(new SavedSessionJsonBean[0]));
+      _dlg.lstSavedSessions.setListData(Main.getApplication().getSavedSessionsManager().getSavedSessionsGrouped().toArray(new SavedSessionGrouped[0]));
 
       if(0 < _dlg.lstSavedSessions.getModel().getSize())
       {
@@ -377,9 +336,9 @@ public class SavedSessionMoreCtrl
 
    private void onOpenSelected()
    {
-      _savedSessionToOpen = _dlg.lstSavedSessions.getSelectedValue();
+      _savedSessionGroupedToOpen = _dlg.lstSavedSessions.getSelectedValue();
 
-      if(null == _savedSessionToOpen)
+      if(null == _savedSessionGroupedToOpen)
       {
          JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("SavedSessionMoreCtrl.no.saved.session.selected.to.open"));
          return;
@@ -417,7 +376,7 @@ public class SavedSessionMoreCtrl
 
       if(null != _closingListener)
       {
-         _closingListener.closed(_savedSessionToOpen, isOpenInNewSession());
+         _closingListener.closed(_savedSessionGroupedToOpen, isOpenInNewSession());
       }
    }
 

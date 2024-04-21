@@ -20,6 +20,7 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommit
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SaveAndManageGroupOfSavedSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.table_script.*;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -110,6 +111,7 @@ public class ActionRegistry
       toolsPopupController.addAction("savedsessionopen", ac.get(SessionOpenAction.class));
       toolsPopupController.addAction("savedsessionsave", ac.get(SessionSaveAction.class));
       toolsPopupController.addAction("savedsessioncommit", ac.get(GitCommitSessionAction.class));
+      toolsPopupController.addAction("savemultiplesessions", ac.get(SaveAndManageGroupOfSavedSessionsAction.class));
 
       toolsPopupController.addAction("aliaspopup", ac.get(AliasPopUpMenuAction.class));
       toolsPopupController.addAction("sessionpopup", ac.get(SessionPopUpMenuAction.class));
@@ -172,6 +174,7 @@ public class ActionRegistry
 
       actionCollection.add(new SessionSaveAction(app));
       actionCollection.add(new GitCommitSessionAction(app));
+      actionCollection.add(new SaveAndManageGroupOfSavedSessionsAction());
       actionCollection.add(new SessionOpenAction(app));
       actionCollection.add(new SessionManageAction(app));
 

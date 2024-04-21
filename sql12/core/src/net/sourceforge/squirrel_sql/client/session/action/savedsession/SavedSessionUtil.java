@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -15,7 +16,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SavedSessionUtil
@@ -146,63 +149,139 @@ public class SavedSessionUtil
       return new ApplicationFiles().getSavedSessionsDir();
    }
 
-   public static void printSavedSessionDetails(SavedSessionJsonBean savedSession)
+   public static void printSavedSessionDetails(SavedSessionGrouped savedSessionGrouped)
    {
-      String savedSessionName = savedSession.getName();
-
-      final SQLAlias alias = getAliasForIdString(savedSession.getDefaultAliasIdString());
-      String aliasName = "<unknown>";
-      String jdbcUrl = "<unknown>";
-      String jdbcUser = "<unknown>";
-      if(null != alias)
+      if(savedSessionGrouped.isGroup())
       {
-         aliasName = alias.getName();
-         jdbcUrl = alias.getUrl();
-         jdbcUser = alias.getUserName();
+         final String msg = s_stringMgr.getString("SavedSessionUtil.saved.session.group", savedSessionGrouped.getGroup().getGroupName());
+         Main.getApplication().getMessageHandler().showMessage(msg);
       }
 
-      final String msg = s_stringMgr.getString("SavedSessionUtil.saved.session.details", savedSessionName, aliasName, jdbcUrl, jdbcUser);
-      Main.getApplication().getMessageHandler().showMessage(msg);
-
-      boolean firstInternalFile = true;
-      for (SessionSqlJsonBean sessionSQL : savedSession.getSessionSQLs())
+      for (int i = 0; i < savedSessionGrouped.getSavedSessions().size(); i++)
       {
-         final String fileMsg;
+         SavedSessionJsonBean savedSession = savedSessionGrouped.getSavedSessions().get(i);
+         String savedSessionName = savedSession.getName();
 
-         if(false == StringUtilities.isEmpty(sessionSQL.getExternalFilePath()))
+         final SQLAlias alias = getAliasForIdString(savedSession.getDefaultAliasIdString());
+         String aliasName = "<unknown>";
+         String jdbcUrl = "<unknown>";
+         String jdbcUser = "<unknown>";
+         if(null != alias)
          {
-            fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.external.file", sessionSQL.getExternalFilePath());
+            aliasName = alias.getName();
+            jdbcUrl = alias.getUrl();
+            jdbcUser = alias.getUserName();
+         }
+
+         if (savedSessionGrouped.isGroup())
+         {
+            final String msg = s_stringMgr.getString("SavedSessionUtil.saved.session.in.group.details", (i+1), aliasName, jdbcUrl, jdbcUser);
+            Main.getApplication().getMessageHandler().showMessage(msg);
          }
          else
          {
-            if(firstInternalFile)
+            final String msg = s_stringMgr.getString("SavedSessionUtil.saved.session.details", savedSessionName, aliasName, jdbcUrl, jdbcUser);
+            Main.getApplication().getMessageHandler().showMessage(msg);
+         }
+
+         boolean firstInternalFile = true;
+         for (SessionSqlJsonBean sessionSQL : savedSession.getSessionSQLs())
+         {
+            final String fileMsg;
+
+            if(false == StringUtilities.isEmpty(sessionSQL.getExternalFilePath()))
             {
-               fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.internal.file.first", sessionSQL.getInternalFileName(), getSavedSessionsDir());
-               firstInternalFile = false;
+               fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.external.file", sessionSQL.getExternalFilePath());
             }
             else
             {
-               fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.internal.file", sessionSQL.getInternalFileName());
+               if(firstInternalFile)
+               {
+                  fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.internal.file.first", sessionSQL.getInternalFileName(), getSavedSessionsDir());
+                  firstInternalFile = false;
+               }
+               else
+               {
+                  fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.internal.file", sessionSQL.getInternalFileName());
+               }
             }
+            Main.getApplication().getMessageHandler().showMessage(fileMsg);
          }
-         Main.getApplication().getMessageHandler().showMessage(fileMsg);
       }
    }
 
-   public static String getDisplayString(SavedSessionJsonBean value)
+   public static String getDisplayString(SavedSessionGrouped value)
    {
-      String aliasName = "<unknown>";
-      String aliasUrl = "<unknown>";
-      String aliasUserName = "<unknown>";
+      String ret = "";
 
-      final SQLAlias alias = getAliasForIdString(value.getDefaultAliasIdString());
-      if(null != alias)
+      if (value.isGroup())
       {
-         aliasName = alias.getName();
-         aliasUrl = alias.getUrl();
-         aliasUserName = alias.getUserName();
+         ret = s_stringMgr.getString("SavedSessionUtil.group.title", value.getName());
       }
 
-      return s_stringMgr.getString("SavedSessionUtil.saved.session.display.name", value.getName(), aliasName, aliasUrl, aliasUserName);
+      for (SavedSessionJsonBean savedSession : value.getSavedSessions())
+      {
+         String aliasName = "<unknown>";
+         String aliasUrl = "<unknown>";
+         String aliasUserName = "<unknown>";
+
+         final SQLAlias alias = getAliasForIdString(savedSession.getDefaultAliasIdString());
+         if(null != alias)
+         {
+            aliasName = alias.getName();
+            aliasUrl = alias.getUrl();
+            aliasUserName = alias.getUserName();
+         }
+
+         if (value.isGroup())
+         {
+            ret += s_stringMgr.getString("SavedSessionUtil.saved.session.in.group.display.name", "   ", aliasName, aliasUrl, aliasUserName);
+         }
+         else
+         {
+            // The above runs only once because its no Saved Session Group
+            ret += s_stringMgr.getString("SavedSessionUtil.saved.session.display.name", value.getName(), aliasName, aliasUrl, aliasUserName);
+         }
+      }
+
+      return ret;
+   }
+
+   public static String createSavedSessionNameTemplate(ISession session)
+   {
+      String savedSessionNameTemplate;
+      savedSessionNameTemplate = createSessionName(session) + createDatePostfix();
+      return savedSessionNameTemplate;
+   }
+
+   public static String createSessionGroupNameTemplate(List<ISession> sessions)
+   {
+      String ret = "Group: [";
+
+      for (int i = 0; i < sessions.size(); i++)
+      {
+         if (0 < i)
+         {
+            ret += " | ";
+         }
+
+         ISession session = sessions.get(i);
+         ret += SavedSessionUtil.createSessionName(session);
+      }
+
+      ret += "]" + createDatePostfix();
+
+      return ret;
+   }
+
+   private static String createDatePostfix()
+   {
+      SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      return " | " + df.format(new Date());
+   }
+
+   private static String createSessionName(ISession session)
+   {
+      return session.getAlias().getName();
    }
 }

@@ -1,23 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 public class SavedSessionMoreDlg extends JDialog
 {
@@ -27,7 +17,7 @@ public class SavedSessionMoreDlg extends JDialog
    JCheckBox chkRememberLastSearch = new JCheckBox(s_stringMgr.getString("SavedSessionMoreDlg.remember.last.search"));
 
    OpenInSessionPanel openInSessionPanel;
-   JList<SavedSessionJsonBean> lstSavedSessions;
+   JList<SavedSessionGrouped> lstSavedSessions;
    JButton btnClose;
    JButton btnOpenSelected;
    JButton btnDeleteSelected;
@@ -47,7 +37,7 @@ public class SavedSessionMoreDlg extends JDialog
 
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5), 0,0);
       lstSavedSessions = new JList<>();
-      lstSavedSessions.setCellRenderer(new SavedSessionListCellRenderer());
+      lstSavedSessions.setCellRenderer(new SavedSessionGroupedListCellRenderer());
       getContentPane().add(new JScrollPane(lstSavedSessions), gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);

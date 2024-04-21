@@ -178,8 +178,10 @@ public class SquirrelResources extends Resources
 		String SQL = "sql";
 
 		String SESSION_SAVE = "session_save";
+		String SESSION_GIT_COMMIT = "session_git_commit";
 		String SESSION_OPEN = "session_open";
 		String SESSION_MANAGE = "session_manage";
+		String SESSION_GROUP_SAVE = "session-group-save";
 
 		String SMALL_COPY_PASSWORD = "small_copy_password";
 		String SMALL_SHOW_PASSWORD = "small_show_password";

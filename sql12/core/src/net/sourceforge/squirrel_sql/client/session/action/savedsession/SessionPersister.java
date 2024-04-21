@@ -3,14 +3,14 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionsGroupJsonBean;
 import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainDialog;
 import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class SessionPersister
@@ -30,15 +30,28 @@ public class SessionPersister
 
    public static boolean saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit)
    {
+      return _saveSession(session, allowAliasChangeMsg, gitCommit, null);
+   }
+
+   public static void saveSessionGroup(ISession sess, SavedSessionsGroupJsonBean group, boolean gitCommit)
+   {
+
+      _saveSession(sess,
+                   false, // As groups can only be opened on the same combination of Aliases
+                   gitCommit,
+                   group);
+   }
+
+   private static boolean _saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit, SavedSessionsGroupJsonBean group)
+   {
       SavedSessionJsonBean savedSessionJsonBean = session.getSavedSession();
 
       final SQLAlias alias = session.getAlias();
       final SavedSessionsManager savedSessionsManager = Main.getApplication().getSavedSessionsManager();
       String savedSessionNameTemplate = null;
-      if(null == savedSessionJsonBean)
+      if(null == savedSessionJsonBean && null == group)
       {
-         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-         savedSessionNameTemplate = alias.getName() + " | " + df.format(new Date());
+         savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(session);
 
          final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(GUIUtils.getOwningFrame(session.getSessionPanel()), savedSessionNameTemplate);
 
@@ -51,7 +64,15 @@ public class SessionPersister
          savedSessionJsonBean.setName(sessionSaveDlg.getSavedSessionName());
          savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
       }
+      else if(null == savedSessionJsonBean && null != group)
+      {
+         savedSessionJsonBean = new SavedSessionJsonBean();
+         savedSessionJsonBean.setGroupId(group.getGroupId());
+         savedSessionJsonBean.setName("<NameNotDisplayGroupSession_groupId=" + group.getGroupId() + ">");
+         savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
+      }
       else if(allowAliasChangeMsg
+              && false == StringUtilities.isEmpty(savedSessionJsonBean.getGroupId(), true) // Cannot change Aliases of SavedSessions in a Session group
               && false == alias.getIdentifier().toString().equals(savedSessionJsonBean.getDefaultAliasIdString())
               && savedSessionsManager.isShowAliasChangeMsg())
       {
@@ -87,7 +108,7 @@ public class SessionPersister
          // But we want the active SQL-Editor to remain the same after saving the Session.
          sqlEditorActivator.prepareToActivateSQLPanelSaveInfo(panel, sessionSqlJsonBean);
       }
-      savedSessionsManager.endStore(savedSessionJsonBean, sessionSaveProcessHandle);
+      savedSessionsManager.endStore(savedSessionJsonBean, group, sessionSaveProcessHandle);
 
       Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SessionPersister.saved.session.msg", savedSessionJsonBean.getName()));
 

@@ -6,12 +6,11 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 
@@ -67,7 +66,8 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
 
    private void onPrintDetailsToMessagePanel()
    {
-      SavedSessionUtil.printSavedSessionDetails(_session.getSavedSession());
+      SavedSessionGrouped savedSessionsGroup = Main.getApplication().getSavedSessionsManager().getSavedSessionGrouped(_session.getSavedSession());
+      SavedSessionUtil.printSavedSessionDetails(savedSessionsGroup);
    }
 
    private void onSaveAsNewSavedSession()
@@ -83,6 +83,8 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
 
    private void onRenameSavedSession()
    {
+      SavedSessionGrouped savedSessionGrouped = Main.getApplication().getSavedSessionsManager().getSavedSessionGrouped(_session.getSavedSession());
+
       SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(Main.getApplication().getMainFrame(), _session.getSavedSession().getName());
 
       if(false == sessionSaveDlg.isOk())
@@ -91,7 +93,7 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
       }
 
       _session.getSavedSession().setName(sessionSaveDlg.getSavedSessionName());
-      Main.getApplication().getSavedSessionsManager().moveToTop(_session.getSavedSession());
+      Main.getApplication().getSavedSessionsManager().moveToTop(savedSessionGrouped);
       // SessionPersister.saveSession(session, false);
 
       Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();

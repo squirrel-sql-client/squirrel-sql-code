@@ -9,9 +9,11 @@ import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.IToolsPopupDescription;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -33,17 +35,17 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
 
    public void actionPerformed(ActionEvent ae)
    {
-      final List<SavedSessionJsonBean> savedSessions = Main.getApplication().getSavedSessionsManager().getSavedSessions();
+      final List<SavedSessionGrouped> savedSessionsGrouped = Main.getApplication().getSavedSessionsManager().getSavedSessionsGrouped();
 
       if(ae.getSource() instanceof JButton)
       {
          JPopupMenu popupMenu = new JPopupMenu();
 
-         for (int i = 0; i < Math.min(10, savedSessions.size()); i++)
+         for (int i = 0; i < Math.min(10, savedSessionsGrouped.size()); i++)
          {
-            SavedSessionJsonBean savedSessionJsonBean =  savedSessions.get(i);
-            final JMenuItem item = new JMenuItem(savedSessionJsonBean.getName());
-            item.addActionListener(e -> onOpenSavedSession(savedSessionJsonBean, _session, false));
+            SavedSessionGrouped savedSessionGrouped =  savedSessionsGrouped.get(i);
+            final JMenuItem item = new JMenuItem(savedSessionGrouped.getName(), getIcon(savedSessionGrouped));
+            item.addActionListener(e -> onOpenSavedSessionGrouped(savedSessionGrouped, _session, false));
             popupMenu.add(item);
          }
 
@@ -64,35 +66,46 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
       }
    }
 
-   public void onOpenSavedSessionsMoreDialog()
+   private ImageIcon getIcon(SavedSessionGrouped savedSessionGrouped)
    {
-      SavedSessionMoreCtrlSingleton.openDialog(_session, (ssjb, newSess) -> onSavedSessionMoreResultReceived(ssjb, newSess));
+      if(false == savedSessionGrouped.isGroup())
+      {
+         return null;
+      }
+
+
+      return Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GROUP_SAVE);
    }
 
-   private void onSavedSessionMoreResultReceived(SavedSessionJsonBean savedSessionJsonBean, boolean openInNewSession)
+   public void onOpenSavedSessionsMoreDialog()
    {
-      if(null != savedSessionJsonBean)
+      SavedSessionMoreCtrlSingleton.openDialog(_session, (ssg, inNewSess) -> onSavedSessionMoreResultReceived(ssg, inNewSess));
+   }
+
+   private void onSavedSessionMoreResultReceived(SavedSessionGrouped savedSessionGrouped, boolean openInNewSession)
+   {
+      if(null != savedSessionGrouped)
       {
          if(openInNewSession)
          {
-            onOpenSavedSession(savedSessionJsonBean, null, true);
+            onOpenSavedSessionGrouped(savedSessionGrouped, null, true);
          }
          else
          {
-            onOpenSavedSession(savedSessionJsonBean, _session, true);
+            onOpenSavedSessionGrouped(savedSessionGrouped, _session, true);
          }
       }
    }
 
-   private void onOpenSavedSession(SavedSessionJsonBean savedSessionJsonBean, ISession session, boolean silent)
+   private void onOpenSavedSessionGrouped(SavedSessionGrouped savedSessionGrouped, ISession session, boolean silent)
    {
       final MainFrame mainFrame = Main.getApplication().getMainFrame();
-      if( null != session )
+      if( null != session && false == savedSessionGrouped.isGroup())
       {
          if(false == silent)
          {
             OpenInSessionDlg openInSessionDlg =
-                  new OpenInSessionDlg(mainFrame, savedSessionJsonBean.getName(),false == SavedSessionUtil.isSQLVirgin(session));
+                  new OpenInSessionDlg(mainFrame, savedSessionGrouped.getName(),false == SavedSessionUtil.isSQLVirgin(session));
 
             if(false == openInSessionDlg.isOk())
             {
@@ -101,36 +114,38 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
 
             if(openInSessionDlg.isOpenInNewSession())
             {
-               onOpenSavedSession(savedSessionJsonBean, null, silent);
+               onOpenSavedSessionGrouped(savedSessionGrouped, null, silent);
                return;
             }
          }
 
          SavedSessionUtil.makeSessionSQLVirgin(session);
 
-         loadSavedSession(session.getSessionInternalFrame(), savedSessionJsonBean);
+         loadSavedSession(session.getSessionInternalFrame(), savedSessionGrouped.getNoGroupedSavedSession());
       }
       else
       {
-         final SQLAlias alias = SavedSessionUtil.getAliasForIdString(savedSessionJsonBean.getDefaultAliasIdString());
-
-         if(null == alias)
+         for (SavedSessionJsonBean savedSession : savedSessionGrouped.getSavedSessions())
          {
-            JOptionPane.showMessageDialog(mainFrame, s_stringMgr.getString("SessionOpenAction.missing.alias"));
-            return;
-         }
+            final SQLAlias alias = SavedSessionUtil.getAliasForIdString(savedSession.getDefaultAliasIdString());
 
-         final ConnectToAliasCallBack callback = new ConnectToAliasCallBack(alias)
-         {
-            @Override
-            public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
+            if(null == alias)
             {
-               loadSavedSession(sessionInternalFrame, savedSessionJsonBean);
+               JOptionPane.showMessageDialog(mainFrame, s_stringMgr.getString("SessionOpenAction.missing.alias"));
+               return;
             }
-         };
 
-         new ConnectToAliasCommand(alias, true, callback).execute();
+            final ConnectToAliasCallBack callback = new ConnectToAliasCallBack(alias)
+            {
+               @Override
+               public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
+               {
+                  loadSavedSession(sessionInternalFrame, savedSession);
+               }
+            };
 
+            new ConnectToAliasCommand(alias, true, callback).execute();
+         }
       }
    }
 

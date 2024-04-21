@@ -8,6 +8,7 @@ public class SavedSessionJsonBean
    private String _defaultAliasIdString;
    private String _name;
    private List<SessionSqlJsonBean> _sessionSQLs = new ArrayList<>();
+   private String _groupId;
 
    public void setDefaultAliasIdString(String defaultAliasIdString)
    {
@@ -42,6 +43,17 @@ public class SavedSessionJsonBean
    @Override
    public String toString()
    {
-      return SavedSessionUtil.getDisplayString(this);
+      //return SavedSessionUtil.getDisplayString(this);
+      return "ERROR: Call SavedSessionGrouped.toString() instead.";
+   }
+
+   public String getGroupId()
+   {
+      return _groupId;
+   }
+
+   public void setGroupId(String groupId)
+   {
+      _groupId = groupId;
    }
 }
