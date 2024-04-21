@@ -347,7 +347,6 @@ public class ConnectToAliasCommand implements ICommand
 
       Runner(ISession session, ConnectionInternalFrame connSheet, ICompletionCallback callback)
 		{
-			super();
 			_session = session;
 			_connSheet = connSheet;
          _callback = callback;

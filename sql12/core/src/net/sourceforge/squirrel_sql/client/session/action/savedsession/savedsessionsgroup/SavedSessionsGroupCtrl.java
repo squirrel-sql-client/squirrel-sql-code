@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionPersister;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -16,20 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class GroupOfSavedSessionsCtrl
+public class SavedSessionsGroupCtrl
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GroupOfSavedSessionsCtrl.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionsGroupCtrl.class);
+   public static final String PROPS_KEY_DEFAULT_BUTTON = "GroupOfSavedSessionsCtrl.GroupSaveDefaultButton";
 
-   private final GroupOfSavedSessionsDlg _dlg;
+   private final SavedSessionsGroupDlg _dlg;
 
    private SavedSessionsGroupJsonBean _savedSessionsGroup;
 
    private boolean _inOnListSelectionChanged;
    private boolean _groupNameEditedByUser;
 
-   public GroupOfSavedSessionsCtrl()
+   public SavedSessionsGroupCtrl()
    {
-      _dlg = new GroupOfSavedSessionsDlg();
+      _dlg = new SavedSessionsGroupDlg();
 
       DefaultListModel<ISession> sessionListModel = new DefaultListModel<>();
       sessionListModel.addAll(Main.getApplication().getSessionManager().getOpenSessions());
@@ -92,13 +94,34 @@ public class GroupOfSavedSessionsCtrl
       });
 
 
-      _dlg.btnSaveGroup.addActionListener(e -> onSaveGroup());
+      _dlg.btnSaveGroup.addActionListener(e -> onSaveGroup(false));
+      _dlg.btnGitCommitGroup.addActionListener(e -> onSaveGroup(true));
       _dlg.btnCancel.addActionListener(e -> close());
+
+      SavedSessionsGroupDlgDefaultButton defaultButton = SavedSessionsGroupDlgDefaultButton.valueOf(Props.getString(PROPS_KEY_DEFAULT_BUTTON, SavedSessionsGroupDlgDefaultButton.SAVE.name()));
+      _dlg.cboDefaultButton.setSelectedItem(defaultButton);
+      _dlg.cboDefaultButton.addActionListener(e -> initDefaultButton((SavedSessionsGroupDlgDefaultButton) _dlg.cboDefaultButton.getSelectedItem()));
+      initDefaultButton(defaultButton);
 
       GUIUtils.forceFocus(_dlg.txtGroupName);
       GUIUtils.initLocation(_dlg, 600, 500);
       GUIUtils.enableCloseByEscape(_dlg);
       _dlg.setVisible(true);
+   }
+
+   private void initDefaultButton(SavedSessionsGroupDlgDefaultButton defaultButton)
+   {
+      switch (defaultButton)
+      {
+         case SAVE:
+            _dlg.getRootPane().setDefaultButton(_dlg.btnSaveGroup);
+            break;
+         case GIT_COMMIT:
+            _dlg.getRootPane().setDefaultButton(_dlg.btnGitCommitGroup);
+            break;
+         default:
+            throw new IllegalStateException("Unknown default button: " + defaultButton);
+      }
    }
 
    private void handleGroupNameUpdatedByUser()
@@ -112,20 +135,20 @@ public class GroupOfSavedSessionsCtrl
    }
 
 
-   private void onSaveGroup()
+   private void onSaveGroup(boolean gitCommit)
    {
       List<ISession> toSave = _dlg.lstSessions.getSelectedValuesList();
 
       if(toSave.isEmpty())
       {
-         JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("GroupOfSavedSessionsCtrl.error.cannot.save.empty.group.message.box"));
+         JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("SavedSessionsGroupCtrl.error.cannot.save.empty.group.message.box"));
          return;
       }
 
       String groupName = _dlg.txtGroupName.getText();
       if(StringUtilities.isEmpty(groupName, true))
       {
-         JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("GroupOfSavedSessionsCtrl.error.no.group.name"));
+         JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("SavedSessionsGroupCtrl.error.no.group.name"));
          return;
       }
 
@@ -136,8 +159,8 @@ public class GroupOfSavedSessionsCtrl
             if(null == _savedSessionsGroup || false == Objects.equals(_savedSessionsGroup.getGroupId(), sess.getSavedSession().getGroupId()))
             {
                int res = JOptionPane.showConfirmDialog(_dlg,
-                                                     s_stringMgr.getString("GroupOfSavedSessionsCtrl.saved.session.exists.message"),
-                                                     s_stringMgr.getString("GroupOfSavedSessionsCtrl.saved.session.exists.title"),
+                                                     s_stringMgr.getString("SavedSessionsGroupCtrl.saved.session.exists.message"),
+                                                     s_stringMgr.getString("SavedSessionsGroupCtrl.saved.session.exists.title"),
                                                      JOptionPane.YES_NO_CANCEL_OPTION);
 
                if (res != JOptionPane.YES_OPTION)
@@ -157,12 +180,16 @@ public class GroupOfSavedSessionsCtrl
 
       for (ISession sess : toSave)
       {
-         SessionPersister.saveSessionGroup(sess, _savedSessionsGroup, false);
+         SessionPersister.saveSessionGroup(sess, _savedSessionsGroup, gitCommit, sess.equals(Main.getApplication().getSessionManager().getActiveSession()));
       }
+
+      close();
    }
 
    private void close()
    {
+      Props.putString(PROPS_KEY_DEFAULT_BUTTON, ((SavedSessionsGroupDlgDefaultButton)_dlg.cboDefaultButton.getSelectedItem()).name());
+
       _dlg.setVisible(false);
       _dlg.dispose();
    }
@@ -179,7 +206,7 @@ public class GroupOfSavedSessionsCtrl
 
          if(_dlg.lstSessions.getSelectedValuesList().isEmpty())
          {
-            _dlg.txtGroupName.setText(s_stringMgr.getString("GroupOfSavedSessionsCtrl.error.cannot.save.empty.group"));
+            _dlg.txtGroupName.setText(s_stringMgr.getString("SavedSessionsGroupCtrl.error.cannot.save.empty.group"));
          }
          _dlg.txtGroupName.setText(SavedSessionUtil.createSessionGroupNameTemplate(_dlg.lstSessions.getSelectedValuesList()));
       }

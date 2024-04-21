@@ -9,7 +9,6 @@ import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.util.List;
 
@@ -30,28 +29,28 @@ public class SessionPersister
 
    public static boolean saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit)
    {
-      return _saveSession(session, allowAliasChangeMsg, gitCommit, null);
+      return _saveSession(session, allowAliasChangeMsg, gitCommit, null, false);
    }
 
-   public static void saveSessionGroup(ISession sess, SavedSessionsGroupJsonBean group, boolean gitCommit)
+   public static void saveSessionGroup(ISession sess, SavedSessionsGroupJsonBean group, boolean gitCommit, boolean activeSessionInGroup)
    {
 
       _saveSession(sess,
                    false, // As groups can only be opened on the same combination of Aliases
                    gitCommit,
-                   group);
+                   group,
+                   activeSessionInGroup);
    }
 
-   private static boolean _saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit, SavedSessionsGroupJsonBean group)
+   private static boolean _saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit, SavedSessionsGroupJsonBean group, boolean activeSessionInGroup)
    {
       SavedSessionJsonBean savedSessionJsonBean = session.getSavedSession();
 
       final SQLAlias alias = session.getAlias();
       final SavedSessionsManager savedSessionsManager = Main.getApplication().getSavedSessionsManager();
-      String savedSessionNameTemplate = null;
       if(null == savedSessionJsonBean && null == group)
       {
-         savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(session);
+         String  savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(session);
 
          final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(GUIUtils.getOwningFrame(session.getSessionPanel()), savedSessionNameTemplate);
 
@@ -72,7 +71,7 @@ public class SessionPersister
          savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
       }
       else if(allowAliasChangeMsg
-              && false == StringUtilities.isEmpty(savedSessionJsonBean.getGroupId(), true) // Cannot change Aliases of SavedSessions in a Session group
+              && null == group // Cannot change Aliases of SavedSessions in a Session group
               && false == alias.getIdentifier().toString().equals(savedSessionJsonBean.getDefaultAliasIdString())
               && savedSessionsManager.isShowAliasChangeMsg())
       {
@@ -100,14 +99,17 @@ public class SessionPersister
 
       SessionSaveProcessHandle sessionSaveProcessHandle = savedSessionsManager.beginStore(savedSessionJsonBean);
       SQLEditorActivator sqlEditorActivator = new SQLEditorActivator();
-      for (SQLPanelSaveInfo panel : sqlPanelSaveInfoList)
+      for (SQLPanelSaveInfo sqlPanelSaveInfo : sqlPanelSaveInfoList)
       {
-         SessionSqlJsonBean sessionSqlJsonBean = savedSessionsManager.storeFile(savedSessionJsonBean, panel, gitCommit);
+         SessionSqlJsonBean sessionSqlJsonBean = savedSessionsManager.storeFile(savedSessionJsonBean, sqlPanelSaveInfo, gitCommit);
 
          // The SQLEditorActivator is needed because externally saving a file selects the according SQL Tab.
          // But we want the active SQL-Editor to remain the same after saving the Session.
-         sqlEditorActivator.prepareToActivateSQLPanelSaveInfo(panel, sessionSqlJsonBean);
+         sqlEditorActivator.prepareToActivateSQLPanelSaveInfo(sqlPanelSaveInfo, sessionSqlJsonBean);
       }
+
+      savedSessionJsonBean.setActiveSessionInGroup(activeSessionInGroup);
+
       savedSessionsManager.endStore(savedSessionJsonBean, group, sessionSaveProcessHandle);
 
       Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SessionPersister.saved.session.msg", savedSessionJsonBean.getName()));

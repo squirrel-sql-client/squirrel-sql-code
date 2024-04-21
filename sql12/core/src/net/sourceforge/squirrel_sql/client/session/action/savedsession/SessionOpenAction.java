@@ -3,22 +3,22 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.IToolsPopupDescription;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.MultipleSavedSessionOpener;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -125,27 +125,33 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
       }
       else
       {
+         List<SavedSessionJsonBean> savedSessionsToOpen = new ArrayList<>();
+
          for (SavedSessionJsonBean savedSession : savedSessionGrouped.getSavedSessions())
          {
             final SQLAlias alias = SavedSessionUtil.getAliasForIdString(savedSession.getDefaultAliasIdString());
 
             if(null == alias)
             {
-               JOptionPane.showMessageDialog(mainFrame, s_stringMgr.getString("SessionOpenAction.missing.alias"));
-               return;
+               if (savedSessionGrouped.isGroup())
+               {
+                  JOptionPane.showMessageDialog(mainFrame, s_stringMgr.getString("SessionOpenAction.missing.alias.for.group"));
+               }
+               else
+               {
+                  JOptionPane.showMessageDialog(mainFrame, s_stringMgr.getString("SessionOpenAction.missing.alias"));
+               }
+
+               // In case of a Saved Session savedSessionGrouped.getSavedSessions() contains one element only hence this
+               // continue means return.
+               // In case of a Saved Session group we skip
+               continue;
             }
 
-            final ConnectToAliasCallBack callback = new ConnectToAliasCallBack(alias)
-            {
-               @Override
-               public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
-               {
-                  loadSavedSession(sessionInternalFrame, savedSession);
-               }
-            };
-
-            new ConnectToAliasCommand(alias, true, callback).execute();
+            savedSessionsToOpen.add(savedSession);
          }
+
+         MultipleSavedSessionOpener.openSavedSessions(savedSessionsToOpen);
       }
    }
 

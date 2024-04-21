@@ -26,7 +26,7 @@ public class SaveAndManageGroupOfSavedSessionsAction extends SquirrelAction impl
    @Override
    public void actionPerformed(ActionEvent evt)
    {
-      new GroupOfSavedSessionsCtrl();
+      new SavedSessionsGroupCtrl();
    }
 
 }
