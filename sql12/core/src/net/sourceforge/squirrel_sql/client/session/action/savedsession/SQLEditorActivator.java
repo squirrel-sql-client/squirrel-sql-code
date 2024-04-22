@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -9,9 +7,15 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 
+import javax.swing.*;
+
 public class SQLEditorActivator
 {
    private Runnable _selectSqlEditorRunnable;
+
+   public SQLEditorActivator()
+   {
+   }
 
    public void prepareToActivateMainSqlTab(SessionInternalFrame sessionInternalFrame, SessionSqlJsonBean sessionSQL)
    {

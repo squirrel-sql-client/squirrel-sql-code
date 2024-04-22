@@ -363,6 +363,7 @@ public class SavedSessionsManager
 
    public SavedSessionsGroupJsonBean getGroup(String groupId)
    {
+      initSavedSessions();
       return _savedSessionGroupsJsonBean.getGroups().stream().filter(g -> StringUtils.equals(g.getGroupId(), groupId)).findFirst().orElse(null);
    }
 }

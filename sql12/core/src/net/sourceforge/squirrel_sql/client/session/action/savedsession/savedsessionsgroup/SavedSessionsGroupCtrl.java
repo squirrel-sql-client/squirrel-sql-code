@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedses
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SaveSessionResult;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionPersister;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -178,9 +179,20 @@ public class SavedSessionsGroupCtrl
 
       _savedSessionsGroup.setGroupName(groupName);
 
+      ISession activeSessionInGroup = Main.getApplication().getSessionManager().getActiveSession();
+      SaveSessionResult saveSessionResultOfActiveSession = null;
       for (ISession sess : toSave)
       {
-         SessionPersister.saveSessionGroup(sess, _savedSessionsGroup, gitCommit, sess.equals(Main.getApplication().getSessionManager().getActiveSession()));
+         SaveSessionResult buf = SessionPersister.saveSessionGroup(sess, _savedSessionsGroup, gitCommit, sess == activeSessionInGroup);
+         if(sess == activeSessionInGroup)
+         {
+            saveSessionResultOfActiveSession = buf;
+         }
+      }
+
+      if(null != saveSessionResultOfActiveSession && saveSessionResultOfActiveSession.isSessionWasSaved())
+      {
+         saveSessionResultOfActiveSession.activatePreviousSqlEditor();
       }
 
       close();

@@ -29,20 +29,18 @@ public class SessionPersister
 
    public static boolean saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit)
    {
-      return _saveSession(session, allowAliasChangeMsg, gitCommit, null, false);
+      return _saveSession(session, allowAliasChangeMsg, gitCommit, null, false).isSessionWasSaved();
    }
 
-   public static void saveSessionGroup(ISession sess, SavedSessionsGroupJsonBean group, boolean gitCommit, boolean activeSessionInGroup)
+   public static SaveSessionResult saveSessionGroup(ISession sess, SavedSessionsGroupJsonBean group, boolean gitCommit, boolean activeSessionInGroup)
    {
-
-      _saveSession(sess,
-                   false, // As groups can only be opened on the same combination of Aliases
-                   gitCommit,
-                   group,
-                   activeSessionInGroup);
+      return _saveSession(sess,
+                          false, // As groups can only be opened on the same combination of Aliases
+                          gitCommit,
+                          group, activeSessionInGroup);
    }
 
-   private static boolean _saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit, SavedSessionsGroupJsonBean group, boolean activeSessionInGroup)
+   private static SaveSessionResult _saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit, SavedSessionsGroupJsonBean group, boolean activeSessionInGroup)
    {
       SavedSessionJsonBean savedSessionJsonBean = session.getSavedSession();
 
@@ -56,7 +54,7 @@ public class SessionPersister
 
          if(false == sessionSaveDlg.isOk())
          {
-            return false;
+            return SaveSessionResult.ofUserCanceledSavingSession();
          }
 
          savedSessionJsonBean = new SavedSessionJsonBean();
@@ -86,7 +84,7 @@ public class SessionPersister
 
          if(res.isCancel())
          {
-            return false;
+            return SaveSessionResult.ofUserCanceledSavingSession();
          }
 
          if(res.isYes())
@@ -120,6 +118,6 @@ public class SessionPersister
 
       Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
 
-      return true;
+      return SaveSessionResult.ofSessionWasSaved(sqlEditorActivator);
    }
 }
