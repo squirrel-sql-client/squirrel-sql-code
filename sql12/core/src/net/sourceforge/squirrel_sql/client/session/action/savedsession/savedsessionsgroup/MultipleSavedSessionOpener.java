@@ -8,55 +8,91 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasComman
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionLoader;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MultipleSavedSessionOpener
 {
+   private static final ILogger s_log = LoggerController.createLogger(MultipleSavedSessionOpener.class);
+
    public static void openSavedSessions(List<SavedSessionJsonBean> savedSessionsToOpen)
    {
-      AtomicInteger calledbackSessionsCounter = new AtomicInteger();
+      ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-      List<Pair<SessionInternalFrame, SavedSessionJsonBean>> sessionFramesToLoad = new ArrayList<>();
+      executorService.submit(() -> _openSavedSessions(savedSessionsToOpen));
+   }
 
-      for (SavedSessionJsonBean savedSession : savedSessionsToOpen)
+   private static void _openSavedSessions(List<SavedSessionJsonBean> savedSessionsToOpen)
+   {
+      try
       {
-         final SQLAlias alias = SavedSessionUtil.getAliasForIdString(savedSession.getDefaultAliasIdString());
+         Thread theExecutorServicesThread = Thread.currentThread();
 
-         final ConnectToAliasCallBack callback = new ConnectToAliasCallBack(alias)
+         AtomicInteger calledbackSessionsCounter = new AtomicInteger();
+
+         List<Pair<SessionInternalFrame, SavedSessionJsonBean>> sessionFramesToLoad = new ArrayList<>();
+
+         for (SavedSessionJsonBean savedSession : savedSessionsToOpen)
          {
-            @Override
-            public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
+            final SQLAlias alias = SavedSessionUtil.getAliasForIdString(savedSession.getDefaultAliasIdString());
+
+            final ConnectToAliasCallBack callback = new ConnectToAliasCallBack(alias)
             {
-               sessionFramesToLoad.add(Pair.of(sessionInternalFrame, savedSession));
-               if(savedSessionsToOpen.size() == calledbackSessionsCounter.incrementAndGet())
+               @Override
+               public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
                {
-                  loadSavedSessionIntoOpenSession(sessionFramesToLoad);
+                  sessionFramesToLoad.add(Pair.of(sessionInternalFrame, savedSession));
+                  if(savedSessionsToOpen.size() == calledbackSessionsCounter.incrementAndGet())
+                  {
+                     loadSavedSessionIntoOpenSession(sessionFramesToLoad, theExecutorServicesThread);
+                  }
+                  theExecutorServicesThread.interrupt();
                }
-            }
 
-            @Override
-            public void errorOccured(Throwable th, boolean connectingHasBeenCanceledByUser)
+               @Override
+               public void errorOccured(Throwable th, boolean connectingHasBeenCanceledByUser)
+               {
+                  calledbackSessionsCounter.incrementAndGet();
+                  super.errorOccured(th, connectingHasBeenCanceledByUser);
+
+                  if(savedSessionsToOpen.size() == calledbackSessionsCounter.incrementAndGet())
+                  {
+                     loadSavedSessionIntoOpenSession(sessionFramesToLoad, theExecutorServicesThread);
+                  }
+                  theExecutorServicesThread.interrupt();
+               }
+            };
+
+            SwingUtilities.invokeAndWait(() -> new ConnectToAliasCommand(alias, true, callback).execute());
+            try
             {
-               calledbackSessionsCounter.incrementAndGet();
-               super.errorOccured(th, connectingHasBeenCanceledByUser);
-
-               if(savedSessionsToOpen.size() == calledbackSessionsCounter.incrementAndGet())
-               {
-                  loadSavedSessionIntoOpenSession(sessionFramesToLoad);
-               }
+               Thread.sleep(Integer.MAX_VALUE);
             }
-         };
+            catch (InterruptedException e)
+            {
+               String msg = "MultipleSavedSessionOpener received interrupt to continue opening Sessions after Saved Session "
+                     + (null == savedSession.getGroupId() ? savedSession.getName() : savedSession.getAliasNameForDebug())
+                     + " was opened";
 
-         new ConnectToAliasCommand(alias, true, callback).execute();
-
+               s_log.info(msg);
+            }
+         }
+      }
+      catch (Exception e)
+      {
+         s_log.error(e);
       }
    }
 
-   private static void loadSavedSessionIntoOpenSession(List<Pair<SessionInternalFrame, SavedSessionJsonBean>> sessionFramesToLoad)
+   private static void loadSavedSessionIntoOpenSession(List<Pair<SessionInternalFrame, SavedSessionJsonBean>> sessionFramesToLoad, Thread theExecutorServicesThread)
    {
       for (Pair<SessionInternalFrame, SavedSessionJsonBean> pair : sessionFramesToLoad)
       {

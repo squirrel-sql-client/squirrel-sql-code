@@ -304,7 +304,7 @@ public class SavedSessionMoreCtrl
 
       if(0 < _dlg.lstSavedSessions.getModel().getSize())
       {
-         _dlg.lstSavedSessions.setSelectedIndex(1);
+         _dlg.lstSavedSessions.setSelectedIndex(0);
       }
    }
 

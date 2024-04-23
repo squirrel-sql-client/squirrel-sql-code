@@ -10,6 +10,7 @@ public class SavedSessionJsonBean
    private List<SessionSqlJsonBean> _sessionSQLs = new ArrayList<>();
    private String _groupId;
    private boolean _activeSessionInGroup;
+   private String _aliasNameForDebug;
 
    public void setDefaultAliasIdString(String defaultAliasIdString)
    {
@@ -66,5 +67,15 @@ public class SavedSessionJsonBean
    public boolean isActiveSessionInGroup()
    {
       return _activeSessionInGroup;
+   }
+
+   public void setAliasNameForDebug(String aliasNameForDebug)
+   {
+      _aliasNameForDebug = aliasNameForDebug;
+   }
+
+   public String getAliasNameForDebug()
+   {
+      return _aliasNameForDebug;
    }
 }

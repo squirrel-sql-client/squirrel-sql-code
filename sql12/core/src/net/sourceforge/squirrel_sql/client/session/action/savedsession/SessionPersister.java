@@ -60,6 +60,7 @@ public class SessionPersister
          savedSessionJsonBean = new SavedSessionJsonBean();
          savedSessionJsonBean.setName(sessionSaveDlg.getSavedSessionName());
          savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
+         savedSessionJsonBean.setAliasNameForDebug(alias.getName());
       }
       else if(null == savedSessionJsonBean && null != group)
       {
@@ -67,6 +68,7 @@ public class SessionPersister
          savedSessionJsonBean.setGroupId(group.getGroupId());
          savedSessionJsonBean.setName("<NameNotDisplayGroupSession_groupId=" + group.getGroupId() + ">");
          savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
+         savedSessionJsonBean.setAliasNameForDebug(alias.getName());
       }
       else if(allowAliasChangeMsg
               && null == group // Cannot change Aliases of SavedSessions in a Session group
@@ -90,6 +92,7 @@ public class SessionPersister
          if(res.isYes())
          {
             savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
+            savedSessionJsonBean.setAliasNameForDebug(alias.getName());
          }
       }
 

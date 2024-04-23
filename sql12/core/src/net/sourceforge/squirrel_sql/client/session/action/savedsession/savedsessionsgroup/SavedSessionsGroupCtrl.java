@@ -15,6 +15,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -181,7 +182,9 @@ public class SavedSessionsGroupCtrl
 
       ISession activeSessionInGroup = Main.getApplication().getSessionManager().getActiveSession();
       SaveSessionResult saveSessionResultOfActiveSession = null;
-      for (ISession sess : toSave)
+
+      Collections.reverse(toSave); // Reverse because saved is moved to the top of SavedSessionsJsonBean._savedSessionJsonBeans
+      for (ISession sess : toSave )
       {
          SaveSessionResult buf = SessionPersister.saveSessionGroup(sess, _savedSessionsGroup, gitCommit, sess == activeSessionInGroup);
          if(sess == activeSessionInGroup)

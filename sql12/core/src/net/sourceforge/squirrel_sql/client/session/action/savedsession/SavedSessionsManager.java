@@ -223,7 +223,7 @@ public class SavedSessionsManager
    public SavedSessionGrouped getSavedSessionGrouped(String groupId)
    {
       return getSavedSessionsGrouped().stream()
-                                      .filter(g -> StringUtils.equals(g.getGroup().getGroupId(), groupId))
+                                      .filter(g -> null != g.getGroup() && StringUtils.equals(g.getGroup().getGroupId(), groupId))
                                       .findFirst().orElseThrow(() -> new IllegalArgumentException("Failed to find group by groupId=" + groupId));
    }
 
@@ -241,14 +241,14 @@ public class SavedSessionsManager
 
 
 
-   private static boolean matchGroup(SavedSessionGrouped gr1, SavedSessionsGroupJsonBean gr2)
+   private static boolean matchGroup(SavedSessionGrouped savedSessionGrouped, SavedSessionsGroupJsonBean savedSessionsGroupJsonBean)
    {
-      if(null == gr1 || null == gr2)
+      if(null == savedSessionGrouped || false == savedSessionGrouped.isGroup() || null == savedSessionsGroupJsonBean)
       {
          return false;
       }
 
-      return StringUtils.equals(gr1.getGroup().getGroupId(), gr2.getGroupId());
+      return StringUtils.equals(savedSessionGrouped.getGroup().getGroupId(), savedSessionsGroupJsonBean.getGroupId());
    }
 
    private void initSavedSessions()
@@ -345,7 +345,11 @@ public class SavedSessionsManager
       {
          toDel.getSavedSessions().forEach(savedSess -> deleteAllInternallyStoredFiles(savedSess));
       }
-      _savedSessionsJsonBean.getSavedSessionJsonBeans().removeAll(toDelList);
+
+      for (SavedSessionGrouped toDel : toDelList)
+      {
+         _savedSessionsJsonBean.getSavedSessionJsonBeans().removeAll(toDel.getSavedSessions());
+      }
 
       saveJsonBeans();
    }
