@@ -21,7 +21,7 @@ public class SavedSessionLoader
    private final static ILogger s_log = LoggerController.createLogger(SavedSessionLoader.class);
 
 
-   public static void load(final SessionInternalFrame sessionInternalFrame, SavedSessionJsonBean savedSessionJsonBean)
+   public static SQLEditorActivator load(final SessionInternalFrame sessionInternalFrame, SavedSessionJsonBean savedSessionJsonBean)
    {
       SQLEditorActivator sqlEditorActivator = new SQLEditorActivator();
 
@@ -68,6 +68,8 @@ public class SavedSessionLoader
       sqlEditorActivator.activate();
 
       Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
+
+      return sqlEditorActivator;
    }
 
    private static void loadSessionSql(SessionSqlJsonBean sessionSQL, ISQLPanelAPI mainSQLPanelAPI)

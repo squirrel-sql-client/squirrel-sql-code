@@ -1,15 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import java.awt.Frame;
-import java.beans.PropertyVetoException;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
-import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.*;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
@@ -18,6 +11,9 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.awt.*;
+import java.beans.PropertyVetoException;
 
 public class SessionUtils
 {
@@ -160,13 +156,18 @@ public class SessionUtils
          sessionInternalFrame.getSession().selectMainTab(MainPanel.ITabIndexes.SQL_TAB);
          if( 0 <= caretPosition && caretPosition < mainSQLPanelAPI.getEntireSQLScript().length())
          {
-            mainSQLPanelAPI.setCaretPosition(caretPosition);
+            forceFocusAndSetCaret(caretPosition, mainSQLPanelAPI);
          }
       }
       catch (PropertyVetoException e)
       {
          s_log.error("Failed to select Mains Session SQL Tab", e);
       }
+   }
+
+   private static void forceFocusAndSetCaret(int caretPosition, ISQLPanelAPI mainSQLPanelAPI)
+   {
+      GUIUtils.forceFocus(mainSQLPanelAPI.getSQLEntryPanel().getTextComponent(), () -> mainSQLPanelAPI.setCaretPosition(caretPosition));
    }
 
    public static void activateAdditionalSqlTab(SessionInternalFrame sessionInternalFrame, AdditionalSQLTab sqlTab, int caretPosition)
@@ -178,7 +179,7 @@ public class SessionUtils
          sessionInternalFrame.getSession().selectMainTab(mainPanelTabIndex);
          if( 0 <= caretPosition && caretPosition < sqlTab.getSQLPanelAPI().getEntireSQLScript().length())
          {
-            sqlTab.getSQLPanelAPI().setCaretPosition(caretPosition);
+            forceFocusAndSetCaret(caretPosition, sqlTab.getSQLPanelAPI());
          }
       }
       catch (PropertyVetoException e)
@@ -192,7 +193,7 @@ public class SessionUtils
       try
       {
          sqlInternalFrame.setSelected(true);
-         sqlInternalFrame.getMainSQLPanelAPI().setCaretPosition(caretPosition);
+         forceFocusAndSetCaret(caretPosition, sqlInternalFrame.getMainSQLPanelAPI());
       }
       catch (PropertyVetoException e)
       {

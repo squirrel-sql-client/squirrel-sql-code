@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup;
 
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SQLEditorActivator;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionLoader;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
@@ -52,7 +52,7 @@ public class MultipleSavedSessionOpener
                   sessionFramesToLoad.add(Pair.of(sessionInternalFrame, savedSession));
                   if(savedSessionsToOpen.size() == calledbackSessionsCounter.incrementAndGet())
                   {
-                     loadSavedSessionIntoOpenSession(sessionFramesToLoad, theExecutorServicesThread);
+                     loadSavedSessionIntoOpenSession(sessionFramesToLoad);
                   }
                   theExecutorServicesThread.interrupt();
                }
@@ -65,7 +65,7 @@ public class MultipleSavedSessionOpener
 
                   if(savedSessionsToOpen.size() == calledbackSessionsCounter.incrementAndGet())
                   {
-                     loadSavedSessionIntoOpenSession(sessionFramesToLoad, theExecutorServicesThread);
+                     loadSavedSessionIntoOpenSession(sessionFramesToLoad);
                   }
                   theExecutorServicesThread.interrupt();
                }
@@ -92,16 +92,26 @@ public class MultipleSavedSessionOpener
       }
    }
 
-   private static void loadSavedSessionIntoOpenSession(List<Pair<SessionInternalFrame, SavedSessionJsonBean>> sessionFramesToLoad, Thread theExecutorServicesThread)
+   /**
+    * Note that this method is called exactly once from each {@link #_openSavedSessions(List)} call
+    */
+   private static void loadSavedSessionIntoOpenSession(List<Pair<SessionInternalFrame, SavedSessionJsonBean>> sessionFramesToLoad)
    {
+      SQLEditorActivator activatorOfActiveSessionInGroup = null;
       for (Pair<SessionInternalFrame, SavedSessionJsonBean> pair : sessionFramesToLoad)
       {
-         SavedSessionLoader.load(pair.getLeft(), pair.getRight());
-
+         SQLEditorActivator buf = SavedSessionLoader.load(pair.getLeft(), pair.getRight());
          if(pair.getRight().isActiveSessionInGroup())
          {
-            Main.getApplication().getSessionManager().setActiveSession(pair.getLeft().getSession(), false);
+            activatorOfActiveSessionInGroup = buf;
          }
+      }
+
+      if(null != activatorOfActiveSessionInGroup)
+      {
+         SQLEditorActivator finalActivatorOfActiveSessionInGroup = activatorOfActiveSessionInGroup;
+         SwingUtilities.invokeLater(() -> finalActivatorOfActiveSessionInGroup.activate());
+         //GUIUtils.executeDelayed(() -> finalActivatorOfActiveSessionInGroup.activate());
       }
 
       // was seen to help GC, shrug.

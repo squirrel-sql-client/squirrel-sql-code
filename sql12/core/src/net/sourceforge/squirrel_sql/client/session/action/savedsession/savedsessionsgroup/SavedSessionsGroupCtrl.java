@@ -173,6 +173,15 @@ public class SavedSessionsGroupCtrl
          }
       }
 
+      close();
+
+      // Needed to do after closing the modal dialog to make focusing and setting caret work.
+      SwingUtilities.invokeLater(() -> saveSessionGroup(gitCommit, groupName, toSave));
+
+   }
+
+   private void saveSessionGroup(boolean gitCommit, String groupName, List<ISession> toSave)
+   {
       if(null == _savedSessionsGroup)
       {
          _savedSessionsGroup = new SavedSessionsGroupJsonBean();
@@ -184,7 +193,7 @@ public class SavedSessionsGroupCtrl
       SaveSessionResult saveSessionResultOfActiveSession = null;
 
       Collections.reverse(toSave); // Reverse because saved is moved to the top of SavedSessionsJsonBean._savedSessionJsonBeans
-      for (ISession sess : toSave )
+      for (ISession sess : toSave)
       {
          SaveSessionResult buf = SessionPersister.saveSessionGroup(sess, _savedSessionsGroup, gitCommit, sess == activeSessionInGroup);
          if(sess == activeSessionInGroup)
@@ -197,8 +206,6 @@ public class SavedSessionsGroupCtrl
       {
          saveSessionResultOfActiveSession.activatePreviousSqlEditor();
       }
-
-      close();
    }
 
    private void close()
