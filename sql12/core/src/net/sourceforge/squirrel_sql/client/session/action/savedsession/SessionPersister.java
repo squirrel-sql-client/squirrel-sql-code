@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionsGroupJsonBean;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionsGroupUtil;
 import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainDialog;
 import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -37,7 +38,8 @@ public class SessionPersister
       return _saveSession(sess,
                           false, // As groups can only be opened on the same combination of Aliases
                           gitCommit,
-                          group, activeSessionInGroup);
+                          group,
+                          activeSessionInGroup);
    }
 
    private static SaveSessionResult _saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit, SavedSessionsGroupJsonBean group, boolean activeSessionInGroup)
@@ -106,7 +108,7 @@ public class SessionPersister
 
          // The SQLEditorActivator is needed because externally saving a file selects the according SQL Tab.
          // But we want the active SQL-Editor to remain the same after saving the Session.
-         sqlEditorActivator.prepareToActivateSQLPanelSaveInfo(sqlPanelSaveInfo, sessionSqlJsonBean);
+         sqlEditorActivator.prepareToActivateSQLPanelSaveInfo(sqlPanelSaveInfo, sessionSqlJsonBean, SavedSessionsGroupUtil.shouldForceToFocusActiveSqlEditor(group, activeSessionInGroup));
       }
 
       savedSessionJsonBean.setActiveSessionInGroup(activeSessionInGroup);
@@ -123,4 +125,5 @@ public class SessionPersister
 
       return SaveSessionResult.ofSessionWasSaved(sqlEditorActivator);
    }
+
 }

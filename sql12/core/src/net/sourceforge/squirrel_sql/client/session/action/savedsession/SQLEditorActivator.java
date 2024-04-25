@@ -17,26 +17,26 @@ public class SQLEditorActivator
    {
    }
 
-   public void prepareToActivateMainSqlTab(SessionInternalFrame sessionInternalFrame, SessionSqlJsonBean sessionSQL)
+   public void prepareToActivateMainSqlTab(SessionInternalFrame sessionInternalFrame, SessionSqlJsonBean sessionSQL, boolean shouldForceToFocusActiveSqlEditor)
    {
       _selectSqlEditorRunnable = () -> {
-         SessionUtils.activateMainSqlTab(sessionInternalFrame, sessionSQL.getCaretPosition());
+         SessionUtils.activateMainSqlTab(sessionInternalFrame, sessionSQL.getCaretPosition(), shouldForceToFocusActiveSqlEditor);
       };
    }
 
 
-   public void prepareToActivateAdditionalSqlTab(SessionInternalFrame sessionInternalFrame, AdditionalSQLTab sqlTab, SessionSqlJsonBean sessionSQL)
+   public void prepareToActivateAdditionalSqlTab(SessionInternalFrame sessionInternalFrame, AdditionalSQLTab sqlTab, SessionSqlJsonBean sessionSQL, boolean shouldForceToFocusActiveSqlEditor)
    {
       _selectSqlEditorRunnable = () -> {
-         SessionUtils.activateAdditionalSqlTab(sessionInternalFrame, sqlTab, sessionSQL.getCaretPosition());
+         SessionUtils.activateAdditionalSqlTab(sessionInternalFrame, sqlTab, sessionSQL.getCaretPosition(), shouldForceToFocusActiveSqlEditor);
       };
 
    }
 
-   public void prepareToActivateSqlInternalFrame(SQLInternalFrame sqlInternalFrame, SessionSqlJsonBean sessionSQL)
+   public void prepareToActivateSqlInternalFrame(SQLInternalFrame sqlInternalFrame, SessionSqlJsonBean sessionSQL, boolean shouldForceToFocusActiveSqlEditor)
    {
       _selectSqlEditorRunnable = () -> {
-         SessionUtils.activateSqlInternalFrame(sqlInternalFrame, sessionSQL.getCaretPosition());
+         SessionUtils.activateSqlInternalFrame(sqlInternalFrame, sessionSQL.getCaretPosition(), shouldForceToFocusActiveSqlEditor);
       };
 
    }
@@ -50,7 +50,7 @@ public class SQLEditorActivator
 
    }
 
-   public void prepareToActivateSQLPanelSaveInfo(SQLPanelSaveInfo saveInfo, SessionSqlJsonBean sessionSqlJsonBean)
+   public void prepareToActivateSQLPanelSaveInfo(SQLPanelSaveInfo saveInfo, SessionSqlJsonBean sessionSqlJsonBean, boolean shouldForceToFocusActiveSqlEditor)
    {
       if(false == sessionSqlJsonBean.isActiveSqlPanel())
       {
@@ -59,7 +59,7 @@ public class SQLEditorActivator
 
       if(saveInfo.getSqlPanelType() == SqlPanelType.MAIN_SQL_TAB)
       {
-         prepareToActivateMainSqlTab(saveInfo.getSqlPanel().getSession().getSessionInternalFrame(), sessionSqlJsonBean);
+         prepareToActivateMainSqlTab(saveInfo.getSqlPanel().getSession().getSessionInternalFrame(), sessionSqlJsonBean, shouldForceToFocusActiveSqlEditor);
       }
       else if(saveInfo.getSqlPanelType() == SqlPanelType.SQL_TAB)
       {
@@ -67,7 +67,7 @@ public class SQLEditorActivator
          {
             if(additionalSQLTab.getSQLPanel() == saveInfo.getSqlPanel())
             {
-               prepareToActivateAdditionalSqlTab(saveInfo.getSqlPanel().getSession().getSessionInternalFrame(), additionalSQLTab, sessionSqlJsonBean);
+               prepareToActivateAdditionalSqlTab(saveInfo.getSqlPanel().getSession().getSessionInternalFrame(), additionalSQLTab, sessionSqlJsonBean,shouldForceToFocusActiveSqlEditor);
                break;
             }
          }
@@ -79,7 +79,7 @@ public class SQLEditorActivator
          {
             if( widget instanceof SQLInternalFrame && ((SQLInternalFrame)widget).getSQLPanel() == saveInfo.getSqlPanel())
             {
-               prepareToActivateSqlInternalFrame((SQLInternalFrame) widget, sessionSqlJsonBean);
+               prepareToActivateSqlInternalFrame((SQLInternalFrame) widget, sessionSqlJsonBean, shouldForceToFocusActiveSqlEditor);
                break;
             }
          }

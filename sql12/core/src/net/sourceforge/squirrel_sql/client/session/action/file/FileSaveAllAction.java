@@ -1,8 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.file;
 
-import java.awt.event.ActionEvent;
-import java.util.Optional;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
@@ -15,6 +12,9 @@ import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+
+import java.awt.event.ActionEvent;
+import java.util.Optional;
 
 public class FileSaveAllAction extends SquirrelAction  implements ISessionAction
 {
@@ -79,7 +79,7 @@ public class FileSaveAllAction extends SquirrelAction  implements ISessionAction
       switch( activeSqlPanelApi.getSQLPanelPosition() )
       {
          case MAIN_TAB_IN_SESSION_WINDOW:
-            SessionUtils.activateMainSqlTab(activeSqlPanelApi.getSession().getSessionInternalFrame(), caretPosition);
+            SessionUtils.activateMainSqlTab(activeSqlPanelApi.getSession().getSessionInternalFrame(), caretPosition, true);
             break;
          case ADDITIONAL_TAB_IN_SESSION_WINDOW:
             ISQLPanelAPI finalActiveSqlPanelApi = activeSqlPanelApi;
@@ -88,7 +88,7 @@ public class FileSaveAllAction extends SquirrelAction  implements ISessionAction
 
             if( additionalSQLTab.isPresent() )
             {
-               SessionUtils.activateAdditionalSqlTab(_session.getSessionInternalFrame(), additionalSQLTab.get(), caretPosition);
+               SessionUtils.activateAdditionalSqlTab(_session.getSessionInternalFrame(), additionalSQLTab.get(), caretPosition, true);
             }
             break;
          case IN_SQL_WORKSHEET:
@@ -96,7 +96,7 @@ public class FileSaveAllAction extends SquirrelAction  implements ISessionAction
             {
                if( widget instanceof SQLInternalFrame && ((SQLInternalFrame)widget).getSQLPanel().getSQLPanelAPI() == activeSqlPanelApi )
                {
-                  SessionUtils.activateSqlInternalFrame((SQLInternalFrame)widget, caretPosition);
+                  SessionUtils.activateSqlInternalFrame((SQLInternalFrame)widget, caretPosition, true);
                   break;
                }
             }

@@ -147,7 +147,7 @@ public class SessionUtils
       return additionalSQLTab;
    }
 
-   public static void activateMainSqlTab(SessionInternalFrame sessionInternalFrame, int caretPosition)
+   public static void activateMainSqlTab(SessionInternalFrame sessionInternalFrame, int caretPosition, boolean shouldForceToFocusActiveSqlEditor)
    {
       try
       {
@@ -156,7 +156,7 @@ public class SessionUtils
          sessionInternalFrame.getSession().selectMainTab(MainPanel.ITabIndexes.SQL_TAB);
          if( 0 <= caretPosition && caretPosition < mainSQLPanelAPI.getEntireSQLScript().length())
          {
-            forceFocusAndSetCaret(caretPosition, mainSQLPanelAPI);
+            forceFocusAndSetCaret(caretPosition, mainSQLPanelAPI, shouldForceToFocusActiveSqlEditor);
          }
       }
       catch (PropertyVetoException e)
@@ -165,12 +165,7 @@ public class SessionUtils
       }
    }
 
-   private static void forceFocusAndSetCaret(int caretPosition, ISQLPanelAPI mainSQLPanelAPI)
-   {
-      GUIUtils.forceFocus(mainSQLPanelAPI.getSQLEntryPanel().getTextComponent(), () -> mainSQLPanelAPI.setCaretPosition(caretPosition));
-   }
-
-   public static void activateAdditionalSqlTab(SessionInternalFrame sessionInternalFrame, AdditionalSQLTab sqlTab, int caretPosition)
+   public static void activateAdditionalSqlTab(SessionInternalFrame sessionInternalFrame, AdditionalSQLTab sqlTab, int caretPosition, boolean shouldForceToFocusActiveSqlEditor)
    {
       try
       {
@@ -179,7 +174,7 @@ public class SessionUtils
          sessionInternalFrame.getSession().selectMainTab(mainPanelTabIndex);
          if( 0 <= caretPosition && caretPosition < sqlTab.getSQLPanelAPI().getEntireSQLScript().length())
          {
-            forceFocusAndSetCaret(caretPosition, sqlTab.getSQLPanelAPI());
+            forceFocusAndSetCaret(caretPosition, sqlTab.getSQLPanelAPI(), shouldForceToFocusActiveSqlEditor);
          }
       }
       catch (PropertyVetoException e)
@@ -188,16 +183,29 @@ public class SessionUtils
       }
    }
 
-   public static void activateSqlInternalFrame(SQLInternalFrame sqlInternalFrame, int caretPosition)
+   public static void activateSqlInternalFrame(SQLInternalFrame sqlInternalFrame, int caretPosition, boolean shouldForceToFocusActiveSqlEditor)
    {
       try
       {
          sqlInternalFrame.setSelected(true);
-         forceFocusAndSetCaret(caretPosition, sqlInternalFrame.getMainSQLPanelAPI());
+         forceFocusAndSetCaret(caretPosition, sqlInternalFrame.getMainSQLPanelAPI(), shouldForceToFocusActiveSqlEditor);
       }
       catch (PropertyVetoException e)
       {
          s_log.error("Failed to select SQL Worksheet", e);
       }
    }
+
+   private static void forceFocusAndSetCaret(int caretPosition, ISQLPanelAPI sqlPanelAPI, boolean shouldForceToFocusActiveSqlEditor)
+   {
+      if (shouldForceToFocusActiveSqlEditor)
+      {
+         GUIUtils.forceFocus(sqlPanelAPI.getSQLEntryPanel().getTextComponent(), () -> sqlPanelAPI.setCaretPosition(caretPosition), "SessionUtils.forceFocusAndSetCaret");
+      }
+      else
+      {
+         sqlPanelAPI.setCaretPosition(caretPosition);
+      }
+   }
+
 }

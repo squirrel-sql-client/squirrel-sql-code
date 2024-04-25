@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionsGroupUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -34,7 +35,7 @@ public class SavedSessionLoader
 
             if(sessionSQL.isActiveSqlPanel())
             {
-               sqlEditorActivator.prepareToActivateMainSqlTab(sessionInternalFrame, sessionSQL);
+               sqlEditorActivator.prepareToActivateMainSqlTab(sessionInternalFrame, sessionSQL, SavedSessionsGroupUtil.shouldForceToFocusActiveSqlEditor(savedSessionJsonBean));
             }
          }
          else if(sessionSQL.getPanelType() == SqlPanelType.SQL_TAB)
@@ -44,7 +45,7 @@ public class SavedSessionLoader
 
             if(sessionSQL.isActiveSqlPanel())
             {
-               sqlEditorActivator.prepareToActivateAdditionalSqlTab(sessionInternalFrame, sqlTab, sessionSQL);
+               sqlEditorActivator.prepareToActivateAdditionalSqlTab(sessionInternalFrame, sqlTab, sessionSQL, SavedSessionsGroupUtil.shouldForceToFocusActiveSqlEditor(savedSessionJsonBean));
             }
 
          }
@@ -55,7 +56,7 @@ public class SavedSessionLoader
 
             if(sessionSQL.isActiveSqlPanel())
             {
-               sqlEditorActivator.prepareToActivateSqlInternalFrame(sqlInternalFrame, sessionSQL);
+               sqlEditorActivator.prepareToActivateSqlInternalFrame(sqlInternalFrame, sessionSQL, SavedSessionsGroupUtil.shouldForceToFocusActiveSqlEditor(savedSessionJsonBean));
             }
          }
       }

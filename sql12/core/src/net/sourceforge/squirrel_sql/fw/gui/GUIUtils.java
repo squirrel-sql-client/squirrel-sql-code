@@ -522,16 +522,22 @@ public class GUIUtils
 
 	public static void forceFocus(final Component comp, Runnable callWhenFocused)
 	{
+		forceFocus(comp, callWhenFocused, null);
+	}
+
+	public static void forceFocus(final Component comp, Runnable callWhenFocused, String logIdentifier)
+	{
 		final Timer[] timerRef = new Timer[1];
 
 		timerRef[0] = new Timer(100, new ActionListener()
 		{
-			private int maxCount = 0;
+			private int focusTrialsCount = 0;
 
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (comp.hasFocus() || maxCount > 15)
+				boolean hasFocus = comp.hasFocus();
+				if (hasFocus || focusTrialsCount > 15)
 				{
 					timerRef[0].stop();
 
@@ -539,11 +545,16 @@ public class GUIUtils
 					{
 						callWhenFocused.run();
 					}
+					if(false == StringUtils.isEmpty(logIdentifier))
+					{
+						String res = hasFocus ? "succeeded" : "failed";
+						s_log.info(logIdentifier + " --> force focus " + res + " after " + (focusTrialsCount + 1) + " trials");
+					}
 					return;
 				}
 				comp.requestFocusInWindow();
 				comp.requestFocus();
-				++maxCount;
+				++focusTrialsCount;
 
 			}
 		});
