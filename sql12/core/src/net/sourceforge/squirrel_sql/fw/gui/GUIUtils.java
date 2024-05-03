@@ -1101,6 +1101,12 @@ public class GUIUtils
 		new ExtraToolTipOnClickDisplay(btn, atDefaultToolTipPosition, toolTipText, displayTimeMillis);
 	}
 
+	public static ToolTipDisplay createToolTipDisplay(JComponent parent)
+	{
+		return new ToolTipDisplay(parent);
+	}
+
+
 	public static void alignPreferredWidths(JComponent... components)
 	{
 		int maxPreferredWidth = 1;

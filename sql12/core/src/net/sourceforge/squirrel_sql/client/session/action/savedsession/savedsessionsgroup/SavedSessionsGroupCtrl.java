@@ -14,19 +14,21 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SavedSessionsGroupCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionsGroupCtrl.class);
-   public static final String PROPS_KEY_DEFAULT_BUTTON = "GroupOfSavedSessionsCtrl.GroupSaveDefaultButton";
+
+   private static final String PROPS_KEY_DEFAULT_BUTTON = "GroupOfSavedSessionsCtrl.GroupSaveDefaultButton";
 
    private final SavedSessionsGroupDlg _dlg;
+   private final SessionsListCtrl _sessionsListCtrl;
 
-   private SavedSessionsGroupJsonBean _savedSessionsGroup;
+   private SavedSessionsGroupJsonBean _activeSavedSessionsGroup;
 
    private boolean _inOnListSelectionChanged;
    private boolean _groupNameEditedByUser;
@@ -35,43 +37,20 @@ public class SavedSessionsGroupCtrl
    {
       _dlg = new SavedSessionsGroupDlg();
 
-      DefaultListModel<ISession> sessionListModel = new DefaultListModel<>();
-      sessionListModel.addAll(Main.getApplication().getSessionManager().getOpenSessions());
-
       String groupId = null;
       if (null != Main.getApplication().getSessionManager().getActiveSession().getSavedSession())
       {
          groupId = Main.getApplication().getSessionManager().getActiveSession().getSavedSession().getGroupId();
       }
-      _savedSessionsGroup = Main.getApplication().getSavedSessionsManager().getGroup(groupId);
+      _activeSavedSessionsGroup = Main.getApplication().getSavedSessionsManager().getGroup(groupId);
 
-      if (null != _savedSessionsGroup)
+      if (null != _activeSavedSessionsGroup)
       {
-         _dlg.txtGroupName.setText(_savedSessionsGroup.getGroupName());
+         _dlg.txtGroupName.setText(_activeSavedSessionsGroup.getGroupName());
       }
 
-      _dlg.lstSessions.setModel(sessionListModel);
-      _dlg.lstSessions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-      List<Integer> selectedIndices = new ArrayList<>();
-      for (int i = 0; i < _dlg.lstSessions.getModel().getSize(); i++)
-      {
-         if ( null != _savedSessionsGroup )
-         {
-            if(Objects.equals(_savedSessionsGroup.getGroupId(), (_dlg.lstSessions.getModel().getElementAt(i).getSavedSession().getGroupId())))
-            {
-               selectedIndices.add(i);
-            }
-         }
-         else
-         {
-            selectedIndices.add(i);
-         }
-      }
-      _dlg.lstSessions.setSelectedIndices(selectedIndices.stream().mapToInt(i -> i).toArray());
-
-      _dlg.lstSessions.addListSelectionListener(e -> onListSelectionChanged());
-      onListSelectionChanged();
+      _sessionsListCtrl = new SessionsListCtrl(_dlg.lstSessions, _activeSavedSessionsGroup, () -> onSessionsListSelectionChanged());
+      onSessionsListSelectionChanged();
 
 
       _dlg.txtGroupName.getDocument().addDocumentListener(new DocumentListener()
@@ -139,9 +118,9 @@ public class SavedSessionsGroupCtrl
 
    private void onSaveGroup(boolean gitCommit)
    {
-      List<ISession> toSave = _dlg.lstSessions.getSelectedValuesList();
+      List<GroupDlgSessionWrapper> toSaveWrappers = _sessionsListCtrl.getSelectedValuesList();
 
-      if(toSave.isEmpty())
+      if(toSaveWrappers.isEmpty())
       {
          JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("SavedSessionsGroupCtrl.error.cannot.save.empty.group.message.box"));
          return;
@@ -154,11 +133,11 @@ public class SavedSessionsGroupCtrl
          return;
       }
 
-      for (ISession sess : toSave)
+      for (GroupDlgSessionWrapper sessWrp : toSaveWrappers)
       {
-         if(null != sess.getSavedSession())
+         if(null != sessWrp.getSession().getSavedSession())
          {
-            if(null == _savedSessionsGroup || false == Objects.equals(_savedSessionsGroup.getGroupId(), sess.getSavedSession().getGroupId()))
+            if(null == _activeSavedSessionsGroup || false == Objects.equals(_activeSavedSessionsGroup.getGroupId(), sessWrp.getSession().getSavedSession().getGroupId()))
             {
                int res = JOptionPane.showConfirmDialog(_dlg,
                                                      s_stringMgr.getString("SavedSessionsGroupCtrl.saved.session.exists.message"),
@@ -176,18 +155,17 @@ public class SavedSessionsGroupCtrl
       close();
 
       // Needed to do after closing the modal dialog to make focusing and setting caret work.
-      SwingUtilities.invokeLater(() -> saveSessionGroup(gitCommit, groupName, toSave));
-
+      SwingUtilities.invokeLater(() -> saveSessionGroup(gitCommit, groupName, toSaveWrappers.stream().map(w -> w.getSession()).collect(Collectors.toList())));
    }
 
    private void saveSessionGroup(boolean gitCommit, String groupName, List<ISession> toSave)
    {
-      if(null == _savedSessionsGroup)
+      if(null == _activeSavedSessionsGroup)
       {
-         _savedSessionsGroup = new SavedSessionsGroupJsonBean();
+         _activeSavedSessionsGroup = new SavedSessionsGroupJsonBean();
       }
 
-      _savedSessionsGroup.setGroupName(groupName);
+      _activeSavedSessionsGroup.setGroupName(groupName);
 
       ISession activeSessionInGroup = Main.getApplication().getSessionManager().getActiveSession();
       SaveSessionResult saveSessionResultOfActiveSession = null;
@@ -195,7 +173,7 @@ public class SavedSessionsGroupCtrl
       Collections.reverse(toSave); // Reverse because saved is moved to the top of SavedSessionsJsonBean._savedSessionJsonBeans
       for (ISession sess : toSave)
       {
-         SaveSessionResult buf = SessionPersister.saveSessionGroup(sess, _savedSessionsGroup, gitCommit, sess == activeSessionInGroup);
+         SaveSessionResult buf = SessionPersister.saveSessionGroup(sess, _activeSavedSessionsGroup, gitCommit, sess == activeSessionInGroup);
          if(sess == activeSessionInGroup)
          {
             saveSessionResultOfActiveSession = buf;
@@ -216,21 +194,21 @@ public class SavedSessionsGroupCtrl
       _dlg.dispose();
    }
 
-   private void onListSelectionChanged()
+   private void onSessionsListSelectionChanged()
    {
       try
       {
          _inOnListSelectionChanged = true;
-         if(_groupNameEditedByUser || null != _savedSessionsGroup)
+         if(_groupNameEditedByUser || null != _activeSavedSessionsGroup)
          {
             return;
          }
 
-         if(_dlg.lstSessions.getSelectedValuesList().isEmpty())
+         if(_sessionsListCtrl.getSelectedValuesList().isEmpty())
          {
             _dlg.txtGroupName.setText(s_stringMgr.getString("SavedSessionsGroupCtrl.error.cannot.save.empty.group"));
          }
-         _dlg.txtGroupName.setText(SavedSessionUtil.createSessionGroupNameTemplate(_dlg.lstSessions.getSelectedValuesList()));
+         _dlg.txtGroupName.setText(SavedSessionUtil.createSessionGroupNameTemplate(_sessionsListCtrl.getSelectedValuesList().stream().map(w -> w.getSession()).collect(Collectors.toList())));
       }
       finally
       {

@@ -2,7 +2,6 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedses
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -13,7 +12,7 @@ public class SavedSessionsGroupDlg extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionsGroupDlg.class);
    JTextField txtGroupName;
-   JList<ISession> lstSessions;
+   JList<GroupDlgSessionWrapper> lstSessions;
    JComboBox<SavedSessionsGroupDlgDefaultButton> cboDefaultButton;
    JButton btnSaveGroup;
    JButton btnGitCommitGroup;

@@ -177,6 +177,7 @@ public class SquirrelResources extends Resources
 		String COPY_SQL = "copySQL";
 		String SQL = "sql";
 
+		String SESSION = "session";
 		String SESSION_SAVE = "session_save";
 		String SESSION_GIT_COMMIT = "session_git_commit";
 		String SESSION_OPEN = "session_open";
