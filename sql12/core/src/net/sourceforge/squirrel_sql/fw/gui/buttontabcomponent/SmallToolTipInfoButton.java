@@ -4,8 +4,8 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
-import javax.swing.ImageIcon;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 
 public class SmallToolTipInfoButton
 {
@@ -24,8 +24,10 @@ public class SmallToolTipInfoButton
       _infoText = infoText;
       _displayTimeMillis = displayTimeMillis;
 
-      _btnShowToolTip = new SmallTabButton(null, getSmallInfoIcon(), 0);
-      Dimension size = _btnShowToolTip.getPreferredSize();
+      ImageIcon smallInfoIcon = getSmallInfoIcon();
+      _btnShowToolTip = new SmallTabButton(null, smallInfoIcon, 0);
+      //Dimension size = _btnShowToolTip.getPreferredSize();
+      Dimension size = new Dimension(smallInfoIcon.getIconWidth(), smallInfoIcon.getIconWidth());
       _btnShowToolTip.setPreferredSize(size);
       _btnShowToolTip.setMinimumSize(size);
       _btnShowToolTip.setMaximumSize(size);

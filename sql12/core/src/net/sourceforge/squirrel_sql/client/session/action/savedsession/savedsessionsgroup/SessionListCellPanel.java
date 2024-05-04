@@ -46,7 +46,7 @@ public class SessionListCellPanel extends JPanel
       add(txtSessName, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2,3,2,0), 0,0);
-      btnMoveToNewSavedSession = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.THREE_DOTS));
+      btnMoveToNewSavedSession = new JButton();
       add(GUIUtils.styleAsToolbarButton(btnMoveToNewSavedSession), gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2,3,2,3), 0,0);

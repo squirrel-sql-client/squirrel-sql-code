@@ -29,14 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.net.URL;
 import java.util.MissingResourceException;
 
@@ -325,6 +318,11 @@ public abstract class Resources implements IResources
 		return getIcon(keyName, "image");
 	}
 
+	public URL getIconUrl(String keyName)
+	{
+		return _getIconUrl(getResourceName(keyName, "image"));
+	}
+
 	/**
 	 * @see IResources#getIcon(java.lang.Class, java.lang.String)
 	 */
@@ -338,22 +336,13 @@ public abstract class Resources implements IResources
 	 */
 	public ImageIcon getIcon(String keyName, String propName)
 	{
-		if (keyName == null)
-		{
-			throw new IllegalArgumentException("keyName == null");
-		}
-		if (propName == null)
-		{
-			throw new IllegalArgumentException("propName == null");
-		}
+		String rsrcName = getResourceName(keyName, propName);
 
 		ImageIcon icon = null;
 
-		String rsrcName = getResourceString(keyName, propName);
-
 		if (rsrcName != null && rsrcName.length() > 0)
 		{
-			icon = privateGetIcon(rsrcName);
+			icon = _getIcon(rsrcName);
 			if (icon == null)
 			{
 				s_log.error("can't load image: " + rsrcName);
@@ -367,6 +356,21 @@ public abstract class Resources implements IResources
 		}
 
 		return icon;
+	}
+
+	private String getResourceName(String keyName, String propName)
+	{
+		if (keyName == null)
+		{
+			throw new IllegalArgumentException("keyName == null");
+		}
+		if (propName == null)
+		{
+			throw new IllegalArgumentException("propName == null");
+		}
+
+		String rsrcName = getResourceString(keyName, propName);
+		return rsrcName;
 	}
 
 	/**
@@ -429,9 +433,9 @@ public abstract class Resources implements IResources
 		return _bundleHandler;
 	}
 
-	private ImageIcon privateGetIcon(String iconName)
+	private ImageIcon _getIcon(String iconResourceName)
 	{
-		URL url = getIconUrl(iconName);
+		URL url = _getIconUrl(iconResourceName);
 
 		if (url == null)
 		{
@@ -441,15 +445,15 @@ public abstract class Resources implements IResources
 		return Main.getApplication().getIconHandler().createImageIcon(url);
 	}
 
-	private URL getIconUrl(String iconName)
+	private URL _getIconUrl(String iconResourceName)
 	{
-		if (StringUtilities.isEmpty(iconName, true))
+		if (StringUtilities.isEmpty(iconResourceName, true))
 		{
 			return null;
 		}
 
 		URL url;
-		String imagePathName = getImagePathName(iconName);
+		String imagePathName = getImagePathName(iconResourceName);
 
 		if (null == _classLoader)
 		{

@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedses
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -36,7 +37,7 @@ public class SavedSessionsGroupDlg extends JDialog
       getContentPane().add(txtGroupName, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,0,0), 0,0);
-      getContentPane().add(new JLabel(s_stringMgr.getString("SavedSessionsGroupDlg.select.session.to.be.saved.in.group")), gbc);
+      getContentPane().add(createGroupListTitle(), gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5), 0,0);
       lstSessions = new JList<>();
@@ -47,6 +48,21 @@ public class SavedSessionsGroupDlg extends JDialog
 
       gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5,0,5,5), 0,0);
       getContentPane().add(createButtonsPanel(), gbc);
+   }
+
+   private static JPanel createGroupListTitle()
+   {
+      JPanel ret = new JPanel(new BorderLayout());
+      ret.add(new JLabel(s_stringMgr.getString("SavedSessionsGroupDlg.select.session.to.be.saved.in.group")), BorderLayout.CENTER);
+
+      String toolTipHtml =
+            s_stringMgr.getString("SavedSessionsGroupDlg.select.session.list.info.button",
+                                  Main.getApplication().getResources().getIconUrl(SquirrelResources.IImageNames.TO_SAVED_SESSION),
+                                  Main.getApplication().getResources().getIconUrl(SquirrelResources.IImageNames.SESSION),
+                                  Main.getApplication().getResources().getIconUrl(SquirrelResources.IImageNames.SESSION_GROUP_SAVE));
+
+      ret.add(new SmallToolTipInfoButton(toolTipHtml).getButton(), BorderLayout.EAST);
+      return ret;
    }
 
    private JPanel createDefaultButtonPanel()
