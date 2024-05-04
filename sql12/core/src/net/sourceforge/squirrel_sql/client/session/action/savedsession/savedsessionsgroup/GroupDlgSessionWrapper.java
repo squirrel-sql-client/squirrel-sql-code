@@ -59,7 +59,7 @@ public class GroupDlgSessionWrapper
 
    public boolean isInButtonFunctions(int xInSessionListCellPanel, int yInSessionListCellPanel)
    {
-      return _sessionListCellPanel.btnFunctions.getBounds().contains(xInSessionListCellPanel, yInSessionListCellPanel);
+      return _sessionListCellPanel.btnMoveToNewSavedSession.getBounds().contains(xInSessionListCellPanel, yInSessionListCellPanel);
    }
 
    public boolean isInBtnSavedSessionOrGroupMemberInfo(int xInSessionListCellPanel, int yInSessionListCellPanel)

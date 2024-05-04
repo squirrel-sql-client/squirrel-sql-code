@@ -183,6 +183,7 @@ public class SquirrelResources extends Resources
 		String SESSION_OPEN = "session_open";
 		String SESSION_MANAGE = "session_manage";
 		String SESSION_GROUP_SAVE = "session-group-save";
+		String TO_SAVED_SESSION = "to-saved-session";
 
 		String SMALL_COPY_PASSWORD = "small_copy_password";
 		String SMALL_SHOW_PASSWORD = "small_show_password";

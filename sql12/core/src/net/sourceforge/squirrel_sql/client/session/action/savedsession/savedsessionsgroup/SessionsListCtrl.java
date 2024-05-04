@@ -98,7 +98,7 @@ public class SessionsListCtrl
       }
       else if(wrapper.isInButtonFunctions(xInSessionListCellPanel, yInSessionListCellPanel))
       {
-         System.out.println("SessionsListCtrl.onMouseButton --> Hit btnFunctions");
+         System.out.println("SessionsListCtrl.onMouseButton --> Hit btnMoveToNewSavedSession");
       }
    }
 
