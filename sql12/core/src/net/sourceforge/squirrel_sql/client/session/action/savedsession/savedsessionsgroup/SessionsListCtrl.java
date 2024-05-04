@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolTipDisplay;
 
@@ -11,22 +12,21 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class SessionsListCtrl
 {
    private final JList<GroupDlgSessionWrapper> _lstSessions;
-   private final SessionsListSelectionListener _sessionsListSelectionListener;
+   private final GroupMembersListener _groupMembersListener;
    private final ToolTipDisplay _toolTipDisplay;
 
    public SessionsListCtrl(JList<GroupDlgSessionWrapper> lstSessions,
-                           SavedSessionsGroupJsonBean activeSavedSessionsGroup,
-                           SessionsListSelectionListener sessionsListSelectionListener)
+                           SavedSessionsGroupJsonBean groupBeingEdited,
+                           GroupMembersListener groupMembersListener)
    {
-      _sessionsListSelectionListener = sessionsListSelectionListener;
+      _groupMembersListener = groupMembersListener;
       _lstSessions = lstSessions;
       DefaultListModel<GroupDlgSessionWrapper> sessionListModel = new DefaultListModel<>();
-      sessionListModel.addAll(Main.getApplication().getSessionManager().getOpenSessions().stream().map(s -> new GroupDlgSessionWrapper(s)).collect(Collectors.toList()));
+      sessionListModel.addAll(createSessionWrapperList(groupBeingEdited));
 
       _lstSessions.setCellRenderer(new SessionListCellRenderer());
       _lstSessions.setModel(sessionListModel);
@@ -34,25 +34,6 @@ public class SessionsListCtrl
 
       _toolTipDisplay = GUIUtils.createToolTipDisplay(_lstSessions);
 
-
-      for (int i = 0; i < _lstSessions.getModel().getSize(); i++)
-      {
-         GroupDlgSessionWrapper sessWrp = _lstSessions.getModel().getElementAt(i);
-         if ( null != activeSavedSessionsGroup )
-         {
-            if(null != sessWrp.getSession().getSavedSession() && Objects.equals(activeSavedSessionsGroup.getGroupId(), sessWrp.getSession().getSavedSession().getGroupId()))
-            {
-               sessWrp.setInCurrentSession(true);
-            }
-         }
-         else
-         {
-            sessWrp.setInCurrentSession(true);
-         }
-      }
-
-
-      // _dlg.lstSessions.addMouseListener(); ...
       // http://blog.mynotiz.de/programmieren/java-checkbox-in-jlist-1061/
       _lstSessions.addMouseListener(new MouseAdapter()
       {
@@ -64,6 +45,36 @@ public class SessionsListCtrl
          }
       });
 
+   }
+
+   private static List<GroupDlgSessionWrapper> createSessionWrapperList(SavedSessionsGroupJsonBean groupBeingEdited)
+   {
+      List<GroupDlgSessionWrapper> ret = new ArrayList<>();
+      for (ISession session : Main.getApplication().getSessionManager().getOpenSessions())
+      {
+         GroupDlgSessionWrapper sessWrp;
+
+         if ( null == groupBeingEdited )
+         {
+            sessWrp = new GroupDlgSessionWrapper(session, true);
+         }
+         else
+         {
+            if(      null != session.getSavedSession()
+                  && Objects.equals(groupBeingEdited.getGroupId(), session.getSavedSession().getGroupId()))
+            {
+               sessWrp = new GroupDlgSessionWrapper(session, true);
+            }
+            else
+            {
+               sessWrp = new GroupDlgSessionWrapper(session, false);
+            }
+         }
+
+         ret.add(sessWrp);
+      }
+
+      return ret;
    }
 
    private void onMousePressed(MouseEvent e)
@@ -89,8 +100,9 @@ public class SessionsListCtrl
 
       if(wrapper.isInChkSelected(xInSessionListCellPanel, yInSessionListCellPanel))
       {
-         wrapper.invertSelected();
+         wrapper.invertGroupMemberFlag();
          _lstSessions.repaint();
+         _groupMembersListener.groupMembersChanged();
       }
       else if(wrapper.isInBtnSavedSessionOrGroupMemberInfo(xInSessionListCellPanel, yInSessionListCellPanel))
       {
@@ -102,13 +114,13 @@ public class SessionsListCtrl
       }
    }
 
-   public List<GroupDlgSessionWrapper> getSelectedValuesList()
+   public List<GroupDlgSessionWrapper> getInCurrentGroupList()
    {
       List<GroupDlgSessionWrapper> ret = new ArrayList<>();
       for (int i = 0; i < _lstSessions.getModel().getSize(); i++)
       {
          GroupDlgSessionWrapper sessWrp = _lstSessions.getModel().getElementAt(i);
-         if(sessWrp.isInCurrentSession())
+         if(sessWrp.isGroupMember())
          {
             ret.add(sessWrp);
          }

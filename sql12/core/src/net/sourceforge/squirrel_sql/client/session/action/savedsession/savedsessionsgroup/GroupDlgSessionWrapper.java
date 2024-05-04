@@ -11,12 +11,13 @@ public class GroupDlgSessionWrapper
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GroupDlgSessionWrapper.class);
 
    private final ISession _session;
-   private boolean _inCurrentSession;
+   private boolean _groupMember;
    private SessionListCellPanel _sessionListCellPanel = new SessionListCellPanel();
 
-   public GroupDlgSessionWrapper(ISession session)
+   public GroupDlgSessionWrapper(ISession session, boolean groupMember)
    {
       _session = session;
+      _groupMember = groupMember;
    }
 
    public ISession getSession()
@@ -30,32 +31,21 @@ public class GroupDlgSessionWrapper
       return _session.toString();
    }
 
-   public boolean isInCurrentSession()
+   public SessionListCellPanel initAndGetListCellPanelForRendering(boolean isSelected, boolean cellHasFocus)
    {
-      return _inCurrentSession;
-   }
-
-   public void setInCurrentSession(boolean inCurrentSession)
-   {
-      _inCurrentSession = inCurrentSession;
-   }
-
-   public SessionListCellPanel initAndGetSessionListCellPanel(boolean isSelected, boolean cellHasFocus)
-   {
-      _sessionListCellPanel.init(this, isSelected, cellHasFocus);
+      _sessionListCellPanel.initForRendering(this, isSelected, cellHasFocus);
       return _sessionListCellPanel;
    }
 
-   public void invertSelected()
+   public boolean isGroupMember()
    {
-      _inCurrentSession = !_inCurrentSession;
+      return _groupMember;
    }
 
-   public SessionListCellPanel getSessionListCellPanel()
+   public void invertGroupMemberFlag()
    {
-      return _sessionListCellPanel;
+      _groupMember = !_groupMember;
    }
-
 
    public boolean isInButtonFunctions(int xInSessionListCellPanel, int yInSessionListCellPanel)
    {

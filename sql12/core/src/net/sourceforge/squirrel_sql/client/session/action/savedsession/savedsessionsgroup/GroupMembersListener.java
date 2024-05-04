@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup;
 
 @FunctionalInterface
-public interface SessionsListSelectionListener
+public interface GroupMembersListener
 {
-   void sessionsListSelectionChanged();
+   void groupMembersChanged();
 }

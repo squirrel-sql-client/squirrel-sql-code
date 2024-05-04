@@ -28,9 +28,9 @@ public class SavedSessionsGroupCtrl
    private final SavedSessionsGroupDlg _dlg;
    private final SessionsListCtrl _sessionsListCtrl;
 
-   private SavedSessionsGroupJsonBean _activeSavedSessionsGroup;
+   private SavedSessionsGroupJsonBean _groupBeingEdited;
 
-   private boolean _inOnListSelectionChanged;
+   private boolean _inOnGroupMembersChanged;
    private boolean _groupNameEditedByUser;
 
    public SavedSessionsGroupCtrl()
@@ -42,15 +42,15 @@ public class SavedSessionsGroupCtrl
       {
          groupId = Main.getApplication().getSessionManager().getActiveSession().getSavedSession().getGroupId();
       }
-      _activeSavedSessionsGroup = Main.getApplication().getSavedSessionsManager().getGroup(groupId);
+      _groupBeingEdited = Main.getApplication().getSavedSessionsManager().getGroup(groupId);
 
-      if (null != _activeSavedSessionsGroup)
+      if (null != _groupBeingEdited)
       {
-         _dlg.txtGroupName.setText(_activeSavedSessionsGroup.getGroupName());
+         _dlg.txtGroupName.setText(_groupBeingEdited.getGroupName());
       }
 
-      _sessionsListCtrl = new SessionsListCtrl(_dlg.lstSessions, _activeSavedSessionsGroup, () -> onSessionsListSelectionChanged());
-      onSessionsListSelectionChanged();
+      _sessionsListCtrl = new SessionsListCtrl(_dlg.lstSessions, _groupBeingEdited, () -> onGroupMembersChanged());
+      onGroupMembersChanged();
 
 
       _dlg.txtGroupName.getDocument().addDocumentListener(new DocumentListener()
@@ -58,19 +58,19 @@ public class SavedSessionsGroupCtrl
          @Override
          public void insertUpdate(DocumentEvent e)
          {
-            handleGroupNameUpdatedByUser();
+            handleGroupNameUpdated();
          }
 
          @Override
          public void removeUpdate(DocumentEvent e)
          {
-            handleGroupNameUpdatedByUser();
+            handleGroupNameUpdated();
          }
 
          @Override
          public void changedUpdate(DocumentEvent e)
          {
-            handleGroupNameUpdatedByUser();
+            handleGroupNameUpdated();
          }
       });
 
@@ -105,9 +105,9 @@ public class SavedSessionsGroupCtrl
       }
    }
 
-   private void handleGroupNameUpdatedByUser()
+   private void handleGroupNameUpdated()
    {
-      if(_inOnListSelectionChanged)
+      if(_inOnGroupMembersChanged)
       {
          return;
       }
@@ -118,7 +118,7 @@ public class SavedSessionsGroupCtrl
 
    private void onSaveGroup(boolean gitCommit)
    {
-      List<GroupDlgSessionWrapper> toSaveWrappers = _sessionsListCtrl.getSelectedValuesList();
+      List<GroupDlgSessionWrapper> toSaveWrappers = _sessionsListCtrl.getInCurrentGroupList();
 
       if(toSaveWrappers.isEmpty())
       {
@@ -137,7 +137,7 @@ public class SavedSessionsGroupCtrl
       {
          if(null != sessWrp.getSession().getSavedSession())
          {
-            if(null == _activeSavedSessionsGroup || false == Objects.equals(_activeSavedSessionsGroup.getGroupId(), sessWrp.getSession().getSavedSession().getGroupId()))
+            if(null == _groupBeingEdited || false == Objects.equals(_groupBeingEdited.getGroupId(), sessWrp.getSession().getSavedSession().getGroupId()))
             {
                int res = JOptionPane.showConfirmDialog(_dlg,
                                                      s_stringMgr.getString("SavedSessionsGroupCtrl.saved.session.exists.message"),
@@ -160,12 +160,12 @@ public class SavedSessionsGroupCtrl
 
    private void saveSessionGroup(boolean gitCommit, String groupName, List<ISession> toSave)
    {
-      if(null == _activeSavedSessionsGroup)
+      if(null == _groupBeingEdited)
       {
-         _activeSavedSessionsGroup = new SavedSessionsGroupJsonBean();
+         _groupBeingEdited = new SavedSessionsGroupJsonBean();
       }
 
-      _activeSavedSessionsGroup.setGroupName(groupName);
+      _groupBeingEdited.setGroupName(groupName);
 
       ISession activeSessionInGroup = Main.getApplication().getSessionManager().getActiveSession();
       SaveSessionResult saveSessionResultOfActiveSession = null;
@@ -173,7 +173,7 @@ public class SavedSessionsGroupCtrl
       Collections.reverse(toSave); // Reverse because saved is moved to the top of SavedSessionsJsonBean._savedSessionJsonBeans
       for (ISession sess : toSave)
       {
-         SaveSessionResult buf = SessionPersister.saveSessionGroup(sess, _activeSavedSessionsGroup, gitCommit, sess == activeSessionInGroup);
+         SaveSessionResult buf = SessionPersister.saveSessionGroup(sess, _groupBeingEdited, gitCommit, sess == activeSessionInGroup);
          if(sess == activeSessionInGroup)
          {
             saveSessionResultOfActiveSession = buf;
@@ -194,25 +194,26 @@ public class SavedSessionsGroupCtrl
       _dlg.dispose();
    }
 
-   private void onSessionsListSelectionChanged()
+   private void onGroupMembersChanged()
    {
       try
       {
-         _inOnListSelectionChanged = true;
-         if(_groupNameEditedByUser || null != _activeSavedSessionsGroup)
+         _inOnGroupMembersChanged = true;
+         if(_groupNameEditedByUser || null != _groupBeingEdited)
          {
             return;
          }
 
-         if(_sessionsListCtrl.getSelectedValuesList().isEmpty())
+         if(_sessionsListCtrl.getInCurrentGroupList().isEmpty())
          {
             _dlg.txtGroupName.setText(s_stringMgr.getString("SavedSessionsGroupCtrl.error.cannot.save.empty.group"));
+            return;
          }
-         _dlg.txtGroupName.setText(SavedSessionUtil.createSessionGroupNameTemplate(_sessionsListCtrl.getSelectedValuesList().stream().map(w -> w.getSession()).collect(Collectors.toList())));
+         _dlg.txtGroupName.setText(SavedSessionUtil.createSessionGroupNameTemplate(_sessionsListCtrl.getInCurrentGroupList().stream().map(w -> w.getSession()).collect(Collectors.toList())));
       }
       finally
       {
-         _inOnListSelectionChanged = false;
+         _inOnGroupMembersChanged = false;
       }
    }
 

@@ -55,7 +55,7 @@ public class SessionListCellPanel extends JPanel
 
    }
 
-   public void init(GroupDlgSessionWrapper value, boolean isSelected, boolean cellHasFocus)
+   public void initForRendering(GroupDlgSessionWrapper value, boolean isSelected, boolean cellHasFocus)
    {
       _value = value;
       JTextField txtVanilla = new JTextField();
@@ -84,7 +84,7 @@ public class SessionListCellPanel extends JPanel
          GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo, false, true);
       }
 
-      chkSelected.setSelected(_value.isInCurrentSession());
+      chkSelected.setSelected(_value.isGroupMember());
 
 
       setBackground(txtVanilla.getBackground());
@@ -95,7 +95,6 @@ public class SessionListCellPanel extends JPanel
          setBackground(txtVanilla.getSelectionColor());
          chkSelected.setBackground(txtVanilla.getSelectionColor());
          txtSessName.setBackground(txtVanilla.getSelectionColor());
-         //lblImage.setBackground(new JTextField().getSelectionColor());
       }
 
       setBorder(BorderFactory.createEmptyBorder());
