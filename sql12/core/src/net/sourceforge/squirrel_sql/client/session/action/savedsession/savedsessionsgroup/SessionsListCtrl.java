@@ -100,9 +100,13 @@ public class SessionsListCtrl
 
       if(wrapper.isInChkSelected(xInSessionListCellPanel, yInSessionListCellPanel))
       {
-         wrapper.invertGroupMemberFlag();
-         _lstSessions.repaint();
-         _groupMembersListener.groupMembersChanged();
+         if (   0 == (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK)
+             && 0 == (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK))
+         {
+            wrapper.invertGroupMemberFlag();
+            _lstSessions.repaint();
+            _groupMembersListener.groupMembersChanged();
+         }
       }
       else if(wrapper.isInBtnSavedSessionOrGroupMemberInfo(xInSessionListCellPanel, yInSessionListCellPanel))
       {

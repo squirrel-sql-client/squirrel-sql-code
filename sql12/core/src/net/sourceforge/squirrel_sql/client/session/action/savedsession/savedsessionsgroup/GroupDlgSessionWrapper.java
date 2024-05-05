@@ -47,6 +47,12 @@ public class GroupDlgSessionWrapper
       _groupMember = !_groupMember;
    }
 
+   public void setGroupMemberFlag(boolean b)
+   {
+      _groupMember = b;
+   }
+
+
    public boolean isInButtonFunctions(int xInSessionListCellPanel, int yInSessionListCellPanel)
    {
       return _sessionListCellPanel.btnMoveToNewSavedSession.getBounds().contains(xInSessionListCellPanel, yInSessionListCellPanel);

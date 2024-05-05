@@ -14,6 +14,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -74,6 +77,15 @@ public class SavedSessionsGroupCtrl
          }
       });
 
+      _dlg.lstSessions.addKeyListener(new KeyAdapter()
+      {
+         @Override
+         public void keyPressed(KeyEvent e)
+         {
+            onKeyPressed(e);
+         }
+      });
+
 
       _dlg.btnSaveGroup.addActionListener(e -> onSaveGroup(false));
       _dlg.btnGitCommitGroup.addActionListener(e -> onSaveGroup(true));
@@ -88,6 +100,26 @@ public class SavedSessionsGroupCtrl
       GUIUtils.initLocation(_dlg, 600, 500);
       GUIUtils.enableCloseByEscape(_dlg);
       _dlg.setVisible(true);
+   }
+
+   private void onKeyPressed(KeyEvent e)
+   {
+      if(0 == _dlg.lstSessions.getModel().getSize())
+      {
+         return;
+      }
+
+      if (   e.getKeyCode() == KeyEvent.VK_K
+          && (0 != (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK)))
+      {
+         boolean allInGroup = (false == _dlg.lstSessions.getSelectedValuesList().stream().anyMatch(w -> !w.isGroupMember()));
+
+         for (GroupDlgSessionWrapper wrapper : _dlg.lstSessions.getSelectedValuesList())
+         {
+            wrapper.setGroupMemberFlag(!allInGroup);
+         }
+         _dlg.lstSessions.repaint();
+      }
    }
 
    private void initDefaultButton(SavedSessionsGroupDlgDefaultButton defaultButton)
