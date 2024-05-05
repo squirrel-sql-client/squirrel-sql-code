@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionsGroupJsonBean;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -256,7 +257,7 @@ public class SavedSessionUtil
 
    public static String createSessionGroupNameTemplate(List<ISession> sessions)
    {
-      String ret = "Group: [";
+      String ret = "Group of [";
 
       for (int i = 0; i < sessions.size(); i++)
       {
@@ -283,5 +284,23 @@ public class SavedSessionUtil
    private static String createSessionName(ISession session)
    {
       return session.getAlias().getName();
+   }
+
+   public static String getMainFrameTitleString(SavedSessionJsonBean savedSession)
+   {
+      if(null == savedSession)
+      {
+         throw new IllegalArgumentException("Don't call with param null");
+      }
+
+      if(StringUtilities.isEmpty(savedSession.getGroupId(), true))
+      {
+         return s_stringMgr.getString("SavedSessionUtil.saved.session.mainframe.title", savedSession.getName());
+      }
+      else
+      {
+         SavedSessionsGroupJsonBean group = Main.getApplication().getSavedSessionsManager().getGroup(savedSession.getGroupId());
+         return s_stringMgr.getString("SavedSessionUtil.in.saved.session.group.mainframe.title", group.getGroupName());
+      }
    }
 }

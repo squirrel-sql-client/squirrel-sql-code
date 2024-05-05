@@ -6,16 +6,20 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
+import java.util.Objects;
+
 public class GroupDlgSessionWrapper
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GroupDlgSessionWrapper.class);
 
+   private final SavedSessionsGroupJsonBean _groupBeingEdited;
    private final ISession _session;
    private boolean _groupMember;
    private SessionListCellPanel _sessionListCellPanel = new SessionListCellPanel();
 
-   public GroupDlgSessionWrapper(ISession session, boolean groupMember)
+   public GroupDlgSessionWrapper(SavedSessionsGroupJsonBean groupBeingEdited, ISession session, boolean groupMember)
    {
+      _groupBeingEdited = groupBeingEdited;
       _session = session;
       _groupMember = groupMember;
    }
@@ -23,12 +27,6 @@ public class GroupDlgSessionWrapper
    public ISession getSession()
    {
       return _session;
-   }
-
-   @Override
-   public String toString()
-   {
-      return _session.toString();
    }
 
    public SessionListCellPanel initAndGetListCellPanelForRendering(boolean isSelected, boolean cellHasFocus)
@@ -52,10 +50,9 @@ public class GroupDlgSessionWrapper
       _groupMember = b;
    }
 
-
-   public boolean isInButtonFunctions(int xInSessionListCellPanel, int yInSessionListCellPanel)
+   public SavedSessionsGroupJsonBean getGroupBeingEdited()
    {
-      return _sessionListCellPanel.btnMoveToNewSavedSession.getBounds().contains(xInSessionListCellPanel, yInSessionListCellPanel);
+      return _groupBeingEdited;
    }
 
    public boolean isInBtnSavedSessionOrGroupMemberInfo(int xInSessionListCellPanel, int yInSessionListCellPanel)
@@ -71,15 +68,27 @@ public class GroupDlgSessionWrapper
 
    public String getSavedSessionOrGroupMemberInfoToolTip()
    {
-      if (null != _session.getSavedSession() && false == StringUtilities.isEmpty(_session.getSavedSession().getGroupId(), true))
+      if (null == _session.getSavedSession())
       {
-         SavedSessionsGroupJsonBean group = Main.getApplication().getSavedSessionsManager().getGroup(_session.getSavedSession().getGroupId());
-         return s_stringMgr.getString("GroupDlgSessionWrapper.group.tooltip", group.getGroupName());
+         return null;
       }
-      else if (null != _session.getSavedSession() && StringUtilities.isEmpty(_session.getSavedSession().getGroupId(), true))
+
+      if (StringUtilities.isEmpty(_session.getSavedSession().getGroupId(), true))
       {
          return s_stringMgr.getString("GroupDlgSessionWrapper.saved.session.tooltip", _session.getSavedSession().getName());
       }
+      else if (null == _groupBeingEdited || false == Objects.equals(_groupBeingEdited.getGroupId(), _session.getSavedSession().getGroupId()))
+      {
+         SavedSessionsGroupJsonBean group = Main.getApplication().getSavedSessionsManager().getGroup(_session.getSavedSession().getGroupId());
+         return s_stringMgr.getString("GroupDlgSessionWrapper.member.of.other.group.tooltip", group.getGroupName());
+      }
+
       return null;
+   }
+
+   @Override
+   public String toString()
+   {
+      return _session.toString();
    }
 }

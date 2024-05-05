@@ -49,7 +49,12 @@ public class SavedSessionsGroupCtrl
 
       if (null != _groupBeingEdited)
       {
+         _dlg.lblOfTxtGroupName.setText(s_stringMgr.getString("SavedSessionsGroupDlg.name.of.existing.group"));
          _dlg.txtGroupName.setText(_groupBeingEdited.getGroupName());
+      }
+      else
+      {
+         _dlg.lblOfTxtGroupName.setText(s_stringMgr.getString("SavedSessionsGroupDlg.name.of.new.group"));
       }
 
       _sessionsListCtrl = new SessionsListCtrl(_dlg.lstSessions, _groupBeingEdited, () -> onGroupMembersChanged());

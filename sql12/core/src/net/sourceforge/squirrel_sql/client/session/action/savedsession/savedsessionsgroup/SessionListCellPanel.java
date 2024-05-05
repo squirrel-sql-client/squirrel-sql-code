@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class SessionListCellPanel extends JPanel
 {
@@ -17,9 +18,6 @@ public class SessionListCellPanel extends JPanel
    final JCheckBox chkSelected;
    final JTextField txtSessName;
    final JButton btnSavedSessionOrGroupMemberInfo;
-   final JButton btnMoveToNewSavedSession;
-
-   private GroupDlgSessionWrapper _value;
 
 
    public SessionListCellPanel()
@@ -45,46 +43,54 @@ public class SessionListCellPanel extends JPanel
       GUIUtils.setPreferredWidth(txtSessName, 0);
       add(txtSessName, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2,3,2,0), 0,0);
-      btnMoveToNewSavedSession = new JButton();
-      add(GUIUtils.styleAsToolbarButton(btnMoveToNewSavedSession), gbc);
-
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2,3,2,3), 0,0);
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2,3,2,3), 0,0);
       btnSavedSessionOrGroupMemberInfo = new JButton();
       add(GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo), gbc);
 
    }
 
-   public void initForRendering(GroupDlgSessionWrapper value, boolean isSelected, boolean cellHasFocus)
+   public void initForRendering(GroupDlgSessionWrapper wrapper, boolean isSelected, boolean cellHasFocus)
    {
-      _value = value;
       JTextField txtVanilla = new JTextField();
 
-      txtSessName.setText(_value.toString());
+      txtSessName.setText(wrapper.toString());
 
       btnSavedSessionOrGroupMemberInfo.setIcon(null);
       btnSavedSessionOrGroupMemberInfo.setToolTipText(null);
       GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo, false, false);
 
-      btnMoveToNewSavedSession.setIcon(null);
-      btnMoveToNewSavedSession.setToolTipText(null);
-      GUIUtils.styleAsToolbarButton(btnMoveToNewSavedSession, false, false);
-
-      if (null != _value.getSession().getSavedSession() && false == StringUtilities.isEmpty(_value.getSession().getSavedSession().getGroupId(), true))
+      if (null != wrapper.getSession().getSavedSession())
       {
-         btnSavedSessionOrGroupMemberInfo.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GROUP_SAVE));
-         GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo, false, true);
-
-         btnMoveToNewSavedSession.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.TO_SAVED_SESSION));
-         GUIUtils.styleAsToolbarButton(btnMoveToNewSavedSession, false, true);
+         // Does the wrapped Session belong to a group?
+         if (false == StringUtilities.isEmpty(wrapper.getSession().getSavedSession().getGroupId(), true))
+         {
+            if (null == wrapper.getGroupBeingEdited())
+            {
+               btnSavedSessionOrGroupMemberInfo.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GROUP_SAVE));
+               GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo, false, true);
+            }
+            // Does the wrapped Session belong another group than to the one being edited?
+            else if(Objects.equals(wrapper.getGroupBeingEdited().getGroupId(), wrapper.getSession().getSavedSession().getGroupId()))
+            {
+               // This offers to move the group member to a standalone Saved Session outside the group
+               // After this function is executed wrapper._groupMember must be automatically set to false.
+               btnSavedSessionOrGroupMemberInfo.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.TO_SAVED_SESSION));
+               GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo, false, true);
+            }
+            else if(false == Objects.equals(wrapper.getGroupBeingEdited().getGroupId(), wrapper.getSession().getSavedSession().getGroupId()))
+            {
+               btnSavedSessionOrGroupMemberInfo.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GROUP_SAVE));
+               GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo, false, true);
+            }
+         }
+         else if (StringUtilities.isEmpty(wrapper.getSession().getSavedSession().getGroupId(), true))
+         {
+            btnSavedSessionOrGroupMemberInfo.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION));
+            GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo, false, true);
+         }
       }
-      else if (null != _value.getSession().getSavedSession() && StringUtilities.isEmpty(_value.getSession().getSavedSession().getGroupId(), true))
-      {
-         btnSavedSessionOrGroupMemberInfo.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION));
-         GUIUtils.styleAsToolbarButton(btnSavedSessionOrGroupMemberInfo, false, true);
-      }
 
-      chkSelected.setSelected(_value.isGroupMember());
+      chkSelected.setSelected(wrapper.isGroupMember());
 
 
       setBackground(txtVanilla.getBackground());
@@ -103,4 +109,5 @@ public class SessionListCellPanel extends JPanel
          setBorder(BorderFactory.createLineBorder(Color.GRAY));
       }
    }
+
 }

@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -47,7 +48,7 @@ public class MainFrameTitleHandler
 
       if(false == allClosed && null != activeSession && null != activeSession.getSavedSession())
       {
-         title += " / " + s_stringMgr.getString("MainFrameTitleHandler.saved.session", activeSession.getSavedSession().getName());
+         title += " / " + SavedSessionUtil.getMainFrameTitleString(activeSession.getSavedSession());
       }
       _mainFrame.setTitle(title);
    }

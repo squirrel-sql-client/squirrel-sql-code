@@ -12,6 +12,7 @@ import java.awt.*;
 public class SavedSessionsGroupDlg extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionsGroupDlg.class);
+   JLabel lblOfTxtGroupName;
    JTextField txtGroupName;
    JList<GroupDlgSessionWrapper> lstSessions;
    JComboBox<SavedSessionsGroupDlgDefaultButton> cboDefaultButton;
@@ -30,7 +31,8 @@ public class SavedSessionsGroupDlg extends JDialog
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
-      getContentPane().add(new JLabel(s_stringMgr.getString("SavedSessionsGroupDlg.name.of.saved.sessions.group")), gbc);
+      lblOfTxtGroupName = new JLabel();
+      getContentPane().add(lblOfTxtGroupName, gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
       txtGroupName = new JTextField();

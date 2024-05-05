@@ -47,27 +47,27 @@ public class SessionsListCtrl
 
    }
 
-   private static List<GroupDlgSessionWrapper> createSessionWrapperList(SavedSessionsGroupJsonBean groupBeingEdited)
+   private List<GroupDlgSessionWrapper> createSessionWrapperList(SavedSessionsGroupJsonBean groupBeingEdited)
    {
       List<GroupDlgSessionWrapper> ret = new ArrayList<>();
       for (ISession session : Main.getApplication().getSessionManager().getOpenSessions())
       {
          GroupDlgSessionWrapper sessWrp;
 
-         if ( null == groupBeingEdited )
+         if (null == groupBeingEdited)
          {
-            sessWrp = new GroupDlgSessionWrapper(session, true);
+            sessWrp = new GroupDlgSessionWrapper(groupBeingEdited, session, null == session.getSavedSession());
          }
          else
          {
-            if(      null != session.getSavedSession()
-                  && Objects.equals(groupBeingEdited.getGroupId(), session.getSavedSession().getGroupId()))
+            if(   null != session.getSavedSession()
+               && Objects.equals(groupBeingEdited.getGroupId(), session.getSavedSession().getGroupId()))
             {
-               sessWrp = new GroupDlgSessionWrapper(session, true);
+               sessWrp = new GroupDlgSessionWrapper(groupBeingEdited, session, true);
             }
             else
             {
-               sessWrp = new GroupDlgSessionWrapper(session, false);
+               sessWrp = new GroupDlgSessionWrapper(groupBeingEdited, session, false);
             }
          }
 
@@ -111,10 +111,6 @@ public class SessionsListCtrl
       else if(wrapper.isInBtnSavedSessionOrGroupMemberInfo(xInSessionListCellPanel, yInSessionListCellPanel))
       {
          _toolTipDisplay.displayToolTip(e.getX(), e.getY(), wrapper.getSavedSessionOrGroupMemberInfoToolTip());
-      }
-      else if(wrapper.isInButtonFunctions(xInSessionListCellPanel, yInSessionListCellPanel))
-      {
-         System.out.println("SessionsListCtrl.onMouseButton --> Hit btnMoveToNewSavedSession");
       }
    }
 
