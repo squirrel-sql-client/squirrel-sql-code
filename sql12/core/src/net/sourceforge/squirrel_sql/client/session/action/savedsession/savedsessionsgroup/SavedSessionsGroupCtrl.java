@@ -185,6 +185,11 @@ public class SavedSessionsGroupCtrl
                {
                   return;
                }
+               else
+               {
+                  // Ask only once
+                  break;
+               }
             }
          }
       }

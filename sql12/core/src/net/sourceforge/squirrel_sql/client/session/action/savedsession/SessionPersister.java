@@ -49,54 +49,62 @@ public class SessionPersister
 
       final SQLAlias alias = session.getAlias();
       final SavedSessionsManager savedSessionsManager = Main.getApplication().getSavedSessionsManager();
-      if(null == savedSessionJsonBean && null == group)
+
+      if(null == group) // Standalone Saved Session
       {
-         String  savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(session);
-
-         final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(GUIUtils.getOwningFrame(session.getSessionPanel()), savedSessionNameTemplate);
-
-         if(false == sessionSaveDlg.isOk())
+         if(null == savedSessionJsonBean)
          {
-            return SaveSessionResult.ofUserCanceledSavingSession();
-         }
+            String  savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(session);
 
-         savedSessionJsonBean = new SavedSessionJsonBean();
-         savedSessionJsonBean.setName(sessionSaveDlg.getSavedSessionName());
-         savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
-         savedSessionJsonBean.setAliasNameForDebug(alias.getName());
-      }
-      else if(null == savedSessionJsonBean && null != group)
-      {
-         savedSessionJsonBean = new SavedSessionJsonBean();
-         savedSessionJsonBean.setGroupId(group.getGroupId());
-         savedSessionJsonBean.setName(GROUP_SAVED_SESSION_NAME_DUMMY);
-         savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
-         savedSessionJsonBean.setAliasNameForDebug(alias.getName());
-      }
-      else if(allowAliasChangeMsg
-              && null == group // Cannot change Aliases of SavedSessions in a Session group
-              && false == alias.getIdentifier().toString().equals(savedSessionJsonBean.getDefaultAliasIdString())
-              && savedSessionsManager.isShowAliasChangeMsg())
-      {
-         final DontShowAgainDialog dlgMsg = new DontShowAgainDialog(GUIUtils.getOwningFrame(session.getSessionPanel()),
-                                                                    s_stringMgr.getString("SessionPersister.change.default.alias.to", savedSessionJsonBean.getName(), alias.getName(), alias.getUrl()),
-                                                                    s_stringMgr.getString("SessionPersister.change.default.alias.how.to"));
+            final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(GUIUtils.getOwningFrame(session.getSessionPanel()), savedSessionNameTemplate);
 
-         dlgMsg.setTitle(s_stringMgr.getString("SessionPersister.change.default.alias.title"));
+            if(false == sessionSaveDlg.isOk())
+            {
+               return SaveSessionResult.ofUserCanceledSavingSession();
+            }
 
-         final DontShowAgainResult res = dlgMsg.showAndGetResult("SessionPersister.change.alias", 600, 250);
-         savedSessionsManager.setShowAliasChangeMsg(false == res.isDontShowAgain());
-
-         if(res.isCancel())
-         {
-            return SaveSessionResult.ofUserCanceledSavingSession();
-         }
-
-         if(res.isYes())
-         {
+            savedSessionJsonBean = new SavedSessionJsonBean();
+            savedSessionJsonBean.setName(sessionSaveDlg.getSavedSessionName());
             savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
             savedSessionJsonBean.setAliasNameForDebug(alias.getName());
          }
+         else if(allowAliasChangeMsg
+                 && false == alias.getIdentifier().toString().equals(savedSessionJsonBean.getDefaultAliasIdString())
+                 && savedSessionsManager.isShowAliasChangeMsg())
+         {
+            final DontShowAgainDialog dlgMsg = new DontShowAgainDialog(GUIUtils.getOwningFrame(session.getSessionPanel()),
+                                                                       s_stringMgr.getString("SessionPersister.change.default.alias.to", savedSessionJsonBean.getName(), alias.getName(), alias.getUrl()),
+                                                                       s_stringMgr.getString("SessionPersister.change.default.alias.how.to"));
+
+            dlgMsg.setTitle(s_stringMgr.getString("SessionPersister.change.default.alias.title"));
+
+            final DontShowAgainResult res = dlgMsg.showAndGetResult("SessionPersister.change.alias", 600, 250);
+            savedSessionsManager.setShowAliasChangeMsg(false == res.isDontShowAgain());
+
+            if(res.isCancel())
+            {
+               return SaveSessionResult.ofUserCanceledSavingSession();
+            }
+
+            if(res.isYes())
+            {
+               savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
+               savedSessionJsonBean.setAliasNameForDebug(alias.getName());
+            }
+         }
+      }
+      else // Saved Session in group
+      {
+         if(null == savedSessionJsonBean)
+         {
+            savedSessionJsonBean = new SavedSessionJsonBean();
+
+            // For an existing Saved Session we keep the name as a template in case it's later moved out of the group again.
+            savedSessionJsonBean.setName(GROUP_SAVED_SESSION_NAME_DUMMY);
+         }
+         savedSessionJsonBean.setGroupId(group.getGroupId());
+         savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
+         savedSessionJsonBean.setAliasNameForDebug(alias.getName());
       }
 
       List<SQLPanelSaveInfo> sqlPanelSaveInfoList = SavedSessionUtil.getAllSQLPanelsOrderedAndTyped(session);
