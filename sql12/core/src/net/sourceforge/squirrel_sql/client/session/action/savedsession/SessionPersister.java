@@ -16,6 +16,7 @@ import java.util.List;
 public class SessionPersister
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionPersister.class);
+   public static final String GROUP_SAVED_SESSION_NAME_DUMMY = "<<<GROUP_SAVED_SESSION_NAME_DUMMY_AS_ONLY_GROUP_NAME_COUNTS>>>";
 
 
    public static boolean saveSession(ISession session)
@@ -68,7 +69,7 @@ public class SessionPersister
       {
          savedSessionJsonBean = new SavedSessionJsonBean();
          savedSessionJsonBean.setGroupId(group.getGroupId());
-         savedSessionJsonBean.setName("<NameNotDisplayGroupSession_groupId=" + group.getGroupId() + ">");
+         savedSessionJsonBean.setName(GROUP_SAVED_SESSION_NAME_DUMMY);
          savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
          savedSessionJsonBean.setAliasNameForDebug(alias.getName());
       }
@@ -126,4 +127,13 @@ public class SessionPersister
       return SaveSessionResult.ofSessionWasSaved(sqlEditorActivator);
    }
 
+   public static void moveSavedSessionFromGroupToStandalone(SavedSessionJsonBean savedSessionToMove, String newSavedSessionName)
+   {
+      String groupId = savedSessionToMove.getGroupId();
+      savedSessionToMove.setName(newSavedSessionName);
+      savedSessionToMove.setGroupId(null);
+      SessionSaveProcessHandle sessionSaveProcessHandle = Main.getApplication().getSavedSessionsManager().beginStore(savedSessionToMove);
+      Main.getApplication().getSavedSessionsManager().endStore(savedSessionToMove, null, sessionSaveProcessHandle);
+      Main.getApplication().getSavedSessionsManager().removeGroupIfEmpty(groupId);
+   }
 }

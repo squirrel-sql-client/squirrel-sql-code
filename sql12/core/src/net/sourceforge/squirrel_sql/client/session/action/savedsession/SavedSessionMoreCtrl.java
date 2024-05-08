@@ -234,6 +234,12 @@ public class SavedSessionMoreCtrl
       menuItem.addActionListener(e -> onPrintDetails());
       popupMenu.add(menuItem);
 
+      popupMenu.addSeparator();
+
+      menuItem = new JMenuItem(s_stringMgr.getString("SavedSessionMoreCtrl.delete.selected.saved.sessions.right.mouse"));
+      menuItem.addActionListener(e -> onDeleteSelected());
+      popupMenu.add(menuItem);
+
       popupMenu.show(_dlg.lstSavedSessions, me.getX(), me.getY());
    }
 

@@ -2,8 +2,13 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedses
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionPersister;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveDlg;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolTipDisplay;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -108,10 +113,40 @@ public class SessionsListCtrl
             _groupMembersListener.groupMembersChanged();
          }
       }
-      else if(wrapper.isInBtnSavedSessionOrGroupMemberInfo(xInSessionListCellPanel, yInSessionListCellPanel))
+      else if(wrapper.isShowSavedSessionOrGroupMemberInfoToolTip(xInSessionListCellPanel, yInSessionListCellPanel))
       {
          _toolTipDisplay.displayToolTip(e.getX(), e.getY(), wrapper.getSavedSessionOrGroupMemberInfoToolTip());
       }
+      else if(wrapper.isAllowToMoveGroupMemberToSavedSession(xInSessionListCellPanel, yInSessionListCellPanel))
+      {
+         onMoveGroupMemberToSavedSession(wrapper);
+      }
+   }
+
+   private void onMoveGroupMemberToSavedSession(GroupDlgSessionWrapper wrapperToMove)
+   {
+      SavedSessionJsonBean savedSessionToMove = wrapperToMove.getSession().getSavedSession();
+      String savedSessionNameTemplate = savedSessionToMove.getName();
+
+      if(StringUtils.equals(savedSessionNameTemplate, SessionPersister.GROUP_SAVED_SESSION_NAME_DUMMY))
+      {
+         savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(wrapperToMove.getSession());
+      }
+
+      SessionSaveDlg sessionSaveDlg =
+            new SessionSaveDlg(GUIUtils.getOwningWindow(_lstSessions), savedSessionNameTemplate);
+
+      if(false == sessionSaveDlg.isOk())
+      {
+         return;
+      }
+
+      String savedSessionName = sessionSaveDlg.getSavedSessionName();
+      SessionPersister.moveSavedSessionFromGroupToStandalone(savedSessionToMove, savedSessionName);
+
+      wrapperToMove.setGroupMemberFlag(false);
+
+      _lstSessions.repaint();
    }
 
    public List<GroupDlgSessionWrapper> getInCurrentGroupList()

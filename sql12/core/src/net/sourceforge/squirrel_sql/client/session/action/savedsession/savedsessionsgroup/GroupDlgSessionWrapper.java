@@ -55,10 +55,30 @@ public class GroupDlgSessionWrapper
       return _groupBeingEdited;
    }
 
-   public boolean isInBtnSavedSessionOrGroupMemberInfo(int xInSessionListCellPanel, int yInSessionListCellPanel)
+   public boolean isShowSavedSessionOrGroupMemberInfoToolTip(int xInSessionListCellPanel, int yInSessionListCellPanel)
    {
-      return _sessionListCellPanel.btnSavedSessionOrGroupMemberInfo.getBounds().contains(xInSessionListCellPanel, yInSessionListCellPanel);
+      return _sessionListCellPanel.btnSavedSessionOrGroupMemberInfo.getBounds().contains(xInSessionListCellPanel, yInSessionListCellPanel)
+            && false == isAllowToMoveGroupMemberToSavedSession(xInSessionListCellPanel, yInSessionListCellPanel);
    }
+
+   public boolean isAllowToMoveGroupMemberToSavedSession(int xInSessionListCellPanel, int yInSessionListCellPanel)
+   {
+      if(    _sessionListCellPanel.btnSavedSessionOrGroupMemberInfo.getBounds().contains(xInSessionListCellPanel, yInSessionListCellPanel)
+          && isSessionMemberOfGroupBeingEdited())
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   private boolean isSessionMemberOfGroupBeingEdited()
+   {
+      return null != _session.getSavedSession()
+            && null != _groupBeingEdited
+            && Objects.equals(_groupBeingEdited.getGroupId(), _session.getSavedSession().getGroupId());
+   }
+
 
    public boolean isInChkSelected(int xInSessionListCellPanel, int yInSessionListCellPanel)
    {

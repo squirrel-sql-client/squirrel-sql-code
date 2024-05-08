@@ -284,13 +284,14 @@ public class SavedSessionsManager
 
    private void checkMaxSavedSessionLimit()
    {
+      List<SavedSessionGrouped> allSavedSessionsGrouped = getSavedSessionsGrouped();
+
       if(   0 == _savedSessionsJsonBean.getMaxNumberSavedSessions()
-         || _savedSessionsJsonBean.getSavedSessionJsonBeans().size() <= _savedSessionsJsonBean.getMaxNumberSavedSessions())
+         || allSavedSessionsGrouped.size() <= _savedSessionsJsonBean.getMaxNumberSavedSessions())
       {
          return;
       }
 
-      List<SavedSessionGrouped> allSavedSessionsGrouped = getSavedSessionsGrouped();
       final List<SavedSessionGrouped> toDel = allSavedSessionsGrouped.subList(_savedSessionsJsonBean.getMaxNumberSavedSessions(), allSavedSessionsGrouped.size());
 
       final String msg = s_stringMgr.getString("SavedSessionsManager.maximum.number.saved.sessions.exceeded", _savedSessionsJsonBean.getMaxNumberSavedSessions(), toDel.size());
@@ -369,5 +370,22 @@ public class SavedSessionsManager
    {
       initSavedSessions();
       return _savedSessionGroupsJsonBean.getGroups().stream().filter(g -> StringUtils.equals(g.getGroupId(), groupId)).findFirst().orElse(null);
+   }
+
+   public void removeGroupIfEmpty(String groupId)
+   {
+      boolean save = false;
+      if(getSavedSessionGrouped(groupId).getSavedSessions().isEmpty())
+      {
+         if(_savedSessionGroupsJsonBean.getGroups().removeIf(g -> StringUtils.equals(g.getGroupId(), groupId)))
+         {
+            save = true;
+         }
+      }
+
+      if(save)
+      {
+         saveJsonBeans();
+      }
    }
 }
