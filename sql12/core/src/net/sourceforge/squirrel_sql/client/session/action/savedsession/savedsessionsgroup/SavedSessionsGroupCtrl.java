@@ -215,7 +215,12 @@ public class SavedSessionsGroupCtrl
       Collections.reverse(toSave); // Reverse because saved is moved to the top of SavedSessionsJsonBean._savedSessionJsonBeans
       for (ISession sess : toSave)
       {
-         SaveSessionResult buf = SessionPersister.saveSessionGroup(sess, _groupBeingEdited, gitCommit, sess == activeSessionInGroup);
+         if(null != sess.getSavedSession() && false == StringUtilities.isEmpty(sess.getSavedSession().getGroupId(), true))
+         {
+            Main.getApplication().getSavedSessionsManager().removeGroupIfEmpty(sess.getSavedSession().getGroupId());
+         }
+
+         SaveSessionResult buf = SessionPersister.saveSessionInGroup(sess, _groupBeingEdited, gitCommit, sess == activeSessionInGroup);
          if(sess == activeSessionInGroup)
          {
             saveSessionResultOfActiveSession = buf;

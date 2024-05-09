@@ -34,7 +34,7 @@ public class SessionPersister
       return _saveSession(session, allowAliasChangeMsg, gitCommit, null, false).isSessionWasSaved();
    }
 
-   public static SaveSessionResult saveSessionGroup(ISession sess, SavedSessionsGroupJsonBean group, boolean gitCommit, boolean activeSessionInGroup)
+   public static SaveSessionResult saveSessionInGroup(ISession sess, SavedSessionsGroupJsonBean group, boolean gitCommit, boolean activeSessionInGroup)
    {
       return _saveSession(sess,
                           false, // As groups can only be opened on the same combination of Aliases
