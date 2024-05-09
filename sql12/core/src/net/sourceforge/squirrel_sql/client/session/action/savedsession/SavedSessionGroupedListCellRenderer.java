@@ -27,17 +27,20 @@ public class SavedSessionGroupedListCellRenderer implements ListCellRenderer<Sav
       textArea.setEditable(false);
       textArea.setBackground(isSelected ? vanillaTextField.getSelectionColor() : vanillaTextField.getBackground());
 
-      JComponent ret = textArea;
-
+      JPanel ret = new JPanel(new BorderLayout());
+      ret.add(textArea, BorderLayout.CENTER);
+      JLabel lblIcon;
       if(value.isGroup())
       {
-         ret = new JPanel(new BorderLayout());
-         ret.add(textArea, BorderLayout.CENTER);
-         JLabel lblGroupIcon = new JLabel(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GROUP_SAVE));
-         lblGroupIcon.setBackground(isSelected ? vanillaTextField.getSelectionColor() : vanillaTextField.getBackground());
-         ret.setBackground(isSelected ? vanillaTextField.getSelectionColor() : vanillaTextField.getBackground());
-         ret.add(lblGroupIcon, BorderLayout.WEST);
+         lblIcon = new JLabel(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GROUP_SAVE));
       }
+      else
+      {
+         lblIcon = new JLabel(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION));
+      }
+      lblIcon.setBackground(isSelected ? vanillaTextField.getSelectionColor() : vanillaTextField.getBackground());
+      ret.setBackground(isSelected ? vanillaTextField.getSelectionColor() : vanillaTextField.getBackground());
+      ret.add(lblIcon, BorderLayout.WEST);
 
       if(cellHasFocus)
       {

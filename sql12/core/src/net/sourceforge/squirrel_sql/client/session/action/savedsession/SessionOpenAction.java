@@ -68,13 +68,14 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
 
    private ImageIcon getIcon(SavedSessionGrouped savedSessionGrouped)
    {
-      if(false == savedSessionGrouped.isGroup())
+      if(savedSessionGrouped.isGroup())
       {
-         return null;
+         return Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GROUP_SAVE);
       }
-
-
-      return Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GROUP_SAVE);
+      else
+      {
+         return Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION);
+      }
    }
 
    public void onOpenSavedSessionsMoreDialog()
