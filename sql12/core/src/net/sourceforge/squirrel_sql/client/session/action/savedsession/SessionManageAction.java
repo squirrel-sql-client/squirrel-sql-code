@@ -7,8 +7,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionsGroupJsonBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -34,15 +36,26 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
 
          JMenuItem item;
 
-         item = new JMenuItem(s_stringMgr.getString("SessionManageAction.rename.session", _session.getSavedSession().getName()));
-         item.addActionListener(e -> onRenameSavedSession());
-         popupMenu.add(item);
+         if(StringUtilities.isEmpty(_session.getSavedSession().getGroupId(), true))
+         {
+            item = new JMenuItem(s_stringMgr.getString("SessionManageAction.rename.session", _session.getSavedSession().getName()));
+            item.addActionListener(e -> onRenameSavedSession());
+            popupMenu.add(item);
 
-         item = new JMenuItem(s_stringMgr.getString("SessionManageAction.save.as.new.session", _session.getSavedSession().getName()));
-         item.addActionListener(e -> onSaveAsNewSavedSession());
-         popupMenu.add(item);
+            item = new JMenuItem(s_stringMgr.getString("SessionManageAction.save.as.new.session", _session.getSavedSession().getName()));
+            item.addActionListener(e -> onSaveAsNewSavedSession());
+            popupMenu.add(item);
+         }
 
-         item = new JMenuItem(s_stringMgr.getString("SessionManageAction.print.saved.session.details.msg.panel", _session.getSavedSession().getName()));
+         if(StringUtilities.isEmpty(_session.getSavedSession().getGroupId(), true))
+         {
+            item = new JMenuItem(s_stringMgr.getString("SessionManageAction.print.saved.session.details.msg.panel", _session.getSavedSession().getName()));
+         }
+         else
+         {
+            SavedSessionsGroupJsonBean group = Main.getApplication().getSavedSessionsManager().getGroup(_session.getSavedSession().getGroupId());
+            item = new JMenuItem(s_stringMgr.getString("SessionManageAction.print.saved.session.in.group.details.msg.panel", group.getGroupName()));
+         }
          item.addActionListener(e -> onPrintDetailsToMessagePanel());
          popupMenu.add(item);
 

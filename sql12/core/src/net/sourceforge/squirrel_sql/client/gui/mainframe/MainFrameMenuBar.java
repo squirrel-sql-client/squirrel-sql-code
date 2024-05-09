@@ -36,8 +36,8 @@ import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAct
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommitSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenManageDialogAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SaveAndManageGroupOfSavedSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
@@ -512,11 +512,11 @@ final class MainFrameMenuBar extends JMenuBar
 	private JMenu createSavedSessionMenu(Resources rsrc)
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.SAVED_SESSION);
+		addToMenu(rsrc, SessionOpenAction.class, menu);
 		addToMenu(rsrc, SessionSaveAction.class, menu);
 		addToMenu(rsrc, GitCommitSessionAction.class, menu);
 		addToMenu(rsrc, SaveAndManageGroupOfSavedSessionsAction.class, menu);
-		addToMenu(rsrc, SessionOpenAction.class, menu);
-		addToMenu(rsrc, SessionManageAction.class, menu);
+		addToMenu(rsrc, SessionOpenManageDialogAction.class, menu);
 		return menu;
 	}
 

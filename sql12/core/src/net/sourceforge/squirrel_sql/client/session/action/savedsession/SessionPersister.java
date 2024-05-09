@@ -16,7 +16,7 @@ import java.util.List;
 public class SessionPersister
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionPersister.class);
-   public static final String GROUP_SAVED_SESSION_NAME_DUMMY = "<<<GROUP_SAVED_SESSION_NAME_DUMMY_AS_ONLY_GROUP_NAME_COUNTS>>>";
+   public static final String GROUP_SAVED_SESSION_NAME_DUMMY = "<<<SAVED_SESSION_IN_GROUP_NAME_DUMMY>>>";
 
 
    public static boolean saveSession(ISession session)

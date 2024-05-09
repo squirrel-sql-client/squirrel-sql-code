@@ -16,10 +16,7 @@ import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAct
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
 import net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection.*;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommitSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.*;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SaveAndManageGroupOfSavedSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.table_script.*;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
@@ -177,6 +174,7 @@ public class ActionRegistry
       actionCollection.add(new SaveAndManageGroupOfSavedSessionsAction());
       actionCollection.add(new SessionOpenAction(app));
       actionCollection.add(new SessionManageAction(app));
+      actionCollection.add(new SessionOpenManageDialogAction());
 
       actionCollection.add(new AliasPopUpMenuAction());
       actionCollection.add(new GlobalPreferencesAction(app));
