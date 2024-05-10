@@ -6,13 +6,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 public class OpenInSessionPanel extends JPanel
 {
@@ -22,6 +17,8 @@ public class OpenInSessionPanel extends JPanel
 
    private JRadioButton _radOpenInNewSession;
    private JRadioButton _radOpenInCurrentSession;
+   private JLabel _lblDecide;
+   private MultipleLineLabel _multiLblDecide;
 
    public OpenInSessionPanel(String savedSessionName, boolean warnDiscardExistingSqlEditors)
    {
@@ -52,11 +49,13 @@ public class OpenInSessionPanel extends JPanel
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0);
       if(StringUtilities.isEmpty(savedSessionName, true))
       {
-         add(new JLabel(s_stringMgr.getString("OpenInSessionPanel.decide.label.exc.name")), gbc);
+         _lblDecide = new JLabel(s_stringMgr.getString("OpenInSessionPanel.decide.label.exc.name"));
+         add(_lblDecide, gbc);
       }
       else
       {
-         add(new MultipleLineLabel(s_stringMgr.getString("OpenInSessionPanel.decide.label.inc.name", savedSessionName)), gbc);
+         _multiLblDecide = new MultipleLineLabel(s_stringMgr.getString("OpenInSessionPanel.decide.label.inc.name", savedSessionName));
+         add(_multiLblDecide, gbc);
       }
 
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0);
@@ -78,5 +77,20 @@ public class OpenInSessionPanel extends JPanel
    public boolean isOpenInNewSession()
    {
       return _radOpenInNewSession.isSelected();
+   }
+
+   public void setEnabledOpenInSessionPanel(boolean b)
+   {
+      if(null != _lblDecide)
+      {
+         _lblDecide.setEnabled(b);
+      }
+      if(null != _multiLblDecide)
+      {
+         _multiLblDecide.setEnabled(b);
+      }
+
+      _radOpenInNewSession.setEnabled(b);
+      _radOpenInCurrentSession.setEnabled(b);
    }
 }

@@ -12,6 +12,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -115,6 +116,9 @@ public class SavedSessionMoreCtrl
          }
       });
 
+      _dlg.lstSavedSessions.addListSelectionListener(e -> onListSelectionChanged(e));
+      onListSelectionChanged(null);
+
 
       final SavedSessionsManager savedSessionsManager = Main.getApplication().getSavedSessionsManager();
 
@@ -157,6 +161,17 @@ public class SavedSessionMoreCtrl
 
          _dlg.setVisible(true);
       }
+   }
+
+   private void onListSelectionChanged(ListSelectionEvent e)
+   {
+      if(   (e!= null && e.getValueIsAdjusting())
+         || null == _dlg.lstSavedSessions.getSelectedValue())
+      {
+         return;
+      }
+
+      _dlg.openInSessionPanel.setEnabledOpenInSessionPanel(!_dlg.lstSavedSessions.getSelectedValue().isGroup());
    }
 
 
