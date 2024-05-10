@@ -166,6 +166,7 @@ public class SavedSessionMoreCtrl
    private void onListSelectionChanged(ListSelectionEvent e)
    {
       if(   (e!= null && e.getValueIsAdjusting())
+         || null == _dlg.openInSessionPanel
          || null == _dlg.lstSavedSessions.getSelectedValue())
       {
          return;

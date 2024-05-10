@@ -20,7 +20,9 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -180,7 +182,35 @@ public class SavedSessionsManager
 
    private void saveJsonBeans()
    {
+      consolidateGroups();
       _singleThreadJsonWriteExecutorService.submit(() -> saveFiles());
+   }
+
+   private void consolidateGroups()
+   {
+      initSavedSessions();
+      Set<String> groupIdsInSavedSessions = _savedSessionsJsonBean.getSavedSessionJsonBeans()
+                                                                  .stream().filter(s -> false == StringUtilities.isEmpty(s.getGroupId(), true))
+                                                                  .map(s -> s.getGroupId()).collect(Collectors.toSet());
+
+      Set<String> uniqueGroupIds = new HashSet<>();
+      ArrayList<SavedSessionsGroupJsonBean> groupsToRemove = new ArrayList<>();
+      for(SavedSessionsGroupJsonBean group : _savedSessionGroupsJsonBean.getGroups())
+      {
+         if(false == groupIdsInSavedSessions.contains(group.getGroupId()))
+         {
+            groupsToRemove.add(group);
+            continue;
+         }
+
+         if(uniqueGroupIds.contains(group.getGroupId())) // Not supposed to happen
+         {
+            groupsToRemove.add(group);
+         }
+         uniqueGroupIds.add(group.getGroupId());
+      }
+
+      _savedSessionGroupsJsonBean.getGroups().removeAll(groupsToRemove);
    }
 
    private void saveFiles()
