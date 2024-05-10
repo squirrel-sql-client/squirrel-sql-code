@@ -335,7 +335,7 @@ public class SavedSessionsManager
       {
          for (SavedSessionGrouped toDel : toDelList)
          {
-            if(toDel.contains(session.getSavedSession()))
+            if(toDel.containsSavedSession(session.getSavedSession()))
             {
                SavedSessionUtil.initSessionWithSavedSession(null, session);
             }
@@ -350,6 +350,14 @@ public class SavedSessionsManager
       for (SavedSessionGrouped toDel : toDelList)
       {
          _savedSessionsJsonBean.getSavedSessionJsonBeans().removeAll(toDel.getSavedSessions());
+      }
+
+      for(SavedSessionGrouped toDel : toDelList)
+      {
+         if(toDel.isGroup())
+         {
+            _savedSessionGroupsJsonBean.getGroups().removeIf(g -> StringUtils.equals(g.getGroupId(), toDel.getGroup().getGroupId()));
+         }
       }
 
       saveJsonBeans();
@@ -374,6 +382,7 @@ public class SavedSessionsManager
 
    public void removeGroupIfEmpty(String groupId)
    {
+      initSavedSessions();
       boolean save = false;
       if(getSavedSessionGrouped(groupId).getSavedSessions().isEmpty())
       {

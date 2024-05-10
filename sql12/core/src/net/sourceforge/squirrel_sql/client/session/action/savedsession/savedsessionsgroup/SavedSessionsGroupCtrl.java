@@ -94,6 +94,7 @@ public class SavedSessionsGroupCtrl
 
       _dlg.btnSaveGroup.addActionListener(e -> onSaveGroup(false));
       _dlg.btnGitCommitGroup.addActionListener(e -> onSaveGroup(true));
+      _dlg.btnDelete.addActionListener(e -> onDelete());
       _dlg.btnCancel.addActionListener(e -> close());
 
       SavedSessionsGroupDlgDefaultButton defaultButton = SavedSessionsGroupDlgDefaultButton.valueOf(Props.getString(PROPS_KEY_DEFAULT_BUTTON, SavedSessionsGroupDlgDefaultButton.SAVE.name()));
@@ -199,6 +200,31 @@ public class SavedSessionsGroupCtrl
       // Needed to do after closing the modal dialog to make focusing and setting caret work.
       SwingUtilities.invokeLater(() -> saveSessionGroup(gitCommit, groupName, toSaveWrappers.stream().map(w -> w.getSession()).collect(Collectors.toList())));
    }
+
+   private void onDelete()
+   {
+      int res = JOptionPane.showConfirmDialog(_dlg,
+                                              s_stringMgr.getString("SavedSessionsGroupCtrl.delete.group.message"),
+                                              s_stringMgr.getString("SavedSessionsGroupCtrl.delete.group.title"),
+                                              JOptionPane.YES_NO_CANCEL_OPTION);
+
+      if (res != JOptionPane.YES_OPTION)
+      {
+         return;
+      }
+
+      if(null != _groupBeingEdited)
+      {
+         SavedSessionGrouped groupBeingEdited = Main.getApplication().getSavedSessionsManager().getSavedSessionGrouped(_groupBeingEdited.getGroupId());
+         Main.getApplication().getSavedSessionsManager().delete(List.of(groupBeingEdited));
+      }
+
+      String groupNameForMessagePanel = null != _groupBeingEdited ? _groupBeingEdited.getGroupName() : _dlg.txtGroupName.getText();
+      Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SavedSessionsGroupCtrl.group.was.delete", groupNameForMessagePanel));
+
+      close();
+   }
+
 
    private void saveSessionGroup(boolean gitCommit, String groupName, List<ISession> toSave)
    {

@@ -19,7 +19,7 @@ public class SaveAndManageGroupOfSavedSessionsAction extends SquirrelAction impl
    @Override
    public void setSession(ISession session)
    {
-      setEnabled(2 <= Main.getApplication().getSessionManager().getOpenSessions().size());
+      setEnabled(null != session);
    }
 
 

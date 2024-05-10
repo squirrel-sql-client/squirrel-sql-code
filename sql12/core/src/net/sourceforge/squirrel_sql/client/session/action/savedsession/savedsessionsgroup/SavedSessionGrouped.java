@@ -167,7 +167,7 @@ public class SavedSessionGrouped
       return false;
    }
 
-   public boolean contains(SavedSessionJsonBean savedSession)
+   public boolean containsSavedSession(SavedSessionJsonBean savedSession)
    {
       return _savedSessionJsonBeans.contains(savedSession);
    }

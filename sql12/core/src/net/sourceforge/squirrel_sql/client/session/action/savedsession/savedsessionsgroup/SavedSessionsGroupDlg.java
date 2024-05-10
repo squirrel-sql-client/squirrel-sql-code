@@ -18,6 +18,7 @@ public class SavedSessionsGroupDlg extends JDialog
    JComboBox<SavedSessionsGroupDlgDefaultButton> cboDefaultButton;
    JButton btnSaveGroup;
    JButton btnGitCommitGroup;
+   JButton btnDelete;
    JButton btnCancel;
 
 
@@ -48,7 +49,7 @@ public class SavedSessionsGroupDlg extends JDialog
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       getContentPane().add(createDefaultButtonPanel(), gbc);
 
-      gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5,0,5,5), 0,0);
+      gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       getContentPane().add(createButtonsPanel(), gbc);
    }
 
@@ -86,16 +87,28 @@ public class SavedSessionsGroupDlg extends JDialog
 
    private JPanel createButtonsPanel()
    {
-      JPanel ret = new JPanel(new GridLayout(1,3,5,0));
+      JPanel ret = new JPanel(new GridBagLayout());
 
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       btnSaveGroup = new JButton(SavedSessionsGroupDlgDefaultButton.SAVE.toString(), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_SAVE));
-      ret.add(btnSaveGroup);
+      ret.add(btnSaveGroup, gbc);
 
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
       btnGitCommitGroup = new JButton(SavedSessionsGroupDlgDefaultButton.GIT_COMMIT.toString(), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SESSION_GIT_COMMIT));
-      ret.add(btnGitCommitGroup);
+      ret.add(btnGitCommitGroup,gbc);
 
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,15,0,0), 0,0);
+      btnDelete = new JButton(s_stringMgr.getString("SavedSessionsGroupDlg.delete"));
+      ret.add(btnDelete, gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
+      ret.add(new JPanel(), gbc);
+
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       btnCancel = new JButton(s_stringMgr.getString("SavedSessionsGroupDlg.cancel"));
-      ret.add(btnCancel);
+      ret.add(btnCancel, gbc);
 
       return ret;
 
