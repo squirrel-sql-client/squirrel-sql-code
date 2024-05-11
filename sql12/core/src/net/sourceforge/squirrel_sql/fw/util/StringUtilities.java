@@ -359,6 +359,17 @@ public class StringUtilities
       }
    }
 
+   public static boolean isNotEmpty(String s)
+   {
+      return isNotEmpty(s, false);
+   }
+
+   public static boolean isNotEmpty(String s, boolean checkTrimmed)
+   {
+      return !isEmpty(s, checkTrimmed);
+   }
+
+
 
    public static String singleQuote(String value) {
 		if (!value.trim().startsWith("'")) {

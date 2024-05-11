@@ -15,6 +15,7 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsess
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -126,6 +127,20 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
       }
       else
       {
+         if(savedSessionGrouped.isGroup())
+         {
+            boolean groupIsOpened =
+                  Main.getApplication().getSessionManager().getOpenSessions()
+                      .stream().anyMatch(s -> null != s.getSavedSession() && StringUtils.equals(s.getSavedSession().getGroupId(), savedSessionGrouped.getGroup().getGroupId()));
+
+            if(groupIsOpened)
+            {
+               JOptionPane.showMessageDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("SessionOpenAction.group.is.open.message", savedSessionGrouped.getGroup().getGroupName()));
+               return;
+            }
+         }
+
+
          List<SavedSessionJsonBean> savedSessionsToOpen = new ArrayList<>();
 
          for (SavedSessionJsonBean savedSession : savedSessionGrouped.getSavedSessions())
