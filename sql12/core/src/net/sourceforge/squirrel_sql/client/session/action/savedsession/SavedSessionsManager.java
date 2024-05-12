@@ -240,7 +240,7 @@ public class SavedSessionsManager
             {
                savedSessionGrouped.addSavedSession(savedSessionJsonBean);
             }
-            else
+            else if(null != group)
             {
                ret.add(new SavedSessionGrouped(savedSessionJsonBean, group));
             }
@@ -414,7 +414,7 @@ public class SavedSessionsManager
    {
       initSavedSessions();
       boolean save = false;
-      if(getSavedSessionGrouped(groupId).getSavedSessions().isEmpty())
+      if(false == _savedSessionsJsonBean.getSavedSessionJsonBeans().stream().anyMatch(s -> StringUtils.equals(s.getGroupId(),groupId)))
       {
          if(_savedSessionGroupsJsonBean.getGroups().removeIf(g -> StringUtils.equals(g.getGroupId(), groupId)))
          {
