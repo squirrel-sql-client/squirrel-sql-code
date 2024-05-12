@@ -1,16 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.JOptionPane;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.ResizableTextEditDialog;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Class responsible for renaming selected session title.
@@ -53,28 +51,34 @@ public class RenameSessionAction  extends SquirrelAction implements ISessionActi
             oldTitle = _session.getTitle();
         }
 
-        String newTitle = (String) JOptionPane.showInputDialog(_app.getMainFrame(),
-            s_stringMgr.getString("RenameSessionAction.label"),
-            s_stringMgr.getString("RenameSessionAction.title"),
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                null,
-                oldTitle);
+		ResizableTextEditDialog textEditDialog = new ResizableTextEditDialog(_app.getMainFrame(),
+																									getClass().getName(),
+																									s_stringMgr.getString("RenameSessionAction.title"),
+																									s_stringMgr.getString("RenameSessionAction.label"),
+																									oldTitle,
+																									null);
+
+        //String newTitle = (String) JOptionPane.showInputDialog(_app.getMainFrame(),
+        //    s_stringMgr.getString("RenameSessionAction.label"),
+        //    s_stringMgr.getString("RenameSessionAction.title"),
+        //        JOptionPane.QUESTION_MESSAGE,
+        //        null,
+        //        null,
+        //        oldTitle);
       
-      if(null == newTitle)
+      if(false == textEditDialog.isOk())
       {
-         // Dialog was canceled.
          return;
       }
       
 
       if(!_session.getActiveSessionWindow().equals(_app.getWindowManager().getAllFramesOfSession(_session.getIdentifier())[0])) 
 		{
-			_session.getActiveSessionWindow().setTitle(newTitle);
+			_session.getActiveSessionWindow().setTitle(textEditDialog.getEditedText());
 		}
 		else
 		{
-			_session.setTitle(newTitle);
+			_session.setTitle(textEditDialog.getEditedText());
 			updateGui();
 		}
 	}

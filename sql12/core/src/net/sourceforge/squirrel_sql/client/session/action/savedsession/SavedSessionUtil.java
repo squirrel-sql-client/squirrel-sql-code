@@ -11,11 +11,14 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsess
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.gui.ResizableTextEditDialog;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -302,5 +305,35 @@ public class SavedSessionUtil
          SavedSessionsGroupJsonBean group = Main.getApplication().getSavedSessionsManager().getGroup(savedSession.getGroupId());
          return s_stringMgr.getString("SavedSessionUtil.in.saved.session.group.mainframe.title", group.getGroupName());
       }
+   }
+
+   public static String showEditSavedSessionNameDialog(Window parent, String defaultName)
+   {
+      final ResizableTextEditDialog sessionSaveDlg =
+            new ResizableTextEditDialog(parent,
+                                        SavedSessionUtil.class.getName(),
+                                        s_stringMgr.getString("SessionSaveDlg.title"),
+                                        s_stringMgr.getString("SessionSaveDlg.label"),
+                                        defaultName,
+                                        (resizableTextEditDialog, editedText) -> onEditSavedSessionNameCheck(resizableTextEditDialog, editedText));
+
+      if(false == sessionSaveDlg.isOk())
+      {
+         return null;
+      }
+
+      return sessionSaveDlg.getEditedText();
+
+   }
+
+   private static boolean onEditSavedSessionNameCheck(ResizableTextEditDialog textEditDialog, String editedText)
+   {
+      if( Main.getApplication().getSavedSessionsManager().doesNameExist(editedText.trim()))
+      {
+         JOptionPane.showMessageDialog(textEditDialog, s_stringMgr.getString("SessionSaveDlg.nonunique.name"));
+         return false;
+      }
+
+      return true;
    }
 }

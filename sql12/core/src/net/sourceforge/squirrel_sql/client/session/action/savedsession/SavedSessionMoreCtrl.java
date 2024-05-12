@@ -279,14 +279,14 @@ public class SavedSessionMoreCtrl
          Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SavedSessionMoreCtrl.no.session.to.rename"));
       }
 
-      final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(_dlg, savedSessionGrouped.getName());
+      String newName = SavedSessionUtil.showEditSavedSessionNameDialog(_dlg, savedSessionGrouped.getName());
 
-      if(false == sessionSaveDlg.isOk())
+      if(null == newName)
       {
          return;
       }
 
-      savedSessionGrouped.setName(sessionSaveDlg.getSavedSessionName());
+      savedSessionGrouped.setName(newName);
       Main.getApplication().getSavedSessionsManager().moveToTop(savedSessionGrouped);
 
       Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();

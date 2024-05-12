@@ -1,63 +1,57 @@
-package net.sourceforge.squirrel_sql.client.session.action.savedsession;
+package net.sourceforge.squirrel_sql.fw.gui;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 
-public class SessionSaveDlg extends JDialog
+public class ResizableTextEditDialog extends JDialog
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionSaveDlg.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResizableTextEditDialog.class);
 
-   private JTextField _txtSavedSessionName = new JTextField();
+   private JTextField _txtEditedText = new JTextField();
    private JButton _btnOk;
    private JButton _btnCancel;
 
    private boolean _ok;
 
 
-   public SessionSaveDlg(Window parentFrame, String savedSessionNameTemplate)
+   public ResizableTextEditDialog(Window parentFrame,
+                                  String originKey,
+                                  String dialogTitle,
+                                  String textFieldLabel,
+                                  String initialEditText,
+                                  ResizableTextEditDialogBeforeOkCloseCallback okCloseCallback)
    {
-      super(parentFrame, s_stringMgr.getString("SessionSaveDlg.title"), ModalityType.APPLICATION_MODAL);
+      super(parentFrame, dialogTitle, ModalityType.APPLICATION_MODAL);
 
-      layoutUI(savedSessionNameTemplate);
+      layoutUI(initialEditText, textFieldLabel);
 
-      _btnOk.addActionListener(e -> onOk());
+      _btnOk.addActionListener(e -> onOk(okCloseCallback));
       _btnCancel.addActionListener(e -> close());
 
       getRootPane().setDefaultButton(_btnOk);
 
       GUIUtils.enableCloseByEscape(this);
-      GUIUtils.initLocation(this, 450, 140);
+      GUIUtils.initLocation(this, 450, 140, originKey);
 
-      GUIUtils.forceFocus(_txtSavedSessionName);
+      GUIUtils.forceFocus(_txtEditedText);
       setVisible(true);
    }
 
-   private void onOk()
+   private void onOk(ResizableTextEditDialogBeforeOkCloseCallback okCloseCallback)
    {
 
-      if(StringUtilities.isEmpty(_txtSavedSessionName.getText(), true))
+      if(StringUtilities.isEmpty(_txtEditedText.getText(), true))
       {
-         JOptionPane.showConfirmDialog(this, s_stringMgr.getString("SessionSaveDlg.empty.name"));
+         JOptionPane.showMessageDialog(this, s_stringMgr.getString("ResizableTextEditDialog.empty.name"));
          return;
       }
 
-      if( Main.getApplication().getSavedSessionsManager().doesNameExist(_txtSavedSessionName.getText().trim()))
+      if(null != okCloseCallback && false == okCloseCallback.allowCloseOnOk(this, _txtEditedText.getText().trim()))
       {
-         JOptionPane.showConfirmDialog(this, s_stringMgr.getString("SessionSaveDlg.nonunique.name"));
          return;
       }
 
@@ -71,9 +65,9 @@ public class SessionSaveDlg extends JDialog
       return _ok;
    }
 
-   public String getSavedSessionName()
+   public String getEditedText()
    {
-      return _txtSavedSessionName.getText().trim();
+      return _txtEditedText.getText().trim();
    }
 
    public void setOk(boolean ok)
@@ -87,18 +81,18 @@ public class SessionSaveDlg extends JDialog
       dispose();
    }
 
-   private void layoutUI(String savedSessionNameTemplate)
+   private void layoutUI(String savedSessionNameTemplate, String textFieldLabel)
    {
       getContentPane().setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,10, 0,10), 0,0);
-      getContentPane().add(new JLabel(s_stringMgr.getString("SessionSaveDlg.label")), gbc);
+      getContentPane().add(new JLabel(textFieldLabel), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,10, 0,10), 0,0);
-      _txtSavedSessionName.setText(savedSessionNameTemplate);
-      getContentPane().add(_txtSavedSessionName, gbc);
+      _txtEditedText.setText(savedSessionNameTemplate);
+      getContentPane().add(_txtEditedText, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,10, 10,10), 0,0);
       getContentPane().add(createOkCancelPanel(), gbc);
@@ -115,11 +109,11 @@ public class SessionSaveDlg extends JDialog
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0, 0,0), 0,0);
-      _btnOk = new JButton(s_stringMgr.getString("SessionSaveDlg.ok"));
+      _btnOk = new JButton(s_stringMgr.getString("ResizableTextEditDialog.ok"));
       ret.add(_btnOk, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5, 0,0), 0,0);
-      _btnCancel = new JButton(s_stringMgr.getString("SessionSaveDlg.cancel"));
+      _btnCancel = new JButton(s_stringMgr.getString("ResizableTextEditDialog.cancel"));
       ret.add(_btnCancel, gbc);
 
       return ret;

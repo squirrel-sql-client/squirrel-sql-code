@@ -98,14 +98,15 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
    {
       SavedSessionGrouped savedSessionGrouped = Main.getApplication().getSavedSessionsManager().getSavedSessionGrouped(_session.getSavedSession());
 
-      SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(Main.getApplication().getMainFrame(), _session.getSavedSession().getName());
+      String newName = SavedSessionUtil.showEditSavedSessionNameDialog(Main.getApplication().getMainFrame(), savedSessionGrouped.getName());
 
-      if(false == sessionSaveDlg.isOk())
+
+      if(null == newName)
       {
          return;
       }
 
-      _session.getSavedSession().setName(sessionSaveDlg.getSavedSessionName());
+      _session.getSavedSession().setName(newName);
       Main.getApplication().getSavedSessionsManager().moveToTop(savedSessionGrouped);
       // SessionPersister.saveSession(session, false);
 

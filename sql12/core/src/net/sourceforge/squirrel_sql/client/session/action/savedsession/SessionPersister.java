@@ -56,15 +56,16 @@ public class SessionPersister
          {
             String  savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(session);
 
-            final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(GUIUtils.getOwningFrame(session.getSessionPanel()), savedSessionNameTemplate);
+            String newName =
+                  SavedSessionUtil.showEditSavedSessionNameDialog(GUIUtils.getOwningFrame(session.getSessionPanel()), savedSessionNameTemplate);
 
-            if(false == sessionSaveDlg.isOk())
+            if(null == newName)
             {
                return SaveSessionResult.ofUserCanceledSavingSession();
             }
 
             savedSessionJsonBean = new SavedSessionJsonBean();
-            savedSessionJsonBean.setName(sessionSaveDlg.getSavedSessionName());
+            savedSessionJsonBean.setName(newName);
             savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
             savedSessionJsonBean.setAliasNameForDebug(alias.getName());
          }

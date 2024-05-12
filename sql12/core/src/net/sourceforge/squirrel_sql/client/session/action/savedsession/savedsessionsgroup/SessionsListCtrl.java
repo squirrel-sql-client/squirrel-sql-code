@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionPersister;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveDlg;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolTipDisplay;
 import org.apache.commons.lang3.StringUtils;
@@ -133,16 +132,15 @@ public class SessionsListCtrl
          savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(wrapperToMove.getSession());
       }
 
-      SessionSaveDlg sessionSaveDlg =
-            new SessionSaveDlg(GUIUtils.getOwningWindow(_lstSessions), savedSessionNameTemplate);
+      String newName =
+            SavedSessionUtil.showEditSavedSessionNameDialog(GUIUtils.getOwningWindow(_lstSessions), savedSessionNameTemplate);
 
-      if(false == sessionSaveDlg.isOk())
+      if(null == newName)
       {
          return;
       }
 
-      String savedSessionName = sessionSaveDlg.getSavedSessionName();
-      SessionPersister.moveSavedSessionFromGroupToStandalone(savedSessionToMove, savedSessionName);
+      SessionPersister.moveSavedSessionFromGroupToStandalone(savedSessionToMove, newName);
 
       wrapperToMove.setGroupMemberFlag(false);
 
