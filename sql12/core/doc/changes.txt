@@ -6,8 +6,14 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
-SQL editor's right mouse menu offers to execute SQLs.
+Saved Session groups: New toolbar and Session menu "Save/manage group of saved Session" allows to save
+  multiple Sessions and their SQL editors.
+  - To reopen a group use the "Open Saved Session or groups" toolbar button or Session menu.
+  - Note: The "Save/manage group of saved Session" dialog offers an optimization
+    which allows to save all open Sessions by using the ctrl+alt+shift+m shortcut to open the dialog
+    and then hitting enter to save or GIT commit.
 
+SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
