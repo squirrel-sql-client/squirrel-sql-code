@@ -27,6 +27,7 @@ public class SavedSessionsGroupCtrl
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionsGroupCtrl.class);
 
    private static final String PROPS_KEY_DEFAULT_BUTTON = "GroupOfSavedSessionsCtrl.GroupSaveDefaultButton";
+   private static final String PROPS_KEY_OPTIMIZE_STORING_OPEN_SESSIONS = "GroupOfSavedSessionsCtrl.OptimizeStoringOpenSessions";
 
    private final SavedSessionsGroupDlg _dlg;
    private final SessionsListCtrl _sessionsListCtrl;
@@ -91,6 +92,9 @@ public class SavedSessionsGroupCtrl
          }
       });
 
+      _dlg.chkOptimizeStoringOpenSessions.setSelected(Props.getBoolean(PROPS_KEY_OPTIMIZE_STORING_OPEN_SESSIONS, false));
+      _dlg.chkOptimizeStoringOpenSessions.addActionListener(e -> onChkOptimizeStoringOpenSessions());
+      onChkOptimizeStoringOpenSessions();
 
       _dlg.btnSaveGroup.addActionListener(e -> onSaveGroup(false));
       _dlg.btnGitCommitGroup.addActionListener(e -> onSaveGroup(true));
@@ -106,6 +110,14 @@ public class SavedSessionsGroupCtrl
       GUIUtils.initLocation(_dlg, 600, 500);
       GUIUtils.enableCloseByEscape(_dlg);
       _dlg.setVisible(true);
+   }
+
+   private void onChkOptimizeStoringOpenSessions()
+   {
+      if(_dlg.chkOptimizeStoringOpenSessions.isSelected())
+      {
+         _sessionsListCtrl.selectAll();
+      }
    }
 
    private void onKeyPressed(KeyEvent e)
@@ -173,7 +185,7 @@ public class SavedSessionsGroupCtrl
 
       for (GroupDlgSessionWrapper sessWrp : toSaveWrappers)
       {
-         if(null != sessWrp.getSession().getSavedSession())
+         if(false == _dlg.chkOptimizeStoringOpenSessions.isSelected() && null != sessWrp.getSession().getSavedSession()) //
          {
             if(null == _groupBeingEdited || false == Objects.equals(_groupBeingEdited.getGroupId(), sessWrp.getSession().getSavedSession().getGroupId()))
             {
@@ -262,6 +274,7 @@ public class SavedSessionsGroupCtrl
    private void close()
    {
       Props.putString(PROPS_KEY_DEFAULT_BUTTON, ((SavedSessionsGroupDlgDefaultButton)_dlg.cboDefaultButton.getSelectedItem()).name());
+      Props.putBoolean(PROPS_KEY_OPTIMIZE_STORING_OPEN_SESSIONS, (_dlg.chkOptimizeStoringOpenSessions.isSelected()));
 
       _dlg.setVisible(false);
       _dlg.dispose();

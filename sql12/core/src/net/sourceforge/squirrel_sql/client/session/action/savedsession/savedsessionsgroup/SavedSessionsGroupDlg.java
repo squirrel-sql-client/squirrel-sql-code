@@ -15,6 +15,8 @@ public class SavedSessionsGroupDlg extends JDialog
    JLabel lblOfTxtGroupName;
    JTextField txtGroupName;
    JList<GroupDlgSessionWrapper> lstSessions;
+   JCheckBox chkOptimizeStoringOpenSessions;
+
    JComboBox<SavedSessionsGroupDlgDefaultButton> cboDefaultButton;
    JButton btnSaveGroup;
    JButton btnGitCommitGroup;
@@ -46,11 +48,26 @@ public class SavedSessionsGroupDlg extends JDialog
       lstSessions = new JList<>();
       getContentPane().add(new JScrollPane(lstSessions), gbc);
 
-      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+      getContentPane().add(createOptimizeStoringOpenSessionsPanel(), gbc);
+
+      gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(15,5,5,5), 0,0);
       getContentPane().add(createDefaultButtonPanel(), gbc);
 
-      gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       getContentPane().add(createButtonsPanel(), gbc);
+   }
+
+   private JPanel createOptimizeStoringOpenSessionsPanel()
+   {
+      JPanel ret = new JPanel(new BorderLayout());
+
+      chkOptimizeStoringOpenSessions = new JCheckBox(s_stringMgr.getString("SavedSessionsGroupDlg.optimize.storing.all.open.session"));
+      ret.add(chkOptimizeStoringOpenSessions, BorderLayout.CENTER);
+
+      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("SavedSessionsGroupDlg.optimize.storing.all.open.session.info")).getButton(), BorderLayout.EAST);
+
+      return ret;
    }
 
    private static JPanel createGroupListTitle()

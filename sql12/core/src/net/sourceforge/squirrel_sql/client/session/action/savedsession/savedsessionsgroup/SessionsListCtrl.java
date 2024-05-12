@@ -163,4 +163,15 @@ public class SessionsListCtrl
 
       return ret;
    }
+
+   public void selectAll()
+   {
+      for(int i = 0; i < _lstSessions.getModel().getSize(); i++)
+      {
+         _lstSessions.getModel().getElementAt(i).setGroupMemberFlag(true);
+      }
+      _lstSessions.repaint();
+      _groupMembersListener.groupMembersChanged();
+
+   }
 }
