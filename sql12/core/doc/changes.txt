@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL result: The rows and columns display now offers several copy functions.
+
 Dialog to rename Session tabs is now resizable, see right mouse menu of Session tabs.
 
 Saved Session groups: New toolbar and Session menu "Save/manage group of saved Session" allows to save
