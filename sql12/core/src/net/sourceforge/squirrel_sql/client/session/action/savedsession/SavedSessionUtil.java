@@ -336,4 +336,27 @@ public class SavedSessionUtil
 
       return true;
    }
+
+   public static void detachInternalFiles(ISession session)
+   {
+      detachInternalFiles(List.of(session));
+   }
+
+   public static void detachInternalFiles(List<ISession> sessions)
+   {
+      for (ISession session : sessions)
+      {
+         List<SQLPanelSaveInfo> sqlPanelSaveInfos = getAllSQLPanelsOrderedAndTyped(session);
+
+         for (SQLPanelSaveInfo sqlPanelSaveInfo : sqlPanelSaveInfos)
+         {
+            final File file = sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().getFile();
+
+            if(isInSavedSessionsDir(file))
+            {
+               sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().fileDetach(true);
+            }
+         }
+      }
+   }
 }

@@ -21,6 +21,9 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+Saved Session groups: Deleting Sessions from groups did not work.
+  It now works the same way as when a Saved Session of an open Session is deleted. I.e. all internal files are detached.
+
 Editable cell data popup: When updating data fails with a "No rows updated" message box
   the message box was poorly positioned.
 

@@ -15,7 +15,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -310,7 +309,7 @@ public class SavedSessionMoreCtrl
             return;
          }
 
-         detachInternalFiles(openSessions);
+         SavedSessionUtil.detachInternalFiles(openSessions);
       }
       else
       {
@@ -327,24 +326,6 @@ public class SavedSessionMoreCtrl
       if(0 < _dlg.lstSavedSessions.getModel().getSize())
       {
          _dlg.lstSavedSessions.setSelectedIndex(0);
-      }
-   }
-
-   private void detachInternalFiles(List<ISession> sessions)
-   {
-      for (ISession session : sessions)
-      {
-         List<SQLPanelSaveInfo> sqlPanelSaveInfos = SavedSessionUtil.getAllSQLPanelsOrderedAndTyped(session);
-
-         for (SQLPanelSaveInfo sqlPanelSaveInfo : sqlPanelSaveInfos)
-         {
-            final File file = sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().getFile();
-
-            if(SavedSessionUtil.isInSavedSessionsDir(file))
-            {
-               sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().fileDetach(true);
-            }
-         }
       }
    }
 

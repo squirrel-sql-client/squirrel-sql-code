@@ -357,6 +357,11 @@ public class SavedSessionsManager
       return ret;
    }
 
+   public void delete(SavedSessionGrouped toDel)
+   {
+      delete(List.of(toDel));
+   }
+
    public void delete(List<SavedSessionGrouped> toDelList)
    {
       initSavedSessions();

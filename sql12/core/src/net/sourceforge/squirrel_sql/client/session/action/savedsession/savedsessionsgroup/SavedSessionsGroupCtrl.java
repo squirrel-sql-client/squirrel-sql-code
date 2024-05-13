@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedses
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SaveSessionResult;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionPersister;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -20,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SavedSessionsGroupCtrl
@@ -240,9 +242,15 @@ public class SavedSessionsGroupCtrl
 
    private void saveSessionGroup(boolean gitCommit, String groupName, List<ISession> toSave)
    {
+      SavedSessionGrouped groupBeforeSave = null;
+
       if(null == _groupBeingEdited)
       {
          _groupBeingEdited = new SavedSessionsGroupJsonBean();
+      }
+      else
+      {
+         groupBeforeSave = Main.getApplication().getSavedSessionsManager().getSavedSessionGrouped(_groupBeingEdited.getGroupId());
       }
 
       _groupBeingEdited.setGroupName(groupName);
@@ -262,6 +270,36 @@ public class SavedSessionsGroupCtrl
          if(sess == activeSessionInGroup)
          {
             saveSessionResultOfActiveSession = buf;
+         }
+      }
+
+      if(null != groupBeforeSave) // Check for deletes
+      {
+         for(SavedSessionJsonBean savedSessionBefore : groupBeforeSave.getSavedSessions())
+         {
+            if(toSave.stream().noneMatch(s -> Objects.equals(s.getSavedSession(), savedSessionBefore)))
+            {
+               // Here savedSessionBefore needs to be removed
+
+               Optional<ISession> sessionToDetach =
+                     Main.getApplication().getSessionManager().getOpenSessions().stream().filter(s -> Objects.equals(s.getSavedSession(), savedSessionBefore)).findFirst();
+
+               if(sessionToDetach.isPresent())
+               {
+                  // If the savedSessionBefore has an open Session, detach it.
+                  SavedSessionUtil.detachInternalFiles(sessionToDetach.get());
+                  sessionToDetach.get().setSavedSession(null);
+
+                  if(Objects.equals(activeSessionInGroup, sessionToDetach.get()))
+                  {
+                     saveSessionResultOfActiveSession = null;
+                  }
+               }
+
+               // Remove the Saved Session
+               savedSessionBefore.setGroupId(null);
+               Main.getApplication().getSavedSessionsManager().delete(SavedSessionGrouped.of(savedSessionBefore));
+            }
          }
       }
 
