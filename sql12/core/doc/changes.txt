@@ -23,6 +23,8 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+Saved Sessions and groups: The "Open / manage ..." dialog's list did not repaint when a Session or group was renamed.
+
 Saved Session groups: Deleting Sessions from groups did not work.
   It now works the same way as when a Saved Session of an open Session is deleted. I.e. all internal files are detached.
 
