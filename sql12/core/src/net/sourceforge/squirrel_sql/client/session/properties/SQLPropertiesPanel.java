@@ -36,8 +36,8 @@ class SQLPropertiesPanel extends JPanel
 
    private JumpToObjectTreeConfigCtrl _jumpToObjectTreeConfigCtrl = new JumpToObjectTreeConfigCtrl();
 
-   private JTextField _stmtSepField = new JTextField(5);
-   private JTextField _solCommentField = new JTextField(2);
+   private JTextField _stmtSepField = new JTextField(10);
+   private JTextField _txtStartOfLineComment = new JTextField(2);
 
    private JCheckBox _removeMultiLineComment = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.removeMultiLineComment"));
    private JCheckBox _removeLineComment = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.removeLineComment"));
@@ -104,13 +104,13 @@ class SQLPropertiesPanel extends JPanel
 
          if (qtp.isTokenizerDefinesStartOfLineComment())
          {
-            _solCommentField.setText(queryTokenizer.getLineCommentBegin());
-            _solCommentField.setEditable(false);
+            _txtStartOfLineComment.setText(queryTokenizer.getLineCommentBegin());
+            _txtStartOfLineComment.setEditable(false);
          }
          else
          {
-            _solCommentField.setText(props.getStartOfLineComment());
-            _solCommentField.setEditable(true);
+            _txtStartOfLineComment.setText(props.getStartOfLineComment());
+            _txtStartOfLineComment.setEditable(true);
          }
 
          if (qtp.isTokenizerDefinesRemoveMultiLineComment())
@@ -138,7 +138,7 @@ class SQLPropertiesPanel extends JPanel
       else
       {
          _stmtSepField.setText(props.getSQLStatementSeparator());
-         _solCommentField.setText(props.getStartOfLineComment());
+         _txtStartOfLineComment.setText(props.getStartOfLineComment());
          _removeMultiLineComment.setSelected(props.getRemoveMultiLineComment());
          _removeLineComment.setSelected(props.getRemoveLineComment());
       }
@@ -187,7 +187,7 @@ class SQLPropertiesPanel extends JPanel
       props.setAllowCtrlMouseClickJumpToObjectTree(_jumpToObjectTreeConfigCtrl.isAllowCtrlMouseClickJumpToObjectTree());
 
       props.setSQLStatementSeparator(_stmtSepField.getText());
-      props.setStartOfLineComment(_solCommentField.getText());
+      props.setStartOfLineComment(_txtStartOfLineComment.getText());
       props.setRemoveMultiLineComment(_removeMultiLineComment.isSelected());
       props.setRemoveLineComment(_removeLineComment.isSelected());
 
@@ -344,29 +344,62 @@ class SQLPropertiesPanel extends JPanel
          }
       }
 
-
       ++gbc.gridy; // new line
       gbc.gridx = 0;
-      gbc.gridwidth = 1;
-      pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.stmtsep")), gbc);
-      ++gbc.gridx;
-      pnl.add(_stmtSepField, gbc);
-      ++gbc.gridx;
-      pnl.add(new RightLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.solcomment")), gbc);
-      ++gbc.gridx;
-      pnl.add(_solCommentField, gbc);
+      gbc.gridwidth = 4;
+      pnl.add(createStatementSeparatorPanel(), gbc);
 
       ++gbc.gridy; // new line
       gbc.gridx = 0;
       gbc.gridwidth = 4;
-      pnl.add(_removeMultiLineComment, gbc);
-
-      ++gbc.gridy; // new line
-      gbc.gridx = 0;
-      gbc.gridwidth = 4;
-      pnl.add(_removeLineComment, gbc);
+      pnl.add(createCommentPanel(), gbc);
 
       return pnl;
+   }
+
+   private JPanel createCommentPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,2,0,2), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.solcomment")), gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,3,0,2), 0,0);
+      ret.add(_txtStartOfLineComment, gbc);
+
+
+      gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(_removeLineComment, gbc);
+
+      gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(_removeMultiLineComment, gbc);
+
+      ret.setBorder(BorderFactory.createEtchedBorder());
+
+      return ret;
+   }
+
+   private JPanel createStatementSeparatorPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,2,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2,2,0,2), 0,0);
+      ret.add(new MultipleLineLabel(s_stringMgr.getString("SQLPropertiesPanel.separators.info")), gbc);
+
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,2,2,2), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.stmtsep")), gbc);
+
+      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,3,2,2), 0,0);
+      ret.add(_stmtSepField, gbc);
+
+      ret.setBorder(BorderFactory.createEtchedBorder());
+
+      return ret;
    }
 
    private JPanel createAvoidUiHangsPanel()
