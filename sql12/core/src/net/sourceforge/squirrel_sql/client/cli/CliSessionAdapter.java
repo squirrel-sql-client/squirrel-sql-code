@@ -197,7 +197,7 @@ public class CliSessionAdapter implements ISession
    }
 
    @Override
-   public void setTitle(String newTitle)
+   public void setUserChangedTitle(String newTitle)
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }

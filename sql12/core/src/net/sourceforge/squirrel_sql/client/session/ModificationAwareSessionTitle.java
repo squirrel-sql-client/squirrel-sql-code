@@ -9,6 +9,7 @@ public class ModificationAwareSessionTitle
    private List<ModificationAwareSessionTitleChangeListener> _listeners = new ArrayList<>();
 
    private String _title;
+   private boolean _titleWasChangedByUser;
 
    public String getTitle()
    {
@@ -17,8 +18,24 @@ public class ModificationAwareSessionTitle
 
    public void setTitle(String newTitle)
    {
+      setTitle(newTitle, false);
+   }
+
+   public void setTitle(String newTitle, boolean changedByUser)
+   {
       if(Objects.equals(_title, newTitle))
       {
+         return;
+      }
+
+      if(changedByUser)
+      {
+         _titleWasChangedByUser = true;
+         // Go on in any case
+      }
+      else if(_titleWasChangedByUser)
+      {
+         // If the user changed the title we leave it as it is. See bug #1528
          return;
       }
 

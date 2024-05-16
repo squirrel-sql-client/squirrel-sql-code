@@ -26,6 +26,8 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+#1528 When users changed a Session tab's name and switched to another catalog the changes were lost.
+
 Look and feel plugin: When SQuirreL was installed into an empty directory
   loading the FlatLaf Look and Feel raised a ClassNotFoundException. In consequence SQuirreL's dark theme did not work.
   Additionally FlatLaf was upgraded to version 3.4.1.

@@ -773,9 +773,9 @@ class Session implements ISession
       return _modificationAwareSessionTitle;
    }
 
-   public void setTitle(String newTitle)
+   public void setUserChangedTitle(String newTitle)
    {
-      _modificationAwareSessionTitle.setTitle(newTitle);
+      _modificationAwareSessionTitle.setTitle(newTitle, true);
    }
 
    public String toString()

@@ -78,7 +78,7 @@ public class RenameSessionAction  extends SquirrelAction implements ISessionActi
 		}
 		else
 		{
-			_session.setTitle(textEditDialog.getEditedText());
+			_session.setUserChangedTitle(textEditDialog.getEditedText());
 			updateGui();
 		}
 	}
