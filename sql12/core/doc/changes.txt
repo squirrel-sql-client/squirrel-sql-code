@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Updated the JDBC driver websites of several predefined drivers,
+  see Drivers panel --> right mouse menu "Show Driver Website".
+  Thanks to zcattacz for the pull request.
+
 Added description for single character and multiple character SQL statement separators.
   See menu Files --> New Session Properties --> tab SQL --> lower part of panel.
 

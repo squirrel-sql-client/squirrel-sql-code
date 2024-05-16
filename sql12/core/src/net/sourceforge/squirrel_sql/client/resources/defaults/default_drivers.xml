@@ -169,7 +169,7 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-65</string>
 		</identifier>
-		<webSiteUrl>https://bitbucket.org/xerial/sqlite-jdbc/downloads/</webSiteUrl>
+		<webSiteUrl>https://github.com/xerial/sqlite-jdbc/releases/</webSiteUrl>
  	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -217,7 +217,7 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-61</string>
 		</identifier>
-		<webSiteUrl>https://downloads.mariadb.org/client-java/</webSiteUrl>
+		<webSiteUrl>https://mariadb.org/connector-java/all-releases/</webSiteUrl>
  	</Bean>
 
         <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -528,7 +528,7 @@
 		 <jarFileNames Indexed="true"/>
 		 <name>H2 In-Memory</name>
 		 <url>jdbc:h2:mem:</url>
-		 <webSiteUrl>http://www.h2database.com</webSiteUrl>
+		 <webSiteUrl>https://github.com/h2database/h2database/releases/</webSiteUrl>
 	</Bean>	
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -540,7 +540,7 @@
 		 <jarFileNames Indexed="true"/>
 		 <name>H2 Embedded</name>
 		 <url>jdbc:h2://&lt;db-name&gt;</url>
-		 <webSiteUrl>http://www.h2database.com</webSiteUrl>		 
+		 <webSiteUrl>https://github.com/h2database/h2database/releases/</webSiteUrl>
 	</Bean>	
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -552,7 +552,7 @@
 		 <jarFileNames Indexed="true"/>
 		 <name>H2</name>
 		 <url>jdbc:h2://&lt;server&gt;:&lt;9092&gt;/&lt;db-name&gt;</url>
-		 <webSiteUrl>http://www.h2database.com</webSiteUrl>		 
+		 <webSiteUrl>https://github.com/h2database/h2database/releases/</webSiteUrl>
 	</Bean>	
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -632,7 +632,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>jTDS Sybase</name>
 		<url>jdbc:jtds:sybase://&lt;hostname&gt;[:&lt;4100&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
-		<webSiteUrl>http://jtds.sourceforge.net</webSiteUrl>
+		<webSiteUrl>https://github.com/milesibastos/jTDS/releases/</webSiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -644,7 +644,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>jTDS Microsoft SQL</name>
 		<url>jdbc:jtds:sqlserver://&lt;hostname&gt;[:&lt;1433&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
-		<webSiteUrl>http://jtds.sourceforge.net</webSiteUrl>
+		<webSiteUrl>https://github.com/milesibastos/jTDS/releases/</webSiteUrl>
 	</Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -752,7 +752,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>jTDS</name>
 		<url>jdbc:jtds:sqlserver://&lt;hostname&gt;[:&lt;4100&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
-	    <webSiteUrl>http://jtds.sourceforge.net</webSiteUrl>
+	    <webSiteUrl>https://github.com/milesibastos/jTDS/releases/</webSiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -812,7 +812,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>Microsoft MSSQL Server JDBC Driver</name>
 		<url>jdbc:sqlserver://&lt;server_name&gt;:1433;databaseName=&lt;db_name&gt;</url>
-		<webSiteUrl>http://msdn.microsoft.com/sql</webSiteUrl>
+		<webSiteUrl>https://github.com/microsoft/mssql-jdbc/releases/</webSiteUrl>
 	</Bean>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>com.sunopsis.jdbc.driver.xml.SnpsXmlDriver</driverClassName>
