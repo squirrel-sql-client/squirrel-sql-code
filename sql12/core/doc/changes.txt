@@ -30,6 +30,12 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+Saved Session groups, several bug fixes:
+  When group members were moved to a standalone Saved Session their internally saved SQL files were lost.
+  When group members were moved to a standalone Saved Session SQuirreL's title bar wasn't updated.
+  When group members were moved to a standalone Saved Session a wrong Saved Session exist warning was shown.
+  Extended several tool tips concerning Saved Sessions and groups.
+
 #1528 When users changed a Session tab's name and switched to another catalog the changes were lost.
 
 Look and feel plugin: When SQuirreL was installed into an empty directory

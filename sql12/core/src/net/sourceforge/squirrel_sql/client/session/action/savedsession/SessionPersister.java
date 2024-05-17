@@ -101,7 +101,7 @@ public class SessionPersister
             savedSessionJsonBean = new SavedSessionJsonBean();
 
             // For an existing Saved Session we keep the name as a template in case it's later moved out of the group again.
-            savedSessionJsonBean.setName(GROUP_SAVED_SESSION_NAME_DUMMY);
+            savedSessionJsonBean.setName(GROUP_SAVED_SESSION_NAME_DUMMY + "_groupId_" + group.getGroupId());
          }
          savedSessionJsonBean.setGroupId(group.getGroupId());
          savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
@@ -110,7 +110,7 @@ public class SessionPersister
 
       List<SQLPanelSaveInfo> sqlPanelSaveInfoList = SavedSessionUtil.getAllSQLPanelsOrderedAndTyped(session);
 
-      SessionSaveProcessHandle sessionSaveProcessHandle = savedSessionsManager.beginStore(savedSessionJsonBean);
+      SessionSaveProcessHandle sessionSaveProcessHandle = savedSessionsManager.beginStore(savedSessionJsonBean, true);
       SQLEditorActivator sqlEditorActivator = new SQLEditorActivator();
       for (SQLPanelSaveInfo sqlPanelSaveInfo : sqlPanelSaveInfoList)
       {
@@ -141,7 +141,7 @@ public class SessionPersister
       String groupId = savedSessionToMove.getGroupId();
       savedSessionToMove.setName(newSavedSessionName);
       savedSessionToMove.setGroupId(null);
-      SessionSaveProcessHandle sessionSaveProcessHandle = Main.getApplication().getSavedSessionsManager().beginStore(savedSessionToMove);
+      SessionSaveProcessHandle sessionSaveProcessHandle = Main.getApplication().getSavedSessionsManager().beginStore(savedSessionToMove, false);
       Main.getApplication().getSavedSessionsManager().endStore(savedSessionToMove, null, sessionSaveProcessHandle);
       Main.getApplication().getSavedSessionsManager().removeGroupIfEmpty(groupId);
    }

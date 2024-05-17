@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSess
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionPersister;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolTipDisplay;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -19,6 +21,8 @@ import java.util.Objects;
 
 public class SessionsListCtrl
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionsListCtrl.class);
+
    private final JList<GroupDlgSessionWrapper> _lstSessions;
    private final GroupMembersListener _groupMembersListener;
    private final ToolTipDisplay _toolTipDisplay;
@@ -127,13 +131,16 @@ public class SessionsListCtrl
       SavedSessionJsonBean savedSessionToMove = wrapperToMove.getSession().getSavedSession();
       String savedSessionNameTemplate = savedSessionToMove.getName();
 
-      if(StringUtils.equals(savedSessionNameTemplate, SessionPersister.GROUP_SAVED_SESSION_NAME_DUMMY))
+      if(StringUtils.startsWith(savedSessionNameTemplate, SessionPersister.GROUP_SAVED_SESSION_NAME_DUMMY))
       {
          savedSessionNameTemplate = SavedSessionUtil.createSavedSessionNameTemplate(wrapperToMove.getSession());
       }
 
       String newName =
-            SavedSessionUtil.showEditSavedSessionNameDialog(GUIUtils.getOwningWindow(_lstSessions), savedSessionNameTemplate);
+            SavedSessionUtil.showEditSavedSessionNameDialog(GUIUtils.getOwningWindow(_lstSessions),
+                                                            savedSessionNameTemplate,
+                                                            savedSessionToMove,
+                                                            s_stringMgr.getString("SessionsListCtrl.move.group.member.title"));
 
       if(null == newName)
       {
@@ -145,6 +152,8 @@ public class SessionsListCtrl
       wrapperToMove.setGroupMemberFlag(false);
 
       _lstSessions.repaint();
+
+      Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
    }
 
    public List<GroupDlgSessionWrapper> getInCurrentGroupList()

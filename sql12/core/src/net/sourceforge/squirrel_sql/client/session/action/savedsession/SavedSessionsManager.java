@@ -37,13 +37,14 @@ public class SavedSessionsManager
    private SavedSessionGroupsJsonBean _savedSessionGroupsJsonBean = null;
    private ExecutorService _singleThreadJsonWriteExecutorService;
 
-   public boolean doesNameExist(String newSessionName)
+   public boolean doesNameExist(String newSessionName, SavedSessionJsonBean toExcludeFromSameNameCheck)
    {
       initSavedSessions();
 
       for (SavedSessionJsonBean savedSessionJsonBean : _savedSessionsJsonBean.getSavedSessionJsonBeans())
       {
-         if( StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(savedSessionJsonBean.getName(), newSessionName, true) )
+         if(   savedSessionJsonBean != toExcludeFromSameNameCheck
+            && StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(savedSessionJsonBean.getName(), newSessionName, true))
          {
             return true;
          }
@@ -63,13 +64,16 @@ public class SavedSessionsManager
       _savedSessionsJsonBean.setShowAliasChangeMsg(b);
    }
 
-   public SessionSaveProcessHandle beginStore(SavedSessionJsonBean savedSessionJsonBean)
+   public SessionSaveProcessHandle beginStore(SavedSessionJsonBean savedSessionJsonBean, boolean clearSessionSqls)
    {
       initSavedSessions();
 
       SessionSaveProcessHandle ret = new SessionSaveProcessHandle(savedSessionJsonBean);
 
-      savedSessionJsonBean.getSessionSQLs().clear();
+      if(clearSessionSqls)
+      {
+         savedSessionJsonBean.getSessionSQLs().clear();
+      }
 
       return ret;
    }

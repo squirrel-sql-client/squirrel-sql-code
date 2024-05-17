@@ -155,10 +155,12 @@ public class SavedSessionUtil
 
    public static void printSavedSessionDetails(SavedSessionGrouped savedSessionGrouped)
    {
+      StringBuilder msgSb = new StringBuilder();
       if(savedSessionGrouped.isGroup())
       {
          final String msg = s_stringMgr.getString("SavedSessionUtil.saved.session.group", savedSessionGrouped.getGroup().getGroupName());
-         Main.getApplication().getMessageHandler().showMessage(msg);
+         //Main.getApplication().getMessageHandler().showMessage(msg);
+         appendWithNewLine(msgSb, msg);
       }
 
       for (int i = 0; i < savedSessionGrouped.getSavedSessions().size(); i++)
@@ -180,12 +182,14 @@ public class SavedSessionUtil
          if (savedSessionGrouped.isGroup())
          {
             final String msg = s_stringMgr.getString("SavedSessionUtil.saved.session.in.group.details", (i+1), aliasName, jdbcUrl, jdbcUser);
-            Main.getApplication().getMessageHandler().showMessage(msg);
+            //Main.getApplication().getMessageHandler().showMessage(msg);
+            appendWithNewLine(msgSb, msg);
          }
          else
          {
             final String msg = s_stringMgr.getString("SavedSessionUtil.saved.session.details", savedSessionName, aliasName, jdbcUrl, jdbcUser);
-            Main.getApplication().getMessageHandler().showMessage(msg);
+            //Main.getApplication().getMessageHandler().showMessage(msg);
+            appendWithNewLine(msgSb, msg);
          }
 
          boolean firstInternalFile = true;
@@ -209,9 +213,24 @@ public class SavedSessionUtil
                   fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.internal.file", sessionSQL.getInternalFileName());
                }
             }
-            Main.getApplication().getMessageHandler().showMessage(fileMsg);
+            //Main.getApplication().getMessageHandler().showMessage(fileMsg);
+            appendWithNewLine(msgSb, fileMsg);
          }
       }
+
+      if(0 < msgSb.length())
+      {
+         Main.getApplication().getMessageHandler().showMessage(msgSb.toString());
+      }
+   }
+
+   private static void appendWithNewLine(StringBuilder msgSb, String msg)
+   {
+      if(0 < msgSb.length())
+      {
+         msgSb.append('\n');
+      }
+      msgSb.append(msg);
    }
 
    public static String getDisplayString(SavedSessionGrouped value)
@@ -309,13 +328,23 @@ public class SavedSessionUtil
 
    public static String showEditSavedSessionNameDialog(Window parent, String defaultName)
    {
+      return showEditSavedSessionNameDialog(parent, defaultName,null);
+   }
+
+   public static String showEditSavedSessionNameDialog(Window parent, String defaultName, SavedSessionJsonBean toExcludeFromSameNameCheck)
+   {
+      return showEditSavedSessionNameDialog(parent, defaultName, toExcludeFromSameNameCheck, null);
+   }
+
+   public static String showEditSavedSessionNameDialog(Window parent, String defaultName, SavedSessionJsonBean toExcludeFromSameNameCheck, String customTitle)
+   {
       final ResizableTextEditDialog sessionSaveDlg =
             new ResizableTextEditDialog(parent,
                                         SavedSessionUtil.class.getName(),
-                                        s_stringMgr.getString("SessionSaveDlg.title"),
+                                        StringUtilities.isEmpty(customTitle,true) ? s_stringMgr.getString("SessionSaveDlg.title"): customTitle,
                                         s_stringMgr.getString("SessionSaveDlg.label"),
                                         defaultName,
-                                        (resizableTextEditDialog, editedText) -> onEditSavedSessionNameCheck(resizableTextEditDialog, editedText));
+                                        (resizableTextEditDialog, editedText) -> onEditSavedSessionNameCheck(resizableTextEditDialog, editedText, toExcludeFromSameNameCheck));
 
       if(false == sessionSaveDlg.isOk())
       {
@@ -326,9 +355,9 @@ public class SavedSessionUtil
 
    }
 
-   private static boolean onEditSavedSessionNameCheck(ResizableTextEditDialog textEditDialog, String editedText)
+   private static boolean onEditSavedSessionNameCheck(ResizableTextEditDialog textEditDialog, String editedText, SavedSessionJsonBean toExcludeFromSameNameCheck)
    {
-      if( Main.getApplication().getSavedSessionsManager().doesNameExist(editedText.trim()))
+      if( Main.getApplication().getSavedSessionsManager().doesNameExist(editedText.trim(), toExcludeFromSameNameCheck))
       {
          JOptionPane.showMessageDialog(textEditDialog, s_stringMgr.getString("SessionSaveDlg.nonunique.name"));
          return false;
