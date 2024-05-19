@@ -22,16 +22,12 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 public class OkClosePanel extends JPanel
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(OkClosePanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(OkClosePanel.class);
 
 	private boolean _executingMode;
 

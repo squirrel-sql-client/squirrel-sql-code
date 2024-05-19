@@ -58,10 +58,10 @@ public class MultipleSavedSessionOpener
                }
 
                @Override
-               public void errorOccured(Throwable th, boolean connectingHasBeenCanceledByUser)
+               public void errorOccurred(Throwable th, boolean connectingHasBeenCanceledByUser)
                {
                   calledbackSessionsCounter.incrementAndGet();
-                  super.errorOccured(th, connectingHasBeenCanceledByUser);
+                  super.errorOccurred(th, connectingHasBeenCanceledByUser);
 
                   if(savedSessionsToOpen.size() == calledbackSessionsCounter.incrementAndGet())
                   {

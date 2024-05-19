@@ -193,7 +193,7 @@ public class FindAliasesCtrl
 
       if (null != selectedWrapperAlias.getAlias())
       {
-         ICompletionCallback completionCallback = null;
+         ConnectCompletionCallback completionCallback = null;
 
          if (_dlg.chkLeaveOpen.isSelected())
          {

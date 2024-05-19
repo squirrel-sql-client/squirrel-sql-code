@@ -15,7 +15,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import javax.swing.*;
 import java.sql.SQLException;
 
-public class ConnectToAliasCallBack implements ICompletionCallback
+public class ConnectToAliasCallBack implements ConnectCompletionCallback
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConnectToAliasCallBack.class);
 
@@ -55,7 +55,7 @@ public class ConnectToAliasCallBack implements ICompletionCallback
    /**
     * @see CompletionCallback#errorOccured(Throwable)
     */
-   public void errorOccured(Throwable th, boolean connectingHasBeenCanceledByUser)
+   public void errorOccurred(Throwable th, boolean connectingHasBeenCanceledByUser)
    {
       th = Utilities.getDeepestThrowable(th);
 

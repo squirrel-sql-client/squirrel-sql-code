@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectCompletionCallback;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
@@ -14,7 +14,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.io.File;
 
 
@@ -76,7 +76,7 @@ public class SessionStartupMainSQLTabContentLoader
 
    public static void startSessionWithFile(SQLAlias selectedAlias, File fileToOpen)
    {
-      ICompletionCallback callback = new ICompletionCallback()
+      ConnectCompletionCallback callback = new ConnectCompletionCallback()
       {
          @Override
          public void connected(ISQLConnection conn)
@@ -96,7 +96,7 @@ public class SessionStartupMainSQLTabContentLoader
          }
 
          @Override
-         public void errorOccured(Throwable th, boolean stopConnection)
+         public void errorOccurred(Throwable th, boolean stopConnection)
          {
          }
       };

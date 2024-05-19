@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
@@ -50,47 +50,11 @@ import java.awt.event.KeyEvent;
  */
 public class ConnectionInternalFrame extends DialogWidget
 {
-	/** Handler called for internal frame actions. */
-	public interface IHandler
-	{
-		/**
-		 * User has clicked the OK button to connect to the alias.
-		 *
-		 * @param	connSheet	The connection internal frame.
-		 * @param	user		The user name entered.
-		 * @param	password	The password entered.
-		 * @param	props		SQLDriverPropertyCollection to connect with.
-		 */
-		public void performOK(ConnectionInternalFrame connSheet, String user,
-								String password, SQLDriverPropertyCollection props);
 
-		/**
-		 * User has clicked the Close button. They don't want to
-		 * connect to the alias.
-		 *
-		 * @param	connSheet	The connection internal frame.
-		 */
-		public void performClose(ConnectionInternalFrame connSheet);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConnectionInternalFrame.class);
 
-		/**
-		 * User has clicked the Cancel button. They want to cancel
-		 * the curently active attempt to connect to the database.
-		 *
-		 * @param	connSheet	The connection internal frame.
-		 */
-		public void performCancelConnect(ConnectionInternalFrame connSheet);
-	}
+	private static final ILogger s_log = LoggerController.createLogger(ConnectionInternalFrame.class);
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ConnectionInternalFrame.class);
-
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(ConnectionInternalFrame.class);
-
-	/** Application API. */
-	private IApplication _app;
 
 	/** Alias we are going to connect to. */
 	private SQLAlias _alias;
@@ -103,7 +67,7 @@ public class ConnectionInternalFrame extends DialogWidget
 
 //	private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
 
-	private IHandler _handler;
+	private ConnectionInternalFrameHandler _handler;
 
 	private JLabel _aliasName = new JLabel();
 	private JLabel _driverName = new JLabel();
@@ -125,40 +89,27 @@ public class ConnectionInternalFrame extends DialogWidget
 	/**
 	 * Ctor.
 	 *
-	 * @param	app		Application API.
-	 * @param	alias	<TT>SQLAlias</TT> that we are going to connect to.
-	 * @param	handler	Handler for internal frame actions.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>SQLAlias</TT>,
-	 * 			or <TT>IConnectionInternalFrameHandler</TT> passed.
+	 * @param createSession
+	 * @param completionCallback
+	 * @param   sqlAlias   <TT>SQLAlias</TT> that we are going to connect to.
+	 * @throws IllegalArgumentException If <TT>null</TT> <TT>IApplication</TT>, <TT>SQLAlias</TT>,
+	 * or <TT>IConnectionInternalFrameHandler</TT> passed.
 	 */
-	public ConnectionInternalFrame(IApplication app, SQLAlias alias,
-									IHandler handler)
+	public ConnectionInternalFrame(SQLAlias sqlAlias, boolean createSession, ConnectCompletionCallback completionCallback)
 	{
 		super("", true);
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		if (alias == null)
+		if (sqlAlias == null)
 		{
 			throw new IllegalArgumentException("Null SQLAlias passed");
 		}
-		if (handler == null)
-		{
-			throw new IllegalArgumentException("Null IConnectionInternalFrameHandler passed");
-		}
 
-		_app = app;
-		_alias = alias;
-		_handler = handler;
+		_alias = sqlAlias;
+		_handler = new ConnectionInternalFrameHandler(sqlAlias, createSession, completionCallback);
 
-		_sqlDriver = _app.getAliasesAndDriversManager().getDriver(_alias.getDriverIdentifier());
+		_sqlDriver = Main.getApplication().getAliasesAndDriversManager().getDriver(_alias.getDriverIdentifier());
 		if (_sqlDriver == null)
 		{
-			throw new IllegalStateException(s_stringMgr.getString("ConnectionInternalFrame.error.nodriver",
-												_alias.getName()));
+			throw new IllegalStateException(s_stringMgr.getString("ConnectionInternalFrame.error.nodriver", _alias.getName()));
 		}
 
 		createGUI();
@@ -333,7 +284,7 @@ public class ConnectionInternalFrame extends DialogWidget
 
 		_statusBar.setEditable(false);
 		GUIUtils.inheritBackground(_statusBar);
-      _app.getFontInfoStore().setUpStatusBarFont(_statusBar);
+		Main.getApplication().getFontInfoStore().setUpStatusBarFont(_statusBar);
 
       final JPanel content = new JPanel(new BorderLayout());
       content.add(createMainPanel(), BorderLayout.CENTER);
@@ -408,7 +359,7 @@ public class ConnectionInternalFrame extends DialogWidget
 
 
 		gbc = new GridBagConstraints(1, 6, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
-		_aliasPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
+		_aliasPropsBtn.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
 		ret.add(_aliasPropsBtn, gbc);
 
 
