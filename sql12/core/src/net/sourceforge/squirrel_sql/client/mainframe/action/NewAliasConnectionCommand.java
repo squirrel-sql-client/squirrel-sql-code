@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 /*
  * Copyright (C) 2001-2004 Colin Bell and Johan Compagner
@@ -27,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
  *
  * @author jarmolow
  */
-public class NewAliasConnectionCommand implements ICommand
+public class NewAliasConnectionCommand
 {
 	private final ConnectToAliasCommand connectToAliasCommand;
 
@@ -36,13 +35,8 @@ public class NewAliasConnectionCommand implements ICommand
 		connectToAliasCommand = new ConnectToAliasCommand(sqlAlias, true, null);
 	}
 
-	@Override
-	public void execute()
+	public void executeConnect()
 	{
 		connectToAliasCommand.executeConnect();
 	}
-
-	
-	
-	
 }
