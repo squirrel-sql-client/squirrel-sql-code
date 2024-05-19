@@ -615,7 +615,7 @@ class Session implements ISession
       }
       try
       {
-         cmd.execute(t -> reconnectDone(connState, cmd, t, reconnectInfo));
+         cmd.executeConnectAndWaitForResultInBackground(t -> reconnectDone(connState, cmd, t, reconnectInfo));
       }
       catch (Throwable t)
       {

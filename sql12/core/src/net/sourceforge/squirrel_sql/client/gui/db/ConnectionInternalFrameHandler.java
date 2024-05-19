@@ -68,7 +68,7 @@ class ConnectionInternalFrameHandler
    /**
     * If <TT>true</TT> user has requested cancellation of the connection attempt.
     */
-   private volatile boolean _stopConnection;
+   private volatile boolean _connectWasCanceled;
 
    /**
     * Callback to notify client on the progress of this command.
@@ -109,9 +109,9 @@ class ConnectionInternalFrameHandler
     * @param   password   The password entered.
     * @param   props      Connection properties.
     */
-   public void performOK(ConnectionInternalFrame connSheet, String user, String password, SQLDriverPropertyCollection props)
+   public void performConnect(ConnectionInternalFrame connSheet, String user, String password, SQLDriverPropertyCollection props)
    {
-      _stopConnection = false;
+      _connectWasCanceled = false;
       _connectionInternalFrame = connSheet;
       _user = user;
       _password = password;
@@ -126,17 +126,7 @@ class ConnectionInternalFrameHandler
     */
    public void performCancelConnect(ConnectionInternalFrame connSheet)
    {
-      _stopConnection = true;
-   }
-
-   /**
-    * User has clicked the Close button to close the internal frame.
-    *
-    * @param   connSheet   Connection internal frame.
-    */
-   public void performClose(ConnectionInternalFrame connSheet)
-   {
-      // Empty.
+      _connectWasCanceled = true;
    }
 
    /**
@@ -152,13 +142,13 @@ class ConnectionInternalFrameHandler
       {
          final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, _props);
 
-         cmd.execute(t -> afterExecuteFinished(sqlDriver, cmd, t));
+         cmd.executeConnectAndWaitForResultInBackground(t -> afterExecuteFinished(sqlDriver, cmd, t));
 
       }
       catch(Throwable ex)
       {
-         _connectionInternalFrame.executed(false);
-         _callback.errorOccurred(ex, _stopConnection);
+         _connectionInternalFrame.finishedCreatingConnection(false);
+         _callback.errorOccurred(ex, _connectWasCanceled);
       }
    }
 
@@ -168,7 +158,25 @@ class ConnectionInternalFrameHandler
       {
          if(null != t)
          {
-            throw t;
+            if(_connectWasCanceled)
+            {
+               String aliasName = "<failedToReadAliasName>";
+               try
+               {
+                  aliasName = _alias.getName();
+               }
+               catch(Throwable e)
+               {
+                  // Ignore, name was just needed for logging
+               }
+
+               s_log.warn("Connecting to Alias \"" + aliasName + "\" failed after it was already canceled", t);
+               return;
+            }
+            else
+            {
+               throw t;
+            }
          }
 
 
@@ -184,13 +192,9 @@ class ConnectionInternalFrameHandler
 
 
          SQLConnection conn = cmd.getSQLConnection();
-         if(_stopConnection)
+         if(_connectWasCanceled)
          {
-            if(conn != null)
-            {
-               closeConnection(conn);
-               conn = null;
-            }
+            closeCanceledConnection(conn);
          }
          else
          {
@@ -202,18 +206,18 @@ class ConnectionInternalFrameHandler
             }
             else
             {
-               _connectionInternalFrame.executed(true);
+               _connectionInternalFrame.finishedCreatingConnection(true);
             }
          }
       }
       catch(Throwable th)
       {
-         _connectionInternalFrame.executed(false);
-         _callback.errorOccurred(th, _stopConnection);
+         _connectionInternalFrame.finishedCreatingConnection(false);
+         _callback.errorOccurred(th, _connectWasCanceled);
       }
    }
 
-   private void closeConnection(ISQLConnection conn)
+   private void closeCanceledConnection(ISQLConnection conn)
    {
       if(conn != null)
       {
@@ -223,7 +227,7 @@ class ConnectionInternalFrameHandler
          }
          catch(Exception ex)
          {
-            s_log.error("Error occurred closing connection", ex);
+            s_log.warn("Error occurred closing already canceled connection", ex);
          }
       }
    }
@@ -243,9 +247,12 @@ class ConnectionInternalFrameHandler
       {
          Main.getApplication().getPluginManager().sessionCreated(session);
          SessionInternalFrame sessionInternalFrame = Main.getApplication().getWindowManager().createInternalFrame(session);
+
+         // Close the connecting dialog. Before bug #1529 was called after calling the callback
+         _connectionInternalFrame.finishedCreatingConnection(true);
+
          _callback.sessionInternalFrameCreated(sessionInternalFrame);
 
-         _connectionInternalFrame.executed(true);
       }
       catch(Throwable th)
       {

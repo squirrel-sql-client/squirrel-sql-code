@@ -293,18 +293,19 @@ public class WindowManager
 		_app.getPluginManager().sessionStarted(session);
 		_app.getMainFrame().addWidget(sif);
 
+		// invokeLater commented out when working on bug #1529
 		// If we don't invokeLater here no Short-Cut-Key is sent
 		// to the internal frame
 		// seen under java version "1.4.1_01" and Linux
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
+		//SwingUtilities.invokeLater(new Runnable()
+		//{
+		//	@Override
+		//	public void run()
+		//	{
 				sif.setVisible(true);
-                sif.getObjectTreeAPI().selectRoot();
-			}
-		});
+				sif.getObjectTreeAPI().selectRoot();
+		//	}
+		//});
 
 		return sif;
 	}

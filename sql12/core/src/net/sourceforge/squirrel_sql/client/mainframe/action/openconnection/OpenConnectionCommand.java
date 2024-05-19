@@ -84,7 +84,7 @@ public class OpenConnectionCommand
 	 * Display connection internal frame.
     * @param openConnectionCommandListener
     */
-	public void execute(final OpenConnectionCommandListener openConnectionCommandListener)
+	public void executeConnectAndWaitForResultInBackground(final OpenConnectionCommandListener openConnectionCommandListener)
    {
       final Future future = OpenConnectionThreadPool.submit(() -> executeConnect());
 

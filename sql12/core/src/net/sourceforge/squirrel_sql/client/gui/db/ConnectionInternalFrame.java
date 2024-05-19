@@ -63,7 +63,7 @@ public class ConnectionInternalFrame extends DialogWidget
 	private ISQLDriver _sqlDriver;
 
 	/** <TT>true</TT> means that an attempt is being made to connect to the alias.*/
-	private boolean _connecting;
+	private volatile boolean _connecting;
 
 //	private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
 
@@ -126,15 +126,15 @@ public class ConnectionInternalFrame extends DialogWidget
 		}
 	}
 
-	public void executed(final boolean connected)
+	public void finishedCreatingConnection(final boolean connected)
 	{
         _connecting = false;
         GUIUtils.processOnSwingEventThread(new Runnable() {
             public void run() {
                 if (connected)
                 {
-                    dispose();
-                }
+						 close();
+					 }
                 else
                 {
                     setStatusText(null);
@@ -144,6 +144,12 @@ public class ConnectionInternalFrame extends DialogWidget
                 }                
             }
         });
+	}
+
+	private void close()
+	{
+		setVisible(false);
+		dispose();
 	}
 
 	/**
@@ -257,7 +263,7 @@ public class ConnectionInternalFrame extends DialogWidget
          {
             driverProperties.clear();
          }
-			_handler.performOK(this, _user.getText(), _password.getText(), driverProperties);
+			_handler.performConnect(this, _user.getText(), _password.getText(), driverProperties);
 		}
 	}
 
@@ -265,12 +271,11 @@ public class ConnectionInternalFrame extends DialogWidget
 	{
 		if (_connecting)
 		{
-			// abort first..
 			setStatusText(s_stringMgr.getString("ConnectionInternalFrame.cancelling"));
 			_btnsPnl.enableCloseButton(false);
 			_handler.performCancelConnect(this);
 			_connecting = false;
-			dispose();
+			close();
 		}
 	}
 
@@ -426,7 +431,7 @@ public class ConnectionInternalFrame extends DialogWidget
 
 		public void closePressed(OkClosePanelEvent evt)
 		{
-			ConnectionInternalFrame.this.dispose();
+			ConnectionInternalFrame.this.close();
 		}
 
 		public void cancelPressed(OkClosePanelEvent evt)
