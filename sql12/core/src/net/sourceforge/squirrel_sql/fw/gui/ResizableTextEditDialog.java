@@ -22,6 +22,20 @@ public class ResizableTextEditDialog extends JDialog
                                   String originKey,
                                   String dialogTitle,
                                   String textFieldLabel,
+                                  String initialEditText)
+   {
+      this(parentFrame,
+           originKey,
+           dialogTitle,
+           textFieldLabel,
+           initialEditText,
+           null);
+   }
+
+   public ResizableTextEditDialog(Window parentFrame,
+                                  String originKey,
+                                  String dialogTitle,
+                                  String textFieldLabel,
                                   String initialEditText,
                                   ResizableTextEditDialogBeforeOkCloseCallback okCloseCallback)
    {

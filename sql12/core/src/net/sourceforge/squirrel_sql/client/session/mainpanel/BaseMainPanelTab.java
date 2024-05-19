@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.awt.Component;
+import java.awt.*;
 
 /**
  * Base class for tabs to the added to the main tabbed panel.
@@ -91,7 +91,12 @@ public abstract class BaseMainPanelTab implements IMainPanelTab
    }
 
    @Override
-   public void mouseWheelClickedOnTab()
+   public void mouseWheelClickedOnTabComponent()
+   {
+   }
+
+   @Override
+   public void rightMouseClickedOnTabComponent(int clickPosX, int clickPosY)
    {
    }
 

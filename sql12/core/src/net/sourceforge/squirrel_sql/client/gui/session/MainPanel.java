@@ -38,10 +38,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -106,12 +105,17 @@ public class MainPanel extends JPanel
 
 
 		GUIUtils.listenToMouseWheelClickOnTab(_tabbedPane, (tabIndex, tabComponent) -> onMouseWheelClickedOnTab(tabIndex));
+		GUIUtils.listenToRightMouseClickOnTab(_tabbedPane, (tabIndex, tabComponent, clickPosX, clickPosY) -> onRightMouseClickedOnTab(tabIndex, clickPosX, clickPosY));
+	}
 
+	private void onRightMouseClickedOnTab(int tabIndex, int clickPosX, int clickPosY)
+	{
+		(_tabs.get(tabIndex)).rightMouseClickedOnTabComponent(clickPosX, clickPosY);
 	}
 
 	private void onMouseWheelClickedOnTab(int tabIndex)
 	{
-		(_tabs.get(tabIndex)).mouseWheelClickedOnTab();
+		(_tabs.get(tabIndex)).mouseWheelClickedOnTabComponent();
 	}
 
 	/**

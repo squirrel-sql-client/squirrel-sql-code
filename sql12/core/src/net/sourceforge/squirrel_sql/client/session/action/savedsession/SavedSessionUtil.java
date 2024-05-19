@@ -49,6 +49,7 @@ public class SavedSessionUtil
       for (AdditionalSQLTab additionalSQLTab : session.getSessionPanel().getAdditionalSQLTabs())
       {
          final SQLPanelSaveInfo sqlPanelSaveInfo = new SQLPanelSaveInfo(additionalSQLTab.getSQLPanel(), SqlPanelType.SQL_TAB);
+         sqlPanelSaveInfo.setSqlTabTitleWithoutFile(additionalSQLTab.getTitleWithoutFile());
 
          if(additionalSQLTab.getSQLPanel().getSQLPanelAPI() == session.getSQLPanelAPIOfActiveSessionWindow())
          {

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Additional SQL tabs can be renamed.
+  See SQuirreL's main toolbar --> Button switchable between "New SQL Worksheet" and "New SQL Tab".
+  The tab names are stored with Saved Sessions and Saved Session groups.
+
 Updated the JDBC driver websites of several predefined drivers,
   see Drivers panel --> right mouse menu "Show Driver Website".
   Thanks to zcattacz for the pull request.

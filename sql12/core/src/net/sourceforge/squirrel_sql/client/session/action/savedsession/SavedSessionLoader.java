@@ -41,6 +41,11 @@ public class SavedSessionLoader
          else if(sessionSQL.getPanelType() == SqlPanelType.SQL_TAB)
          {
             final AdditionalSQLTab sqlTab = SessionUtils.createSQLTab(sessionInternalFrame.getSession());
+            if(StringUtilities.isNotEmpty(sessionSQL.getSqlTabTitleWithoutFile()))
+            {
+               sqlTab.setTitleWithoutFile(sessionSQL.getSqlTabTitleWithoutFile());
+            }
+
             loadSessionSql(sessionSQL, sqlTab.getSQLPanelAPI());
 
             if(sessionSQL.isActiveSqlPanel())

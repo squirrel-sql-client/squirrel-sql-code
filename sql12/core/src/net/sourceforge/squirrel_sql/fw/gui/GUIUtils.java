@@ -875,17 +875,51 @@ public class GUIUtils
 				handleMiddleMouseClick(e, tabbedPane, mouseWheelClickOnTabListener);
 			}
 		});
-
 	}
+
+	public static void listenToRightMouseClickOnTab(JTabbedPane tabbedPane, RightMouseClickOnTabListener rightMouseClickOnTabListener)
+	{
+		tabbedPane.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				handleRightMouseClick(e, tabbedPane, rightMouseClickOnTabListener);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				handleRightMouseClick(e, tabbedPane, rightMouseClickOnTabListener);
+			}
+		});
+	}
+
+	private static void handleRightMouseClick(MouseEvent e, JTabbedPane tabbedPane, RightMouseClickOnTabListener rightMouseClickOnTabListener)
+	{
+		if(false == e.isPopupTrigger())
+		{
+			return;
+		}
+
+		int tabIndex = tabbedPane.getUI().tabForCoordinate(tabbedPane, e.getX(), e.getY());
+		if (-1 != tabIndex)
+		{
+			Component tabComponent = tabbedPane.getTabComponentAt(tabIndex);
+			MouseEvent mouseEventOnTabComponent = SwingUtilities.convertMouseEvent(tabbedPane, e, tabComponent);
+			rightMouseClickOnTabListener.mouseWheelClickedOnTabComponent(tabIndex, tabComponent, mouseEventOnTabComponent.getX(), mouseEventOnTabComponent.getY());
+		}
+	}
+
 
 	private static void handleMiddleMouseClick(MouseEvent e, JTabbedPane tabbedPane, MouseWheelClickOnTabListener mouseWheelClickOnTabListener)
 	{
-		if(SwingUtilities.isMiddleMouseButton (e))
+		if(SwingUtilities.isMiddleMouseButton(e))
 		{
 			int tabIndex = tabbedPane.getUI().tabForCoordinate(tabbedPane, e.getX(), e.getY());
 			if (-1 != tabIndex)
 			{
-				mouseWheelClickOnTabListener.mouseWheeleClickedOnTabComponent(tabIndex, tabbedPane.getTabComponentAt(tabIndex));
+				mouseWheelClickOnTabListener.mouseWheelClickedOnTabComponent(tabIndex, tabbedPane.getTabComponentAt(tabIndex));
 			}
 		}
 

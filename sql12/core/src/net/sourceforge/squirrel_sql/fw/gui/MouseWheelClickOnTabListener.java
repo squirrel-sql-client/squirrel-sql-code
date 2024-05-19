@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import java.awt.Component;
+import java.awt.*;
 
 public interface MouseWheelClickOnTabListener
 {
-   void mouseWheeleClickedOnTabComponent(int tabIndex, Component tabComponent);
+   void mouseWheelClickedOnTabComponent(int tabIndex, Component tabComponent);
 }

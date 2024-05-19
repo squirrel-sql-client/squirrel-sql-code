@@ -107,6 +107,7 @@ public class SavedSessionsManager
    {
       final SessionSqlJsonBean sqlJsonBean = new SessionSqlJsonBean();
       sqlJsonBean.setPanelType(sqlPanelSaveInfo.getSqlPanelType());
+      sqlJsonBean.setSqlTabTitleWithoutFile(sqlPanelSaveInfo.getSqlTabTitleWithoutFile());
       sqlJsonBean.setActiveSqlPanel(sqlPanelSaveInfo.isActiveSqlPanel());
       sqlJsonBean.setCaretPosition(sqlPanelSaveInfo.getCaretPosition());
 

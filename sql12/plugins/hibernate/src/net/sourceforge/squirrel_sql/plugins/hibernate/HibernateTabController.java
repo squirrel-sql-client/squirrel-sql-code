@@ -378,9 +378,13 @@ public class HibernateTabController implements IMainPanelTab
    }
 
    @Override
-   public void mouseWheelClickedOnTab()
+   public void mouseWheelClickedOnTabComponent()
    {
+   }
 
+   @Override
+   public void rightMouseClickedOnTabComponent(int clickPosX, int clickPosY)
+   {
    }
 
    @Override

@@ -17,11 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
+
+import java.awt.*;
 
 /**
  * This interface defines the behaviour for a tab in the main tabbed panel.
@@ -77,10 +77,13 @@ public interface IMainPanelTab
 	 */
 	void select();
 
-	void mouseWheelClickedOnTab();
+	void mouseWheelClickedOnTabComponent();
+
+	void rightMouseClickedOnTabComponent(int clickPosX, int clickPosY);
 
 	IFileEditorAPI getActiveFileEditorAPIOrNull();
 
 	SQLPanel getSqlPanelOrNull();
+
 }
 

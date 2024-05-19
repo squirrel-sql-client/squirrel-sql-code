@@ -8,6 +8,7 @@ public class SQLPanelSaveInfo
    private final SqlPanelType _sqlPanelType;
    private boolean _activeSqlPanel = false;
    private int _caretPosition = 0;
+   private String _sqlTabTitleWithoutFile;
 
    public SQLPanelSaveInfo(SQLPanel sqlPanel, SqlPanelType sqlPanelType)
    {
@@ -39,5 +40,15 @@ public class SQLPanelSaveInfo
    public int getCaretPosition()
    {
       return _caretPosition;
+   }
+
+   public void setSqlTabTitleWithoutFile(String sqlTabTitleWithoutFile)
+   {
+      _sqlTabTitleWithoutFile = sqlTabTitleWithoutFile;
+   }
+
+   public String getSqlTabTitleWithoutFile()
+   {
+      return _sqlTabTitleWithoutFile;
    }
 }

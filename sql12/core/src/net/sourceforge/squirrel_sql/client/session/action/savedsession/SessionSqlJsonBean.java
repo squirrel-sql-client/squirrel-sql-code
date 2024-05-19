@@ -9,6 +9,7 @@ public class SessionSqlJsonBean implements Serializable
    private String _externalFilePath;
    private boolean _activeSqlPanel = false;
    private int _caretPosition = 0;
+   private String _sqlTabTitleWithoutFile;
 
    public String getInternalFileName()
    {
@@ -58,5 +59,15 @@ public class SessionSqlJsonBean implements Serializable
    public int getCaretPosition()
    {
       return _caretPosition;
+   }
+
+   public void setSqlTabTitleWithoutFile(String sqlTabTitleWithoutFile)
+   {
+      _sqlTabTitleWithoutFile = sqlTabTitleWithoutFile;
+   }
+
+   public String getSqlTabTitleWithoutFile()
+   {
+      return _sqlTabTitleWithoutFile;
    }
 }
