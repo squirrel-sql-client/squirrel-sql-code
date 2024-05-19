@@ -101,7 +101,7 @@ public class SessionStartupMainSQLTabContentLoader
          }
       };
 
-      new ConnectToAliasCommand(selectedAlias, true, callback).execute();
+      new ConnectToAliasCommand(selectedAlias, true, callback).executeConnect();
 
    }
 

@@ -73,6 +73,6 @@ public class AliasPopUpMenuAction extends SquirrelAction
 
 	private void onAliasSelected(SQLAlias alias)
 	{
-		new ConnectToAliasCommand(alias).execute();
+		new ConnectToAliasCommand(alias).executeConnect();
 	}
 }

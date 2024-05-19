@@ -444,7 +444,7 @@ public class AliasInternalFrame extends DialogWidget
 		_chkAutoLogon.setToolTipText(s_stringMgr.getString("AliasInternalFrame.autologon.security.tooltip"));
 		ret.add(_chkAutoLogon, gbc);
 
-		gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,2), 0,0);
+		gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
 		ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("AliasInternalFrame.autologon.security.tooltip.long.html"), 10000).getButton(), gbc);
 
 		return ret;
@@ -501,7 +501,7 @@ public class AliasInternalFrame extends DialogWidget
 				}
 			};
 
-			new ConnectToAliasCommand(_sqlAlias, true, connectToAliasCallBack).execute();
+			new ConnectToAliasCommand(_sqlAlias, true, connectToAliasCallBack).executeConnect();
 		}
 		else
 		{
@@ -532,7 +532,7 @@ public class AliasInternalFrame extends DialogWidget
 				return;
 			}
 
-			new ConnectToAliasCommand(alias, false, new ConnectionTestCallBack(Main.getApplication(), alias)).execute();
+			new ConnectToAliasCommand(alias, false, new ConnectionTestCallBack(Main.getApplication(), alias)).executeConnect();
 		}
 	}
 

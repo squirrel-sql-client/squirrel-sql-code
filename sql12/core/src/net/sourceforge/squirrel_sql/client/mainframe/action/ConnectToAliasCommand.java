@@ -27,7 +27,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -37,7 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * This command is used to start Sessions and to test connections.
  * It delegates to {@link OpenConnectionCommand}.
  */
-public class ConnectToAliasCommand implements ICommand
+public class ConnectToAliasCommand
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConnectToAliasCommand.class);
 
@@ -92,7 +91,7 @@ public class ConnectToAliasCommand implements ICommand
 	/**
 	 * Display connection internal frame.
     */
-	public void execute()
+	public void executeConnect()
 	{
 		try
 		{

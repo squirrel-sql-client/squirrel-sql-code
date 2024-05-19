@@ -39,7 +39,7 @@ public class NewAliasConnectionCommand implements ICommand
 	@Override
 	public void execute()
 	{
-		connectToAliasCommand.execute();
+		connectToAliasCommand.executeConnect();
 	}
 
 	

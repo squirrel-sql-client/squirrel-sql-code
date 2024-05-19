@@ -147,7 +147,7 @@ public class RecentAliasesListCtrl
          return;
       }
 
-      new ConnectToAliasCommand(selectedAlias).execute();
+      new ConnectToAliasCommand(selectedAlias).executeConnect();
    }
 
    private SQLAlias getSelectedAliasChecked()

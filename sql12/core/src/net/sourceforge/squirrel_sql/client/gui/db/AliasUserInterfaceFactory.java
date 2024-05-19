@@ -10,7 +10,6 @@ import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -112,15 +111,25 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory<AliasesLi
       return s_stringMgr.getString("AliasesListInternalFrame.windowtitle");
    }
 
-   public ICommand getDoubleClickCommand(MouseEvent evt)
+   //public ICommand getDoubleClickCommand(MouseEvent evt)
+   //{
+   //   ICommand cmd = null;
+   //   SQLAlias alias = _aliasesList.getSelectedAlias(evt);
+   //   if (alias != null)
+   //   {
+   //      cmd = new ConnectToAliasCommand(alias);
+   //   }
+   //   return cmd;
+   //}
+
+   @Override
+   public void execDoubleClickCommand(MouseEvent evt)
    {
-      ICommand cmd = null;
       SQLAlias alias = _aliasesList.getSelectedAlias(evt);
       if (alias != null)
       {
-         cmd = new ConnectToAliasCommand(alias);
+         new ConnectToAliasCommand(alias).executeConnect();
       }
-      return cmd;
    }
 
    /**

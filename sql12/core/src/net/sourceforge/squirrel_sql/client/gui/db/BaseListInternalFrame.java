@@ -22,8 +22,6 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -110,18 +108,13 @@ abstract class BaseListInternalFrame<T extends IBaseList> extends DockWidget
    {
       if (evt.getClickCount() == 2)
       {
-         ICommand cmd = _uiFactory.getDoubleClickCommand(evt);
-         if (cmd != null)
+         try
          {
-            try
-            {
-               cmd.execute();
-            }
-            catch (BaseException ex)
-            {
-               // i18n[BaseListInternalFrame.error.execdoubleclick=Error occurred executing doubleclick event]
-               s_log.error(s_stringMgr.getString("BaseListInternalFrame.error.execdoubleclick"), ex);
-            }
+            _uiFactory.execDoubleClickCommand(evt);
+         }
+         catch(Exception e)
+         {
+            s_log.error(s_stringMgr.getString("BaseListInternalFrame.error.execdoubleclick"), e);
          }
       }
    }

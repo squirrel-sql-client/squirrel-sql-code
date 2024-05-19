@@ -55,7 +55,7 @@ public class AppStartupSessionStarter
       for (SQLAlias alias : startUpAliases)
       {
          s_log.info("Connecting during Application start to Alias: \"" + alias.getName() + "\" (JDBC-URL: " +  alias.getUrl() + ")");
-         new ConnectToAliasCommand(alias).execute();
+         new ConnectToAliasCommand(alias).executeConnect();
       }
 
       if(false == StringUtilities.isEmpty(args.getStartupJdbcUrl(), true) && false == foundStartupJdbcUrl)

@@ -8,7 +8,6 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -55,15 +54,25 @@ final class DriverUserInterfaceFactory implements IUserInterfaceFactory<DriversL
       _app.getResources().configureMenuItem(action, popup.add(action));
    }
 
-   public ICommand getDoubleClickCommand(MouseEvent evt)
+   //public ICommand getDoubleClickCommand(MouseEvent evt)
+   //{
+   //   ICommand cmd = null;
+   //   ISQLDriver driver = _driversList.getSelectedDriver();
+   //   if (driver != null)
+   //   {
+   //      cmd = new ModifyDriverCommand(_app, driver);
+   //   }
+   //   return cmd;
+   //}
+
+   @Override
+   public void execDoubleClickCommand(MouseEvent evt)
    {
-      ICommand cmd = null;
       ISQLDriver driver = _driversList.getSelectedDriver();
       if (driver != null)
       {
-         cmd = new ModifyDriverCommand(_app, driver);
+         new ModifyDriverCommand(_app, driver).execute();
       }
-      return cmd;
    }
 
 

@@ -68,7 +68,7 @@ class ConnectionInternalFrameHandler
    /**
     * If <TT>true</TT> user has requested cancellation of the connection attempt.
     */
-   private boolean _stopConnection;
+   private volatile boolean _stopConnection;
 
    /**
     * Callback to notify client on the progress of this command.
@@ -126,13 +126,7 @@ class ConnectionInternalFrameHandler
     */
    public void performCancelConnect(ConnectionInternalFrame connSheet)
    {
-      // if blocked that means that it doesn't help anymore
-      // Or an error dialog is shown or the connection is made
-      // and the SessionFrame is being constructed/shown.
-      synchronized(this)
-      {
-         _stopConnection = true;
-      }
+      _stopConnection = true;
    }
 
    /**

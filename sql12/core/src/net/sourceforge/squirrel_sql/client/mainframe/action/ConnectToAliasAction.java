@@ -55,7 +55,7 @@ public class ConnectToAliasAction extends AliasAction
       final SQLAlias alias = _aliases.getSelectedAlias(null);
       if (alias != null)
       {
-         new ConnectToAliasCommand(alias).execute();
+         new ConnectToAliasCommand(alias).executeConnect();
       }
    }
 }

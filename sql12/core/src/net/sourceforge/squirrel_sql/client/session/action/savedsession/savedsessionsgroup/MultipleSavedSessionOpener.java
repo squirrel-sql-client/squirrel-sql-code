@@ -71,7 +71,7 @@ public class MultipleSavedSessionOpener
                }
             };
 
-            SwingUtilities.invokeAndWait(() -> new ConnectToAliasCommand(alias, true, callback).execute());
+            SwingUtilities.invokeAndWait(() -> new ConnectToAliasCommand(alias, true, callback).executeConnect());
             try
             {
                Thread.sleep(Integer.MAX_VALUE);
