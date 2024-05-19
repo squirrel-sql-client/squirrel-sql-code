@@ -3,23 +3,20 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.Action;
+import javax.swing.*;
 
 public class ToolsPopupCompletionInfo extends CompletionInfo
 {
    private String _selectionString;
    private Action _action;
-   private String _toolsPopupDescription;
    private int _maxCandidateSelectionStringName;
    private String _description;
 
-   public ToolsPopupCompletionInfo(String selectionString, Action action, String toolsPopupDescription)
+   public ToolsPopupCompletionInfo(String selectionString, Action action)
    {
       _selectionString = selectionString;
       _action = action;
-      _toolsPopupDescription = toolsPopupDescription;
    }
 
    public String getCompareString()
@@ -46,11 +43,7 @@ public class ToolsPopupCompletionInfo extends CompletionInfo
    {
       if(null == _description)
       {
-         if(false == StringUtilities.isEmpty(_toolsPopupDescription, true))
-         {
-            _description = _toolsPopupDescription;
-         }
-         else if(_action instanceof IToolsPopupDescription)
+         if(_action instanceof IToolsPopupDescription)
          {
             _description = ((IToolsPopupDescription)_action).getToolsPopupDescription();
          }
@@ -76,7 +69,7 @@ public class ToolsPopupCompletionInfo extends CompletionInfo
 
    private boolean isActionDescriptionContainsAccelerator()
    {
-      return    StringUtilities.isEmpty(_toolsPopupDescription, true)
+      return    false == _action instanceof IToolsPopupDescription
              && ActionUtil.actionDescriptionContainsAccelerator(_action);
    }
 

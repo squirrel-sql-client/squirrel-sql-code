@@ -76,7 +76,7 @@ public class ActionRegistry
       toolsPopupController.addAction("sqlselect", ac.get(SelectSqlAction.class));
       toolsPopupController.addAction("sqllastedit", ac.get(SelectSqlAction.class));
 
-      toolsPopupController.addAction("caretadd", ac.get(CaretAddAction.class), CaretAddAction.getToolsPopupDescription());
+      toolsPopupController.addAction("caretadd", ac.get(CaretAddAction.class));
       toolsPopupController.addAction("caretremove", ac.get(CaretRemoveAction.class));
 
       toolsPopupController.addAction("format", ac.get(FormatSQLAction.class));
@@ -108,7 +108,7 @@ public class ActionRegistry
       toolsPopupController.addAction("savedsessionopen", ac.get(SessionOpenAction.class));
       toolsPopupController.addAction("savedsessionsave", ac.get(SessionSaveAction.class));
       toolsPopupController.addAction("savedsessioncommit", ac.get(GitCommitSessionAction.class));
-      toolsPopupController.addAction("savemultiplesessions", ac.get(SaveAndManageGroupOfSavedSessionsAction.class));
+      toolsPopupController.addAction("savegroup", ac.get(SaveAndManageGroupOfSavedSessionsAction.class));
 
       toolsPopupController.addAction("aliaspopup", ac.get(AliasPopUpMenuAction.class));
       toolsPopupController.addAction("sessionpopup", ac.get(SessionPopUpMenuAction.class));

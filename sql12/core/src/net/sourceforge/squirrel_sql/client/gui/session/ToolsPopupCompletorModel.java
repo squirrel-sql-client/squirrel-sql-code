@@ -3,23 +3,23 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
 
-import javax.swing.Action;
+import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Vector;
+import java.util.List;
 
 
 public class ToolsPopupCompletorModel implements ICompletorModel
 {
 
-   Vector<ToolsPopupCompletionInfo> _toolsPopupCompletionInfos = 
-       new Vector<ToolsPopupCompletionInfo>();
+   List<ToolsPopupCompletionInfo> _toolsPopupCompletionInfos = new ArrayList<>();
 
    public CompletionCandidates getCompletionCandidates(String selectionStringBegin)
    {
 
 
-      Vector<ToolsPopupCompletionInfo> ret = new Vector<ToolsPopupCompletionInfo>();
+      List<ToolsPopupCompletionInfo> ret = new ArrayList<>();
       int maxNameLen = 0;
       for (int i = 0; i < _toolsPopupCompletionInfos.size(); i++)
       {
@@ -43,9 +43,9 @@ public class ToolsPopupCompletorModel implements ICompletorModel
 
 
 
-   public void addAction(String selectionString, Action action, String toolsPopupDescription)
+   public void addAction(String selectionString, Action action)
    {
-      _toolsPopupCompletionInfos.add(new ToolsPopupCompletionInfo(selectionString, action, toolsPopupDescription));
+      _toolsPopupCompletionInfos.add(new ToolsPopupCompletionInfo(selectionString, action));
 
       Collections.sort(_toolsPopupCompletionInfos, new ToolsPopupCompletionInfoComparator());
       

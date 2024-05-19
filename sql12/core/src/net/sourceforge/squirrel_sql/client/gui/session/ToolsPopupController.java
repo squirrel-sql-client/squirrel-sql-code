@@ -13,8 +13,8 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.Action;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 
@@ -114,11 +114,6 @@ public class ToolsPopupController
 
    public void addAction(String selectionString, Action action)
    {
-      addAction(selectionString, action, null);
-   }
-
-   public void addAction(String selectionString, Action action, String toolsPopupDescription)
-   {
-      _toolsPopupCompletorModel.addAction(selectionString, action, toolsPopupDescription);
+      _toolsPopupCompletorModel.addAction(selectionString, action);
    }
 }
