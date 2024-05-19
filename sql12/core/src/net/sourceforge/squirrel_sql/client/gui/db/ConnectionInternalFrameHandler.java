@@ -33,7 +33,7 @@ class ConnectionInternalFrameHandler
    /**
     * The connection internal frame.
     */
-   private ConnectionInternalFrame _connSheet;
+   private ConnectionInternalFrame _connectionInternalFrame;
 
    /**
     * Application API.
@@ -112,7 +112,7 @@ class ConnectionInternalFrameHandler
    public void performOK(ConnectionInternalFrame connSheet, String user, String password, SQLDriverPropertyCollection props)
    {
       _stopConnection = false;
-      _connSheet = connSheet;
+      _connectionInternalFrame = connSheet;
       _user = user;
       _password = password;
       _props = props;
@@ -163,7 +163,7 @@ class ConnectionInternalFrameHandler
       }
       catch(Throwable ex)
       {
-         _connSheet.executed(false);
+         _connectionInternalFrame.executed(false);
          _callback.errorOccurred(ex, _stopConnection);
       }
    }
@@ -180,10 +180,10 @@ class ConnectionInternalFrameHandler
 
          if(_alias.isAutoLogon())
          {
-// If the user checked Auto Logon but gave wrong username/password
-// in the Alias definition. He will be asked to enter username/password again in an extra dialog.
-// Here for convenience we transfer these data back into the Alias.
-// Note: Don't do this when Auto Logon is false.
+            // If the user checked Auto Logon but gave wrong username/password
+            // in the Alias definition. He will be asked to enter username/password again in an extra dialog.
+            // Here for convenience we transfer these data back into the Alias.
+            // Note: Don't do this when Auto Logon is false.
             _alias.setUserName(_user);
             AliasPasswordHandler.setPassword(_alias, _password);
          }
@@ -200,7 +200,7 @@ class ConnectionInternalFrameHandler
          }
          else
          {
-// After this it can't be stopped anymore!
+            // After this it can't be stopped anymore!
             _callback.connected(conn);
             if(_createSession)
             {
@@ -208,13 +208,13 @@ class ConnectionInternalFrameHandler
             }
             else
             {
-               _connSheet.executed(true);
+               _connectionInternalFrame.executed(true);
             }
          }
       }
       catch(Throwable th)
       {
-         _connSheet.executed(false);
+         _connectionInternalFrame.executed(false);
          _callback.errorOccurred(th, _stopConnection);
       }
    }
@@ -251,7 +251,7 @@ class ConnectionInternalFrameHandler
          SessionInternalFrame sessionInternalFrame = Main.getApplication().getWindowManager().createInternalFrame(session);
          _callback.sessionInternalFrameCreated(sessionInternalFrame);
 
-         _connSheet.executed(true);
+         _connectionInternalFrame.executed(true);
       }
       catch(Throwable th)
       {
