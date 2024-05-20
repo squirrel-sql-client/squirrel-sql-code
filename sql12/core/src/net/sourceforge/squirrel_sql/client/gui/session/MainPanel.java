@@ -105,7 +105,7 @@ public class MainPanel extends JPanel
 
 
 		GUIUtils.listenToMouseWheelClickOnTab(_tabbedPane, (tabIndex, tabComponent) -> onMouseWheelClickedOnTab(tabIndex));
-		GUIUtils.listenToRightMouseClickOnTab(_tabbedPane, (tabIndex, tabComponent, clickPosX, clickPosY) -> onRightMouseClickedOnTab(tabIndex, clickPosX, clickPosY));
+		GUIUtils.listenToRightMouseClickOnTabComponent(_tabbedPane, (tabIndex, tabComponent, clickPosX, clickPosY) -> onRightMouseClickedOnTab(tabIndex, clickPosX, clickPosY));
 	}
 
 	private void onRightMouseClickedOnTab(int tabIndex, int clickPosX, int clickPosY)

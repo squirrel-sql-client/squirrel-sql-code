@@ -877,7 +877,7 @@ public class GUIUtils
 		});
 	}
 
-	public static void listenToRightMouseClickOnTab(JTabbedPane tabbedPane, RightMouseClickOnTabListener rightMouseClickOnTabListener)
+	public static void listenToRightMouseClickOnTabComponent(JTabbedPane tabbedPane, RightMouseClickOnTabListener rightMouseClickOnTabListener)
 	{
 		tabbedPane.addMouseListener(new MouseAdapter()
 		{
@@ -906,8 +906,17 @@ public class GUIUtils
 		if (-1 != tabIndex)
 		{
 			Component tabComponent = tabbedPane.getTabComponentAt(tabIndex);
-			MouseEvent mouseEventOnTabComponent = SwingUtilities.convertMouseEvent(tabbedPane, e, tabComponent);
-			rightMouseClickOnTabListener.mouseWheelClickedOnTabComponent(tabIndex, tabComponent, mouseEventOnTabComponent.getX(), mouseEventOnTabComponent.getY());
+			if(null == tabComponent)
+			{
+				// Here no custom tab component is used, i.e. JTabbedPane.setTabComponentAt(...) was not called.
+				// An example can be found in ...plugins.postgres.explain.ExplainExecutorPanel.
+				rightMouseClickOnTabListener.rightMouseClickedOnTabComponent(tabIndex, tabbedPane, e.getX(), e.getY());
+			}
+			else
+			{
+				MouseEvent mouseEventOnTabComponent = SwingUtilities.convertMouseEvent(tabbedPane, e, tabComponent);
+				rightMouseClickOnTabListener.rightMouseClickedOnTabComponent(tabIndex, tabComponent, mouseEventOnTabComponent.getX(), mouseEventOnTabComponent.getY());
+			}
 		}
 	}
 

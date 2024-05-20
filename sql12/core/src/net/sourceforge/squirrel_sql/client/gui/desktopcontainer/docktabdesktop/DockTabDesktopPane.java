@@ -3,13 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 import net.sourceforge.squirrel_sql.client.ApplicationListener;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockDelegate;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabDelegate;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.*;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSessionsAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
@@ -17,36 +11,19 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionWindowAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToAliasSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -79,8 +56,6 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    private HashSet<TabHandle> _handlesInRemoveTab_Dispose = new HashSet<TabHandle>();
 
    private DockTabDesktopManager _dockTabDesktopManager = new DockTabDesktopManager();
-
-   private JPopupMenu _tabRightMouseMenu;
 
    private ScrollableTabHandler _scrollableTabHandler;
 
@@ -137,7 +112,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
          });
       }
 
-      initTabRightMouseMenu();
+      GUIUtils.listenToRightMouseClickOnTabComponent(_tabbedPane, (tabIndex, tabComponent, clickPosX, clickPosY) -> onShowTabComponentRightMouseMenu(tabComponent, clickPosX, clickPosY));
    }
 
    private void onSaveApplicationState()
@@ -607,31 +582,19 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       return this;
    }
 
-   public void initTabRightMouseMenu()
+   private void onShowTabComponentRightMouseMenu(Component tabComponent, int clickPosX, int clickPosY)
    {
-      _tabRightMouseMenu = new JPopupMenu();
+      JPopupMenu tabComponentRightMouseMenu = new JPopupMenu();
+      tabComponentRightMouseMenu.add(createMenu(Main.getApplication().getActionCollection().get(CloseSessionWindowAction.class)));
+      tabComponentRightMouseMenu.add(createMenu(Main.getApplication().getActionCollection().get(CloseSessionAction.class)));
+      tabComponentRightMouseMenu.add(createMenu(Main.getApplication().getActionCollection().get(CloseAllButCurrentSessionsAction.class)));
+      tabComponentRightMouseMenu.add(createMenu(Main.getApplication().getActionCollection().get(CloseAllSessionsAction.class)));
 
-      _tabbedPane.addMouseListener(new MouseAdapter()
-      {
-         public void mousePressed(MouseEvent e)
-         {
-            maybeShowTabRightMouseMenu(e);
-         }
+      tabComponentRightMouseMenu.add(createMenu(Main.getApplication().getActionCollection().get(RenameSessionAction.class)));
 
-         public void mouseReleased(MouseEvent e)
-         {
-            maybeShowTabRightMouseMenu(e);
-         }
-      });
+      tabComponentRightMouseMenu.add(createMenu(Main.getApplication().getActionCollection().get(GoToAliasSessionAction.class)));
 
-      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseSessionWindowAction.class)));
-      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseSessionAction.class)));
-      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseAllButCurrentSessionsAction.class)));
-      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseAllSessionsAction.class)));
-      
-      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(RenameSessionAction.class)));
-
-      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(GoToAliasSessionAction.class)));
+      tabComponentRightMouseMenu.show(tabComponent, clickPosX, clickPosY);
    }
 
    private JMenuItem createMenu(Action action)
@@ -639,26 +602,10 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       JMenuItem ret = new JMenuItem(action);
 
       String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
-//      if(null != accel && 0 != accel.trim().length())
-//      {
-         Main.getApplication().getShortcutManager().setAccelerator(ret, KeyStroke.getKeyStroke(accel), action);
-//      }
+      Main.getApplication().getShortcutManager().setAccelerator(ret, KeyStroke.getKeyStroke(accel), action);
 
       return ret;
    }
-
-   private void maybeShowTabRightMouseMenu(MouseEvent e)
-   {
-      if (e.isPopupTrigger())
-      {
-         int tab = _tabbedPane.getUI().tabForCoordinate(_tabbedPane, e.getX(), e.getY());
-         if (-1 != tab)
-         {
-            _tabRightMouseMenu.show(e.getComponent(), e.getX(), e.getY());
-         }
-      }
-   }
-
 
    public void setDesktopManager(SquirrelDesktopManager squirrelDesktopManager)
    {

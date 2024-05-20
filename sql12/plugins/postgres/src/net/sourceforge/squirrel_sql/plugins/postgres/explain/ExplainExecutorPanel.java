@@ -20,11 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.postgres.explain;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecutor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
@@ -44,19 +40,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
@@ -203,69 +188,33 @@ public class ExplainExecutorPanel extends JPanel implements ISQLResultExecutor
 		final JPopupMenu popup = new JPopupMenu();
 
 		JMenuItem close = new JMenuItem(i18n.CLOSE);
-		close.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				_tabbedExecutionsPanel.remove(_tabbedExecutionsPanel.getSelectedIndex());
-			}
-		});
+		close.addActionListener(e -> _tabbedExecutionsPanel.remove(_tabbedExecutionsPanel.getSelectedIndex()));
 		popup.add(close);
 
 		JMenuItem closeAllButThis = new JMenuItem(i18n.CLOSE_ALL_BUT_THIS);
-		closeAllButThis.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				for (Component c : _tabbedExecutionsPanel.getComponents())
-				{
-					if (c != _tabbedExecutionsPanel.getSelectedComponent())
-						_tabbedExecutionsPanel.remove(c);
-				}
-			}
-		});
+		closeAllButThis.addActionListener(e -> onCloseAllButThis());
 		popup.add(closeAllButThis);
 
 		JMenuItem closeAll = new JMenuItem(i18n.CLOSE_ALL);
-		closeAll.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				_tabbedExecutionsPanel.removeAll();
-			}
-		});
+		closeAll.addActionListener(e -> _tabbedExecutionsPanel.removeAll());
 		popup.add(closeAll);
 
-		_tabbedExecutionsPanel.addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mousePressed(MouseEvent e)
-			{
-				showPopup(e, popup);
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e)
-			{
-				showPopup(e, popup);
-			}
-		});
+		GUIUtils.listenToRightMouseClickOnTabComponent(_tabbedExecutionsPanel, (tabIndex, tabComponent, clickPosX, clickPosY) -> popup.show(tabComponent, clickPosX, clickPosY));
 	}
 
-	private void showPopup(MouseEvent e, JPopupMenu popup)
+	private void onCloseAllButThis()
 	{
-		if (e.isPopupTrigger())
+		List<Component> toRemove = new ArrayList<>();
+		for(int i = 0; i < _tabbedExecutionsPanel.getTabCount(); i++)
 		{
-			int index =
-				_tabbedExecutionsPanel.getUI().tabForCoordinate(_tabbedExecutionsPanel, e.getX(), e.getY());
-			if (-1 != index)
+			Component c = _tabbedExecutionsPanel.getComponentAt(i);
+			if(c != _tabbedExecutionsPanel.getSelectedComponent())
 			{
-				popup.show(e.getComponent(), e.getX(), e.getY());
+				toRemove.add(c);
 			}
 		}
+
+		toRemove.forEach(c -> _tabbedExecutionsPanel.remove(c));
 	}
 
 	public void reRunTab(ExplainTab tab)

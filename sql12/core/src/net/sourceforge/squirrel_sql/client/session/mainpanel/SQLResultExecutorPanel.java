@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -42,8 +43,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -849,50 +848,26 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       final SessionProperties props = _session.getProperties();
 		_tabbedExecutionsPanel = UIFactory.getInstance().createTabbedPane(props.getSQLExecutionTabPlacement(), true);
 
+      initTabPopup();
 
-      createTabPopup();
-
-      _tabbedExecutionsPanel.addMouseListener(new MouseAdapter()
-      {
-         @Override
-         public void mouseClicked(MouseEvent e)
-         {
-            doCloseOnMiddleMouseClick(e);
-         }
-      });
-
-
+      GUIUtils.listenToMouseWheelClickOnTab(_tabbedExecutionsPanel, (tabIndex, tabComponent) -> doCloseOnMiddleMouseClick(tabIndex));
 
       setLayout(new BorderLayout());
 
 		add(_tabbedExecutionsPanel, BorderLayout.CENTER);
 	}
 
-   private void doCloseOnMiddleMouseClick(MouseEvent e)
+   private void doCloseOnMiddleMouseClick(int tabIndex)
    {
-      if(SwingUtilities.isMiddleMouseButton (e))
+      Component comp = _tabbedExecutionsPanel.getComponentAt(tabIndex);
+      if(comp instanceof IResultTab || comp instanceof ErrorPanel || comp instanceof CustomResultPanel)
       {
-         int tab = _tabbedExecutionsPanel.getUI().tabForCoordinate(_tabbedExecutionsPanel, e.getX(), e.getY());
-
-         if(-1 == tab)
-         {
-            return;
-         }
-
-         Component comp = _tabbedExecutionsPanel.getComponentAt(tab);
-
-         if(comp instanceof IResultTab || comp instanceof ErrorPanel || comp instanceof CustomResultPanel)
-         {
-            _resultTabClosing.closeTab((JComponent) comp);
-         }
+         _resultTabClosing.closeTab((JComponent) comp);
       }
    }
 
 
-   /**
-    * Due to JDK 1.4 Bug 4465870 this doesn't work with JDK 1.4. when scrollable tabbed pane is used.
-    */
-   private void createTabPopup()
+   private void initTabPopup()
    {
       final JPopupMenu popup = new JPopupMenu();
 
@@ -944,18 +919,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       mnuToggleAnchored.setToolTipText(s_stringMgr.getString("SQLResultExecuterPanel.toggleAnchored.tooltip"));
       popup.add(mnuToggleAnchored);
 
-      _tabbedExecutionsPanel.addMouseListener(new MouseAdapter()
-      {
-         public void mousePressed(MouseEvent e)
-         {
-            maybeShowPopup(e, popup);
-         }
-
-         public void mouseReleased(MouseEvent e)
-         {
-            maybeShowPopup(e, popup);
-         }
-      });
+      GUIUtils.listenToRightMouseClickOnTabComponent(_tabbedExecutionsPanel, (tabIndex, tabComponent, clickPosX, clickPosY) -> popup.show(tabComponent, clickPosX, clickPosY));
    }
 
    private void initAccelerator(Class<? extends Action> actionClass, JMenuItem mnuItem)
@@ -963,21 +927,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       Action action = _session.getApplication().getActionCollection().get(actionClass);
 
       String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
-//      if(   null != accel && 0 != accel.trim().length())
-//      {
-         Main.getApplication().getShortcutManager().setAccelerator(mnuItem, KeyStroke.getKeyStroke(accel), action);
-//      }
+      Main.getApplication().getShortcutManager().setAccelerator(mnuItem, KeyStroke.getKeyStroke(accel), action);
    }
 
-   private void maybeShowPopup(MouseEvent e, JPopupMenu popup)
-   {
-      if (e.isPopupTrigger())
-      {
-         int tab = _tabbedExecutionsPanel.getUI().tabForCoordinate(_tabbedExecutionsPanel, e.getX(), e.getY());
-         if (-1 != tab)
-         {
-            popup.show(e.getComponent(), e.getX(), e.getY());
-         }
-      }
-   }
 }
