@@ -10,7 +10,14 @@ public class PasteFromHistoryAttach
 {
    public PasteFromHistoryAttach(ISQLEntryPanel sqlEntry)
    {
-      //sqlEntry.getTextComponent().getActionMap().get("paste-from-clipboard");
+      this(sqlEntry.getTextComponent());
+   }
+
+   public PasteFromHistoryAttach(JTextArea textComponent)
+   {
+      //textComponent.getActionMap().get("paste-from-clipboard");
+
+
 
       ClipboardCopyActionProxyListener clipboardCopyActionProxyListener = new ClipboardCopyActionProxyListener()
       {
@@ -24,13 +31,13 @@ public class PasteFromHistoryAttach
       Action action;
       ClipboardCopyActionProxy actionProxy;
 
-      action = sqlEntry.getTextComponent().getActionMap().get(DefaultEditorKit.copyAction);
+      action = textComponent.getActionMap().get(DefaultEditorKit.copyAction);
       actionProxy = new ClipboardCopyActionProxy(action, clipboardCopyActionProxyListener);
-      sqlEntry.getTextComponent().getActionMap().put(DefaultEditorKit.copyAction, actionProxy);
+      textComponent.getActionMap().put(DefaultEditorKit.copyAction, actionProxy);
 
-      action = sqlEntry.getTextComponent().getActionMap().get(DefaultEditorKit.cutAction);
+      action = textComponent.getActionMap().get(DefaultEditorKit.cutAction);
       actionProxy = new ClipboardCopyActionProxy(action, clipboardCopyActionProxyListener);
-      sqlEntry.getTextComponent().getActionMap().put(DefaultEditorKit.cutAction, actionProxy);
+      textComponent.getActionMap().put(DefaultEditorKit.cutAction, actionProxy);
    }
 
    private void onCopyToClipboard(String clipContent)

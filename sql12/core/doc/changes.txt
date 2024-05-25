@@ -34,6 +34,8 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+Copying from table cell data popup was not added to paste history (ctrl+shift+v or ctrl+shift+insert).
+
 Tools popup (ctrl+t) was broken by too long description.
 
 Saved Session groups, several bug fixes:
