@@ -1,17 +1,17 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 
 public class DefaultFindService implements FindService
 {
@@ -76,13 +76,14 @@ public class DefaultFindService implements FindService
    }
 
    @Override
-   public List<Object[]> getRowsForIndexes(List<Integer> rowIndexes)
+   public List<Object[]> getRowsForViewIndexes(List<Integer> viewRowIndexes)
    {
       ArrayList<Object[]> ret = new ArrayList<Object[]>();
 
-      for (Integer row : rowIndexes)
+      for (Integer viewRowIndex : viewRowIndexes)
       {
-         ret.add(_table.getDataSetViewerTableModel().getRowAt(row));
+         int modelIndex = _table.getSortableTableModel().transformToModelRow(viewRowIndex);
+         ret.add(_table.getDataSetViewerTableModel().getRowAt(modelIndex));
       }
       return ret;
    }

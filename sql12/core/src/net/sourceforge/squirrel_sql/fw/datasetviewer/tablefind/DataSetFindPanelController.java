@@ -1,5 +1,18 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -13,13 +26,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.util.List;
 
 public class DataSetFindPanelController
 {
@@ -163,7 +169,7 @@ public class DataSetFindPanelController
 
    private void onShowRowsFoundInTable(ISession session)
    {
-      List<Object[]> allRows = ensureFindService().getRowsForIndexes(_trace.getRowsFound());
+      List<Object[]> allRows = ensureFindService().getRowsForViewIndexes(_trace.getRowsFound());
       ColumnDisplayDefinition[] columnDisplayDefinitions = ensureFindService().getColumnDisplayDefinitions();
 
       RowsWindowFrame rowsWindowFrame =
