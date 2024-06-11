@@ -17,6 +17,14 @@ package net.sourceforge.squirrel_sql.client.session.action.dataimport;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Date;
+import java.util.List;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -33,14 +41,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This class does the main work for importing the file into the database.
@@ -379,8 +379,9 @@ public class ImportDataIntoTableExecutor
             }
             break;
          case Types.INTEGER:
+            setIntOrUnsignedInt(stmt, index, column, null != value ? Integer.parseInt(value) : null, null != value ? Long.parseLong(value) : null);
          case Types.NUMERIC:
-            setIntOrUnsignedInt(stmt, index, column);
+            setDouble(stmt, index, (null != value ? Double.parseDouble(value) : null), Types.DOUBLE);
             break;
          case Types.DATE:
             // Null values should be allowed
@@ -453,17 +454,17 @@ public class ImportDataIntoTableExecutor
       switch (column.getTableColumnInfo().getDataType())
       {
          case Types.BIGINT:
-            setLong(stmt, index, mappedColumn);
+            setLong(stmt, index, _importer.getLong(mappedColumn));
             break;
          case Types.INTEGER:
          case Types.SMALLINT:
-            setIntOrUnsignedInt(stmt, index, column);
+            setIntOrUnsignedInt(stmt, index, column, _importer.getInt(mappedColumn), _importer.getLong(mappedColumn));
             break;
          case Types.NUMERIC:
          case Types.FLOAT:
          case Types.DOUBLE:
          case Types.DECIMAL:
-            setDouble(stmt, index, column);
+            setDouble(stmt, index, _importer.getDouble(getMappedColumn(column)), column.getTableColumnInfo().getDataType());
             break;
          case Types.DATE:
             setDate(stmt, index, mappedColumn);
@@ -543,58 +544,54 @@ public class ImportDataIntoTableExecutor
     * a Java integer which is always signed. However, if we are working with an
     * unsigned integer type, Java doesn't have this so use a long instead.
     */
-   private void setIntOrUnsignedInt(PreparedStatement stmt, int index, ExtendedColumnInfo column)
-         throws SQLException, IOException
+   private void setIntOrUnsignedInt(PreparedStatement stmt, int index, ExtendedColumnInfo column, Integer integerValue, Long longValue)
+         throws SQLException
    {
-      int mappedColumn = getMappedColumn(column);
       String columnTypeName = column.getTableColumnInfo().getTypeName();
       if (columnTypeName != null && (columnTypeName.toUpperCase().endsWith("UNSIGNED")))
       {
-         setLong(stmt, index, mappedColumn);
+         setLong(stmt, index, longValue);
       }
 
-      setInt(stmt, index, mappedColumn);
+      setInt(stmt, index, integerValue);
    }
 
-   private void setDouble(PreparedStatement stmt, int index, ExtendedColumnInfo column)
-         throws SQLException, IOException
+   private void setDouble(PreparedStatement stmt, int index, Double value, int javaSqlTypes_Type)
+         throws SQLException
    {
-      Double d = _importer.getDouble(getMappedColumn(column));
-      if (null == d)
+      if ( null == value )
       {
-         stmt.setNull(index, column.getTableColumnInfo().getDataType());
+         stmt.setNull(index, javaSqlTypes_Type);
       }
       else
       {
-         stmt.setDouble(index, d);
+         stmt.setDouble(index, value);
       }
    }
 
-   private void setLong(PreparedStatement stmt, int index, int mappedColumn)
-         throws IOException, SQLException
+   private void setLong(PreparedStatement stmt, int index, Long value)
+         throws SQLException
    {
-      Long long1 = _importer.getLong(mappedColumn);
-      if (null == long1)
+      if ( null == value )
       {
          stmt.setNull(index, Types.INTEGER);
       }
       else
       {
-         stmt.setLong(index, long1);
+         stmt.setLong(index, value);
       }
    }
 
-   private void setInt(PreparedStatement stmt, int index, int mappedColumn)
-         throws IOException, SQLException
+   private void setInt(PreparedStatement stmt, int index, Integer value)
+         throws SQLException
    {
-      Integer int1 = _importer.getInt(mappedColumn);
-      if (null == int1)
+      if ( null == value )
       {
          stmt.setNull(index, Types.INTEGER);
       }
       else
       {
-         stmt.setInt(index, int1);
+         stmt.setInt(index, value);
       }
    }
 

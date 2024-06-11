@@ -34,6 +34,8 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+File import: Fixed values were not written to the database when a column was of numeric type.
+
 SQL result search function: Moving search results to an own table window didn't work when the result table was sorted.
 
 Copying from table cell data popup was not added to paste history (ctrl+shift+v or ctrl+shift+insert).
