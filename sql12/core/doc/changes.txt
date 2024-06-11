@@ -34,6 +34,10 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+File import: If Ok was clicked immediately after a fixed value was edited the edited value wasn't used.
+
+File import: Avoided non cancelable progress dialog.
+
 File import: Fixed values were not written to the database when a column was of numeric type.
 
 SQL result search function: Moving search results to an own table window didn't work when the result table was sorted.

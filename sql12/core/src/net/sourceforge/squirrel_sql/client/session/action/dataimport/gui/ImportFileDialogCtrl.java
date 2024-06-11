@@ -17,6 +17,17 @@ package net.sourceforge.squirrel_sql.client.session.action.dataimport.gui;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
@@ -35,14 +46,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import static net.sourceforge.squirrel_sql.client.session.action.dataimport.gui.SpecialColumnMapping.*;
 
@@ -487,7 +490,7 @@ public class ImportFileDialogCtrl
          return;
       }
 
-
+      _importFileDialog.tblMapping.getCellEditor().stopCellEditing();
       ColumnMappingTableModel columnMappingModel = (ColumnMappingTableModel) _importFileDialog.tblMapping.getModel();
 
       ExtendedColumnInfo[] columns = getExtendedColumnInfos();

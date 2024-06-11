@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.action.dataimport;
 
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.swing.Timer;
+
 import net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.UnsupportedFormatException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -8,11 +13,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class ImportProgressCtrl
 {
@@ -100,6 +100,18 @@ public class ImportProgressCtrl
 
       EDTMessageBoxUtil.showMessageDialogOnEDT(
             stringMgr.getString("ImportDataIntoTableExecutor.UnsupportedFormatException", Utilities.getExceptionStringSave(ufe), _currentRow),
+            stringMgr.getString("ImportDataIntoTableExecutor.error"));
+
+   }
+
+   public void failedWithUnknownException(Throwable t)
+   {
+      log.error("Unsupported format.", t);
+
+      GUIUtils.processOnSwingEventThread(() -> close());
+
+      EDTMessageBoxUtil.showMessageDialogOnEDT(
+            stringMgr.getString("ImportDataIntoTableExecutor.UnknownException", Utilities.getExceptionStringSave(t), _currentRow),
             stringMgr.getString("ImportDataIntoTableExecutor.error"));
 
    }

@@ -233,7 +233,7 @@ public class ImportDataIntoTableExecutor
       }
       catch (Throwable t)
       {
-         s_log.error(t);
+         importProgressCtrl.failedWithUnknownException(t);
       }
       finally
       {
