@@ -490,7 +490,11 @@ public class ImportFileDialogCtrl
          return;
       }
 
-      _importFileDialog.tblMapping.getCellEditor().stopCellEditing();
+      if( null != _importFileDialog.tblMapping.getCellEditor() )
+      {
+         _importFileDialog.tblMapping.getCellEditor().stopCellEditing();
+      }
+
       ColumnMappingTableModel columnMappingModel = (ColumnMappingTableModel) _importFileDialog.tblMapping.getModel();
 
       ExtendedColumnInfo[] columns = getExtendedColumnInfos();

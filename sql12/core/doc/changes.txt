@@ -34,6 +34,8 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+File import: Fixed NullPointer when file import was started.
+
 File import: If Ok was clicked immediately after a fixed value was edited the edited value wasn't used.
 
 File import: Avoided non cancelable progress dialog.
