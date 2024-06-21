@@ -42,7 +42,7 @@ public enum MarkDuplicatesMode
 
       static String embedInUsageInfo(String toEmbed)
       {
-         return s_stringMgr.getString("MarkDuplicatesMode.usage.tooltip.embed", toEmbed);
+         return s_stringMgr.getString("MarkDuplicatesMode.usage.tooltip.embed", s_stringMgr.getString(toEmbed));
       }
    }
 
