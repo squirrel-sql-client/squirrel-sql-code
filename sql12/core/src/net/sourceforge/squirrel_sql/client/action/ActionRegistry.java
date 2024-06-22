@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.QuitSoundAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.*;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
+import net.sourceforge.squirrel_sql.fw.gui.table.columndisplaychoice.ColumnDisplayChoiceAction;
 
 /**
  * Supposed to be the place where actions are
@@ -223,6 +224,7 @@ public class ActionRegistry
       actionCollection.add(new FindInResultAction());
       actionCollection.add(new FindResultColumnAction());
       actionCollection.add(new MarkDuplicatesToggleAction());
+      actionCollection.add(new ColumnDisplayChoiceAction());
 
       actionCollection.add(new InQuotesAction(app));
       actionCollection.add(new RemoveQuotesAction(app));

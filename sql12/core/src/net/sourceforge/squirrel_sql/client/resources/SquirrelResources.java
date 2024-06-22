@@ -201,6 +201,8 @@ public class SquirrelResources extends Resources
 
 		String CLIPBOARD = "clipboard";
 
+		String PRESENTATION = "presentation";
+
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

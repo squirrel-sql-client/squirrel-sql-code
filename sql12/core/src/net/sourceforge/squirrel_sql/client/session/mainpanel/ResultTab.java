@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.Mar
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableToolbarCtrl;
+import net.sourceforge.squirrel_sql.fw.gui.table.columndisplaychoice.ColumnDisplayChoiceAction;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -562,23 +563,26 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,10,0,0), 0,0);
       ret.add(new TabButton(getRerunCurrentSQLResultTabAction()), gbc);
 
-      _markDuplicatesChooserController = new MarkDuplicatesChooserController(this);
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      ret.add(new TabButton(new ColumnDisplayChoiceAction(this)), gbc);
+
+      _markDuplicatesChooserController = new MarkDuplicatesChooserController(this);
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
       ret.add(GUIUtils.setPreferredWidth(_markDuplicatesChooserController.getComponent(), 42), gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
       ret.add(new MakeEditableToolbarCtrl(this, _session).getTabButton(), gbc);
 
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
       ret.add(new TabButton(new FindResultColumnAction(this)), gbc);
 
-      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
       ret.add(new TabButton(new FindInResultAction(this)), gbc);
 
-      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
+      gbc = new GridBagConstraints(7,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
       ret.add(new TabButton(new CreateResultTabFrameAction(this)), gbc);
 
-      gbc = new GridBagConstraints(7,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,2), 0,0);
+      gbc = new GridBagConstraints(8,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,2), 0,0);
       ret.add(new TabButton(new CloseAction(this)), gbc);
 
       gbc = new GridBagConstraints(0,1, GridBagConstraints.REMAINDER, 1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
