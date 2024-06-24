@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,4 +79,9 @@ public interface IResultTab
    IDataSetViewer getSQLResultDataSetViewer();
 
    void setParentWindow(Window parent);
+
+
+   boolean isSQLResultTabSelected();
+
+   ResultDataSetAndCellDetailDisplayHandler getSelectedResultTabsDisplayHandler();
 }

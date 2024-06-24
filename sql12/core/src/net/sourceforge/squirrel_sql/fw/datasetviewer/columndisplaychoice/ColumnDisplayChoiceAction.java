@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui.table.columndisplaychoice;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -46,29 +46,34 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
          return;
       }
 
-      if(false == _resultTabProvider.getResultTab().getSQLResultDataSetViewer() instanceof DataSetViewerTablePanel)
-      {
-         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ColumnDisplayChoiceAction.display.choice.for.table.only"));
-         s_log.warn(s_stringMgr.getString("ColumnDisplayChoiceAction.display.choice.for.table.only"));
-         return;
-      }
-
       if(false == e.getSource() instanceof TabButton)
       {
          s_log.error("ColumnDisplayChoiceAction.actionPerformed() called with unknown source.");
+         return;
       }
-
       TabButton tabButton = (TabButton) e.getSource();
 
+      ResultDataSetAndCellDetailDisplayHandler selectedTabsDisplayHandler = _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler();
+
+      if(null == selectedTabsDisplayHandler)
+      {
+         CellDetailDisplayAvailableInfo.INFO_NO_DISPLAY_HANDLER.displayNotAvailableMessage();
+         return;
+      }
+      else if(false == selectedTabsDisplayHandler.getCellDetailDisplayAvailableInfo().isAvailable())
+      {
+         selectedTabsDisplayHandler.getCellDetailDisplayAvailableInfo().displayNotAvailableMessage();
+         return;
+      }
 
       DataSetViewerTable table = ((DataSetViewerTablePanel) _resultTabProvider.getResultTab().getSQLResultDataSetViewer()).getTable();
 
-      int selCol = table.getSelectedColumn();
+      int selColIx = table.getSelectedColumn();
       int selRow = table.getSelectedRow();
 
       JPopupMenu popupMenu = new JPopupMenu();
 
-      if(-1 == selCol || -1 == selRow)
+      if(-1 == selColIx || -1 == selRow)
       {
          JMenuItem mnuNoQuickCoice = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.click.cell.for.quick.choice"));
          mnuNoQuickCoice.setEnabled(false);
@@ -76,12 +81,13 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
       }
       else
       {
-         TableColumn col = table.getColumnModel().getColumn(selCol);
+         TableColumn col = table.getColumnModel().getColumn(selColIx);
          if(col instanceof ExtTableColumn)
          {
             ColumnDisplayDefinition colDisp = ((ExtTableColumn) col).getColumnDisplayDefinition();
 
             JMenuItem mnuDisplayAsImage = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.display.image", colDisp.getFullTableColumnName(), colDisp.getSqlTypeName()));
+            mnuDisplayAsImage.addActionListener(e1 -> displayAsImage(colDisp, selColIx));
             popupMenu.add(mnuDisplayAsImage);
          }
          else
@@ -97,6 +103,11 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
 
 
       popupMenu.show(tabButton, 0, tabButton.getHeight());
+   }
+
+   private void displayAsImage(ColumnDisplayDefinition colDisp, int selColIx)
+   {
+      _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().showCellDetail();
    }
 
    @Override

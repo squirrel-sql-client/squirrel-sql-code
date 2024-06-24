@@ -36,10 +36,12 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ColumnDisplayChoiceAction;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableToolbarCtrl;
-import net.sourceforge.squirrel_sql.fw.gui.table.columndisplaychoice.ColumnDisplayChoiceAction;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -194,7 +196,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		}
 
 
-      _resultDataSetViewerFindHandler = new DataSetViewerFindHandler(resultDataSetViewer, _session);
+      _resultDataSetViewerFindHandler = new DataSetViewerFindHandler(resultDataSetViewer, _session, ResultTableType.SQL_QUERY_RESULT);
 
       //  SCROLL
 		// _resultSetSp.setViewportView(_resultDataSetViewerFindHandler.getComponent());
@@ -203,7 +205,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       if (_session.getProperties().getShowResultsMetaData())
       {
          IDataSetViewer metaDataSetViewer = BaseDataSetViewerDestination.createInstance(props.getMetaDataOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
-         _metaDataDataSetViewerFindHandler = new DataSetViewerFindHandler(metaDataSetViewer, _session);
+         _metaDataDataSetViewerFindHandler = new DataSetViewerFindHandler(metaDataSetViewer, _session, ResultTableType.SQL_QUERY_RESULT_META_DATA);
       }
 	}
 
@@ -609,7 +611,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       if(null == dataSetViewerFindHandlerOfSelectedTab)
       {
-         selectResultTab();
+         selectSQLResultTabSelected();
          dataSetViewerFindHandlerOfSelectedTab = _resultDataSetViewerFindHandler;
       }
 
@@ -632,7 +634,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
-      selectResultTab();
+      selectSQLResultTabSelected();
       FindResultColumnUtil.findAndShowResultColumns(dataSetViewerTablePanel, GUIUtils.getOwningFrame(_tabResultTabs));
    }
 
@@ -642,7 +644,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    {
       if(_markDuplicatesChooserController.actionWasFired(e))
       {
-         selectResultTab();
+         selectSQLResultTabSelected();
       }
    }
 
@@ -720,9 +722,27 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       return _allowEditing;
    }
 
-   public void selectResultTab()
+   @Override
+   public boolean isSQLResultTabSelected()
+   {
+      return 0 == _tabResultTabs.getSelectedIndex();
+   }
+
+   @Override
+   public ResultDataSetAndCellDetailDisplayHandler getSelectedResultTabsDisplayHandler()
+   {
+      DataSetViewerFindHandler findHandler = getDataSetViewerFindHandlerOfSelectedTabOrNull();
+
+      if(null == findHandler)
+      {
+         return null;
+      }
+
+      return findHandler.getResultDisplayHandler();
+   }
+
+   public void selectSQLResultTabSelected()
    {
       _tabResultTabs.setSelectedIndex(0);
    }
-
 }

@@ -4,12 +4,14 @@ import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetail
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyTabControllerCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Formatter;
 
 public class RotatedTableCtrl implements LazyTabControllerCtrl
 {
@@ -118,7 +120,7 @@ public class RotatedTableCtrl implements LazyTabControllerCtrl
          table.init(null, new DataModelImplementationDetails(_session), _session);
          table.show(simpleDataSet);
 
-         _dataSetViewerFindHandler = new DataSetViewerFindHandler(table, _session);
+         _dataSetViewerFindHandler = new DataSetViewerFindHandler(table, _session, ResultTableType.ROTATED_SQL_RESULT_TABLE);
 
          _rotatedTablePanel.add(_dataSetViewerFindHandler.getComponent());
 

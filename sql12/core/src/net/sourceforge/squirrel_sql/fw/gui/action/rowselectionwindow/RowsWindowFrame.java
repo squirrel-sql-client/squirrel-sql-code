@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -76,7 +77,7 @@ public class RowsWindowFrame extends JDialog
       ret = new JPanel(new BorderLayout(0, 3));
 
       _dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(rows, _columnDisplayDefinitions, _session);
-      _dataSetViewerFindHandler = new DataSetViewerFindHandler(_dataSetViewerTablePanel, _session, this);
+      _dataSetViewerFindHandler = new DataSetViewerFindHandler(_dataSetViewerTablePanel, _session, ResultTableType.ROWS_WINDOW, this);
 
       JPanel pnlNorth = createNorthPanel(_dataSetViewerTablePanel);
       ret.add(pnlNorth, BorderLayout.NORTH);
