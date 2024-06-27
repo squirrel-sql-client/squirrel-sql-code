@@ -8,22 +8,19 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.TabButton;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.ResultTabProvider;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
-import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
 
 public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPanelAction
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColumnDisplayChoiceAction.class);
    private static ILogger s_log = LoggerController.createLogger(ColumnDisplayChoiceAction.class);
+
 
    private final ResultTabProvider _resultTabProvider;
 
@@ -66,14 +63,18 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
          return;
       }
 
-      DataSetViewerTable table = ((DataSetViewerTablePanel) _resultTabProvider.getResultTab().getSQLResultDataSetViewer()).getTable();
-
-      int selColIx = table.getSelectedColumn();
-      int selRow = table.getSelectedRow();
-
       JPopupMenu popupMenu = new JPopupMenu();
 
-      if(-1 == selColIx || -1 == selRow)
+      JMenuItem chkMnuShowCellDetails = new JCheckBoxMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.toggle.show.cellDetail"));
+      popupMenu.add(chkMnuShowCellDetails);
+      chkMnuShowCellDetails.addActionListener(ae -> onToggleShowCellDetail(chkMnuShowCellDetails));
+      chkMnuShowCellDetails.setSelected(selectedTabsDisplayHandler.isCellDetailVisible());
+      onToggleShowCellDetail(chkMnuShowCellDetails);
+
+
+      SelectedCellInfo selectedCellInfo = selectedTabsDisplayHandler.getSelectedCellInfo();
+
+      if(false == selectedCellInfo.hasSelectedCell())
       {
          JMenuItem mnuNoQuickCoice = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.click.cell.for.quick.choice"));
          mnuNoQuickCoice.setEnabled(false);
@@ -81,13 +82,12 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
       }
       else
       {
-         TableColumn col = table.getColumnModel().getColumn(selColIx);
-         if(col instanceof ExtTableColumn)
+         if(selectedCellInfo.isExtTableColumnCellSelected())
          {
-            ColumnDisplayDefinition colDisp = ((ExtTableColumn) col).getColumnDisplayDefinition();
+            ColumnDisplayDefinition colDisp = selectedCellInfo.getSelectedColumnsDisplayDefinition();
 
             JMenuItem mnuDisplayAsImage = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.display.image", colDisp.getFullTableColumnName(), colDisp.getSqlTypeName()));
-            mnuDisplayAsImage.addActionListener(e1 -> displayAsImage(colDisp, selColIx));
+            mnuDisplayAsImage.addActionListener(e1 -> displayAsImage());
             popupMenu.add(mnuDisplayAsImage);
          }
          else
@@ -105,9 +105,14 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
       popupMenu.show(tabButton, 0, tabButton.getHeight());
    }
 
-   private void displayAsImage(ColumnDisplayDefinition colDisp, int selColIx)
+   private void onToggleShowCellDetail(JMenuItem chkMnuShowCellDetails)
    {
-      _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().showCellDetail();
+      _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().setCellDetailVisible(chkMnuShowCellDetails.isSelected());
+   }
+
+   private void displayAsImage()
+   {
+      _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().setCellDetailVisible(true);
    }
 
    @Override

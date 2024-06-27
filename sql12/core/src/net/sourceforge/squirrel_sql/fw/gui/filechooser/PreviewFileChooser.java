@@ -1,16 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.gui.filechooser;
 
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JSplitPane;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class PreviewFileChooser extends JDialog
@@ -78,7 +72,7 @@ public class PreviewFileChooser extends JDialog
 
    private static void initSplitDividerLocation(JSplitPane splitPane, Dimension size)
    {
-      int preferredDividerLocation = Main.getApplication().getPropsImpl().getInt(PREF_KEY_SPLIT_DIVIDER_LOCATION, size.width / 2);
+      int preferredDividerLocation = Props.getInt(PREF_KEY_SPLIT_DIVIDER_LOCATION, size.width / 2);
 
       int dividerLocation = preferredDividerLocation;
       if (0 < splitPane.getWidth())
