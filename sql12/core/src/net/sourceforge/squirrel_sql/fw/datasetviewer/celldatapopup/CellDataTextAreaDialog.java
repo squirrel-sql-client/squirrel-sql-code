@@ -5,10 +5,8 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JDialog;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 
 class CellDataTextAreaDialog extends JDialog
 {
@@ -21,7 +19,7 @@ class CellDataTextAreaDialog extends JDialog
 
       super(SwingUtilities.windowForComponent(comp), s_stringMgr.getString("cellDataPopup.valueofColumn", columnName));
       CellDataColumnDataPopupPanel popup = new CellDataColumnDataPopupPanel(value, colDef, isModelEditable);
-      popup.setUserActionInfo(this, row, col, table);
+      popup.setCellDataUpdateInfo(new CellDataUpdateInfo(row, col, table, this));
       setContentPane(popup);
 
       GUIUtils.enableCloseByEscape(this);

@@ -52,9 +52,6 @@ import java.nio.file.Path;
  */
 public class PopupEditableIOPanel extends JPanel
 {
-	private static final String PREF_KEY_LAST_BROWSE_FILE = "SquirrelSQL.last.browse.file";
-
-
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PopupEditableIOPanel.class);
 	public static final String ACTION_BROWSE = "browse";
 	public static final String ACTION_EXPORT = "export";
@@ -74,11 +71,11 @@ public class PopupEditableIOPanel extends JPanel
 
 
 	// Description needed to handle conversion of data to/from Object
-	transient private final ColumnDisplayDefinition _colDef;
+	private final ColumnDisplayDefinition _colDef;
 	private final JCheckBoxMenuItem _chkMnuLineWrap;
 	private final JCheckBoxMenuItem _chkMnuWordWrap;
 
-	transient private MouseAdapter _lis;
+	private MouseAdapter _lis;
 
 	private final TextPopupMenu _popupMenu;
 
@@ -126,8 +123,6 @@ public class PopupEditableIOPanel extends JPanel
 
 			previousRadixListItem = (String)radixList.getSelectedItem();
 			previousShowAscii = showAscii.isSelected();
-
-			return;
 		}
 	}
 	transient private BinaryOptionActionListener optionActionListener =

@@ -13,10 +13,7 @@ class CellDataColumnDataPopupPanel extends JPanel
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataColumnDataPopupPanel.class);
 
    private final PopupEditableIOPanel _ioPanel;
-   private JDialog _parentFrame = null;
-   private int _row;
-   private int _col;
-   private JTable _table;
+   private CellDataUpdateInfo _cellDataUpdateInfo;
 
    CellDataColumnDataPopupPanel(Object cellContents, ColumnDisplayDefinition colDef, boolean tableIsEditable)
    {
@@ -72,7 +69,7 @@ class CellDataColumnDataPopupPanel extends JPanel
 
    private void onCancel()
    {
-      closeFrame();
+      _cellDataUpdateInfo.closeParentDialog();
    }
 
 
@@ -96,29 +93,17 @@ class CellDataColumnDataPopupPanel extends JPanel
       }
       else
       {
-         _table.setValueAt(newValue, _row, _col);
-         closeFrame();
+         _cellDataUpdateInfo.getTable().setValueAt(newValue, _cellDataUpdateInfo.getRow(), _cellDataUpdateInfo.getCol());
+         _cellDataUpdateInfo.closeParentDialog();
       }
-   }
-
-   private void closeFrame()
-   {
-      _parentFrame.setVisible(false);
-      _parentFrame.dispose();
    }
 
 
    /*
     * Save various information which is needed to do Update & Cancel.
     */
-   public void setUserActionInfo(JDialog parent, int row, int col,
-                                 JTable table)
+   public void setCellDataUpdateInfo(CellDataUpdateInfo cellDataUpdateInfo)
    {
-      _parentFrame = parent;
-      _row = row;
-      _col = col;
-      _table = table;
+      _cellDataUpdateInfo = cellDataUpdateInfo;
    }
-
-
 }
