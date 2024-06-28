@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetail
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
-import java.awt.*;
+import java.awt.Component;
 
 public interface IDataSetViewer
 {
@@ -96,7 +96,7 @@ public interface IDataSetViewer
 
    void disableContinueRead();
 
-   void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener);
+   void addRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener);
 
 	void switchColumnHeader(ColumnHeaderDisplay columnHeaderDisplay);
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
-import javax.swing.*;
+import javax.swing.JTable;
 
 public class CellDataUpdateInfo
 {
@@ -34,6 +34,11 @@ public class CellDataUpdateInfo
 
    public void closeParentDialog()
    {
+      if(null == _parentDialog)
+      {
+         return;
+      }
+
       _parentDialog.setVisible(false);
       _parentDialog.dispose();
    }

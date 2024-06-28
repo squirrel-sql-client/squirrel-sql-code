@@ -5,17 +5,19 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
-class CellDataColumnDataPopupPanel extends JPanel
+public class CellDataColumnDataPopupPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataColumnDataPopupPanel.class);
 
    private final PopupEditableIOPanel _ioPanel;
    private CellDataUpdateInfo _cellDataUpdateInfo;
 
-   CellDataColumnDataPopupPanel(Object cellContents, ColumnDisplayDefinition colDef, boolean tableIsEditable)
+   public CellDataColumnDataPopupPanel(Object cellContents, ColumnDisplayDefinition colDef, boolean tableIsEditable)
    {
       super(new BorderLayout());
 

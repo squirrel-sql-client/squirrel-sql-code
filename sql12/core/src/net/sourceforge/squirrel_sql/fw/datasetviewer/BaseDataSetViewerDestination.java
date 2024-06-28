@@ -214,7 +214,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
    }
 
    @Override
-   public void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener)
+   public void addRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener)
    {
    }
 

@@ -4,14 +4,19 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataColumnDataPopupPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataUpdateInfo;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 
 public class ResultDataSetAndCellDetailDisplayHandler
@@ -50,10 +55,45 @@ public class ResultDataSetAndCellDetailDisplayHandler
       {
          setCellDetailVisible(Props.getBoolean(PREF_KEY_SHOW_CELL_DETAIL, false), true);
          _splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, e -> onDividerLocationChanged(e));
+
+         if(isDataSetViewerTablePanel())
+         {
+            _dataSetViewer.addRowColSelectedCountListener((selRowCount, selColCount, selRow, selCol) -> onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer, selRow, selCol));
+         }
       }
       else
       {
          setCellDetailVisible(false, true);
+      }
+   }
+
+   private void onRowColSelectionChanged(DataSetViewerTablePanel dataSetViewer, int selRow, int selCol)
+   {
+      if(false == _splitPane.isEnabled())
+      {
+         return;
+      }
+
+      if(   -1 == selRow
+         || -1 == selCol
+         || false == dataSetViewer.getTable().getColumnModel().getColumn(selCol) instanceof ExtTableColumn)
+      {
+         int dividerLocBuf = _splitPane.getDividerLocation();
+         _splitPane.setRightComponent(_lblNoCell);
+         _splitPane.setDividerLocation(dividerLocBuf);
+      }
+      else
+      {
+         Object value = dataSetViewer.getTable().getValueAt(selRow, selCol);
+
+         ExtTableColumn column = (ExtTableColumn) dataSetViewer.getTable().getColumnModel().getColumn(selCol);
+         CellDataColumnDataPopupPanel panel = new CellDataColumnDataPopupPanel(value, column.getColumnDisplayDefinition(), dataSetViewer.isTableEditable());
+         panel.setCellDataUpdateInfo(new CellDataUpdateInfo(selRow, selCol, dataSetViewer.getTable(), null));
+         GUIUtils.setPreferredWidth(panel, 0);
+         GUIUtils.setMinimumWidth(panel, 0);
+         int dividerLocBuf = _splitPane.getDividerLocation();
+         _splitPane.setRightComponent(panel);
+         _splitPane.setDividerLocation(dividerLocBuf);
       }
    }
 

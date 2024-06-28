@@ -123,7 +123,7 @@ public class RowColAndSumController
    public void setDataSetViewer(IDataSetViewer dataSetViewer)
    {
       _dataSetViewer = dataSetViewer;
-      _dataSetViewer.setRowColSelectedCountListener(new RowColSelectedCountListener(){
+      _dataSetViewer.addRowColSelectedCountListener(new RowColSelectedCountListener(){
          @Override
          public void rowColSelectedCountOrPosChanged(int selectedRowCount, int selectedColumnCount, int selectedRow, int selectedColumn)
          {

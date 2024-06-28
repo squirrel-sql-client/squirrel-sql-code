@@ -27,17 +27,22 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLeng
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implements IDataSetViewAccess, Printable
 {
@@ -49,7 +54,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
    private DataModelImplementationDetails _dataModelImplementationDetails = new DataModelImplementationDetails();
 
    private ContinueReadHandler _continueReadHandler;
-   private RowColSelectedCountListener _rowColSelectedCountListener;
+   private List<RowColSelectedCountListener> _rowColSelectedCountListeners = new ArrayList<>();
 
 	public DataSetViewerTablePanel()
 	{
@@ -92,16 +97,16 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 
    private void onSelectionChanged()
    {
-      if(null != _rowColSelectedCountListener)
-      {
-         _rowColSelectedCountListener.rowColSelectedCountOrPosChanged(_table.getSelectedRowCount(), _table.getSelectedColumnCount(), _table.getSelectedRow(), _table.getSelectedColumn());
-      }
+		for(RowColSelectedCountListener l : _rowColSelectedCountListeners.toArray(new RowColSelectedCountListener[0]))
+		{
+			l.rowColSelectedCountOrPosChanged(_table.getSelectedRowCount(), _table.getSelectedColumnCount(), _table.getSelectedRow(), _table.getSelectedColumn());
+		}
    }
 
    @Override
-   public void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener)
+   public void addRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener)
    {
-      _rowColSelectedCountListener = rowColSelectedCountListener;
+      _rowColSelectedCountListeners.add(rowColSelectedCountListener);
    }
 
    public IDataSetUpdateableModel getUpdateableModel()
