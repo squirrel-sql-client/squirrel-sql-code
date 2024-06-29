@@ -17,6 +17,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.table.TableColumn;
 import java.awt.Component;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
 
 public class ResultDataSetAndCellDetailDisplayHandler
@@ -50,6 +52,14 @@ public class ResultDataSetAndCellDetailDisplayHandler
       GUIUtils.setPreferredWidth(_lblNoCell, 0);
       GUIUtils.setMinimumWidth(_lblNoCell, 0);
       _splitPane.setRightComponent(_lblNoCell);
+      _splitPane.addComponentListener(new ComponentAdapter()
+      {
+         @Override
+         public void componentResized(ComponentEvent e)
+         {
+            onSplitPaneResized();
+         }
+      });
 
       if(resultTableType == ResultTableType.SQL_QUERY_RESULT)
       {
@@ -64,6 +74,14 @@ public class ResultDataSetAndCellDetailDisplayHandler
       else
       {
          setCellDetailVisible(false, true);
+      }
+   }
+
+   private void onSplitPaneResized()
+   {
+      if(false == _splitPane.isEnabled())
+      {
+         _splitPane.setDividerLocation(Integer.MAX_VALUE);
       }
    }
 
