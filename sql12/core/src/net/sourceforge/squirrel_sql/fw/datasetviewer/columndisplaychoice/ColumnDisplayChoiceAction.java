@@ -10,10 +10,13 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Re
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
 
 public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPanelAction
@@ -86,7 +89,14 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
          {
             ColumnDisplayDefinition colDisp = selectedCellInfo.getSelectedColumnsDisplayDefinition();
 
-            JMenuItem mnuDisplayAsImage = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.display.image", colDisp.getFullTableColumnName(), colDisp.getSqlTypeName()));
+            String colName = "";
+            if(StringUtilities.isNotEmpty(colDisp.getTableName(), true))
+            {
+               colName += colDisp.getTableName() + ".";
+            }
+            colName += colDisp.getColumnName();
+
+            JMenuItem mnuDisplayAsImage = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.display.image", colName, colDisp.getSqlTypeName()));
             mnuDisplayAsImage.addActionListener(e1 -> displayAsImage());
             popupMenu.add(mnuDisplayAsImage);
          }

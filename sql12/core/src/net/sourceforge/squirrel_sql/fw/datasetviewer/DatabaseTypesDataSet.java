@@ -33,47 +33,17 @@ import java.util.List;
 
 public class DatabaseTypesDataSet implements IDataSet
 {
-
 	private int[] _columnIndices;
 
 	private int _columnCount;
 
 	private DataSetDefinition _dataSetDefinition;
 
-	private List<Object[]> _allData = new ArrayList<Object[]>();
+	private List<Object[]> _allData = new ArrayList<>();
 
 	private int _currentRowIdx = -1;
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DatabaseTypesDataSet.class);
-
-	private static interface i18n
-	{
-
-		// i18n[DatabaseMetaData.nullableTypeNoNulls=false]
-		String NULLABLE_TYPE_NO_NULLS = s_stringMgr.getString("DatabaseMetaData.nullableTypeNoNulls");
-
-		// i18n[DatabaseMetaData.nullableTypeNullable=true]
-		String NULLABLE_TYPE_NULLABLE = s_stringMgr.getString("DatabaseMetaData.nullableTypeNullable");
-
-		// i18n[DatabaseMetaData.nullableTypeNullableUnknown=unknown]
-		String NULLABLE_TYPE_NULLABLE_UNKNOWN =
-			s_stringMgr.getString("DatabaseMetaData.nullableTypeNullableUnknown");
-
-		// i18n[DatabaseMetaData.searchableTypePredNone=no support]
-		String SEARCHABLE_TYPE_PRED_NONE = s_stringMgr.getString("DatabaseMetaData.searchableTypePredNone");
-
-		// i18n[DatabaseMetaData.searchableTypePredChar=only supports 'WHERE...LIKE']
-		String SEARCHABLE_TYPE_PRED_CHAR = s_stringMgr.getString("DatabaseMetaData.searchableTypePredChar");
-
-		// i18n[DatabaseMetaData.searchableTypePredBasic=supports all except 'WHERE...LIKE']
-		String SEARCHABLE_TYPE_PRED_BASIC = s_stringMgr.getString("DatabaseMetaData.searchableTypePredBasic");
-
-		// i18n[DatabaseMetaData.searchableTypeSearchable=supports all WHERE]
-		String SEARCHABLE_TYPE_SEARCHABLE = s_stringMgr.getString("DatabaseMetaData.searchableTypeSearchable");
-
-	}
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DatabaseTypesDataSet.class);
 
 	public DatabaseTypesDataSet(ResultSet rs) throws DataSetException
 	{
@@ -82,8 +52,6 @@ public class DatabaseTypesDataSet implements IDataSet
 
 	public DatabaseTypesDataSet(ResultSet rs, int[] columnIndices) throws DataSetException
 	{
-		super();
-
 		if (columnIndices != null && columnIndices.length == 0)
 		{
 			columnIndices = null;
@@ -116,7 +84,7 @@ public class DatabaseTypesDataSet implements IDataSet
 		return _dataSetDefinition;
 	}
 
-	public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException
+	public boolean next(IMessageHandler msgHandler) throws DataSetException
 	{
 		if (_currentRowIdx < _allData.size() - 1)
 		{
@@ -178,13 +146,13 @@ public class DatabaseTypesDataSet implements IDataSet
 				switch (nullable)
 				{
 				case DatabaseMetaData.typeNoNulls:
-					_row[i] = i18n.NULLABLE_TYPE_NO_NULLS;
+					_row[i] = s_stringMgr.getString("DatabaseMetaData.nullableTypeNoNulls");
 					break;
 				case DatabaseMetaData.typeNullable:
-					_row[i] = i18n.NULLABLE_TYPE_NULLABLE;
+					_row[i] = s_stringMgr.getString("DatabaseMetaData.nullableTypeNullable");
 					break;
 				case DatabaseMetaData.typeNullableUnknown:
-					_row[i] = i18n.NULLABLE_TYPE_NULLABLE_UNKNOWN;
+					_row[i] = s_stringMgr.getString("DatabaseMetaData.nullableTypeNullableUnknown");
 					break;
 				default:
 					_row[i] = nullable + "[error]";
@@ -225,16 +193,16 @@ public class DatabaseTypesDataSet implements IDataSet
 				switch (searchable)
 				{
 				case DatabaseMetaData.typePredNone:
-					_row[i] = i18n.SEARCHABLE_TYPE_PRED_NONE;
+					_row[i] = s_stringMgr.getString("DatabaseMetaData.searchableTypePredNone");
 					break;
 				case DatabaseMetaData.typePredChar:
-					_row[i] = i18n.SEARCHABLE_TYPE_PRED_CHAR;
+					_row[i] = s_stringMgr.getString("DatabaseMetaData.searchableTypePredChar");
 					break;
 				case DatabaseMetaData.typePredBasic:
-					_row[i] = i18n.SEARCHABLE_TYPE_PRED_BASIC;
+					_row[i] = s_stringMgr.getString("DatabaseMetaData.searchableTypePredBasic");
 					break;
 				case DatabaseMetaData.typeSearchable:
-					_row[i] = i18n.SEARCHABLE_TYPE_SEARCHABLE;
+					_row[i] = s_stringMgr.getString("DatabaseMetaData.searchableTypeSearchable");
 					break;
 				default:
 					_row[i] = searchable + "[error]";
@@ -273,7 +241,15 @@ public class DatabaseTypesDataSet implements IDataSet
 		for (int i = 0; i < _columnCount; ++i)
 		{
 			int idx = columnIndices != null ? columnIndices[i] : i + 1;
-			columnDefs[i] = new ColumnDisplayDefinition(md.getColumnDisplaySize(idx), md.getColumnLabel(idx));
+
+			String columnLabel = md.getColumnLabel(idx);
+			int columnLabelLength = 1;
+			if(null !=columnLabel)
+			{
+				columnLabelLength = columnLabel.length();
+			}
+
+			columnDefs[i] = new ColumnDisplayDefinition(Math.max(columnLabelLength, Math.min(md.getColumnDisplaySize(idx), columnLabelLength + 10)), columnLabel);
 		}
 		return columnDefs;
 	}
