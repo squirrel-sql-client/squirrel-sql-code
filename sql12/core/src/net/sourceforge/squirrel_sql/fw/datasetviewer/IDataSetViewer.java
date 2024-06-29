@@ -100,4 +100,5 @@ public interface IDataSetViewer
 
 	void switchColumnHeader(ColumnHeaderDisplay columnHeaderDisplay);
 
+	void moveRowColListenersToMe(IDataSetViewer dataSetViewer);
 }

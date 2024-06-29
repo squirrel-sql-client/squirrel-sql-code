@@ -224,7 +224,13 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 
 	}
 
-	/** reference to DefaultCellEditor currently in operation, if any */
+   @Override
+   public void moveRowColListenersToMe(IDataSetViewer dataSetViewer)
+   {
+
+   }
+
+   /** reference to DefaultCellEditor currently in operation, if any */
 	protected DefaultCellEditor getCurrentCellEditor()
 	{
 		return currentCellEditor;

@@ -156,6 +156,8 @@ public class ResultDataSetAndCellDetailDisplayHandler
       }
 
       _dataSetViewer = dataSetViewer;
+      _dataSetViewer.moveRowColListenersToMe(previousDataSetViewer);
+
       _scrollPane.setViewportView(_dataSetViewer.getComponent());
       _scrollPane.setRowHeader(null);
 

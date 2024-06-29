@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.RowColSelectedCountListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttonchooser.ComboButton;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -106,11 +105,11 @@ public class RowColAndSumController
       if (_dataSetViewer instanceof DataSetViewerTablePanel)
       {
          DataSetViewerTable table = ((DataSetViewerTablePanel) _dataSetViewer).getTable();
-         onRowColSelectionChanged(table.getSelectedRowCount(), table.getSelectedColumnCount(), table.getSelectedRow(), table.getSelectedColumn());
+         onRowColSelectedCountOrPosChanged(table.getSelectedRowCount(), table.getSelectedColumnCount(), table.getSelectedRow(), table.getSelectedColumn());
       }
       else
       {
-         onRowColSelectionChanged(0, 0, -1, -1);
+         onRowColSelectedCountOrPosChanged(0, 0, -1, -1);
       }
    }
 
@@ -123,18 +122,12 @@ public class RowColAndSumController
    public void setDataSetViewer(IDataSetViewer dataSetViewer)
    {
       _dataSetViewer = dataSetViewer;
-      _dataSetViewer.addRowColSelectedCountListener(new RowColSelectedCountListener(){
-         @Override
-         public void rowColSelectedCountOrPosChanged(int selectedRowCount, int selectedColumnCount, int selectedRow, int selectedColumn)
-         {
-            onRowColSelectionChanged(selectedRowCount, selectedColumnCount, selectedRow, selectedColumn);
-         }
-      });
+      _dataSetViewer.addRowColSelectedCountListener((selRowCount, selColCount, selRow, selColumn) -> onRowColSelectedCountOrPosChanged(selRowCount, selColCount, selRow, selColumn));
 
       callSelectionChanged();
    }
 
-   private void onRowColSelectionChanged(int selectedRowCount, int selectedColumnCount, int selectedRow, int selectedColumn)
+   private void onRowColSelectedCountOrPosChanged(int selectedRowCount, int selectedColumnCount, int selectedRow, int selectedColumn)
    {
       if(_rowColAndSumDisplay == RowColAndSumDisplay.ROW_COLS || _rowColAndSumDisplay == RowColAndSumDisplay.BOTH)
       {

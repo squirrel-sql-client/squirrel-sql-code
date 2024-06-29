@@ -30,11 +30,24 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn.FindResultColumnUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CloseAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindResultColumnAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ContinueReadChannel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ColumnDisplayChoiceAction;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
@@ -50,8 +63,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -442,6 +462,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
                IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _dataSetUpdateableTableModel, new DataModelImplementationDetails(_session, _exInfo), _session);
                // _resultDataSetViewerFindHandler = new DataSetViewerFindHandler(dataSetViewer);
                _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
+               _rowColAndSumController.setDataSetViewer(_resultDataSetViewerFindHandler.getDataSetViewer());
+
 
                _rsds.resetCursor();
                _resultDataSetViewerFindHandler.getDataSetViewer().show(_rsds, null);
@@ -467,6 +489,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
             IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(readOnlyOutput, _dataSetUpdateableTableModel, new DataModelImplementationDetails(_session, _exInfo), _session);
             IDataSetViewer previousDataSetViewer = _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
+            _rowColAndSumController.setDataSetViewer(_resultDataSetViewerFindHandler.getDataSetViewer());
+
 
             ResultSetDataSetEditsUpdater.updateEdits(previousDataSetViewer, _rsds);
             _rsds.resetCursor();

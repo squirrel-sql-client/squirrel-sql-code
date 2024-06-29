@@ -34,6 +34,8 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+SQL result: Display of current row and column, selection count and summing didn't work after tables was made editable.
+
 SQL result: Fixed tooltips of mark duplicates buttons and menu items.
 
 File import: Fixed NullPointer when file import was started.

@@ -577,4 +577,15 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
       _continueReadHandler.disableContinueRead();
    }
 
+	@Override
+	public void moveRowColListenersToMe(IDataSetViewer dataSetViewer)
+	{
+		if(false == dataSetViewer instanceof DataSetViewerTablePanel)
+		{
+			return;
+		}
+
+		_rowColSelectedCountListeners.clear();
+		_rowColSelectedCountListeners.addAll(((DataSetViewerTablePanel)dataSetViewer)._rowColSelectedCountListeners);
+	}
 }
