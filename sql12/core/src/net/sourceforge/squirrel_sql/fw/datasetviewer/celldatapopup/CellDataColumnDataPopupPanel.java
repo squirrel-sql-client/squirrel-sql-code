@@ -95,8 +95,13 @@ public class CellDataColumnDataPopupPanel extends JPanel
       }
       else
       {
+         if(null != _cellDataUpdateInfo.getTable().getCellEditor())
+         {
+            _cellDataUpdateInfo.getTable().getCellEditor().cancelCellEditing();
+         }
          _cellDataUpdateInfo.getTable().setValueAt(newValue, _cellDataUpdateInfo.getRow(), _cellDataUpdateInfo.getCol());
          _cellDataUpdateInfo.closeParentDialog();
+         _cellDataUpdateInfo.getTable().repaint();
       }
    }
 
