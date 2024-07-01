@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -557,4 +558,19 @@ public class ColumnDisplayDefinition
    {
       return _resultMetaDataTable;
    }
+
+	public boolean matchesByQualifiedName(ColumnDisplayDefinition other)
+	{
+		if(false == StringUtils.equalsIgnoreCase(_tableName, other._tableName))
+		{
+			return false;
+		}
+		else if(false == StringUtils.equalsIgnoreCase(_columnName, other._columnName))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
 }

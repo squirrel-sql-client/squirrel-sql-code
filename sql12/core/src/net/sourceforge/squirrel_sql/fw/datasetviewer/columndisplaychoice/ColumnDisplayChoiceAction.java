@@ -18,6 +18,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPanelAction
 {
@@ -74,6 +75,8 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
       chkMnuShowCellDetails.setSelected(selectedTabsDisplayHandler.isCellDetailVisible());
       onToggleShowCellDetail(chkMnuShowCellDetails);
 
+      popupMenu.addSeparator();
+
 
       SelectedCellInfo selectedCellInfo = selectedTabsDisplayHandler.getSelectedCellInfo();
 
@@ -85,28 +88,36 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
       }
       else
       {
+         List<ColumnDisplayDefinition> columnsShowingAsImage = _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().getColumnsShowingAsImage();
+
          if(selectedCellInfo.isExtTableColumnCellSelected())
          {
-            ColumnDisplayDefinition colDisp = selectedCellInfo.getSelectedColumnsDisplayDefinition();
+            ColumnDisplayDefinition selColDisp = selectedCellInfo.getSelectedColumnsDisplayDefinition();
 
-            String colName = "";
-            if(StringUtilities.isNotEmpty(colDisp.getTableName(), true))
+            if(false == columnsShowingAsImage.stream().anyMatch(cd -> cd.matchesByQualifiedName(selColDisp)))
             {
-               colName += colDisp.getTableName() + ".";
+               JCheckBoxMenuItem mnuDisplayAsImage = new JCheckBoxMenuItem(getImageMenuText(selColDisp));
+               mnuDisplayAsImage.addActionListener(e1 -> displayAsImage(selColDisp, mnuDisplayAsImage));
+               popupMenu.add(mnuDisplayAsImage);
             }
-            colName += colDisp.getColumnName();
-
-            JMenuItem mnuDisplayAsImage = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.display.image", colName, colDisp.getSqlTypeName()));
-            mnuDisplayAsImage.addActionListener(e1 -> displayAsImage());
-            popupMenu.add(mnuDisplayAsImage);
          }
-         else
+         else if(columnsShowingAsImage.isEmpty())
          {
             JMenuItem mnuNoChoiceFOrCol = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.cannot.offer.display.choice.for.selected.cell"));
             mnuNoChoiceFOrCol.setEnabled(false);
             popupMenu.add(mnuNoChoiceFOrCol);
          }
+
+         for(ColumnDisplayDefinition colDisp : columnsShowingAsImage)
+         {
+            JCheckBoxMenuItem mnuDisplayAsImage = new JCheckBoxMenuItem(getImageMenuText(colDisp));
+            mnuDisplayAsImage.setSelected(true);
+            mnuDisplayAsImage.addActionListener(e1 -> displayAsImage(colDisp, mnuDisplayAsImage));
+            popupMenu.add(mnuDisplayAsImage);
+         }
       }
+
+      popupMenu.addSeparator();
 
       JMenuItem mnuMore = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.more"));
       popupMenu.add(mnuMore);
@@ -115,14 +126,31 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
       popupMenu.show(tabButton, 0, tabButton.getHeight());
    }
 
+   private static String getImageMenuText(ColumnDisplayDefinition selColDisp)
+   {
+      String colName = "";
+      if(StringUtilities.isNotEmpty(selColDisp.getTableName(), true))
+      {
+         colName += selColDisp.getTableName() + ".";
+      }
+      colName += selColDisp.getColumnName();
+      String imageMenuText = s_stringMgr.getString("ColumnDisplayChoiceAction.display.image", colName, selColDisp.getSqlTypeName());
+      return imageMenuText;
+   }
+
    private void onToggleShowCellDetail(JMenuItem chkMnuShowCellDetails)
    {
       _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().setCellDetailVisible(chkMnuShowCellDetails.isSelected());
    }
 
-   private void displayAsImage()
+   private void displayAsImage(ColumnDisplayDefinition colDisp, JCheckBoxMenuItem mnuDisplayAsImage)
    {
-      _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().setCellDetailVisible(true);
+      if(mnuDisplayAsImage.isSelected())
+      {
+         _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().setCellDetailVisible(mnuDisplayAsImage.isSelected());
+      }
+
+      _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().displayColumnAsImage(colDisp, mnuDisplayAsImage.isSelected());
    }
 
    @Override
