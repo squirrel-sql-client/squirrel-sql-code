@@ -119,28 +119,9 @@ public class ResultImageDisplayPanel extends JPanel
             return new JLabel(StringUtilities.NULL_AS_STRING);
          }
 
-         //Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(valueToDisplay);
-
-         //Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(valueToDisplay)));
-
-         //ImageInputStream imageInputStream = ImageIO.createImageInputStream(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(valueToDisplay)));
-         //Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(imageInputStream);
-
-         //ImageInputStream imageInputStream = ImageIO.createImageInputStream(new File("/home/gerd/Bilder/Screenshot_20230227_195224-1.png"));
-         //Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(imageInputStream);
-         //
-         //if(false == imageReaders.hasNext())
-         //{
-         //   String msg = s_stringMgr.getString("ResultImageDisplayPanel.dont.know.how.to.read.image", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName());
-         //   s_log.error(msg);
-         //   Main.getApplication().getMessageHandler().showErrorMessage(msg);
-         //   return new JLabel(msg);
-         //}
-
          BufferedImage image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(valueToDisplay)));
 
          JLabel lblImage = new JLabel();
-         //lblImage.setIcon(new ImageIcon(imageReaders.next().read(0)));
          lblImage.setIcon(new ImageIcon(image));
          return lblImage;
       }
