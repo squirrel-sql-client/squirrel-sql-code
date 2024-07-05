@@ -18,7 +18,9 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.dnd.DropTarget;
@@ -34,6 +36,7 @@ public class ResultImageDisplayPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultImageDisplayPanel.class);
    private static final ILogger s_log = LoggerController.createLogger(ResultImageDisplayPanel.class);
+   private final JScrollPane _scrImage = new JScrollPane();
 
 
    public ResultImageDisplayPanel(ColumnDisplayDefinition cdd,
@@ -43,19 +46,28 @@ public class ResultImageDisplayPanel extends JPanel
                                   int selCol,
                                   DataSetViewerTable table)
    {
-      setLayout(new BorderLayout(3,0));
-      add(getDisplayLabel(cdd, valueToDisplay), BorderLayout.CENTER);
+      setLayout(new BorderLayout(3,3));
+      add(_scrImage, BorderLayout.CENTER);
+
+      updateImageDisplay(cdd, valueToDisplay);
 
       if(tableEditable)
       {
-         add(createUpdatePanel(selRow, selCol, table), BorderLayout.SOUTH);
+         add(createUpdatePanel(selRow, selCol, table, cdd), BorderLayout.SOUTH);
       }
    }
-   private JPanel createUpdatePanel(int selRow, int selCol, DataSetViewerTable table)
+
+   private void updateImageDisplay(ColumnDisplayDefinition cdd, Object valueToDisplay)
+   {
+      _scrImage.setViewportView(getDisplayLabel(cdd, valueToDisplay));
+   }
+
+   private JPanel createUpdatePanel(int selRow, int selCol, DataSetViewerTable table, ColumnDisplayDefinition cdd)
    {
       JPanel ret = new JPanel(new BorderLayout(0,3));
 
       JLabel lblDrop = new JLabel(s_stringMgr.getString("ResultImageDisplayPanel.drop.image.file.here"));
+      lblDrop.setToolTipText(s_stringMgr.getString("ResultImageDisplayPanel.drop.image.file.here.tooltip"));
 
       DropTarget dt = new DropTarget(lblDrop, new DropTargetAdapter()
       {
@@ -75,8 +87,28 @@ public class ResultImageDisplayPanel extends JPanel
       ret.add(pnlBorder, BorderLayout.CENTER);
 
       JButton btnDel = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DELETE));
+      btnDel.setToolTipText(s_stringMgr.getString("ResultImageDisplayPanel.delete.image.from.database.tooltip"));
+      btnDel.addActionListener(e -> onDelete(selRow, selCol, table, cdd));
       ret.add(GUIUtils.styleAsToolbarButton(btnDel), BorderLayout.EAST);
       return ret;
+   }
+
+   private void onDelete(int selRow, int selCol, DataSetViewerTable table, ColumnDisplayDefinition cdd)
+   {
+      if(JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(this, s_stringMgr.getString("ResultImageDisplayPanel.delete.image")))
+      {
+         return;
+      }
+
+      if(null != table.getCellEditor())
+      {
+         table.getCellEditor().cancelCellEditing();
+      }
+
+      table.setValueAt(null, selRow, selCol);
+      table.repaint();
+
+      updateImageDisplay(cdd, null);
    }
 
    private void onDrop(DropTargetDropEvent dtde, int selRow, int selCol, DataSetViewerTable table)
