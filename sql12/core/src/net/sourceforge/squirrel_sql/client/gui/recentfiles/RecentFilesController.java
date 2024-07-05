@@ -17,17 +17,29 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -508,7 +520,7 @@ public class RecentFilesController
 
    private ArrayList<DefaultMutableTreeNode> onCreatePasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
    {
-      List<File> files = DropedFileExtractor.getFiles(dtde, _app);
+      List<File> files = DropedFileExtractor.getFiles(dtde);
 
       ArrayList<DefaultMutableTreeNode> ret = new ArrayList<DefaultMutableTreeNode>();
 

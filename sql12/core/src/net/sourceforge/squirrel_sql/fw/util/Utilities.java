@@ -507,4 +507,60 @@ public class Utilities
 
       return ret;
    }
+
+   public static Byte[] toBoxedByteArray(Object value)
+   {
+      if(null == value)
+      {
+         return null;
+      }
+      else if(value instanceof Byte[])
+      {
+         return (Byte[]) value;
+      }
+      else
+      {
+         byte[] primitiveByteArray = toPrimitiveByteArray(value);
+
+         Byte[] ret = new Byte[primitiveByteArray.length];
+
+         for(int i = 0; i < primitiveByteArray.length; i++)
+         {
+            ret[i] = primitiveByteArray[i];
+         }
+
+         return ret;
+      }
+   }
+
+   public static byte[] toPrimitiveByteArray(Object value)
+   {
+      if(null == value)
+      {
+         return null;
+      }
+      else if(value instanceof byte[])
+      {
+         return (byte[]) value;
+      }
+      else if(value instanceof Byte)
+      {
+         return new byte[]{(Byte) value};
+      }
+      else if(value instanceof Byte[])
+      {
+         Byte[] buf = (Byte[]) value;
+         byte[] ret = new byte[buf.length];
+
+         for(int i = 0; i < buf.length; i++)
+         {
+            ret[i] = buf[i];
+         }
+         return ret;
+      }
+      else
+      {
+         return ("" + value).getBytes();
+      }
+   }
 }

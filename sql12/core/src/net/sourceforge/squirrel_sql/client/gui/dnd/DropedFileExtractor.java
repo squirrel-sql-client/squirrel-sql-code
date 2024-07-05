@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.dnd;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -42,9 +43,9 @@ public class DropedFileExtractor
       }
    }
 
-   public static List<File> getFiles(DropTargetDropEvent dtde, IApplication app)
+   public static List<File> getFiles(DropTargetDropEvent dtde)
    {
-      return _getFiles(dtde, app, true);
+      return _getFiles(dtde, Main.getApplication(), true);
    }
    private static List<File> _getFiles(DropTargetDropEvent dtde, IApplication app, boolean allowMoreThanOneFile)
    {

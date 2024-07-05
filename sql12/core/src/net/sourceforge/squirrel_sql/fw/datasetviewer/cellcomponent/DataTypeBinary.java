@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.I
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -144,23 +145,17 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	/**
 	 * Render a value into text for this DataType.
 	 */
-	public String renderObject(Object value) {
+	public String renderObject(Object value)
+	{
 		// The SQL Results page puts text into the table cells
 		// rather than objects of the appropriate type, so we
 		// need to convert befor proceeding
-		Byte[] useValue;
-		if (value instanceof java.lang.String) {
-			byte[] bytes = ((String)value).getBytes();
-			useValue = new Byte[bytes.length];
-			for (int i=0; i<bytes.length; i++) {
-				useValue[i] = Byte.valueOf(bytes[i]);
-            }
-		}
-		else useValue = (Byte[])value;
+		Byte[] useValue = Utilities.toBoxedByteArray(value);
+
 		// use the default settings for the conversion
-		return (String)_renderer.renderObject(
-			BinaryDisplayConverter.convertToString(useValue,
-			BinaryDisplayConverter.HEX, false));
+		return (String) _renderer.renderObject(
+				BinaryDisplayConverter.convertToString(useValue,
+																	BinaryDisplayConverter.HEX, false));
 	}
 	
 	/**
@@ -429,15 +424,16 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	 * prepared statment at the given variable position.
 	 */
 	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
-		throws java.sql.SQLException {
-		if (value == null) {
+			throws java.sql.SQLException
+	{
+		if(value == null)
+		{
 			pstmt.setNull(position, _colDef.getSqlType());
 		}
-		else {
-			Byte[] internal = (Byte[])value;
-			byte[] dbValue = new byte[internal.length];
-			for (int i=0; i<internal.length; i++)
-				dbValue[i] = internal[i].byteValue();
+		else
+		{
+			byte[] dbValue = Utilities.toPrimitiveByteArray(value);
+
 			pstmt.setBytes(position, dbValue);
 		}
 	}

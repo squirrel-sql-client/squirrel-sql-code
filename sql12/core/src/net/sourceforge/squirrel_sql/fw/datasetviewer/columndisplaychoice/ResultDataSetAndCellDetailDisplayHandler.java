@@ -14,6 +14,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.table.TableColumn;
@@ -107,12 +108,28 @@ public class ResultDataSetAndCellDetailDisplayHandler
          Object value = dataSetViewer.getTable().getValueAt(selRow, selCol);
 
          ExtTableColumn column = (ExtTableColumn) dataSetViewer.getTable().getColumnModel().getColumn(selCol);
-         CellDataColumnDataPopupPanel panel = new CellDataColumnDataPopupPanel(value, column.getColumnDisplayDefinition(), dataSetViewer.isTableEditable());
-         panel.setCellDataUpdateInfo(new CellDataUpdateInfo(selRow, selCol, dataSetViewer.getTable(), null));
-         GUIUtils.setPreferredWidth(panel, 0);
-         GUIUtils.setMinimumWidth(panel, 0);
+
+         JPanel pnlToDisplay;
+         if(_columnsShowingAsImage.stream().anyMatch(cd -> cd.matchesByQualifiedName(column.getColumnDisplayDefinition())))
+         {
+            pnlToDisplay = new ResultImageDisplayPanel(column.getColumnDisplayDefinition(),
+                                                       value,
+                                                       dataSetViewer.isTableEditable(),
+                                                       selRow,
+                                                       selCol,
+                                                       dataSetViewer.getTable());
+         }
+         else
+         {
+            CellDataColumnDataPopupPanel panel = new CellDataColumnDataPopupPanel(value, column.getColumnDisplayDefinition(), dataSetViewer.isTableEditable());
+            panel.setCellDataUpdateInfo(new CellDataUpdateInfo(selRow, selCol, dataSetViewer.getTable(), null));
+            pnlToDisplay = panel;
+         }
+
+         GUIUtils.setPreferredWidth(pnlToDisplay, 0);
+         GUIUtils.setMinimumWidth(pnlToDisplay, 0);
          int dividerLocBuf = _splitPane.getDividerLocation();
-         _splitPane.setRightComponent(panel);
+         _splitPane.setRightComponent(pnlToDisplay);
          _splitPane.setDividerLocation(dividerLocBuf);
       }
    }
@@ -210,9 +227,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
             if(_dataSetViewer instanceof DataSetViewerTablePanel)
             {
-               int selRow = ((DataSetViewerTablePanel) _dataSetViewer).getTable().getSelectedRow();
-               int selCol = ((DataSetViewerTablePanel) _dataSetViewer).getTable().getSelectedColumn();
-               onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer, selRow, selCol);
+               fireCellSelectionChangedForCurrentSelectedCell();
             }
          }
 
@@ -225,6 +240,13 @@ public class ResultDataSetAndCellDetailDisplayHandler
       {
          _adjustingSplitPane = false;
       }
+   }
+
+   private void fireCellSelectionChangedForCurrentSelectedCell()
+   {
+      int selRow = ((DataSetViewerTablePanel) _dataSetViewer).getTable().getSelectedRow();
+      int selCol = ((DataSetViewerTablePanel) _dataSetViewer).getTable().getSelectedColumn();
+      onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer, selRow, selCol);
    }
 
    public boolean isCellDetailVisible()
@@ -269,6 +291,8 @@ public class ResultDataSetAndCellDetailDisplayHandler
       {
          _columnsShowingAsImage.removeIf(cd -> cd.matchesByQualifiedName(colDisp));
       }
+
+      fireCellSelectionChangedForCurrentSelectedCell();
    }
 
    public List<ColumnDisplayDefinition> getColumnsShowingAsImage()

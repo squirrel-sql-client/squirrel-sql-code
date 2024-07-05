@@ -10,7 +10,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Re
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -82,9 +81,9 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
 
       if(false == selectedCellInfo.hasSelectedCell())
       {
-         JMenuItem mnuNoQuickCoice = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.click.cell.for.quick.choice"));
-         mnuNoQuickCoice.setEnabled(false);
-         popupMenu.add(mnuNoQuickCoice);
+         JMenuItem mnuNoQuickChoice = new JMenuItem(s_stringMgr.getString("ColumnDisplayChoiceAction.click.cell.for.quick.choice"));
+         mnuNoQuickChoice.setEnabled(false);
+         popupMenu.add(mnuNoQuickChoice);
       }
       else
       {
@@ -128,12 +127,7 @@ public class ColumnDisplayChoiceAction extends SquirrelAction implements ISQLPan
 
    private static String getImageMenuText(ColumnDisplayDefinition selColDisp)
    {
-      String colName = "";
-      if(StringUtilities.isNotEmpty(selColDisp.getTableName(), true))
-      {
-         colName += selColDisp.getTableName() + ".";
-      }
-      colName += selColDisp.getColumnName();
+      String colName = ColumnDisplayUtil.getColumnName(selColDisp);
       String imageMenuText = s_stringMgr.getString("ColumnDisplayChoiceAction.display.image", colName, selColDisp.getSqlTypeName());
       return imageMenuText;
    }
