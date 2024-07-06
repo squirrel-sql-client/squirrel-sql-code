@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import java.awt.Color;
@@ -92,11 +91,16 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 		// Noted for clearance in case troubles occur because BaseDataSetViewerDestination._updateableModelReference isn't null anymore.
 		setUpdateableModelReference(_updateableModel);
 
-      _table.getSelectionModel().addListSelectionListener(e -> onSelectionChanged());
+      _table.getSelectionModel().addListSelectionListener(e -> onSelectionChanged(e));
    }
 
-   private void onSelectionChanged()
+   private void onSelectionChanged(ListSelectionEvent e)
    {
+		if(e.getValueIsAdjusting())
+		{
+			return;
+		}
+
 		for(RowColSelectedCountListener l : _rowColSelectedCountListeners.toArray(new RowColSelectedCountListener[0]))
 		{
 			l.rowColSelectedCountOrPosChanged(_table.getSelectedRowCount(), _table.getSelectedColumnCount(), _table.getSelectedRow(), _table.getSelectedColumn());
@@ -133,13 +137,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 
 		// A new column model is set in the call of _table.setColumnDefinitions(colDefs)
 		// That is why this listener is added here.
-		_table.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e)
-			{
-				onSelectionChanged();
-			}
-		});
+		_table.getColumnModel().getSelectionModel().addListSelectionListener(e -> onSelectionChanged(e));
 
 	}
 

@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.table.TableColumn;
-import java.awt.Component;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
@@ -72,7 +71,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          setCellDetailVisible(Props.getBoolean(PREF_KEY_SHOW_CELL_DETAIL, false), true);
          _splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, e -> onDividerLocationChanged(e));
 
-         _dataSetViewer.addRowColSelectedCountListener((selRowCount, selColCount, selRow, selCol) -> onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer, selRow, selCol));
+         _dataSetViewer.addRowColSelectedCountListener((selRowCount, selColCount, selRow, selCol) -> onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer));
       }
       else
       {
@@ -88,16 +87,19 @@ public class ResultDataSetAndCellDetailDisplayHandler
       }
    }
 
-   private void onRowColSelectionChanged(DataSetViewerTablePanel dataSetViewer, int selRow, int selCol)
+   private void onRowColSelectionChanged(DataSetViewerTablePanel dataSetViewer)
    {
       if(false == _splitPane.isEnabled())
       {
          return;
       }
 
-      if(   -1 == selRow
-         || -1 == selCol
-         || false == dataSetViewer.getTable().getColumnModel().getColumn(selCol) instanceof ExtTableColumn)
+      int rowLeadSelectionIndex = dataSetViewer.getTable().getSelectionModel().getLeadSelectionIndex();
+      int colLeadSelectionIndex = dataSetViewer.getTable().getColumnModel().getSelectionModel().getLeadSelectionIndex();
+
+      if(   -1 == rowLeadSelectionIndex
+         || -1 == colLeadSelectionIndex
+         || false == dataSetViewer.getTable().getColumnModel().getColumn(colLeadSelectionIndex) instanceof ExtTableColumn)
       {
          int dividerLocBuf = _splitPane.getDividerLocation();
          _splitPane.setRightComponent(_lblNoCell);
@@ -105,9 +107,9 @@ public class ResultDataSetAndCellDetailDisplayHandler
       }
       else
       {
-         Object value = dataSetViewer.getTable().getValueAt(selRow, selCol);
+         Object value = dataSetViewer.getTable().getValueAt(rowLeadSelectionIndex, colLeadSelectionIndex);
 
-         ExtTableColumn column = (ExtTableColumn) dataSetViewer.getTable().getColumnModel().getColumn(selCol);
+         ExtTableColumn column = (ExtTableColumn) dataSetViewer.getTable().getColumnModel().getColumn(colLeadSelectionIndex);
 
          JPanel pnlToDisplay;
          if(_columnsShowingAsImage.stream().anyMatch(cd -> cd.matchesByQualifiedName(column.getColumnDisplayDefinition())))
@@ -115,14 +117,14 @@ public class ResultDataSetAndCellDetailDisplayHandler
             pnlToDisplay = new ResultImageDisplayPanel(column.getColumnDisplayDefinition(),
                                                        value,
                                                        dataSetViewer.isTableEditable(),
-                                                       selRow,
-                                                       selCol,
+                                                       rowLeadSelectionIndex,
+                                                       colLeadSelectionIndex,
                                                        dataSetViewer.getTable());
          }
          else
          {
             CellDataColumnDataPopupPanel panel = new CellDataColumnDataPopupPanel(value, column.getColumnDisplayDefinition(), dataSetViewer.isTableEditable());
-            panel.setCellDataUpdateInfo(new CellDataUpdateInfo(selRow, selCol, dataSetViewer.getTable(), null));
+            panel.setCellDataUpdateInfo(new CellDataUpdateInfo(rowLeadSelectionIndex, colLeadSelectionIndex, dataSetViewer.getTable(), null));
             pnlToDisplay = panel;
          }
 
@@ -197,9 +199,8 @@ public class ResultDataSetAndCellDetailDisplayHandler
       return CellDetailDisplayAvailableInfo.INFO_DISPLAY_AVAILABLE;
    }
 
-   public Component getComponent()
+   public JSplitPane getComponent()
    {
-      // TODO return split with cell detail display
       return _splitPane;
    }
 
@@ -246,7 +247,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
    {
       int selRow = ((DataSetViewerTablePanel) _dataSetViewer).getTable().getSelectedRow();
       int selCol = ((DataSetViewerTablePanel) _dataSetViewer).getTable().getSelectedColumn();
-      onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer, selRow, selCol);
+      onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer);
    }
 
    public boolean isCellDetailVisible()

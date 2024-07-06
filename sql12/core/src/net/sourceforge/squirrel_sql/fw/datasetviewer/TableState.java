@@ -16,6 +16,8 @@ import java.util.List;
 
 public class TableState
 {
+   private final int _selectedCol;
+   private final int _selectedRow;
    private boolean _applySorting;
 
    private List<TableStateSortingItem> _tableStateSortingItems = new ArrayList<>();
@@ -40,8 +42,10 @@ public class TableState
          }
       }
 
-
       _selectedRows = table.getSelectedRows();
+      _selectedRow = table.getSelectedRow();
+      _selectedCol = table.getSelectedColumn();
+
 
       int decrementForRowNumberColumn = 0;
       for (int i = 0; i < table.getColumnModel().getColumnCount(); i++)
@@ -80,7 +84,7 @@ public class TableState
       SwingUtilities.invokeLater(runnable);
    }
 
-   private void doApply(JTable table)
+   private void doApply(final JTable table)
    {
       for (int i = 0; i < table.getColumnModel().getColumnCount(); i++)
       {
@@ -110,7 +114,13 @@ public class TableState
       }
 
       table.getSelectionModel().clearSelection();
-      for (int selectedRow : _selectedRows)
+      if(-1 < _selectedCol && -1 < _selectedRow)
+      {
+         table.requestFocus();
+         table.changeSelection(_selectedRow, _selectedCol, false, false);
+      }
+
+      for(int selectedRow : _selectedRows)
       {
          table.getSelectionModel().addSelectionInterval(selectedRow, selectedRow);
       }
@@ -125,7 +135,6 @@ public class TableState
          }
 
       }
-
 
       table.scrollRectToVisible(_visibleRect);
    }
