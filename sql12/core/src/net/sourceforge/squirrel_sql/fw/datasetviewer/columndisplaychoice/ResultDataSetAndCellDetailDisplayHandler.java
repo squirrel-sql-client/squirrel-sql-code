@@ -245,8 +245,6 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
    private void fireCellSelectionChangedForCurrentSelectedCell()
    {
-      int selRow = ((DataSetViewerTablePanel) _dataSetViewer).getTable().getSelectedRow();
-      int selCol = ((DataSetViewerTablePanel) _dataSetViewer).getTable().getSelectedColumn();
       onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer);
    }
 

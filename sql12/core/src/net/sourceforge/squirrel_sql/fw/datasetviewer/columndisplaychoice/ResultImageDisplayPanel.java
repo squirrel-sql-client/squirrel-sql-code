@@ -74,7 +74,7 @@ public class ResultImageDisplayPanel extends JPanel
          @Override
          public void drop(DropTargetDropEvent dtde)
          {
-            onDrop(dtde, selRow, selCol, table);
+            onDrop(dtde, selRow, selCol, table, cdd);
          }
       });
 
@@ -111,7 +111,7 @@ public class ResultImageDisplayPanel extends JPanel
       updateImageDisplay(cdd, null);
    }
 
-   private void onDrop(DropTargetDropEvent dtde, int selRow, int selCol, DataSetViewerTable table)
+   private void onDrop(DropTargetDropEvent dtde, int selRow, int selCol, DataSetViewerTable table, ColumnDisplayDefinition cdd)
    {
       File fileBuf = null;
       try
@@ -133,6 +133,7 @@ public class ResultImageDisplayPanel extends JPanel
          byte[] bytes = Files.readAllBytes(fileBuf.toPath());
          table.setValueAt(bytes, selRow, selCol);
          table.repaint();
+         updateImageDisplay(cdd, table.getValueAt(selRow, selCol));
       }
       catch(Exception e)
       {
