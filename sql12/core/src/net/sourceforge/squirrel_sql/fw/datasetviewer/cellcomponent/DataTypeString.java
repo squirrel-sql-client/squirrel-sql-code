@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -261,11 +262,17 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * text only in the Popup window.
 	 */
 	@Override
-	public boolean isEditableInCell(Object originalValue) {
+	public boolean isEditableInCell(Object originalValue)
+	{
 		//			prevent editing if text contains newlines
-		 if (originalValue != null && ((String)originalValue).indexOf('\n') > -1)
-			 return false;
-		else return true;
+		if(originalValue != null && originalValue instanceof String && ((String) originalValue).indexOf('\n') > -1)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 
 	/**
@@ -590,12 +597,42 @@ public class DataTypeString extends BaseDataTypeComponent
 	 */
 	@Override
 	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
-		throws java.sql.SQLException {
-		if (value == null) {
+			throws java.sql.SQLException
+	{
+		if(value == null)
+		{
 			pstmt.setNull(position, _colDef.getSqlType());
 		}
-		else {
-			pstmt.setString(position, ((String)value));
+		else
+		{
+			String stringValue;
+
+			if(value instanceof String)
+			{
+				stringValue = (String) value;
+			}
+			else if(value instanceof byte[])
+			{
+				stringValue = new String((byte[]) value);
+			}
+			else if(value instanceof Byte[])
+			{
+				stringValue = new String(Utilities.toPrimitiveByteArray(value));
+			}
+			else if(value instanceof char[])
+			{
+				stringValue = new String((char[]) value);
+			}
+			else if(value instanceof Character[])
+			{
+				stringValue = new String(Utilities.toPrimitiveCharArray(value));
+			}
+			else
+			{
+				stringValue = "" + value;
+			}
+
+			pstmt.setString(position, stringValue);
 		}
 	}
 

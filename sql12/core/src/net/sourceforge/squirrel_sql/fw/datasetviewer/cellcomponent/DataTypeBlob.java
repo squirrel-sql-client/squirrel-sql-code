@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -582,10 +583,15 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
-		if (value == null || ((BlobDescriptor)value).getData() == null)
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+	{
+		if(   value == null
+			|| (value instanceof BlobDescriptor && ((BlobDescriptor) value).getData() == null))
+		{
 			return new IsNullWhereClausePart(_colDef);
-		else{
+		}
+		else
+		{
 			// BLOB cannot be used in WHERE clause
 			// TODO Review, if this DataType could not be used in a where clause
 			return new EmptyWhereClausePart();
@@ -598,20 +604,33 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	 * prepared statment at the given variable position.
 	 */
 	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
-		throws java.sql.SQLException {
-		if (value == null || ((BlobDescriptor)value).getData() == null) {
+			throws java.sql.SQLException
+	{
+		if(   value == null
+			|| (value instanceof BlobDescriptor && ((BlobDescriptor) value).getData() == null))
+		{
 			pstmt.setNull(position, _colDef.getSqlType());
 		}
-		else {
+		else
+		{
 			// for convenience cast the object to BlobDescriptor
-			BlobDescriptor bdesc = (BlobDescriptor)value;
+			byte[] data;
+			if(value instanceof BlobDescriptor)
+			{
+				BlobDescriptor bdesc = (BlobDescriptor) value;
+				data = bdesc.getData();
+			}
+			else
+			{
+				data = Utilities.toPrimitiveByteArray(value);
+			}
 
 			// There are a couple of possible ways to update the data in the DB.
 			// The first is to use setString like this:
 			//		bdesc.getBlob().setString(0, bdesc.getData());
 			// However, the DB2 driver throws an exception saying that that function
 			// is not implemented, so we have to use the other method, which is to use a stream.		
-			pstmt.setBinaryStream(position, new ByteArrayInputStream(bdesc.getData()), bdesc.getData().length);
+			pstmt.setBinaryStream(position, new ByteArrayInputStream(data), data.length);
 		}
 	}
 

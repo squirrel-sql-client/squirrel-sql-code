@@ -563,4 +563,35 @@ public class Utilities
          return ("" + value).getBytes();
       }
    }
+
+   public static char[] toPrimitiveCharArray(Object value)
+   {
+      if(null == value)
+      {
+         return null;
+      }
+      else if(value instanceof char[])
+      {
+         return (char[]) value;
+      }
+      else if(value instanceof Character)
+      {
+         return new char[]{(Character) value};
+      }
+      else if(value instanceof Character[])
+      {
+         Character[] buf = (Character[]) value;
+         char[] ret = new char[buf.length];
+
+         for(int i = 0; i < buf.length; i++)
+         {
+            ret[i] = buf[i];
+         }
+         return ret;
+      }
+      else
+      {
+         return ("" + value).toCharArray();
+      }
+   }
 }

@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -548,13 +549,19 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
-		if (value == null || ((ClobDescriptor)value).getData() == null)
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+	{
+		if(   value == null
+				|| (value instanceof ClobDescriptor && ((ClobDescriptor) value).getData() == null))
+		{
 			return new IsNullWhereClausePart(_colDef);
+		}
 		else
-			// CLOB cannot be used in WHERE clause
-			// TODO Review, if this DataType could not be used in a where clause
-			return new EmptyWhereClausePart();	
+		// CLOB cannot be used in WHERE clause
+		// TODO Review, if this DataType could not be used in a where clause
+		{
+			return new EmptyWhereClausePart();
+		}
 	}
 
 	/**
@@ -562,21 +569,33 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	 * prepared statment at the given variable position.
 	 */
 	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
-		throws java.sql.SQLException {
-		if (value == null || ((ClobDescriptor)value).getData() == null) {
+			throws java.sql.SQLException
+	{
+		if(   value == null
+				|| (value instanceof ClobDescriptor && ((ClobDescriptor) value).getData() == null))
+		{
 			pstmt.setNull(position, _colDef.getSqlType());
 		}
-		else {
+		else
+		{
 			// for convenience cast the object to ClobDescriptor
-			ClobDescriptor cdesc = (ClobDescriptor)value;
+			String data;
+			if(value instanceof ClobDescriptor)
+			{
+				ClobDescriptor cdesc = (ClobDescriptor) value;
+				data = cdesc.getData();
+			}
+			else
+			{
+				data = new String(Utilities.toPrimitiveByteArray(value));
+			}
 
 			// There are a couple of possible ways to update the data in the DB.
 			// The first is to use setString like this:
 			//		cdesc.getClob().setString(0, cdesc.getData());
 			// However, the DB2 driver throws an exception saying that that function
 			// is not implemented, so we have to use the other method, which is to use a stream.
-			pstmt.setCharacterStream(position, new StringReader(cdesc.getData()),
-				cdesc.getData().length());
+			pstmt.setCharacterStream(position, new StringReader(data), data.length());
 		}
 	}
 

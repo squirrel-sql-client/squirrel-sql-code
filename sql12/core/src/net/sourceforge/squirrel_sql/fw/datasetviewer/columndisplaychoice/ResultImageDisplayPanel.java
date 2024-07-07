@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BlobDescriptor;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -30,6 +32,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
+import java.sql.Types;
+import java.util.Base64;
 import java.util.List;
 
 public class ResultImageDisplayPanel extends JPanel
@@ -131,7 +135,16 @@ public class ResultImageDisplayPanel extends JPanel
 
          fileBuf = files.get(0);
          byte[] bytes = Files.readAllBytes(fileBuf.toPath());
-         table.setValueAt(bytes, selRow, selCol);
+
+         if(cdd.getSqlType() == Types.VARCHAR || cdd.getSqlType() == Types.LONGVARCHAR || cdd.getSqlType() == Types.LONGNVARCHAR || cdd.getSqlType() == Types.CLOB)
+         {
+            table.setValueAt(new String(Base64.getEncoder().encode(bytes)), selRow, selCol);
+         }
+         else
+         {
+            table.setValueAt(bytes, selRow, selCol);
+         }
+
          table.repaint();
          updateImageDisplay(cdd, table.getValueAt(selRow, selCol));
       }
@@ -152,7 +165,23 @@ public class ResultImageDisplayPanel extends JPanel
             return new JLabel(StringUtilities.NULL_AS_STRING);
          }
 
-         BufferedImage image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(valueToDisplay)));
+         BufferedImage image;
+         if(valueToDisplay instanceof String)
+         {
+            image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode((String) valueToDisplay)));
+         }
+         else if (valueToDisplay instanceof ClobDescriptor)
+         {
+            image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(((ClobDescriptor)valueToDisplay).getData())));
+         }
+         else if (valueToDisplay instanceof BlobDescriptor)
+         {
+            image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(((BlobDescriptor)valueToDisplay).getData())));
+         }
+         else
+         {
+            image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(valueToDisplay)));
+         }
 
          JLabel lblImage = new JLabel();
          lblImage.setIcon(new ImageIcon(image));
