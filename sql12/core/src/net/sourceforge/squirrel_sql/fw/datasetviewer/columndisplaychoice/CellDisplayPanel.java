@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,7 +11,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,10 +42,13 @@ public class CellDisplayPanel extends JPanel
 
    private void onDisplayModeChanged()
    {
-      _columnsToNonDefaultDisplayMode.removeIf(p -> p.getLeft().matchesByQualifiedName(_currentColumnDisplayDefinition));
-      if(getDisplayMode() != DisplayMode.DEFAULT)
+      if(null != _currentColumnDisplayDefinition)
       {
-         _columnsToNonDefaultDisplayMode.add(Pair.of(_currentColumnDisplayDefinition, getDisplayMode()));
+         _columnsToNonDefaultDisplayMode.removeIf(p -> p.getLeft().matchesByQualifiedName(_currentColumnDisplayDefinition));
+         if(getDisplayMode() != DisplayMode.DEFAULT)
+         {
+            _columnsToNonDefaultDisplayMode.add(Pair.of(_currentColumnDisplayDefinition, getDisplayMode()));
+         }
       }
 
       _displayPanelListener.displayModeChanged();
@@ -49,10 +56,20 @@ public class CellDisplayPanel extends JPanel
 
    private JPanel createDisplaySelectionPanel()
    {
-      JPanel ret = new JPanel(new BorderLayout(5,5));
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,3,3,0), 0,0);
       JLabel lbl = new JLabel(s_stringMgr.getString("DisplayPanel.select.display"));
-      ret.add(lbl, BorderLayout.WEST);
-      ret.add(_cboDisplayMode, BorderLayout.CENTER);
+      ret.add(lbl, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,3,3,0), 0,0);
+      ret.add(GUIUtils.setPreferredWidth(_cboDisplayMode, _cboDisplayMode.getPreferredSize().width + 40), gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(3,3,3,0), 0,0);
+      ret.add(new JPanel(), gbc);
+
       return ret;
    }
 
