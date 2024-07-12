@@ -1,24 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.TableCellRenderer;
-
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -29,6 +11,21 @@ import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -140,28 +137,6 @@ public class CellComponentFactory
 {
    private static  ILogger s_log = LoggerController.createLogger(CellComponentFactory.class);
 
-   /* map of existing DataType objects for each column.
-    * The key is the ColumnDisplayDefinition object, and the value
-    * is the DataTypeObject for that column's data type.
-    */
-   private static HashMap<ColumnDisplayDefinition, IDataTypeComponent> _colDataTypeObjects = new HashMap<>(); // TODO Remove static
-
-   /* list of DBMS-specific registered data handlers.
-    * The key is a string of the form:
-    *   <SQL type as a string>:<SQL type name>
-    * and the value is a factory that can create instances of DBMS-specific
-    * DataTypeComponets.
-    */
-   private static List<IDataTypeComponentFactory> _pluginDataTypeFactories = new ArrayList<>(); // TODO Remove static
-
-   /* The current JTable that we are working with.
-    * This is used only to see when the user moves
-    * to a different JTable so we know when to clear
-    * the HashMap of DataTypeObjects.
-    */
-   private static JTable _table = null; // TODO Remove static
-
-
    /**
     * Return the name of the Java class that is used to represent
     * this data type within the application.
@@ -172,7 +147,7 @@ public class CellComponentFactory
       if (dataTypeObject != null)
          return dataTypeObject.getClassName();
       else
-         return "java.lang.Object";
+         return Object.class.getName();
    }
 
    /**
@@ -286,7 +261,7 @@ public class CellComponentFactory
       // with no other special behavior and hope the object has a toString().
       if (dataTypeObject != null)
       {
-         textField = dataTypeObject.getJTextField();
+         textField = dataTypeObject.getJTextField(table);
       }
       else
       {
@@ -478,7 +453,6 @@ public class CellComponentFactory
          ColumnDisplayDefinition colDef = new ColumnDisplayDefinition(
                rs, index, factory.getDialectType());
          dtComp.setColumnDisplayDefinition(colDef);
-         dtComp.setTable(_table);
          result = dtComp.readResultSet(rs, index, false);
       }
       return result;
@@ -658,24 +632,7 @@ public class CellComponentFactory
     */
    private static IDataTypeComponentFactory findMatchingFactory(DialectType dialectType, int sqlType, String sqlTypeName)
    {
-      for (IDataTypeComponentFactory factory : _pluginDataTypeFactories)
-      {
-         if (factory.matches(dialectType, sqlType, sqlTypeName))
-         {
-            return factory;
-         }
-      }
-      return null;
-   }
-
-   /**
-    * Method for registering a DataTypeComponent factory for a non-standard SQL
-    * type (or for overriding a standard handler).
-    */
-   public static void registerDataTypeFactory(IDataTypeComponentFactory factory)
-   {
-
-      _pluginDataTypeFactories.add(factory);
+      return Main.getApplication().getDataTypeComponentFactoryRegistry().findMatchingFactory(dialectType, sqlType, sqlTypeName);
    }
 
 
@@ -790,38 +747,17 @@ public class CellComponentFactory
     */
    public static IDataTypeComponent getDataTypeObject(JTable table, ColumnDisplayDefinition colDef)
    {
-      IDataTypeComponent dataTypeComponent = null;
+      IDataTypeComponent dataTypeComponent;
 
-      // keep a hash table of the column objects
-      // so we can reuse them.
-      if (table != _table)
-      {
-         // new table - clear hash map
-         _colDataTypeObjects.clear();
-         _table = table;
-      }
-      if (_colDataTypeObjects.containsKey(colDef))
-      {
-         dataTypeComponent = _colDataTypeObjects.get(colDef);
-      }
-      else
-      {
-         if (dataTypeComponent == null)
-         {
-            /* See if we have a custom data-type registered. */
-            dataTypeComponent = getCustomDataType(table, colDef);
-         }
+      dataTypeComponent = getCustomDataType(table, colDef);
 
-         if (dataTypeComponent == null)
-         {
-            // we have not already created a DataType object for this column
-            // so do that now and save it
-            dataTypeComponent = getGenericDataType(table, colDef);
-         }
-
-         // remember this DataType object so we can reuse it
-         _colDataTypeObjects.put(colDef, dataTypeComponent);
+      if(dataTypeComponent == null)
+      {
+         // we have not already created a DataType object for this column
+         // so do that now and save it
+         dataTypeComponent = getGenericDataType(table, colDef);
       }
+
 
       // If we get here, then no data type object was found for this column.
       // (should not get here because switch default returns null.)
@@ -842,26 +778,15 @@ public class CellComponentFactory
    private static IDataTypeComponent getCustomDataType(JTable table, ColumnDisplayDefinition colDef)
    {
       IDataTypeComponent dataTypeComponent = null;
-      if (dataTypeComponent == null && !_pluginDataTypeFactories.isEmpty() && colDef.getDialectType() != null)
+      if (dataTypeComponent == null && colDef.getDialectType() != null)
       {
-
-         IDataTypeComponentFactory factory = findMatchingFactory(colDef.getDialectType(),
-               colDef.getSqlType(),
-               colDef.getSqlTypeName());
+         IDataTypeComponentFactory factory = findMatchingFactory(colDef.getDialectType(), colDef.getSqlType(), colDef.getSqlTypeName());
          if (factory != null)
          {
             dataTypeComponent = factory.constructDataTypeComponent();
             if (colDef != null)
             {
                dataTypeComponent.setColumnDisplayDefinition(colDef);
-            }
-            if (table != null)
-            {
-               dataTypeComponent.setTable(table);
-            }
-            else if (_table != null)
-            {
-               dataTypeComponent.setTable(_table);
             }
          }
       }

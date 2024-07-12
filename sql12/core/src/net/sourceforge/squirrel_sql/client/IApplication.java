@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import net.sourceforge.squirrel_sql.client.session.menuattic.PopupMenuAtticModel;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeComponentFactoryRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
@@ -55,7 +56,9 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
 import java.io.File;
 
 /**
@@ -63,8 +66,6 @@ import java.io.File;
  */
 public interface IApplication
 {
-   ObjectTreeSelectionStoreManager getObjectTreeSelectionStoreManager();
-
    interface IMenuIDs extends MainFrame.IMenuIDs
 	{
 		// Empty body.
@@ -304,4 +305,9 @@ public interface IApplication
 	DBDiffState getDBDiffState();
 
 	SQLScriptPreferencesManager getSQLScriptPreferencesManager();
+
+	ObjectTreeSelectionStoreManager getObjectTreeSelectionStoreManager();
+
+	DataTypeComponentFactoryRegistry getDataTypeComponentFactoryRegistry();
+
 }

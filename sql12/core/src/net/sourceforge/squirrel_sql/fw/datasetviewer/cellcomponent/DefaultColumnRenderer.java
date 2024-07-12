@@ -29,25 +29,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
  */
 public class DefaultColumnRenderer
 {
-	/** Singleton instance of this class. */
-	private static final DefaultColumnRenderer s_instance = new DefaultColumnRenderer();
-
-	/**
-	 * Default ctor.
-	 */
-	protected DefaultColumnRenderer()
-	{
-		super();
-	}
-
-	/**
-	 * Retrieve the singleton instance of this class.
-	 */
-	public static DefaultColumnRenderer getInstance()
-	{
-		return s_instance;
-	}
-
 	/**
 	 * Return the rendered version of the passed object. If the passed object
 	 * is not <TT>null</TT> then <TT>toString() is called on it else
@@ -59,7 +40,7 @@ public class DefaultColumnRenderer
 	 * 
 	 * @return	The rendered object.
 	 */
-	public Object renderObject(Object obj)
+	public static Object renderObject(Object obj)
 	{
 		if (obj != null)
 		{

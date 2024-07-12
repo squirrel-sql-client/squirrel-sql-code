@@ -91,8 +91,7 @@ import java.util.Iterator;
 public class DataTypeString extends BaseDataTypeComponent
 	implements IDataTypeComponent
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DataTypeString.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeString.class);
 
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
@@ -105,21 +104,6 @@ public class DataTypeString extends BaseDataTypeComponent
 
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
-
-	/* The CellRenderer used for this data type */
-	//??? For now, use the same renderer as everyone else.
-	//??
-	//?? IN FUTURE: change this to use a new instance of renederer
-	//?? for this data type.
-	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
-
-	/**
-	 * Name of this class, which is needed because the class name is needed
-	 * by the static method getControlPanel, so we cannot use something
-	 * like getClass() to find this name.
-	 */
-	private static final String thisClassName =
-		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeString";
 
 	/*
 	 * Properties settable by the user
@@ -175,27 +159,27 @@ public class DataTypeString extends BaseDataTypeComponent
 		if (propertiesAlreadyLoaded == false) {
 			// get parameters previously set by user, or set default values
 			_makeNewlinesVisibleInCell = true;	// set to the default
-			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
+			String makeNewlinesVisibleString = DTProperties.get(DataTypeString.class.getName(), "makeNewlinesVisibleInCell");
 			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
 				_makeNewlinesVisibleInCell = false;
 
 			_useLongInWhere = true;	// set to the default
-			String useLongInWhereString = DTProperties.get(thisClassName, "useLongInWhere");
+			String useLongInWhereString = DTProperties.get(DataTypeString.class.getName(), "useLongInWhere");
 			if (useLongInWhereString != null && useLongInWhereString.equals("false"))
 				_useLongInWhere = false;
 
 			LimitReadLengthFeatureUnstable._limitRead = false;	// set to default
-			String limitReadString = DTProperties.get(thisClassName, "limitRead");
+			String limitReadString = DTProperties.get(DataTypeString.class.getName(), "limitRead");
 			if (limitReadString != null && limitReadString.equals("true"))
 				LimitReadLengthFeatureUnstable._limitRead = true;
 
 			LimitReadLengthFeatureUnstable._limitReadLength = LimitReadLengthFeatureUnstable.DEFAULT_LIMIT_READ_LENGTH;	// set to default
-			String limitReadLengthString = DTProperties.get(thisClassName, "limitReadLength");
+			String limitReadLengthString = DTProperties.get(DataTypeString.class.getName(), "limitReadLength");
 			if (limitReadLengthString != null)
 				LimitReadLengthFeatureUnstable._limitReadLength = Integer.parseInt(limitReadLengthString);
 
 			LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = false;	// set to default
-			String limitReadOnSpecificColumnsString = DTProperties.get(thisClassName, "limitReadOnSpecificColumns");
+			String limitReadOnSpecificColumnsString = DTProperties.get(DataTypeString.class.getName(), "limitReadOnSpecificColumns");
 			if (limitReadOnSpecificColumnsString != null && limitReadOnSpecificColumnsString.equals("true"))
 				LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = true;
 
@@ -203,7 +187,7 @@ public class DataTypeString extends BaseDataTypeComponent
 			// with a comma in front of the first entry as well
 			LimitReadLengthFeatureUnstable._limitReadColumnNameMap.clear();	// empty the map of old values
 
-			String nameString = DTProperties.get(thisClassName, "limitReadColumnNames");
+			String nameString = DTProperties.get(DataTypeString.class.getName(), "limitReadColumnNames");
 			int start = 0;
 			int end;
 			String name;
@@ -244,7 +228,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 */
 	@Override
 	public String renderObject(Object value) {
-		String text = (String)_renderer.renderObject(value);
+		String text = (String)DefaultColumnRenderer.renderObject(value);
 		if (_makeNewlinesVisibleInCell) {
 			 text = text.replaceAll("\n", "\\\\n");
 		}
@@ -322,7 +306,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	@Override
-	public JTextField getJTextField() {
+	public JTextField getJTextField(JTable table) {
 		_textComponent = new RestorableJTextField();
 
 		// special handling of operations while editing this data type
@@ -418,7 +402,7 @@ public class DataTypeString extends BaseDataTypeComponent
 		// The in-cell version may replace newline chars with "\n" while this version
 		// does not.  In other respects it is the same as the in-cell version because both
 		// use the _renderer object to do the rendering.
-		((RestorableJTextArea)_textComponent).setText((String)_renderer.renderObject(value));
+		((RestorableJTextArea)_textComponent).setText((String)DefaultColumnRenderer.renderObject(value));
 
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
@@ -1000,24 +984,24 @@ public class DataTypeString extends BaseDataTypeComponent
 		public void ok() {
 			// get the values from the controls and set them in the static properties
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
-			DTProperties.put(thisClassName,
-				"makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
+			DTProperties.put(DataTypeString.class.getName(),
+								  "makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
 
 			_useLongInWhere = _useLongInWhereChk.isSelected();
-			DTProperties.put(thisClassName,
-				"useLongInWhere", Boolean.valueOf(_useLongInWhere).toString());
+			DTProperties.put(DataTypeString.class.getName(),
+								  "useLongInWhere", Boolean.valueOf(_useLongInWhere).toString());
 
 			LimitReadLengthFeatureUnstable._limitRead = _limitReadChk.isSelected();
-			DTProperties.put(thisClassName,
-				"limitRead", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitRead).toString());
+			DTProperties.put(DataTypeString.class.getName(),
+								  "limitRead", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitRead).toString());
 
 			LimitReadLengthFeatureUnstable._limitReadLength = _limitReadLengthTextField.getInt();
-			DTProperties.put(thisClassName,
-				"limitReadLength", Integer.toString(LimitReadLengthFeatureUnstable._limitReadLength));
+			DTProperties.put(DataTypeString.class.getName(),
+								  "limitReadLength", Integer.toString(LimitReadLengthFeatureUnstable._limitReadLength));
 
 			LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = _limitReadOnSpecificColumnsChk.isSelected();
-			DTProperties.put(thisClassName,
-				"limitReadOnSpecificColumns", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns).toString());
+			DTProperties.put(DataTypeString.class.getName(),
+								  "limitReadOnSpecificColumns", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns).toString());
 
 			// Handle list of column names
 
@@ -1054,8 +1038,8 @@ public class DataTypeString extends BaseDataTypeComponent
 				propertyString += "," + name.trim().toUpperCase();
 			}	// end while
 
-			DTProperties.put(thisClassName,
-				"limitReadColumnNames", propertyString);
+			DTProperties.put(DataTypeString.class.getName(),
+								  "limitReadColumnNames", propertyString);
 
 		}	// end ok
 

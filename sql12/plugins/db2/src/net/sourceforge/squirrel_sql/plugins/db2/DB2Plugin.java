@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.db2;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -33,7 +34,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -186,7 +186,7 @@ public class DB2Plugin extends DefaultSessionPlugin
 		super.initialize();
 
 		// register custom DataTypeComponent factory for DB2 XML
-		CellComponentFactory.registerDataTypeFactory(new DB2XmlTypeDataTypeComponentFactory());
+		Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new DB2XmlTypeDataTypeComponentFactory());
 	}
 
 	/**

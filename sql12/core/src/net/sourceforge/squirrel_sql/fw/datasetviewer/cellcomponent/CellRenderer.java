@@ -60,7 +60,7 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
       }
       else
       {
-         super.setValue(DefaultColumnRenderer.getInstance().renderObject(value));
+         super.setValue(DefaultColumnRenderer.renderObject(value));
       }
    }
 
@@ -72,7 +72,7 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
       }
       else
       {
-         return DefaultColumnRenderer.getInstance().renderObject(value);
+         return DefaultColumnRenderer.renderObject(value);
       }
    }
 

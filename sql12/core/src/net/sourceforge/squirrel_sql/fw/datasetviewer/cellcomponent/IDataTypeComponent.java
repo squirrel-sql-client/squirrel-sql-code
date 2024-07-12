@@ -46,13 +46,13 @@ public interface IDataTypeComponent {
      * Return the name of the Java class used to store this data type in the
      * application.
      */
-    public String getClassName();
+    String getClassName();
 
     /**
      * Determine if two objects of this data type contain the same value.
      * Neither of the objects is null.
      */
-    public boolean areEqual(Object obj1, Object obj2);
+    boolean areEqual(Object obj1, Object obj2);
 
     /*
      * Cell related methods come next.
@@ -62,18 +62,18 @@ public interface IDataTypeComponent {
      * Convert the given object into its printable String value for use in Text
      * output and the in-cell representations (CellRenderer and CellEditor).
      */
-    public String renderObject(Object object);
+    String renderObject(Object object);
 
     /**
      * Returns true if data type may be edited within a table cell, false if
      * not.
      */
-    public boolean isEditableInCell(Object originalValue);
+    boolean isEditableInCell(Object originalValue);
 
     /**
      * Returns true if data type may be edited in the popup, false if not.
      */
-    public boolean isEditableInPopup(Object originalValue);
+    boolean isEditableInPopup(Object originalValue);
 
 
     /**
@@ -83,7 +83,7 @@ public interface IDataTypeComponent {
      * of the cell even if it was not completely loaded during the initial table
      * setup.
      */
-    public boolean needToReRead(Object originalValue);
+    boolean needToReRead(Object originalValue);
 
     /**
      * Get the JTextField component for this data type to be used in a
@@ -91,7 +91,7 @@ public interface IDataTypeComponent {
      * using the same mechanism as the renderer. The Assumption here is that the
      * CellEditor uses the same string representation as the CellRenderer.
      */
-    public JTextField getJTextField();
+    JTextField getJTextField(JTable table);
 
     /**
      * Validate that the contents of a cell is in the right form for this data
@@ -100,7 +100,7 @@ public interface IDataTypeComponent {
      * using CellComponentFactory and the constraints of the Java language make
      * that difficult.
      */
-    public Object validateAndConvert(String value, Object originalValue,
+    Object validateAndConvert(String value, Object originalValue,
             StringBuffer messageBuffer);
 
     /**
@@ -114,7 +114,7 @@ public interface IDataTypeComponent {
      * TextField or TextArea, and must handle all user key strokes related to
      * editing of that data.
      */
-    public boolean useBinaryEditingPanel();
+    boolean useBinaryEditingPanel();
 
     /*
      * Now the Popup-related methods. These are not quite symmetric with the
@@ -132,7 +132,7 @@ public interface IDataTypeComponent {
      * or it may be different (e.g. a BLOB may have renderObject=>"<BLOB>" but
      * fill in the actual value in the Popup TextArea).
      */
-    public JTextArea getJTextArea(Object value);
+    JTextArea getJTextArea(Object value);
 
     /**
      * Validate that the contents of a cell is in the right form for this data
@@ -141,7 +141,7 @@ public interface IDataTypeComponent {
      * using CellComponentFactory and the constraints of the Java language make
      * that difficult.
      */
-    public Object validateAndConvertInPopup(String value, Object originalValue,
+    Object validateAndConvertInPopup(String value, Object originalValue,
             StringBuffer messageBuffer);
 
     /*
@@ -152,7 +152,7 @@ public interface IDataTypeComponent {
      * On input from the DB, read the data from the ResultSet into the
      * appropriate type of object to be stored in the table cell.
      */
-    public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
+    Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
             throws java.sql.SQLException;
 
     /**
@@ -166,20 +166,20 @@ public interface IDataTypeComponent {
      * whatever is appropriate for this column in the database.
      * @see IWhereClausePart
      */
-    public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md);
+    IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md);
 
     /**
      * When updating the database, insert the appropriate datatype into the
      * prepared statement at the given variable position.
      */
-    public void setPreparedStatementValue(PreparedStatement pstmt,
+    void setPreparedStatementValue(PreparedStatement pstmt,
             Object value, int position) throws java.sql.SQLException;
 
     /**
      * Get a default value for the table used to input data for a new row to be
      * inserted into the DB.
      */
-    public Object getDefaultValue(String dbDefaultValue);
+    Object getDefaultValue(String dbDefaultValue);
 
     /*
      * File IO related functions
@@ -190,7 +190,7 @@ public interface IDataTypeComponent {
      * put both export and import together in one test on the assumption that
      * all conversions can be done both ways.
      */
-    public boolean canDoFileIO();
+    boolean canDoFileIO();
 
     /**
      * Read a file and construct a valid object from its contents. Errors are
@@ -203,7 +203,7 @@ public interface IDataTypeComponent {
      * same as is done by the DataType object internally in the getJTextArea()
      * method.
      */
-    public String importObject(FileInputStream inStream) throws IOException;
+    String importObject(FileInputStream inStream) throws IOException;
 
     /**
      * Read a file and construct a valid object from its contents. Errors are
@@ -219,7 +219,7 @@ public interface IDataTypeComponent {
      * returning. Typically it will create another object (e.g. an
      * OutputWriter), and that is the object that must be flushed and closed.
      */
-    public void exportObject(FileOutputStream outStream, String text)
+    void exportObject(FileOutputStream outStream, String text)
             throws IOException;
 
     /**
@@ -228,22 +228,16 @@ public interface IDataTypeComponent {
      * @param def the ColumnDisplayDefinition that describes the column in the 
      *            db table.
      */
-    public void setColumnDisplayDefinition(ColumnDisplayDefinition def);
+    void setColumnDisplayDefinition(ColumnDisplayDefinition def);
 
-    /**
-     * Sets the JTable of which holds data rendered by this DataTypeComponent.
-     * 
-     * @param table a JTable component
-     */
-    public void setTable(JTable table);
-    
+
     /**
      * Sets the utility that allows the component to notify the user audibly when there is a 
      * problem with input data.
      * 
      * @param helper
      */
-    public void setBeepHelper(IToolkitBeepHelper helper);
+    void setBeepHelper(IToolkitBeepHelper helper);
 
     
     /**
@@ -253,9 +247,9 @@ public interface IDataTypeComponent {
      * @param value
      * @return condition representation
      */
-	public String getCondition(String column, String operator, String value);
+	String getCondition(String column, String operator, String value);
 
-	public String[] getSupportedOperators();
+	String[] getSupportedOperators();
 
 	String getColumnForContentSelect(DialectType dialectType, String columnPrefix);
 }

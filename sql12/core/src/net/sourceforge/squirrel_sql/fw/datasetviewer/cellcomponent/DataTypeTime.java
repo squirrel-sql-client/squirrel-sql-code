@@ -112,13 +112,6 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
    /* The JTextComponent that is being used for editing */
    private IRestorableTextComponent _textComponent;
 
-   /* The CellRenderer used for this data type */
-   //??? For now, use the same renderer as everyone else.
-   //??
-   //?? IN FUTURE: change this to use a new instance of renederer
-   //?? for this data type.
-   private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
-
 
    /**
     * Name of this class, which is needed because the class name is needed
@@ -261,13 +254,13 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
       // use the Java default date-to-string
       if(useJavaDefaultFormat == true || value == null)
       {
-         return (String) _renderer.renderObject(value);
+         return (String) DefaultColumnRenderer.renderObject(value);
       }
 
       // use a date formatter
       try
       {
-         return (String) _renderer.renderObject(dateFormat.format(value));
+         return (String) DefaultColumnRenderer.renderObject(dateFormat.format(value));
       }
       catch (Exception e)
       {
@@ -276,7 +269,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
             _renderExceptionHasBeenLogged = true;
             s_log.error("Could not format \"" + value + "\" as date type", e);
          }
-         return (String) _renderer.renderObject(value);
+         return (String) DefaultColumnRenderer.renderObject(value);
       }
    }
 
@@ -303,7 +296,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
    /**
     * Return a JTextField usable in a CellEditor.
     */
-   public JTextField getJTextField() {
+   public JTextField getJTextField(JTable table) {
       _textComponent = new RestorableJTextField();
 
       // special handling of operations while editing this data type

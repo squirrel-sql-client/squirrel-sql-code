@@ -59,13 +59,6 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 	/** the whole column definition */
 	protected ColumnDisplayDefinition _colDef;
 
-	/** table of which we are part (needed for creating popup dialog) */
-	protected JTable _table;
-
-	/** A default renderer */
-	protected DefaultColumnRenderer _renderer = DefaultColumnRenderer
-			.getInstance();
-
 	/** The JTextComponent that is being used for editing */
 	protected RestorableJTextField _textField;
 
@@ -89,15 +82,6 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 		this._colDef = def;
 	}
 
-	/**
-	 * Sets the JTable of which holds data rendered by this DataTypeComponent.
-	 * 
-	 * @param table
-	 *            a JTable component
-	 */
-	public void setTable(JTable table) {
-		_table = table;
-	}
 
 	/**
 	 * Return a JTextArea usable in the CellPopupDialog. This will use the
@@ -109,7 +93,7 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 	 */
 	public JTextArea getJTextArea(Object value) {
 		_textArea = new RestorableJTextArea();
-		_textArea.setText((String) _renderer.renderObject(value));
+		_textArea.setText((String) DefaultColumnRenderer.renderObject(value));
 
 		// special handling of operations while editing this data type
 		KeyListener keyListener = getKeyListener(_textArea);
@@ -123,11 +107,13 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
-	public JTextField getJTextField() {
+	public JTextField getJTextField(JTable table)
+	{
 		_textField = new RestorableJTextField();
 
 		KeyListener keyListener = getKeyListener(_textField);
-		if (keyListener != null) {
+		if(keyListener != null)
+		{
 			// special handling of operations while editing this data type
 			_textField.addKeyListener(keyListener);
 		}
@@ -137,12 +123,15 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 		// make this an inner class within this method rather than a separate
 		// inner class as is done with the KeyTextHandler class.
 		//
-		_textField.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
-				if (evt.getClickCount() == 2) {
+		_textField.addMouseListener(new MouseAdapter()
+		{
+			public void mousePressed(MouseEvent evt)
+			{
+				if(evt.getClickCount() == 2)
+				{
 					MouseEvent tableEvt = SwingUtilities.convertMouseEvent(
-							_textField, evt, _table);
-					CellDataPopup.showDialog(_table, _colDef, tableEvt, true);
+							_textField, evt, table);
+					CellDataPopup.showDialog(table, _colDef, tableEvt, true);
 				}
 			}
 		}); // end of mouse listener
@@ -154,7 +143,7 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(final Object value) {
-		String text = (String) _renderer.renderObject(value);
+		String text = (String) DefaultColumnRenderer.renderObject(value);
 		return text;
 	}
 

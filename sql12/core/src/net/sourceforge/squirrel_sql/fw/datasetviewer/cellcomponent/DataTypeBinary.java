@@ -81,13 +81,6 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
 	
-	/* The CellRenderer used for this data type */
-	//??? For now, use the same renderer as everyone else.
-	//??
-	//?? IN FUTURE: change this to use a new instance of renderer
-	//?? for this data type.
-	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
-
 
 	/**
 	 * Constructor - save the data needed by this data type.
@@ -153,7 +146,7 @@ public class DataTypeBinary extends BaseDataTypeComponent
 		Byte[] useValue = Utilities.toBoxedByteArray(value);
 
 		// use the default settings for the conversion
-		return (String) _renderer.renderObject(
+		return (String) DefaultColumnRenderer.renderObject(
 				BinaryDisplayConverter.convertToString(useValue,
 																	BinaryDisplayConverter.HEX, false));
 	}
@@ -181,7 +174,7 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
-	public JTextField getJTextField() {
+	public JTextField getJTextField(JTable table) {
 		_textComponent = new RestorableJTextField();
 		
 		// special handling of operations while editing this data type

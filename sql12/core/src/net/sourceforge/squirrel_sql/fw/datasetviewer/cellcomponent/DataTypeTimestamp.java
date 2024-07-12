@@ -96,14 +96,6 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
    /* The JTextComponent that is being used for editing */
    private IRestorableTextComponent _textComponent;
 
-   /* The CellRenderer used for this data type */
-   //??? For now, use the same renderer as everyone else.
-   //??
-   //?? IN FUTURE: change this to use a new instance of renederer
-   //?? for this data type.
-   private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
-
-
    /**
     * The DTProperties key that is used to store and get the mode that
     * determines how timestamps are used in where clauses
@@ -221,13 +213,13 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
       if (value == null || null == _dataTypeTimestampStatics.getDateFormat() )
       {
          // use the Java default date-to-string
-         return (String) _renderer.renderObject(value);
+         return (String) DefaultColumnRenderer.renderObject(value);
       }
 
       // use a date formatter
       try
       {
-         return (String) _renderer.renderObject(_dataTypeTimestampStatics.getDateFormat().format(value));
+         return (String) DefaultColumnRenderer.renderObject(_dataTypeTimestampStatics.getDateFormat().format(value));
       }
       catch (Exception e)
       {
@@ -236,7 +228,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
             _renderExceptionHasBeenLogged = true;
             s_log.error("Could not format \"" + value + "\" as date type", e);
          }
-         return (String) _renderer.renderObject(value);
+         return (String) DefaultColumnRenderer.renderObject(value);
       }
    }
 
@@ -265,7 +257,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
    /**
     * Return a JTextField usable in a CellEditor.
     */
-   public JTextField getJTextField()
+   public JTextField getJTextField(JTable table)
    {
       _textComponent = new RestorableJTextField();
 

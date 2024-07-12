@@ -87,14 +87,6 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
 
-	/* The CellRenderer used for this data type */
-	//??? For now, use the same renderer as everyone else.
-	//??
-	//?? IN FUTURE: change this to use a new instance of renederer
-	//?? for this data type.
-	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
-
-
 	private static DataTypeClobProperties s_properties = new DataTypeClobProperties();
 
     
@@ -143,7 +135,7 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	 */
 	public String renderObject(Object value)
 	{
-		String text = (String) _renderer.renderObject(value);
+		String text = (String) DefaultColumnRenderer.renderObject(value);
 		if(s_properties.isMakeNewlinesVisibleInCell())
 		{
 			text = text.replaceAll("\n", "\\\\n");
@@ -229,7 +221,7 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
-	public JTextField getJTextField() {
+	public JTextField getJTextField(JTable table) {
 		_textComponent = new RestorableJTextField();
 
 		// special handling of operations while editing this data type
@@ -350,7 +342,7 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 		// The in-cell version may replace newline chars with "\n" while this version
 		// does not.  In other respects it is the same as the in-cell version because both
 		// use the _renderer object to do the rendering.
-		((RestorableJTextArea)_textComponent).setText((String)_renderer.renderObject(value));
+		((RestorableJTextArea)_textComponent).setText((String)DefaultColumnRenderer.renderObject(value));
 
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());

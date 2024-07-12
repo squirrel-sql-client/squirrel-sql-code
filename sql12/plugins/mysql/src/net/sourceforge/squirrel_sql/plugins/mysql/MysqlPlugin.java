@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -38,7 +39,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
@@ -288,11 +288,11 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		_prefsManager.initialize(this, new MysqlPreferenceBean());
 		
       /* Register custom DataTypeComponent factory for MySQL TINYINT UNSIGNED type */
-      CellComponentFactory.registerDataTypeFactory(new MySQLByteTypeDataTypeComponentFactory());
+      Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new MySQLByteTypeDataTypeComponentFactory());
       /* Register custom DataTypeComponent factory for MySQL TINYINT UNSIGNED type */
-      CellComponentFactory.registerDataTypeFactory(new MySQL5ByteTypeDataTypeComponentFactory());
+      Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new MySQL5ByteTypeDataTypeComponentFactory());
 
-	}
+   }
 
 	/**
 	 * Application is shutting down so save preferences.

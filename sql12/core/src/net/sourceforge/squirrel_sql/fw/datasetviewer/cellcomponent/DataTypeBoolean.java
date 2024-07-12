@@ -77,13 +77,6 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
 
-	/* The CellRenderer used for this data type */
-	// ??? For now, use the same renderer as everyone else.
-	// ??
-	// ?? IN FUTURE: change this to use a new instance of renderer
-	// ?? for this data type.
-	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
-
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
@@ -111,7 +104,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	 */
 	public String renderObject(Object value)
 	{
-		return (String) _renderer.renderObject(value);
+		return (String) DefaultColumnRenderer.renderObject(value);
 	}
 
 	/**
@@ -137,7 +130,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
-	public JTextField getJTextField()
+	public JTextField getJTextField(JTable table)
 	{
 		_textComponent = new RestorableJTextField();
 

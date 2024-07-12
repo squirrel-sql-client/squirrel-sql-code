@@ -11,6 +11,7 @@ package net.sourceforge.squirrel_sql.plugins.postgres;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -28,7 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -209,13 +210,14 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
         app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, sessionMenu);
         super.registerSessionMenu(sessionMenu);
 
-        CellComponentFactory.registerDataTypeFactory(new PostgreSqlGeometryTypeDataTypeComponentFactory(app.getSessionManager()));
-        CellComponentFactory.registerDataTypeFactory(new PostgreSqlUUIDTypeDataTypeComponentFactory());
-        CellComponentFactory.registerDataTypeFactory(new PostgreSqlArrayTypeDataTypeComponentFactory());
-        CellComponentFactory.registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory());
-        CellComponentFactory.registerDataTypeFactory(new PostgreSqlOtherTypeDataTypeComponentFactory("interval"));
+        IDataTypeComponentFactory factory = new PostgreSqlGeometryTypeDataTypeComponentFactory(app.getSessionManager());
+        Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(factory);
+        Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new PostgreSqlUUIDTypeDataTypeComponentFactory());
+        Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new PostgreSqlArrayTypeDataTypeComponentFactory());
+        Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory());
+        Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new PostgreSqlOtherTypeDataTypeComponentFactory("interval"));
 
-		SQLDatabaseMetaDataFactory.registerOverride(DialectType.POSTGRES, this);
+        SQLDatabaseMetaDataFactory.registerOverride(DialectType.POSTGRES, this);
     }
 
     @Override

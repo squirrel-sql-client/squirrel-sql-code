@@ -101,12 +101,6 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
 
-	/* The CellRenderer used for this data type */
-	//??? For now, use the same renderer as everyone else.
-	//??
-	//?? IN FUTURE: change this to use a new instance of renederer
-	//?? for this data type.
-	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
 
 	// The NumberFormat object to use for all locale-dependent formatting.
@@ -150,14 +144,14 @@ public class DataTypeBigDecimal extends FloatingPointBase
 
 		if (value == null || FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
 		{
-			return (String)_renderer.renderObject(value);
+			return (String)DefaultColumnRenderer.renderObject(value);
 		}
 		else
 		{
 
          try
          {
-            return (String)_renderer.renderObject(_numberFormat.format(value));
+            return (String)DefaultColumnRenderer.renderObject(_numberFormat.format(value));
          }
          catch (Exception e)
          {
@@ -166,7 +160,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
                _renderExceptionHasBeenLogged = true;
                s_log.error("Could not format \"" + value + "\" as number type", e);
             }
-            return (String) _renderer.renderObject(value);
+            return (String) DefaultColumnRenderer.renderObject(value);
          }
 
 
@@ -200,7 +194,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	@Override
-	public JTextField getJTextField() {
+	public JTextField getJTextField(JTable table) {
 		_textComponent = new RestorableJTextField();
 
 		// special handling of operations while editing this data type

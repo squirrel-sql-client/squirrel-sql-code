@@ -91,14 +91,6 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	/** Internationalized strings for this class, shared/copied from ResultSetReader. */
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeUnknown.class);
 	
-	/* The CellRenderer used for this data type */
-	//??? For now, use the same renderer as everyone else.
-	//??
-	//?? IN FUTURE: change this to use a new instance of renederer
-	//?? for this data type.
-	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
-
-
 
 	/**
 	 * Name of this class, which is needed because the class name is needed
@@ -172,7 +164,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
-		return (String)_renderer.renderObject(value);
+		return (String)DefaultColumnRenderer.renderObject(value);
 	}
 	
 	/**
@@ -198,7 +190,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
-	public JTextField getJTextField() {
+	public JTextField getJTextField(JTable table) {
 		_textComponent = new RestorableJTextField();
 		
 		// special handling of operations while editing this data type

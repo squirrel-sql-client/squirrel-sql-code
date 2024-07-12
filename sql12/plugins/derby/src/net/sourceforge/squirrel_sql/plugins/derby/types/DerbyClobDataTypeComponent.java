@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -98,9 +99,6 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
 
    /* The JTextComponent that is being used for editing */
    private IRestorableTextComponent _textComponent;
-
-   /* The CellRenderer used for this data type */
-   private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
    private IOUtilities ioUtils = new IOUtilitiesImpl();
    
@@ -167,7 +165,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
     */
    @Override
    public String renderObject(Object value) {
-      return (String) _renderer.renderObject(value);
+      return (String) DefaultColumnRenderer.renderObject(value);
    }
 
    /**
@@ -307,7 +305,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
-	public JTextField getJTextField() {
+	public JTextField getJTextField(JTable table) {
 		_textComponent = new RestorableJTextField();
 
 		// special handling of operations while editing this data type
@@ -327,8 +325,8 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
 				{
 					MouseEvent tableEvt = SwingUtilities.convertMouseEvent(
 						(RestorableJTextField)DerbyClobDataTypeComponent.this._textComponent,
-						evt, DerbyClobDataTypeComponent.this._table);
-					CellDataPopup.showDialog(DerbyClobDataTypeComponent.this._table,
+						evt, table);
+					CellDataPopup.showDialog(table,
 						DerbyClobDataTypeComponent.this._colDef, tableEvt, true);
 				}
 			}
@@ -349,7 +347,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
 		// The in-cell version may replace newline chars with "\n" while this version
 		// does not.  In other respects it is the same as the in-cell version because both
 		// use the _renderer object to do the rendering.
-		((RestorableJTextArea)_textComponent).setText((String)_renderer.renderObject(value));
+		((RestorableJTextArea)_textComponent).setText((String)DefaultColumnRenderer.renderObject(value));
 
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
