@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,17 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DisplayPanel extends JPanel
+public class CellDisplayPanel extends JPanel
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DisplayPanel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDisplayPanel.class);
    private final JPanel _pnlContent = new JPanel(new GridLayout(1, 1));
    private final DisplayPanelListener _displayPanelListener;
 
    private List<Pair<ColumnDisplayDefinition, DisplayMode>> _columnsToNonDefaultDisplayMode = new ArrayList<>();
-   private ExtTableColumn _currentColumn;
+   private ColumnDisplayDefinition _currentColumnDisplayDefinition;
    private JComboBox<DisplayMode> _cboDisplayMode = new JComboBox<>(DisplayMode.values());
 
-   public DisplayPanel(DisplayPanelListener displayPanelListener)
+   public CellDisplayPanel(DisplayPanelListener displayPanelListener)
    {
       _displayPanelListener = displayPanelListener;
       setLayout(new BorderLayout(3, 3));
@@ -39,10 +38,10 @@ public class DisplayPanel extends JPanel
 
    private void onDisplayModeChanged()
    {
-      _columnsToNonDefaultDisplayMode.removeIf(p -> p.getLeft().matchesByQualifiedName(_currentColumn.getColumnDisplayDefinition()));
+      _columnsToNonDefaultDisplayMode.removeIf(p -> p.getLeft().matchesByQualifiedName(_currentColumnDisplayDefinition));
       if(getDisplayMode() != DisplayMode.DEFAULT)
       {
-         _columnsToNonDefaultDisplayMode.add(Pair.of(_currentColumn.getColumnDisplayDefinition(), getDisplayMode()));
+         _columnsToNonDefaultDisplayMode.add(Pair.of(_currentColumnDisplayDefinition, getDisplayMode()));
       }
 
       _displayPanelListener.displayModeChanged();
@@ -63,13 +62,13 @@ public class DisplayPanel extends JPanel
       _pnlContent.add(contentComponent);
    }
 
-   public void setCurrentColumn(ExtTableColumn column)
+   public void setCurrentColumnDisplayDefinition(ColumnDisplayDefinition columnDisplayDefinition)
    {
-      _currentColumn = column;
+      _currentColumnDisplayDefinition = columnDisplayDefinition;
 
       DisplayMode modeToSel = DisplayMode.DEFAULT;
       Optional<Pair<ColumnDisplayDefinition, DisplayMode>> nonDefaultDisplay =
-            _columnsToNonDefaultDisplayMode.stream().filter(p -> p.getLeft().matchesByQualifiedName(_currentColumn.getColumnDisplayDefinition())).findFirst();
+            _columnsToNonDefaultDisplayMode.stream().filter(p -> p.getLeft().matchesByQualifiedName(columnDisplayDefinition)).findFirst();
 
       if(nonDefaultDisplay.isPresent())
       {

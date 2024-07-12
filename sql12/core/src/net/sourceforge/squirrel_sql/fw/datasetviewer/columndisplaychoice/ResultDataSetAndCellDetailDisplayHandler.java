@@ -25,7 +25,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
    private static final String PREF_KEY_CELL_DETAIL_DIVIDER_POS = "ResultDataSetAndCellDetailDisplayHandler.cell.detail.divider.pos";
    private final JLabel _lblNoCell;
-   private final DisplayPanel _rightDisplayPanel;
+   private final CellDisplayPanel _rightCellDisplayPanel;
 
 
    private IDataSetViewer _dataSetViewer;
@@ -51,8 +51,8 @@ public class ResultDataSetAndCellDetailDisplayHandler
       GUIUtils.setMinimumWidth(_lblNoCell, 0);
 
 
-      _rightDisplayPanel = new DisplayPanel(() -> onDisplayChanged());
-      _splitPane.setRightComponent(_rightDisplayPanel);
+      _rightCellDisplayPanel = new CellDisplayPanel(() -> onDisplayChanged());
+      _splitPane.setRightComponent(_rightCellDisplayPanel);
 
       _splitPane.addComponentListener(new ComponentAdapter()
       {
@@ -100,7 +100,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          || false == dataSetViewer.getTable().getColumnModel().getColumn(colLeadSelectionIndex) instanceof ExtTableColumn)
       {
          int dividerLocBuf = _splitPane.getDividerLocation();
-         _rightDisplayPanel.setContentComponent(_lblNoCell);
+         _rightCellDisplayPanel.setContentComponent(_lblNoCell);
          _splitPane.setDividerLocation(dividerLocBuf);
       }
       else
@@ -108,10 +108,10 @@ public class ResultDataSetAndCellDetailDisplayHandler
          Object value = dataSetViewer.getTable().getValueAt(rowLeadSelectionIndex, colLeadSelectionIndex);
 
          ExtTableColumn column = (ExtTableColumn) dataSetViewer.getTable().getColumnModel().getColumn(colLeadSelectionIndex);
-         _rightDisplayPanel.setCurrentColumn(column);
+         _rightCellDisplayPanel.setCurrentColumnDisplayDefinition(column.getColumnDisplayDefinition());
 
          JPanel pnlToDisplay;
-         if(DisplayMode.IMAGE == _rightDisplayPanel.getDisplayMode())
+         if(DisplayMode.IMAGE == _rightCellDisplayPanel.getDisplayMode())
          {
             pnlToDisplay = new ResultImageDisplayPanel(column.getColumnDisplayDefinition(),
                                                        value,
@@ -130,7 +130,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          GUIUtils.setPreferredWidth(pnlToDisplay, 0);
          GUIUtils.setMinimumWidth(pnlToDisplay, 0);
          int dividerLocBuf = _splitPane.getDividerLocation();
-         _rightDisplayPanel.setContentComponent(pnlToDisplay);
+         _rightCellDisplayPanel.setContentComponent(pnlToDisplay);
          _splitPane.setDividerLocation(dividerLocBuf);
       }
    }
