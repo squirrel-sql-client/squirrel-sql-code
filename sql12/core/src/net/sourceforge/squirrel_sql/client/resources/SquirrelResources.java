@@ -203,6 +203,8 @@ public class SquirrelResources extends Resources
 
 		String PRESENTATION = "presentation";
 
+		String SHOW_DETAIL = "show_detail";
+
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

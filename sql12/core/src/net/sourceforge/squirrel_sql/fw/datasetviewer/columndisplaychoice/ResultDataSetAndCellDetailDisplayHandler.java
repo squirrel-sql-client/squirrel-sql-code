@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -17,20 +15,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.table.TableColumn;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ResultDataSetAndCellDetailDisplayHandler
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultDataSetAndCellDetailDisplayHandler.class);
 
    private static final String PREF_KEY_CELL_DETAIL_DIVIDER_POS = "ResultDataSetAndCellDetailDisplayHandler.cell.detail.divider.pos";
-   private static final String PREF_KEY_SHOW_CELL_DETAIL = "ResultDataSetAndCellDetailDisplayHandler.show.cell.detail";
    private final JLabel _lblNoCell;
+   private final DisplayPanel _rightDisplayPanel;
+
 
    private IDataSetViewer _dataSetViewer;
    private final ResultTableType _resultTableType;
@@ -38,9 +34,6 @@ public class ResultDataSetAndCellDetailDisplayHandler
    private JScrollPane _scrollPane;
    private JSplitPane _splitPane;
    private boolean _adjustingSplitPane = false;
-
-   private List<ColumnDisplayDefinition> _columnsShowingAsImage = new ArrayList<>();
-
 
    public ResultDataSetAndCellDetailDisplayHandler(IDataSetViewer dataSetViewer, ResultTableType resultTableType)
    {
@@ -56,7 +49,11 @@ public class ResultDataSetAndCellDetailDisplayHandler
       _lblNoCell = new JLabel("No cell selected");
       GUIUtils.setPreferredWidth(_lblNoCell, 0);
       GUIUtils.setMinimumWidth(_lblNoCell, 0);
-      _splitPane.setRightComponent(_lblNoCell);
+
+
+      _rightDisplayPanel = new DisplayPanel(() -> onDisplayChanged());
+      _splitPane.setRightComponent(_rightDisplayPanel);
+
       _splitPane.addComponentListener(new ComponentAdapter()
       {
          @Override
@@ -68,7 +65,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
       if(resultTableType == ResultTableType.SQL_QUERY_RESULT && isDataSetViewerTablePanel())
       {
-         setCellDetailVisible(Props.getBoolean(PREF_KEY_SHOW_CELL_DETAIL, false), true);
+         setCellDetailVisible(ColumnDisplayUtil.isShowCellDetail(), true);
          _splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, e -> onDividerLocationChanged(e));
 
          _dataSetViewer.addRowColSelectedCountListener((selRowCount, selColCount, selRow, selCol) -> onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer));
@@ -78,6 +75,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          setCellDetailVisible(false, true);
       }
    }
+
 
    private void onSplitPaneResized()
    {
@@ -102,7 +100,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          || false == dataSetViewer.getTable().getColumnModel().getColumn(colLeadSelectionIndex) instanceof ExtTableColumn)
       {
          int dividerLocBuf = _splitPane.getDividerLocation();
-         _splitPane.setRightComponent(_lblNoCell);
+         _rightDisplayPanel.setContentComponent(_lblNoCell);
          _splitPane.setDividerLocation(dividerLocBuf);
       }
       else
@@ -110,9 +108,10 @@ public class ResultDataSetAndCellDetailDisplayHandler
          Object value = dataSetViewer.getTable().getValueAt(rowLeadSelectionIndex, colLeadSelectionIndex);
 
          ExtTableColumn column = (ExtTableColumn) dataSetViewer.getTable().getColumnModel().getColumn(colLeadSelectionIndex);
+         _rightDisplayPanel.setCurrentColumn(column);
 
          JPanel pnlToDisplay;
-         if(_columnsShowingAsImage.stream().anyMatch(cd -> cd.matchesByQualifiedName(column.getColumnDisplayDefinition())))
+         if(DisplayMode.IMAGE == _rightDisplayPanel.getDisplayMode())
          {
             pnlToDisplay = new ResultImageDisplayPanel(column.getColumnDisplayDefinition(),
                                                        value,
@@ -131,7 +130,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          GUIUtils.setPreferredWidth(pnlToDisplay, 0);
          GUIUtils.setMinimumWidth(pnlToDisplay, 0);
          int dividerLocBuf = _splitPane.getDividerLocation();
-         _splitPane.setRightComponent(pnlToDisplay);
+         _rightDisplayPanel.setContentComponent(pnlToDisplay);
          _splitPane.setDividerLocation(dividerLocBuf);
       }
    }
@@ -234,7 +233,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
          if(false == initializing)
          {
-            Props.putBoolean(PREF_KEY_SHOW_CELL_DETAIL, _splitPane.isEnabled());
+            ColumnDisplayUtil.setShowCellDetail(_splitPane.isEnabled());
          }
       }
       finally
@@ -248,54 +247,8 @@ public class ResultDataSetAndCellDetailDisplayHandler
       onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer);
    }
 
-   public boolean isCellDetailVisible()
+   private void onDisplayChanged()
    {
-      return _splitPane.isEnabled();
-   }
-
-   public SelectedCellInfo getSelectedCellInfo()
-   {
-      if(false == _dataSetViewer instanceof DataSetViewerTablePanel)
-      {
-         return new SelectedCellInfo().setHasSelectedCell(false);
-      }
-
-      DataSetViewerTable table = ((DataSetViewerTablePanel) _dataSetViewer).getTable();
-      int selColIx = table.getSelectedColumn();
-
-      if(-1 == selColIx)
-      {
-         return new SelectedCellInfo().setHasSelectedCell(false);
-      }
-
-      TableColumn column = table.getColumnModel().getColumn(selColIx);
-      if(false == column instanceof ExtTableColumn)
-      {
-         return new SelectedCellInfo().setExtTableColumnCellSelected(false);
-      }
-
-      return new SelectedCellInfo(((ExtTableColumn) column).getColumnDisplayDefinition());
-   }
-
-   public void displayColumnAsImage(ColumnDisplayDefinition colDisp, boolean selected)
-   {
-      if(selected)
-      {
-         if(false == _columnsShowingAsImage.stream().anyMatch(cd -> cd.matchesByQualifiedName(colDisp)))
-         {
-            _columnsShowingAsImage.add(colDisp);
-         }
-      }
-      else
-      {
-         _columnsShowingAsImage.removeIf(cd -> cd.matchesByQualifiedName(colDisp));
-      }
-
       fireCellSelectionChangedForCurrentSelectedCell();
-   }
-
-   public List<ColumnDisplayDefinition> getColumnsShowingAsImage()
-   {
-      return _columnsShowingAsImage;
    }
 }

@@ -183,6 +183,14 @@ public class ResultImageDisplayPanel extends JPanel
             image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(valueToDisplay)));
          }
 
+         if(null == image)
+         {
+            String msg = s_stringMgr.getString("ResultImageDisplayPanel.could.create.image", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName());
+            s_log.error(msg);
+            Main.getApplication().getMessageHandler().showErrorMessage(msg);
+            return new JLabel(msg);
+         }
+
          JLabel lblImage = new JLabel();
          lblImage.setIcon(new ImageIcon(image));
          return lblImage;

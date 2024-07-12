@@ -49,9 +49,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ColumnDisplayChoiceAction;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ShowCellDetailCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableToolbarCtrl;
@@ -590,7 +590,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       ret.add(new TabButton(getRerunCurrentSQLResultTabAction()), gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
-      ret.add(new TabButton(new ColumnDisplayChoiceAction(this)), gbc);
+      ret.add(new ShowCellDetailCtrl(this).getTabButton(), gbc);
 
       _markDuplicatesChooserController = new MarkDuplicatesChooserController(this);
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
