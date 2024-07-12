@@ -10,14 +10,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-public class CellDataColumnDataPopupPanel extends JPanel
+public class CellDataColumnDataPanel extends JPanel
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataColumnDataPopupPanel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataColumnDataPanel.class);
 
    private final PopupEditableIOPanel _ioPanel;
    private CellDataUpdateInfo _cellDataUpdateInfo;
 
-   public CellDataColumnDataPopupPanel(Object cellContents, ColumnDisplayDefinition colDef, boolean tableIsEditable)
+   public CellDataColumnDataPanel(Object cellContents, ColumnDisplayDefinition colDef, boolean tableIsEditable)
    {
       super(new BorderLayout());
 
@@ -85,7 +85,7 @@ public class CellDataColumnDataPopupPanel extends JPanel
       {
          // handle an error in conversion of text to object
          JOptionPane.showMessageDialog(
-               CellDataColumnDataPopupPanel.this,
+               CellDataColumnDataPanel.this,
                s_stringMgr.getString("cellDataPopUp.cannnotBGeConverted", messageBuffer),
                // i18n[cellDataPopUp.conversionError=Conversion Error]
                s_stringMgr.getString("cellDataPopUp.conversionError"),

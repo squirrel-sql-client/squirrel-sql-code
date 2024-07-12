@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataColumnDataPopupPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataColumnDataPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataUpdateInfo;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -122,7 +122,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          }
          else
          {
-            CellDataColumnDataPopupPanel panel = new CellDataColumnDataPopupPanel(value, column.getColumnDisplayDefinition(), dataSetViewer.isTableEditable());
+            CellDataColumnDataPanel panel = new CellDataColumnDataPanel(value, column.getColumnDisplayDefinition(), dataSetViewer.isTableEditable());
             panel.setCellDataUpdateInfo(new CellDataUpdateInfo(rowLeadSelectionIndex, colLeadSelectionIndex, dataSetViewer.getTable(), null));
             pnlToDisplay = panel;
          }

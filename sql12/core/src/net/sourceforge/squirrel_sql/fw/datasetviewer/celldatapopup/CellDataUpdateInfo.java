@@ -7,9 +7,9 @@ public class CellDataUpdateInfo
    private final int _row;
    private final int _col;
    private final JTable _table;
-   private final CellDataTextAreaDialog _parentDialog;
+   private final CellDataDialog _parentDialog;
 
-   public CellDataUpdateInfo(int row, int col, JTable table, CellDataTextAreaDialog parentDialog)
+   public CellDataUpdateInfo(int row, int col, JTable table, CellDataDialog parentDialog)
    {
       _row = row;
       _col = col;

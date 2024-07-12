@@ -78,7 +78,7 @@ public class CellDataPopup
 
       Component parent = SwingUtilities.windowForComponent(table);
 
-      final CellDataTextAreaDialog dialog = new CellDataTextAreaDialog(table, table.getColumnName(col), colDef, obj,row, col, isModelEditable, table);
+      final CellDataDialog dialog = new CellDataDialog(table, table.getColumnName(col), colDef, obj, row, col, isModelEditable, table);
 
       dialog.pack();
 
