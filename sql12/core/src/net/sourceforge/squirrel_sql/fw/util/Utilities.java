@@ -536,7 +536,7 @@ public class Utilities
       }
       else
       {
-         byte[] primitiveByteArray = toPrimitiveByteArray(value);
+         byte[] primitiveByteArray = toPrimitiveByteArray(value, maxBytes);
 
          Byte[] ret = new Byte[primitiveByteArray.length];
 

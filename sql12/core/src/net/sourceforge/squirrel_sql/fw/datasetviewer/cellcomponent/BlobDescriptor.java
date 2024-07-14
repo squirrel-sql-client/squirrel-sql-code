@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import java.sql.Blob;
 import java.util.Arrays;
@@ -72,13 +73,10 @@ public class BlobDescriptor {
 	private int _userSetBlobLimit;
 	
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(BlobDescriptor.class);
-	
-    public static interface i18n {
-        String BLOB_LABEL = s_stringMgr.getString("BlobDescriptor.blob");
-    }
-    
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(BlobDescriptor.class);
+
+	private String _blobStringCache;
+
 	/**
 	 * Ctor
 	 */
@@ -132,24 +130,42 @@ public class BlobDescriptor {
 	 * toString means print the data string, unless the data has not been
 	 * read at all.
 	 */
-	public String toString() {
-		if (_blobRead) {
-			if (_data == null)
+	public String toString()
+	{
+		if(null != _blobStringCache)
+		{
+			return _blobStringCache;
+		}
+
+		if(_blobRead)
+		{
+			if(_data == null)
+			{
 				return null;
-			
+			}
+
 			// Convert the data into an ascii representation
 			// using the standard convention
-			Byte[] useValue = new Byte[_data.length];
-					for (int i=0; i<_data.length; i++)
-						useValue[i] = Byte.valueOf(_data[i]);
+			Byte[] useValue = Utilities.toBoxedByteArray(_data);
+
 			String outString = BinaryDisplayConverter.convertToString(useValue,
-						                            BinaryDisplayConverter.HEX, 
-                                                    false);
-			if (_wholeBlobRead || _userSetBlobLimit > _data.length)
-				return outString;	// we have the whole contents of the BLOB
-			else return outString+"...";	// tell user the data is truncated
+																						 BinaryDisplayConverter.HEX,
+																						 false);
+			if(_wholeBlobRead || _userSetBlobLimit > _data.length)
+			{
+				_blobStringCache =  outString;   // we have the whole contents of the BLOB
+			}
+			else
+			{
+				_blobStringCache = outString + "...";   // tell user the data is truncated
+			}
 		}
-		else return i18n.BLOB_LABEL;
+		else
+		{
+			_blobStringCache = s_stringMgr.getString("BlobDescriptor.blob");
+		}
+
+		return _blobStringCache;
 	}
 	
 	/* 

@@ -334,7 +334,8 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	 * Return a JTextArea usable in the CellPopupDialog
 	 * and fill in the value.
 	 */
-	 public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
+	public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef)
+	{
 		_textComponent = new RestorableJTextArea();
 
 		// value is a simple string representation of the data,
@@ -342,12 +343,20 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 		// The in-cell version may replace newline chars with "\n" while this version
 		// does not.  In other respects it is the same as the in-cell version because both
 		// use the _renderer object to do the rendering.
-		((RestorableJTextArea)_textComponent).setText((String)DefaultColumnRenderer.renderObject(value));
+		String renderedValue = DefaultColumnRenderer.renderObject(value);
+
+		if(renderedValue.length() > BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY)
+		{
+			renderedValue = renderedValue.substring(0, BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+			BigDataRenderResult.showStringLenReachedMessage(colDef);
+		}
+
+		((RestorableJTextArea) _textComponent).setText(renderedValue);
 
 		// special handling of operations while editing this data type
-		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
+		((RestorableJTextArea) _textComponent).addKeyListener(new KeyTextHandler());
 
-		return (RestorableJTextArea)_textComponent;
+		return (RestorableJTextArea) _textComponent;
 	 }
 
 	/**

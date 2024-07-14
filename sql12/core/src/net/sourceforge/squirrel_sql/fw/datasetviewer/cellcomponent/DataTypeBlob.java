@@ -126,9 +126,38 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	/**
 	 * Render a value into text for this DataType.
 	 */
-	public String renderObject(Object value) {
-		return (String)DefaultColumnRenderer.renderObject(value);
+	public String renderObject(Object value)
+	{
+		return DefaultColumnRenderer.renderObject(value);
 	}
+
+	private static String renderForTextArea(Object value, ColumnDisplayDefinition colDef)
+	{
+		// The SQL Results page puts text into the table cells
+		// rather than objects of the appropriate type, so we
+		// need to convert befor proceeding
+		Byte[] useValue;
+		if(value instanceof BlobDescriptor)
+		{
+			useValue = Utilities.toBoxedByteArray(((BlobDescriptor)value).getData(), BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+		}
+		else
+		{
+			useValue = Utilities.toBoxedByteArray(value, BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+		}
+
+		if(useValue.length == BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY)
+		{
+			BigDataRenderResult.showMaxBytesReachedMessage(colDef);
+		}
+
+		// use the default settings for the conversion
+		String renderResult =
+				DefaultColumnRenderer.renderObject(BinaryDisplayConverter.convertToString(useValue, BinaryDisplayConverter.HEX, false));
+
+		return renderResult;
+	}
+
 
 	/**
 	 * This Data Type can be edited in a table cell.
@@ -302,19 +331,19 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	 * Return a JTextArea usable in the CellPopupDialog
 	 * and fill in the value.
 	 */
-	 public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
+	public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef)
+	{
 		_textComponent = new RestorableJTextArea();
 
+		String renderRes = renderForTextArea(value, colDef);
 
-		// value is a simple string representation of the data,
-		// the same one used in Text and in-cell operations.
-		((RestorableJTextArea)_textComponent).setText(renderObject(value));
+		((RestorableJTextArea)_textComponent).setText(renderRes);
 
 		// special handling of operations while editing this data type
-		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
+		((RestorableJTextArea) _textComponent).addKeyListener(new KeyTextHandler());
 
-		return (RestorableJTextArea)_textComponent;
-	 }
+		return (RestorableJTextArea) _textComponent;
+	}
 
 	/**
 	 * Validating and converting in Popup is identical to cell-related operation.

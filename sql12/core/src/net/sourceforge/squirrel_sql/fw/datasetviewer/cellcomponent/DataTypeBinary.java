@@ -19,15 +19,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -78,11 +75,8 @@ public class DataTypeBinary extends BaseDataTypeComponent
  	implements IDataTypeComponent
 {
 	private static ILogger s_log = LoggerController.createLogger(DataTypeBinary.class);
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeBinary.class);
 
 
-
-	public static final int MAX_BYTES_IN_CELL_DETAIL_DISPLAY = 10000;
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
 
@@ -157,7 +151,7 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	/**
 	 * @param maxBytes -1 means no maximum
 	 */
-	private static BinaryTypeRenderResult _renderObject(Object value, int maxBytes)
+	private static BigDataRenderResult _renderObject(Object value, int maxBytes)
 	{
 		// The SQL Results page puts text into the table cells
 		// rather than objects of the appropriate type, so we
@@ -168,7 +162,7 @@ public class DataTypeBinary extends BaseDataTypeComponent
 		String renderResult =
 				DefaultColumnRenderer.renderObject(BinaryDisplayConverter.convertToString(useValue, BinaryDisplayConverter.HEX, false));
 
-		return new BinaryTypeRenderResult(renderResult, null != useValue && useValue.length == maxBytes);
+		return new BigDataRenderResult(renderResult, null != useValue && useValue.length == maxBytes);
 	}
 
 	/**
@@ -288,13 +282,11 @@ public class DataTypeBinary extends BaseDataTypeComponent
 		
 		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
-		 BinaryTypeRenderResult renderResult = _renderObject(value, MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+		 BigDataRenderResult renderResult = _renderObject(value, BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
 
 		 if(renderResult.isMaxBytesReached())
 		 {
-			 String msg = s_stringMgr.getString("DataTypeBinary.MaxBytesReached", MAX_BYTES_IN_CELL_DETAIL_DISPLAY, colDef.getFullTableColumnName(), colDef.getSqlTypeName());
-			 s_log.warn(msg);
-			 Main.getApplication().getMessageHandler().showWarningMessage(msg);
+			 BigDataRenderResult.showMaxBytesReachedMessage(colDef);
 		 }
 
 		 ((RestorableJTextArea)_textComponent).setText(renderResult.getRenderResult());
@@ -305,7 +297,7 @@ public class DataTypeBinary extends BaseDataTypeComponent
 		return (RestorableJTextArea)_textComponent;
 	 }
 
-	/**
+   /**
 	 * Validating and converting in Popup is identical to cell-related operation.
 	 */
 	public Object validateAndConvertInPopup(String value, Object originalValue, StringBuffer messageBuffer) {
