@@ -50,8 +50,6 @@ class CellDataDialog extends JDialog
       }
       else
       {
-         CellDataColumnDataPanel panel = new CellDataColumnDataPanel(value, colDef, isModelEditable);
-         panel.setCellDataUpdateInfo(new CellDataUpdateInfo(row, col, table, null));
          CellDataColumnDataPanel cellDataPanel = new CellDataColumnDataPanel(value, colDef, isModelEditable);
          cellDataPanel.setCellDataUpdateInfo(new CellDataUpdateInfo(row, col, table, this));
 
