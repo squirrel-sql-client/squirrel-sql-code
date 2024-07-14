@@ -135,7 +135,7 @@ import java.util.Arrays;
  */
 public class CellComponentFactory
 {
-   private static  ILogger s_log = LoggerController.createLogger(CellComponentFactory.class);
+   private static ILogger s_log = LoggerController.createLogger(CellComponentFactory.class);
 
    /**
     * Return the name of the Java class that is used to represent
@@ -365,7 +365,7 @@ public class CellComponentFactory
 
       if (dataTypeObject != null)
       {
-         return dataTypeObject.getJTextArea(value);
+         return dataTypeObject.getJTextArea(value, colDef);
       }
 
       // default behavior if no appropriate data type found is to create

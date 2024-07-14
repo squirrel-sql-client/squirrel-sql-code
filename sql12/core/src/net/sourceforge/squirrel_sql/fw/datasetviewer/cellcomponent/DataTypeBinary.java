@@ -19,14 +19,19 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -72,6 +77,12 @@ import java.sql.ResultSet;
 public class DataTypeBinary extends BaseDataTypeComponent
  	implements IDataTypeComponent
 {
+	private static ILogger s_log = LoggerController.createLogger(DataTypeBinary.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeBinary.class);
+
+
+
+	public static final int MAX_BYTES_IN_CELL_DETAIL_DISPLAY = 10000;
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
 
@@ -140,17 +151,26 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	 */
 	public String renderObject(Object value)
 	{
+		return _renderObject(value, -1).getRenderResult();
+	}
+
+	/**
+	 * @param maxBytes -1 means no maximum
+	 */
+	private static BinaryTypeRenderResult _renderObject(Object value, int maxBytes)
+	{
 		// The SQL Results page puts text into the table cells
 		// rather than objects of the appropriate type, so we
 		// need to convert befor proceeding
-		Byte[] useValue = Utilities.toBoxedByteArray(value);
+		Byte[] useValue = Utilities.toBoxedByteArray(value, maxBytes);
 
 		// use the default settings for the conversion
-		return (String) DefaultColumnRenderer.renderObject(
-				BinaryDisplayConverter.convertToString(useValue,
-																	BinaryDisplayConverter.HEX, false));
+		String renderResult =
+				DefaultColumnRenderer.renderObject(BinaryDisplayConverter.convertToString(useValue, BinaryDisplayConverter.HEX, false));
+
+		return new BinaryTypeRenderResult(renderResult, null != useValue && useValue.length == maxBytes);
 	}
-	
+
 	/**
 	 * This Data Type can be edited in a table cell.
 	 */
@@ -263,12 +283,21 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	 * Return a JTextArea usable in the CellPopupDialog
 	 * and fill in the value.
 	 */
-	 public JTextArea getJTextArea(Object value) {
+	 public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
 		_textComponent = new RestorableJTextArea();
 		
 		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
-		((RestorableJTextArea)_textComponent).setText(renderObject(value));
+		 BinaryTypeRenderResult renderResult = _renderObject(value, MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+
+		 if(renderResult.isMaxBytesReached())
+		 {
+			 String msg = s_stringMgr.getString("DataTypeBinary.MaxBytesReached", MAX_BYTES_IN_CELL_DETAIL_DISPLAY, colDef.getFullTableColumnName(), colDef.getSqlTypeName());
+			 s_log.warn(msg);
+			 Main.getApplication().getMessageHandler().showWarningMessage(msg);
+		 }
+
+		 ((RestorableJTextArea)_textComponent).setText(renderResult.getRenderResult());
 		
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());

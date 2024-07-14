@@ -98,7 +98,7 @@ public class BinaryDisplayConverter {
 		if (data == null)
 			return null;
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		
 		ConversionConstants convConst = getConstants(base);
 		

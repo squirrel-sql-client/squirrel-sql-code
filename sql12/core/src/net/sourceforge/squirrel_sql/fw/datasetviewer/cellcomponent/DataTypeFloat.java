@@ -280,7 +280,7 @@ public class DataTypeFloat extends FloatingPointBase
      * and fill in the value.
      */
     @Override
-    public JTextArea getJTextArea(Object value) {
+    public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
       _textComponent = new RestorableJTextArea();
 
       // value is a simple string representation of the data,

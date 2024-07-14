@@ -394,7 +394,7 @@ public class DataTypeString extends BaseDataTypeComponent
 		 * Return a JTextArea usable in the CellPopupDialog.
 		 */
 	 @Override
-	 public JTextArea getJTextArea(Object value) {
+	 public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
 		_textComponent = new RestorableJTextArea();
 
 		// value is a simple string representation of the data,

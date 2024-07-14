@@ -15,6 +15,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,11 +38,16 @@ public class CellDisplayPanel extends JPanel
       add(_pnlContent, BorderLayout.CENTER);
 
       _cboDisplayMode.setSelectedItem(DisplayMode.DEFAULT);
-      _cboDisplayMode.addActionListener(e -> onDisplayModeChanged());
+      _cboDisplayMode.addItemListener(e -> onDisplayModeChanged(e));
    }
 
-   private void onDisplayModeChanged()
+   private void onDisplayModeChanged(ItemEvent e)
    {
+      if(e.getStateChange() == ItemEvent.DESELECTED)
+      {
+         return;
+      }
+
       if(null != _currentColumnDisplayDefinition)
       {
          _columnsToNonDefaultDisplayMode.removeIf(p -> p.getLeft().matchesByQualifiedName(_currentColumnDisplayDefinition));

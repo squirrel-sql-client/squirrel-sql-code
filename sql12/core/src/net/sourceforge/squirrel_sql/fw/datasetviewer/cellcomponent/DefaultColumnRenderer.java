@@ -40,7 +40,7 @@ public class DefaultColumnRenderer
 	 * 
 	 * @return	The rendered object.
 	 */
-	public static Object renderObject(Object obj)
+	public static String renderObject(Object obj)
 	{
 		if (obj != null)
 		{

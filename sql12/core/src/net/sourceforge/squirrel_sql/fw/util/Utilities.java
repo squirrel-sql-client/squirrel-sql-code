@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -510,13 +511,28 @@ public class Utilities
 
    public static Byte[] toBoxedByteArray(Object value)
    {
+      return toBoxedByteArray(value, -1);
+   }
+
+   /**
+    * @param maxBytes -1 means no maximum
+    */
+   public static Byte[] toBoxedByteArray(Object value, int maxBytes)
+   {
       if(null == value)
       {
          return null;
       }
       else if(value instanceof Byte[])
       {
-         return (Byte[]) value;
+         if(lengthExceedsMaximum(maxBytes, ((Byte[]) value).length))
+         {
+            return Arrays.copyOf((Byte[]) value, maxBytes);
+         }
+         else
+         {
+            return (Byte[]) value;
+         }
       }
       else
       {
@@ -535,13 +551,25 @@ public class Utilities
 
    public static byte[] toPrimitiveByteArray(Object value)
    {
+      return toPrimitiveByteArray(value, -1);
+   }
+
+   public static byte[] toPrimitiveByteArray(Object value, int maxBytes)
+   {
       if(null == value)
       {
          return null;
       }
       else if(value instanceof byte[])
       {
-         return (byte[]) value;
+         if(lengthExceedsMaximum(maxBytes, ((byte[])value).length))
+         {
+            return Arrays.copyOf((byte[])value, maxBytes);
+         }
+         else
+         {
+            return (byte[]) value;
+         }
       }
       else if(value instanceof Byte)
       {
@@ -552,19 +580,45 @@ public class Utilities
          Byte[] buf = (Byte[]) value;
          byte[] ret = new byte[buf.length];
 
-         for(int i = 0; i < buf.length; i++)
+         if(lengthExceedsMaximum(maxBytes, buf.length))
          {
-            ret[i] = buf[i];
+            for(int i = 0; i < maxBytes; i++)
+            {
+               ret[i] = buf[i];
+            }
+         }
+         else
+         {
+            for(int i = 0; i < buf.length; i++)
+            {
+               ret[i] = buf[i];
+            }
          }
          return ret;
       }
       else
       {
-         return ("" + value).getBytes();
+         String strVal = "" + value;
+         if(lengthExceedsMaximum(maxBytes, strVal.getBytes().length))
+         {
+            return Arrays.copyOf(strVal.getBytes(), maxBytes);
+         }
+         else
+         {
+            return strVal.getBytes();
+         }
       }
    }
 
    public static char[] toPrimitiveCharArray(Object value)
+   {
+      return toPrimitiveCharArray(value, -1);
+   }
+
+   /**
+    * @param maxChars -1 means no maximum
+    */
+   public static char[] toPrimitiveCharArray(Object value, int maxChars)
    {
       if(null == value)
       {
@@ -572,7 +626,14 @@ public class Utilities
       }
       else if(value instanceof char[])
       {
-         return (char[]) value;
+         if(lengthExceedsMaximum(maxChars, ((char[]) value).length))
+         {
+            return Arrays.copyOf((char[]) value, maxChars);
+         }
+         else
+         {
+            return (char[]) value;
+         }
       }
       else if(value instanceof Character)
       {
@@ -583,9 +644,19 @@ public class Utilities
          Character[] buf = (Character[]) value;
          char[] ret = new char[buf.length];
 
-         for(int i = 0; i < buf.length; i++)
+         if(lengthExceedsMaximum(maxChars, ((Character[])value).length))
          {
-            ret[i] = buf[i];
+            for(int i = 0; i < maxChars; i++)
+            {
+               ret[i] = buf[i];
+            }
+         }
+         else
+         {
+            for(int i = 0; i < buf.length; i++)
+            {
+               ret[i] = buf[i];
+            }
          }
          return ret;
       }
@@ -594,4 +665,15 @@ public class Utilities
          return ("" + value).toCharArray();
       }
    }
+
+   private static boolean lengthExceedsMaximum(int max, int length)
+   {
+      if(max < 0)
+      {
+         return false;
+      }
+
+      return length > max;
+   }
+
 }

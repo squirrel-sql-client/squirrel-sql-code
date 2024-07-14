@@ -273,7 +273,7 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 	  * and fill in the value.
 	  */
 	@Override
-	public JTextArea getJTextArea(Object value)
+	public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef)
 	{
 		_textComponent = new RestorableJTextArea();
 

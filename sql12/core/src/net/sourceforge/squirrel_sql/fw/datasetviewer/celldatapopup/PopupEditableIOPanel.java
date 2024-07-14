@@ -33,16 +33,42 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFindCtrl;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.DesktopUtil;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.sql.Types;
 
 /**
  * @author gwg
@@ -161,7 +187,16 @@ public class PopupEditableIOPanel extends JPanel
 
 
 		_textArea.setLineWrap(true);
-		_textArea.setWrapStyleWord(true);
+
+
+		if(   colDef.getSqlType() == Types.VARCHAR
+			|| colDef.getSqlType() == Types.CLOB
+			|| colDef.getSqlType() == Types.LONGNVARCHAR
+			|| colDef.getSqlType() == Types.NVARCHAR
+			|| colDef.getSqlType() == Types.SQLXML)
+		{
+			_textArea.setWrapStyleWord(true);
+		}
 
 		setLayout(new BorderLayout());
 

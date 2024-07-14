@@ -84,14 +84,14 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 
 
 	/**
-	 * Return a JTextArea usable in the CellPopupDialog. This will use the
-	 * renderer to render the value as text and set this as the text for the
-	 * JTextArea that is returned.
-	 * 
-	 * @param value
-	 *            the value to set as text in the JTextArea.
-	 */
-	public JTextArea getJTextArea(Object value) {
+    * Return a JTextArea usable in the CellPopupDialog. This will use the
+    * renderer to render the value as text and set this as the text for the
+    * JTextArea that is returned.
+    *
+    * @param value  the value to set as text in the JTextArea.
+    * @param colDef
+    */
+	public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
 		_textArea = new RestorableJTextArea();
 		_textArea.setText((String) DefaultColumnRenderer.renderObject(value));
 

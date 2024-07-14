@@ -132,7 +132,7 @@ public interface IDataTypeComponent {
      * or it may be different (e.g. a BLOB may have renderObject=>"<BLOB>" but
      * fill in the actual value in the Popup TextArea).
      */
-    JTextArea getJTextArea(Object value);
+    JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef);
 
     /**
      * Validate that the contents of a cell is in the right form for this data

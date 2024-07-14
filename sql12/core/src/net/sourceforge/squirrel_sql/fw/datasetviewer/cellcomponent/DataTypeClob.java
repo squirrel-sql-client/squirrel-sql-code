@@ -334,7 +334,7 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	 * Return a JTextArea usable in the CellPopupDialog
 	 * and fill in the value.
 	 */
-	 public JTextArea getJTextArea(Object value) {
+	 public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
 		_textComponent = new RestorableJTextArea();
 
 		// value is a simple string representation of the data,
