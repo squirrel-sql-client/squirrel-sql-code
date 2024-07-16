@@ -1,11 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
+import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
+
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -14,13 +15,12 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
-import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Inner class that extends OkJPanel so that we can call the ok()
@@ -216,17 +216,18 @@ class TimestampOkPanel extends OkJPanel
    {
       // get the values from the controls and set them in the static properties
       _dataTypeTimestampStatics.setUseJavaDefaultFormat(_radUseJavaDefaultFormat.isSelected());
-      DTProperties.put(DataTypeTimestamp.class.getName(), "useJavaDefaultFormat", Boolean.valueOf(_dataTypeTimestampStatics.isUseJavaDefaultFormat()).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeTimestamp.class.getName(), "useJavaDefaultFormat", Boolean.valueOf(_dataTypeTimestampStatics.isUseJavaDefaultFormat()).toString());
 
       _dataTypeTimestampStatics.setUseThreeDigitMillis(_useThreeDigitMillisChk.isSelected());
-      DTProperties.put(DataTypeTimestamp.class.getName(), "useThreeDigitMillis", Boolean.valueOf(_dataTypeTimestampStatics.isUseThreeDigitMillis()).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeTimestamp.class.getName(), "useThreeDigitMillis", Boolean.valueOf(_dataTypeTimestampStatics.isUseThreeDigitMillis()).toString());
 
 
       _dataTypeTimestampStatics.setLocaleFormat(_dateFormatTypeCbo.getValue());
-      DTProperties.put(DataTypeTimestamp.class.getName(), "localeFormat", Integer.toString(_dataTypeTimestampStatics.getLocaleFormat()));
+      String propertyValue1 = Integer.toString(_dataTypeTimestampStatics.getLocaleFormat());
+      DataTypeProps.putDataTypeProperty(DataTypeTimestamp.class.getName(), "localeFormat", propertyValue1);
 
       _dataTypeTimestampStatics.setLenient(_lenientChk.isSelected());
-      DTProperties.put(DataTypeTimestamp.class.getName(), "lenient", Boolean.valueOf(_dataTypeTimestampStatics.isLenient()).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeTimestamp.class.getName(), "lenient", Boolean.valueOf(_dataTypeTimestampStatics.isLenient()).toString());
 
       //WARNING: this depends on entries in ButtonGroup being in the same order
       // as the values for whereClauseUsage
@@ -243,10 +244,11 @@ class TimestampOkPanel extends OkJPanel
          buttonIndex = DataTypeTimestampStatics.USE_JDBC_ESCAPE_FORMAT;
       }
       _dataTypeTimestampStatics.setInternalWhereClauseUsage(buttonIndex);
-      DTProperties.put(DataTypeTimestamp.class.getName(), "whereClauseUsage", Integer.toString(_dataTypeTimestampStatics.getInternalWhereClauseUsage()));
+      String propertyValue = Integer.toString(_dataTypeTimestampStatics.getInternalWhereClauseUsage());
+      DataTypeProps.putDataTypeProperty(DataTypeTimestamp.class.getName(), "whereClauseUsage", propertyValue);
 
       _dataTypeTimestampStatics.setTimestampScriptFormat(_temporalScriptGenerationCtrl.getFormat());
-      DTProperties.put(DataTypeTimestamp.class.getName(), "timestampScriptFormat", _dataTypeTimestampStatics.getTimestampScriptFormat().name());
+      DataTypeProps.putDataTypeProperty(DataTypeTimestamp.class.getName(), "timestampScriptFormat", _dataTypeTimestampStatics.getTimestampScriptFormat().name());
 
       _dataTypeTimestampStatics.initDateFormat();
    }

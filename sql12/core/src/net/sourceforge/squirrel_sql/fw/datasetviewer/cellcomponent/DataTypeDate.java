@@ -182,7 +182,7 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
          propertiesAlreadyLoaded = true;
 			// get parameters previously set by user, or set default values
 			useJavaDefaultFormat =true;	// set to use the Java default
-			String useJavaDefaultFormatString = DTProperties.get(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT);
+			String useJavaDefaultFormatString = DataTypeProps.getProperty(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT);
 			if(useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
 			{
 				useJavaDefaultFormat = false;
@@ -190,7 +190,7 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 
 			// get which locale-dependent format to use
 			localeFormat =DateFormat.SHORT;	// set to use the Java default
-			String localeFormatString = DTProperties.get(thisClassName, PROP_LOCALE_FORMAT);
+			String localeFormatString = DataTypeProps.getProperty(thisClassName, PROP_LOCALE_FORMAT);
 			if(localeFormatString != null)
 			{
 				localeFormat = Integer.parseInt(localeFormatString);
@@ -198,7 +198,7 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 
 			// use lenient input or force user to enter exact format
 			lenient = true;	// set to allow less stringent input
-			String lenientString = DTProperties.get(thisClassName, PROP_LENIENT);
+			String lenientString = DataTypeProps.getProperty(thisClassName, PROP_LENIENT);
 			if(lenientString != null && lenientString.equals("false"))
 			{
 				lenient = false;
@@ -208,7 +208,7 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 			// always use false unless user specifies otherwise; this breaks
 			// date editing in Derby (possibly DB2 as well)
 			readDateAsTimestamp = false;
-			String readDateAsTimestampString = DTProperties.get(thisClassName, PROP_READ_DATE_AS_TIMESTAMP);
+			String readDateAsTimestampString = DataTypeProps.getProperty(thisClassName, PROP_READ_DATE_AS_TIMESTAMP);
 			if (readDateAsTimestampString != null && readDateAsTimestampString.equals("true"))
 			{
 				 readDateAsTimestamp = true;
@@ -227,7 +227,7 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 	public static TemporalScriptGenerationFormat getDateScriptFormat()
 	{
 		TemporalScriptGenerationFormat ret = TemporalScriptGenerationFormat.STD_JDBC_FORMAT;
-		final String formatName = DTProperties.get(thisClassName, PROP_DATE_SCRIPT_FORMAT);
+		final String formatName = DataTypeProps.getProperty(thisClassName, PROP_DATE_SCRIPT_FORMAT);
 		if(false == StringUtilities.isEmpty(formatName, true))
 		{
 			final TemporalScriptGenerationFormat timestampScriptFormat = TemporalScriptGenerationFormat.valueOf(formatName);
@@ -762,7 +762,7 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 	  * such as keeping a list (also entered by the user) of table/column names
 	  * for which certain properties should be used.
 	  * <P>
-	  * This is called ONLY if there is at least one property entered into the DTProperties
+	  * This is called ONLY if there is at least one property entered into the DataTypeProperties
 	  * for this class.
 	  * <P>
 	  * Since this method is called by reflection on the Method object derived from this class,
@@ -785,7 +785,7 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 				 */
 
 		 // if this panel is called before any instances of the class have been
-		 // created, we need to load the properties from the DTProperties.
+		 // created, we need to load the properties from the DataTypeProperties.
 		 loadProperties();
 
 		return new DateOkJPanel();
@@ -950,21 +950,21 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 		 {
 			 // get the values from the controls and set them in the static properties
 			 useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
-			 DTProperties.put(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT, Boolean.valueOf(useJavaDefaultFormat).toString());
+			 DataTypeProps.putDataTypeProperty(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT, Boolean.valueOf(useJavaDefaultFormat).toString());
 
 			 localeFormat = dateFormatTypeDrop.getValue();
 			 dateFormat = new ThreadSafeDateFormat(localeFormat);   // lenient is set next
-			 DTProperties.put(thisClassName, PROP_LOCALE_FORMAT, Integer.toString(localeFormat));
+			 DataTypeProps.putDataTypeProperty(thisClassName, PROP_LOCALE_FORMAT, Integer.toString(localeFormat));
 
 			 lenient = lenientChk.isSelected();
 			 dateFormat.setLenient(lenient);
-			 DTProperties.put(thisClassName, PROP_LENIENT, Boolean.valueOf(lenient).toString());
+			 DataTypeProps.putDataTypeProperty(thisClassName, PROP_LENIENT, Boolean.valueOf(lenient).toString());
 
 			 readDateAsTimestamp = readdDateAsTimestampChk.isSelected();
-			 DTProperties.put(thisClassName, PROP_READ_DATE_AS_TIMESTAMP, Boolean.valueOf(readDateAsTimestamp).toString());
+			 DataTypeProps.putDataTypeProperty(thisClassName, PROP_READ_DATE_AS_TIMESTAMP, Boolean.valueOf(readDateAsTimestamp).toString());
 
 			 dateScriptFormat = _temporalScriptGenerationCtrl.getFormat();
-			 DTProperties.put(thisClassName, PROP_DATE_SCRIPT_FORMAT, dateScriptFormat.name());
+			 DataTypeProps.putDataTypeProperty(thisClassName, PROP_DATE_SCRIPT_FORMAT, dateScriptFormat.name());
 
 			 initDateFormat(localeFormat, lenient);
 		 }

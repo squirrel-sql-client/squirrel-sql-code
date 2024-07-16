@@ -62,8 +62,8 @@ import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeComponentFactoryRegistry;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypePropertiesManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
@@ -234,6 +234,8 @@ public class Application implements IApplication
 
 	private DataTypeComponentFactoryRegistry _dataTypeComponentFactoryRegistry = new DataTypeComponentFactoryRegistry();
 
+	private DataTypePropertiesManager _dataTypePropertiesManager = new DataTypePropertiesManager();
+
 	public Application()
 	{
 	}
@@ -384,7 +386,7 @@ public class Application implements IApplication
       s_log.info("saveApplicationState: saveEditWhereColsInfo() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save options selected for DataType-specific properties
-      saveDataTypePreferences();
+      _dataTypePropertiesManager.saveDataTypeProperties();
       s_log.info("saveApplicationState: saveDataTypePreferences() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save user specific WIKI configurations
@@ -444,7 +446,7 @@ public class Application implements IApplication
 					saveDrivers();
 					break;
 				case DATATYPE_PREFERENCES:
-					saveDataTypePreferences();
+					_dataTypePropertiesManager.saveDataTypeProperties();
 					_globalPreferences.setFirstRun(false);
 					_globalPreferences.save();
 					break;
@@ -1002,7 +1004,7 @@ public class Application implements IApplication
 
 		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 15
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loaddatatypeprops"));
-		loadDTProperties();
+		_dataTypePropertiesManager.loadDataTypeProperties();
 
 		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 16
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadUserSpecificWikiConfiguration"));
@@ -1324,64 +1326,10 @@ public class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			// i18n[Application.error.savecolsinfo=Unable to write Edit Where Cols options to persistant
-			// storage.]
 			s_log.error(s_stringMgr.getString("Application.error.savecolsinfo"), ex);
 		}
 	}
 
-	/**
-	 * Load the options previously selected by user for specific cols to use in WHERE clause when editing
-	 * cells.
-	 */
-	@SuppressWarnings("all")
-	private void loadDTProperties()
-	{
-		DTProperties saverInstance = null;
-		try
-		{
-			XMLBeanReader doc = new XMLBeanReader();
-			doc.load(new ApplicationFiles().getDTPropertiesFile());
-			Iterator<Object> it = doc.iterator();
-			if (it.hasNext())
-			{
-				saverInstance = (DTProperties) it.next();
-				DTProperties x = saverInstance;
-			}
-		}
-		catch (FileNotFoundException ignore)
-		{
-			// Cell Import/Export file not found for user - first time user ran pgm.
-		}
-		catch (Exception ex)
-		{
-			// i18n[Application.error.loaddatatypeprops=Unable to load DataType Properties selections from
-			// persistant storage.]
-			s_log.error(s_stringMgr.getString("Application.error.loaddatatypeprops"), ex);
-		}
-		finally
-		{
-			// nothing needed here??
-		}
-	}
-
-	/**
-	 * Save the options selected by user for Cell Import Export.
-	 */
-	private void saveDataTypePreferences()
-	{
-		try
-		{
-			XMLBeanWriter wtr = new XMLBeanWriter(new DTProperties());
-			wtr.save(new ApplicationFiles().getDTPropertiesFile());
-		}
-		catch (Exception ex)
-		{
-			// i18n[Application.error.savedatatypeprops=Unable to write DataType properties to persistant
-			// storage.]
-			s_log.error(s_stringMgr.getString("Application.error.savedatatypeprops"), ex);
-		}
-	}
 
 	public void addApplicationListener(ApplicationListener l)
 	{
@@ -1596,4 +1544,9 @@ public class Application implements IApplication
    {
       return _sqlScriptPreferencesManager;
    }
+
+	public DataTypePropertiesManager getDataTypePropertiesManager()
+	{
+		return _dataTypePropertiesManager;
+	}
 }

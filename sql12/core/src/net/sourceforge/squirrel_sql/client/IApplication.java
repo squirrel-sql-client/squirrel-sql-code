@@ -46,6 +46,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.Past
 import net.sourceforge.squirrel_sql.client.session.menuattic.PopupMenuAtticModel;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeComponentFactoryRegistry;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypePropertiesManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
@@ -309,5 +310,7 @@ public interface IApplication
 	ObjectTreeSelectionStoreManager getObjectTreeSelectionStoreManager();
 
 	DataTypeComponentFactoryRegistry getDataTypeComponentFactoryRegistry();
+
+	DataTypePropertiesManager getDataTypePropertiesManager();
 
 }

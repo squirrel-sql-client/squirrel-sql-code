@@ -137,14 +137,14 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
       // this DataType created to handle a different column.
       // get parameters previously set by user, or set default values
       _dataTypeTimestampStatics.setUseJavaDefaultFormat(true);   // set to use the Java default
-      String useJavaDefaultFormatString = DTProperties.get(DataTypeTimestamp.class.getName(), "useJavaDefaultFormat");
+      String useJavaDefaultFormatString = DataTypeProps.getProperty(DataTypeTimestamp.class.getName(), "useJavaDefaultFormat");
       if (useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
       {
          _dataTypeTimestampStatics.setUseJavaDefaultFormat(false);
       }
 
       _dataTypeTimestampStatics.setUseThreeDigitMillis(false);   // set to use the Java default
-      String useThreeDigitMillisString = DTProperties.get(DataTypeTimestamp.class.getName(), "useThreeDigitMillis");
+      String useThreeDigitMillisString = DataTypeProps.getProperty(DataTypeTimestamp.class.getName(), "useThreeDigitMillis");
       if (useThreeDigitMillisString != null && useThreeDigitMillisString.equals("true"))
       {
          _dataTypeTimestampStatics.setUseThreeDigitMillis(true);
@@ -152,7 +152,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
 
       // get which locale-dependent format to use
       _dataTypeTimestampStatics.setLocaleFormat(DateFormat.SHORT);   // set to use the Java default
-      String localeFormatString = DTProperties.get(DataTypeTimestamp.class.getName(), "localeFormat");
+      String localeFormatString = DataTypeProps.getProperty(DataTypeTimestamp.class.getName(), "localeFormat");
       if (localeFormatString != null)
       {
          _dataTypeTimestampStatics.setLocaleFormat(Integer.parseInt(localeFormatString));
@@ -160,7 +160,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
 
       // use lenient input or force user to enter exact format
       _dataTypeTimestampStatics.setLenient(true);   // set to allow less stringent input
-      String lenientString = DTProperties.get(DataTypeTimestamp.class.getName(), "lenient");
+      String lenientString = DataTypeProps.getProperty(DataTypeTimestamp.class.getName(), "lenient");
       if (lenientString != null && lenientString.equals("false"))
       {
          _dataTypeTimestampStatics.setLenient(false);
@@ -168,7 +168,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
 
       // how to use Timestamp in WHERE clauses
       _dataTypeTimestampStatics.setInternalWhereClauseUsage(DataTypeTimestampStatics.USE_JDBC_ESCAPE_FORMAT);   // default to SQL standard
-      String whereClauseUsageString = DTProperties.get(DataTypeTimestamp.class.getName(), "whereClauseUsage");
+      String whereClauseUsageString = DataTypeProps.getProperty(DataTypeTimestamp.class.getName(), "whereClauseUsage");
       if (whereClauseUsageString != null)
       {
          _dataTypeTimestampStatics.setInternalWhereClauseUsage(Integer.parseInt(whereClauseUsageString));
@@ -183,7 +183,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
    public static TemporalScriptGenerationFormat getTimeStampScriptFormat()
    {
       TemporalScriptGenerationFormat ret = TemporalScriptGenerationFormat.STD_JDBC_FORMAT;
-      final String formatName = DTProperties.get(DataTypeTimestamp.class.getName(), "timestampScriptFormat");
+      final String formatName = DataTypeProps.getProperty(DataTypeTimestamp.class.getName(), "timestampScriptFormat");
       if(false == StringUtilities.isEmpty(formatName, true))
       {
          final TemporalScriptGenerationFormat timestampScriptFormat = TemporalScriptGenerationFormat.valueOf(formatName);

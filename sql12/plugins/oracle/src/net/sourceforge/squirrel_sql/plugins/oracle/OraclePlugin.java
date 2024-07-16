@@ -41,7 +41,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeProps;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestampStatics;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -565,7 +565,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 	{
 
 		String tsClassName = DataTypeTimestamp.class.getName();
-		String timeStampWhereClauseUsage = DTProperties.get(tsClassName, DataTypeTimestamp.WHERE_CLAUSE_USAGE_KEY);
+		String timeStampWhereClauseUsage = DataTypeProps.getProperty(tsClassName, DataTypeTimestamp.WHERE_CLAUSE_USAGE_KEY);
 
 		if (timeStampWhereClauseUsage != null)
 		{

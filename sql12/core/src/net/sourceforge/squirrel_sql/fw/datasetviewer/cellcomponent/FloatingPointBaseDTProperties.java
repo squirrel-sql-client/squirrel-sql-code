@@ -94,7 +94,7 @@ public class FloatingPointBaseDTProperties
 
    private static Integer toInteger(String key, int defaultValue)
    {
-      String value = DTProperties.get(DataTypeBigDecimal.class.getName(), key);
+      String value = DataTypeProps.getProperty(DataTypeBigDecimal.class.getName(), key);
 
       if(null == value)
       {
@@ -107,7 +107,7 @@ public class FloatingPointBaseDTProperties
    private static boolean toBoolean(String key, boolean defaultValue)
    {
 
-      String value = DTProperties.get(DataTypeBigDecimal.class.getName(), key);
+      String value = DataTypeProps.getProperty(DataTypeBigDecimal.class.getName(), key);
 
       if (null == value)
       {
@@ -120,7 +120,7 @@ public class FloatingPointBaseDTProperties
 
    private static String _toString(String key, String defaultValue)
    {
-      String value = DTProperties.get(DataTypeBigDecimal.class.getName(), key);
+      String value = DataTypeProps.getProperty(DataTypeBigDecimal.class.getName(), key);
 
       if (StringUtilities.isEmpty(value, true))
       {
@@ -133,27 +133,21 @@ public class FloatingPointBaseDTProperties
 
    public static void setUseJavaDefaultFormat(boolean useJavaDefaultFormat)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(),
-            KEY_USE_JAVA_DEFAULT_FORMAT,
-            Boolean.valueOf(useJavaDefaultFormat).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_USE_JAVA_DEFAULT_FORMAT, Boolean.valueOf(useJavaDefaultFormat).toString());
 
       _useJavaDefaultFormat = useJavaDefaultFormat;
    }
 
    public static void setUseLocaleFormat(boolean useLocaleFormat)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(),
-            KEY_USE_LOCALE_FORMAT,
-            Boolean.valueOf(useLocaleFormat).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_USE_LOCALE_FORMAT, Boolean.valueOf(useLocaleFormat).toString());
 
       _useLocaleFormat = useLocaleFormat;
    }
 
    public static void setUseUserDefinedFormat(boolean useUserDefinedFormat)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(),
-            KEY_USE_USER_DEFINED_FORMAT,
-            Boolean.valueOf(useUserDefinedFormat).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_USE_USER_DEFINED_FORMAT, Boolean.valueOf(useUserDefinedFormat).toString());
 
       _useUserDefinedFormat = useUserDefinedFormat;
    }
@@ -162,18 +156,14 @@ public class FloatingPointBaseDTProperties
 
    public static void setMinimumFractionDigits(int minimumFractionDigits)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(),
-            KEY_MINIMUM_FRACTION_DIGITS,
-            Integer.valueOf(minimumFractionDigits).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_MINIMUM_FRACTION_DIGITS, Integer.valueOf(minimumFractionDigits).toString());
 
       _minimumFractionDigits = minimumFractionDigits;
    }
 
    public static void setMaximumFractionDigits(int maximumFractionDigits)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(),
-            KEY_MAXIMUM_FRACTION_DIGITS,
-            Integer.valueOf(maximumFractionDigits).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_MAXIMUM_FRACTION_DIGITS, Integer.valueOf(maximumFractionDigits).toString());
 
       _maximumFractionDigits = maximumFractionDigits;
    }
@@ -181,9 +171,7 @@ public class FloatingPointBaseDTProperties
 
    public static void setUserDefinedMinimumFractionDigits(int userDefinedminimumFractionDigits)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(),
-            KEY_USER_DEFINDED_MINIMUM_FRACTION_DIGITS,
-            Integer.valueOf(userDefinedminimumFractionDigits).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_USER_DEFINDED_MINIMUM_FRACTION_DIGITS, Integer.valueOf(userDefinedminimumFractionDigits).toString());
 
       _userDefinedMinimumFractionDigits = userDefinedminimumFractionDigits;
 
@@ -191,9 +179,7 @@ public class FloatingPointBaseDTProperties
 
    public static void setUserDefinedMaximumFractionDigits(int userDefinedMaximumFractionDigits)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(),
-            KEY_USER_DEFINDED_MAXIMUM_FRACTION_DIGITS,
-            Integer.valueOf(userDefinedMaximumFractionDigits).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_USER_DEFINDED_MAXIMUM_FRACTION_DIGITS, Integer.valueOf(userDefinedMaximumFractionDigits).toString());
 
       _userDefinedMaximumFractionDigits = userDefinedMaximumFractionDigits;
    }
@@ -202,13 +188,13 @@ public class FloatingPointBaseDTProperties
 
    public static void setUserDefinedDecimalSeparator(String userDefinedDecimalSeparator)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(), KEY_USER_DEFINED_DECIMAL_SEPARATOR, userDefinedDecimalSeparator);
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_USER_DEFINED_DECIMAL_SEPARATOR, userDefinedDecimalSeparator);
       _userDefinedDecimalSeparator = userDefinedDecimalSeparator;
    }
 
    public static void setUserDefinedGroupingSeparator(String userDefinedGroupingSeparator)
    {
-      DTProperties.put(DataTypeBigDecimal.class.getName(), KEY_USER_DEFINED_GROUPING_SEPARATOR, userDefinedGroupingSeparator);
+      DataTypeProps.putDataTypeProperty(DataTypeBigDecimal.class.getName(), KEY_USER_DEFINED_GROUPING_SEPARATOR, userDefinedGroupingSeparator);
       _userDefinedGroupingSeparator = userDefinedGroupingSeparator;
    }
 

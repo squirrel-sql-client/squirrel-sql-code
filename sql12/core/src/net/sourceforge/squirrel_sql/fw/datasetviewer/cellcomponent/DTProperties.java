@@ -58,6 +58,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * This class is used for XML Serialization. Do not rename.
+ */
 public class DTProperties
 {
 
@@ -79,10 +82,11 @@ public class DTProperties
     * containing the properties for that DataType.
     * There is only one copy of this table for all instances of this class.
     */
-   private static HashMap<String, HashMap<String, String>> dataTypes = new HashMap<>();
+   private HashMap<String, HashMap<String, String>> dataTypes = new HashMap<>();
 
 
    /**
+    * Used by XML serialization.
     * get data in form that can be used to output to file.
     * This is called from an instance of this class.
     */
@@ -117,6 +121,7 @@ public class DTProperties
    }
 
    /**
+    * Used by XML serialization.
     * Data in the external form (array of strings) is passed in and must be converted
     * to the internal form.
     * This is called on an instance of this class.
@@ -124,7 +129,7 @@ public class DTProperties
     */
    public void setDataArray(String[] inData)
    {
-      dataTypes = new HashMap<String, HashMap<String, String>>();   // make sure we are starting clean
+      dataTypes = new HashMap<>();   // make sure we are starting clean
 
       // convert each string into Classname, prop, & value and fill it into the data
       for (int i = 0; i < inData.length; i++)
@@ -143,7 +148,7 @@ public class DTProperties
          HashMap<String, String> h = dataTypes.get(dataTypeName);
          if(h == null)
          {
-            h = new HashMap<String, String>();
+            h = new HashMap<>();
             dataTypes.put(dataTypeName, h);
          }
 
@@ -152,65 +157,11 @@ public class DTProperties
       }
    }
 
-   public static void put(Class dataTypeClass, String propertyName, String propertyValue)
-   {
-      put(dataTypeClass.getName(), propertyName, propertyValue);
-   }
-
    /**
-    * add or replace a table-name/hashmap-of-column-names mapping.
-    * If map is null, remove the entry from the tables.
+    * Named fetch ... to prevent XML serialization accessing it.
     */
-   public static void put(String dataTypeName, String propertyName, String propertyValue)
+   HashMap<String, HashMap<String, String>> fetchDataTypes()
    {
-
-      // get the hashmap for this type, or create it if this is a new property
-      HashMap<String, String> h = dataTypes.get(dataTypeName);
-      if(h == null)
-      {
-         h = new HashMap<String, String>();
-         dataTypes.put(dataTypeName, h);
-      }
-      h.put(propertyName, propertyValue);
+      return dataTypes;
    }
-
-   /**
-    * get the HashMap of column names for the given table name.
-    * it will be null if the table does not have any limitation on the columns to use.
-    */
-   public static String get(String dataTypeName, String propertyName)
-   {
-      HashMap<String, String> h = dataTypes.get(dataTypeName);
-		if(h == null)
-		{
-			return null;
-		}
-      return h.get(propertyName);
-   }
-
-   public static Boolean getBoolean(Class dataTypeClass, String propertyName, Boolean defaultValueWhenNull)
-   {
-      String val = get(dataTypeClass.getName(), propertyName);
-
-      if(null == val)
-      {
-         return defaultValueWhenNull;
-      }
-
-      return "true".equals(val);
-   }
-
-   public static Integer getInteger(Class dataTypeClass, String propertyName, Integer defaultValueWhenNull)
-   {
-      String val = get(dataTypeClass.getName(), propertyName);
-
-      if(null == val)
-      {
-         return defaultValueWhenNull;
-      }
-
-      return Integer.parseInt(val);
-   }
-
-
 }

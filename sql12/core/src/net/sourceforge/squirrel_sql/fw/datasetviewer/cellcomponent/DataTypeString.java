@@ -159,27 +159,27 @@ public class DataTypeString extends BaseDataTypeComponent
 		if (propertiesAlreadyLoaded == false) {
 			// get parameters previously set by user, or set default values
 			_makeNewlinesVisibleInCell = true;	// set to the default
-			String makeNewlinesVisibleString = DTProperties.get(DataTypeString.class.getName(), "makeNewlinesVisibleInCell");
+			String makeNewlinesVisibleString = DataTypeProps.getProperty(DataTypeString.class.getName(), "makeNewlinesVisibleInCell");
 			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
 				_makeNewlinesVisibleInCell = false;
 
 			_useLongInWhere = true;	// set to the default
-			String useLongInWhereString = DTProperties.get(DataTypeString.class.getName(), "useLongInWhere");
+			String useLongInWhereString = DataTypeProps.getProperty(DataTypeString.class.getName(), "useLongInWhere");
 			if (useLongInWhereString != null && useLongInWhereString.equals("false"))
 				_useLongInWhere = false;
 
 			LimitReadLengthFeatureUnstable._limitRead = false;	// set to default
-			String limitReadString = DTProperties.get(DataTypeString.class.getName(), "limitRead");
+			String limitReadString = DataTypeProps.getProperty(DataTypeString.class.getName(), "limitRead");
 			if (limitReadString != null && limitReadString.equals("true"))
 				LimitReadLengthFeatureUnstable._limitRead = true;
 
 			LimitReadLengthFeatureUnstable._limitReadLength = LimitReadLengthFeatureUnstable.DEFAULT_LIMIT_READ_LENGTH;	// set to default
-			String limitReadLengthString = DTProperties.get(DataTypeString.class.getName(), "limitReadLength");
+			String limitReadLengthString = DataTypeProps.getProperty(DataTypeString.class.getName(), "limitReadLength");
 			if (limitReadLengthString != null)
 				LimitReadLengthFeatureUnstable._limitReadLength = Integer.parseInt(limitReadLengthString);
 
 			LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = false;	// set to default
-			String limitReadOnSpecificColumnsString = DTProperties.get(DataTypeString.class.getName(), "limitReadOnSpecificColumns");
+			String limitReadOnSpecificColumnsString = DataTypeProps.getProperty(DataTypeString.class.getName(), "limitReadOnSpecificColumns");
 			if (limitReadOnSpecificColumnsString != null && limitReadOnSpecificColumnsString.equals("true"))
 				LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = true;
 
@@ -187,7 +187,7 @@ public class DataTypeString extends BaseDataTypeComponent
 			// with a comma in front of the first entry as well
 			LimitReadLengthFeatureUnstable._limitReadColumnNameMap.clear();	// empty the map of old values
 
-			String nameString = DTProperties.get(DataTypeString.class.getName(), "limitReadColumnNames");
+			String nameString = DataTypeProps.getProperty(DataTypeString.class.getName(), "limitReadColumnNames");
 			int start = 0;
 			int end;
 			String name;
@@ -984,24 +984,19 @@ public class DataTypeString extends BaseDataTypeComponent
 		public void ok() {
 			// get the values from the controls and set them in the static properties
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
-			DTProperties.put(DataTypeString.class.getName(),
-								  "makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
+			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
 
 			_useLongInWhere = _useLongInWhereChk.isSelected();
-			DTProperties.put(DataTypeString.class.getName(),
-								  "useLongInWhere", Boolean.valueOf(_useLongInWhere).toString());
+			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "useLongInWhere", Boolean.valueOf(_useLongInWhere).toString());
 
 			LimitReadLengthFeatureUnstable._limitRead = _limitReadChk.isSelected();
-			DTProperties.put(DataTypeString.class.getName(),
-								  "limitRead", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitRead).toString());
+			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "limitRead", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitRead).toString());
 
 			LimitReadLengthFeatureUnstable._limitReadLength = _limitReadLengthTextField.getInt();
-			DTProperties.put(DataTypeString.class.getName(),
-								  "limitReadLength", Integer.toString(LimitReadLengthFeatureUnstable._limitReadLength));
+			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "limitReadLength", Integer.toString(LimitReadLengthFeatureUnstable._limitReadLength));
 
 			LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = _limitReadOnSpecificColumnsChk.isSelected();
-			DTProperties.put(DataTypeString.class.getName(),
-								  "limitReadOnSpecificColumns", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns).toString());
+			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "limitReadOnSpecificColumns", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns).toString());
 
 			// Handle list of column names
 
@@ -1038,8 +1033,7 @@ public class DataTypeString extends BaseDataTypeComponent
 				propertyString += "," + name.trim().toUpperCase();
 			}	// end while
 
-			DTProperties.put(DataTypeString.class.getName(),
-								  "limitReadColumnNames", propertyString);
+			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "limitReadColumnNames", propertyString);
 
 		}	// end ok
 

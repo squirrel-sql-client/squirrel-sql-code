@@ -139,8 +139,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 		if (propertiesAlreadyLoaded == false) {
 			// get parameters previously set by user, or set default values
 			_readUnknown = false;	// set to the default
-			String readUnknownString = DTProperties.get(
-				thisClassName, "readUnknown");
+			String readUnknownString = DataTypeProps.getProperty(thisClassName, "readUnknown");
 			if (readUnknownString != null && readUnknownString.equals("true"))
 				_readUnknown = true;
 
@@ -549,9 +548,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 		public void ok() {
 			// get the values from the controls and set them in the static properties
 			_readUnknown = _showUnknownChk.isSelected();
-			DTProperties.put(
-				thisClassName,
-				"readUnknown", Boolean.valueOf(_readUnknown).toString());
+			DataTypeProps.putDataTypeProperty(thisClassName, "readUnknown", Boolean.valueOf(_readUnknown).toString());
 		}
 	 
 	 } // end of inner class

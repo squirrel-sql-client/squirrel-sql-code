@@ -35,15 +35,15 @@ public class DataTypeBlobProperties
    {
       if(_propertiesAlreadyLoaded == false)
       {
-         _readBlobsOnTableLoading = DTProperties.getBoolean(DataTypeBlob.class, "readBlobs", false);
-         _readCompleteBlobs = DTProperties.getBoolean(DataTypeBlob.class, "readCompleteBlobs", false);
-         _readBlobsSize = DTProperties.getInteger(DataTypeBlob.class, "readBlobsSize", LARGE_COLUMN_DEFAULT_READ_LENGTH);
+         _readBlobsOnTableLoading = DataTypeProps.getBooleanProperty(DataTypeBlob.class, "readBlobs", false);
+         _readCompleteBlobs = DataTypeProps.getBooleanProperty(DataTypeBlob.class, "readCompleteBlobs", false);
+         _readBlobsSize = DataTypeProps.getIntegerProperty(DataTypeBlob.class, "readBlobsSize", LARGE_COLUMN_DEFAULT_READ_LENGTH);
 
-         _readBlobsOnCellFocused = DTProperties.getBoolean(DataTypeBlob.class, "readBlobsOnCellFocused", false);
+         _readBlobsOnCellFocused = DataTypeProps.getBooleanProperty(DataTypeBlob.class, "readBlobsOnCellFocused", false);
 
-         _readBlobsOnCellVisible = DTProperties.getBoolean(DataTypeBlob.class, "readBlobsOnCellVisible", false);
+         _readBlobsOnCellVisible = DataTypeProps.getBooleanProperty(DataTypeBlob.class, "readBlobsOnCellVisible", false);
 
-         _readBlobsNever = DTProperties.getBoolean(DataTypeBlob.class, "readBlobsNever", true);
+         _readBlobsNever = DataTypeProps.getBooleanProperty(DataTypeBlob.class, "readBlobsNever", true);
 
          _propertiesAlreadyLoaded = true;
       }
@@ -51,15 +51,15 @@ public class DataTypeBlobProperties
 
    public void saveProperties()
    {
-      DTProperties.put(DataTypeBlob.class, "readBlobs", Boolean.valueOf(_readBlobsOnTableLoading).toString());
-      DTProperties.put(DataTypeBlob.class, "readCompleteBlobs", Boolean.valueOf(_readCompleteBlobs).toString());
-      DTProperties.put(DataTypeBlob.class, "readBlobsSize", Integer.toString(_readBlobsSize));
+      DataTypeProps.putDataTypeProperty(DataTypeBlob.class, "readBlobs", Boolean.valueOf(_readBlobsOnTableLoading).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBlob.class, "readCompleteBlobs", Boolean.valueOf(_readCompleteBlobs).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBlob.class, "readBlobsSize", Integer.toString(_readBlobsSize));
 
-      DTProperties.put(DataTypeBlob.class, "readBlobsOnCellFocused", Boolean.valueOf(_readBlobsOnCellFocused).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBlob.class, "readBlobsOnCellFocused", Boolean.valueOf(_readBlobsOnCellFocused).toString());
 
-      DTProperties.put(DataTypeBlob.class, "readBlobsOnCellVisible", Boolean.valueOf(_readBlobsOnCellVisible).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBlob.class, "readBlobsOnCellVisible", Boolean.valueOf(_readBlobsOnCellVisible).toString());
 
-      DTProperties.put(DataTypeBlob.class, "readBlobsNever", Boolean.valueOf(_readBlobsNever).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeBlob.class, "readBlobsNever", Boolean.valueOf(_readBlobsNever).toString());
    }
 
 

@@ -137,19 +137,18 @@ public class DataTypeClobProperties
 
       if (_propertiesAlreadyLoaded == false)
       {
-         _readClobsOnTableLoading = DTProperties.getBoolean(DataTypeClob.class, "readClobs", false);
-         _readCompleteClobs = DTProperties.getBoolean(DataTypeClob.class, "readCompleteClobs", false);
-         _readClobsSize= DTProperties.getInteger(DataTypeClob.class, "readClobsSize", LARGE_COLUMN_DEFAULT_READ_LENGTH);
+         _readClobsOnTableLoading = DataTypeProps.getBooleanProperty(DataTypeClob.class, "readClobs", false);
+         _readCompleteClobs = DataTypeProps.getBooleanProperty(DataTypeClob.class, "readCompleteClobs", false);
+         _readClobsSize= DataTypeProps.getIntegerProperty(DataTypeClob.class, "readClobsSize", LARGE_COLUMN_DEFAULT_READ_LENGTH);
 
-         _readClobsOnCellFocused = DTProperties.getBoolean(DataTypeClob.class, "readClobsOnCellFocused", false);
+         _readClobsOnCellFocused = DataTypeProps.getBooleanProperty(DataTypeClob.class, "readClobsOnCellFocused", false);
 
-         _readClobsOnCellVisible = DTProperties.getBoolean(DataTypeClob.class, "readClobsOnCellVisible", false);
+         _readClobsOnCellVisible = DataTypeProps.getBooleanProperty(DataTypeClob.class, "readClobsOnCellVisible", false);
 
-         _readClobsNever = DTProperties.getBoolean(DataTypeClob.class, "readClobsNever", true);
+         _readClobsNever = DataTypeProps.getBooleanProperty(DataTypeClob.class, "readClobsNever", true);
 
 
-
-         _makeNewlinesVisibleInCell= DTProperties.getBoolean(DataTypeClob.class, "makeNewlinesVisibleInCell", true);
+         _makeNewlinesVisibleInCell= DataTypeProps.getBooleanProperty(DataTypeClob.class, "makeNewlinesVisibleInCell", true);
 
          _propertiesAlreadyLoaded = true;
       }
@@ -157,17 +156,17 @@ public class DataTypeClobProperties
 
    public void saveProperties()
    {
-      DTProperties.put(DataTypeClob.class,"readClobs", Boolean.valueOf(_readClobsOnTableLoading).toString());
-      DTProperties.put(DataTypeClob.class,"readCompleteClobs", Boolean.valueOf(_readCompleteClobs).toString());
-      DTProperties.put(DataTypeClob.class,"readClobsSize", Integer.toString(_readClobsSize));
+      DataTypeProps.putDataTypeProperty(DataTypeClob.class, "readClobs", Boolean.valueOf(_readClobsOnTableLoading).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeClob.class, "readCompleteClobs", Boolean.valueOf(_readCompleteClobs).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeClob.class, "readClobsSize", Integer.toString(_readClobsSize));
 
-      DTProperties.put(DataTypeClob.class, "readClobsOnCellFocused", Boolean.valueOf(_readClobsOnCellFocused).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeClob.class, "readClobsOnCellFocused", Boolean.valueOf(_readClobsOnCellFocused).toString());
 
-      DTProperties.put(DataTypeClob.class, "readClobsOnCellVisible", Boolean.valueOf(_readClobsOnCellVisible).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeClob.class, "readClobsOnCellVisible", Boolean.valueOf(_readClobsOnCellVisible).toString());
 
-      DTProperties.put(DataTypeClob.class, "readClobsNever", Boolean.valueOf(_readClobsNever).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeClob.class, "readClobsNever", Boolean.valueOf(_readClobsNever).toString());
 
 
-      DTProperties.put(DataTypeClob.class,"makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
+      DataTypeProps.putDataTypeProperty(DataTypeClob.class, "makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
    }
 }

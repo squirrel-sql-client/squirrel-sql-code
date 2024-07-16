@@ -179,7 +179,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
       {
          // get parameters previously set by user, or set default values
          useJavaDefaultFormat = true;   // set to use the Java default
-         String useJavaDefaultFormatString = DTProperties.get(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT);
+         String useJavaDefaultFormatString = DataTypeProps.getProperty(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT);
          if(useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
          {
             useJavaDefaultFormat = false;
@@ -187,7 +187,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
 
          // get which locale-dependent format to use
          localeFormat = DateFormat.SHORT;   // set to use the Java default
-         String localeFormatString = DTProperties.get(thisClassName, PROP_LOCALE_FORMAT);
+         String localeFormatString = DataTypeProps.getProperty(thisClassName, PROP_LOCALE_FORMAT);
          if(localeFormatString != null)
          {
             localeFormat = Integer.parseInt(localeFormatString);
@@ -195,7 +195,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
 
          // use lenient input or force user to enter exact format
          lenient = true;   // set to allow less stringent input
-         String lenientString = DTProperties.get(thisClassName, PROP_LENIENT);
+         String lenientString = DataTypeProps.getProperty(thisClassName, PROP_LENIENT);
          if(lenientString != null && lenientString.equals("false"))
          {
             lenient = false;
@@ -224,7 +224,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
    public static TemporalScriptGenerationFormat getTimeScriptFormat()
    {
       TemporalScriptGenerationFormat ret = TemporalScriptGenerationFormat.STD_JDBC_FORMAT;
-      final String formatName = DTProperties.get(thisClassName, PROP_TIME_SCRIPT_FORMAT);
+      final String formatName = DataTypeProps.getProperty(thisClassName, PROP_TIME_SCRIPT_FORMAT);
       if(false == StringUtilities.isEmpty(formatName, true))
       {
          final TemporalScriptGenerationFormat timestampScriptFormat = TemporalScriptGenerationFormat.valueOf(formatName);
@@ -890,19 +890,19 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
        {
           // get the values from the controls and set them in the static properties
           useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
-          DTProperties.put(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT, Boolean.valueOf(useJavaDefaultFormat).toString());
+          DataTypeProps.putDataTypeProperty(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT, Boolean.valueOf(useJavaDefaultFormat).toString());
 
 
           localeFormat = timeFormatTypeDrop.getValue();
           dateFormat = new ThreadSafeDateFormat(localeFormat, true);   // lenient is set next
-          DTProperties.put(thisClassName, PROP_LOCALE_FORMAT, Integer.toString(localeFormat));
+          DataTypeProps.putDataTypeProperty(thisClassName, PROP_LOCALE_FORMAT, Integer.toString(localeFormat));
 
           lenient = lenientChk.isSelected();
           dateFormat.setLenient(lenient);
-          DTProperties.put(thisClassName, PROP_LENIENT, Boolean.valueOf(lenient).toString());
+          DataTypeProps.putDataTypeProperty(thisClassName, PROP_LENIENT, Boolean.valueOf(lenient).toString());
 
           timeScriptFormat = _temporalScriptGenerationCtrl.getFormat();
-          DTProperties.put(thisClassName, PROP_TIME_SCRIPT_FORMAT, timeScriptFormat.name());
+          DataTypeProps.putDataTypeProperty(thisClassName, PROP_TIME_SCRIPT_FORMAT, timeScriptFormat.name());
 
 
           initDateFormat(localeFormat, lenient);

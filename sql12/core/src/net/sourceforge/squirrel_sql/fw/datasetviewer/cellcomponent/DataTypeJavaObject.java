@@ -138,8 +138,7 @@ public class DataTypeJavaObject extends BaseDataTypeComponent
 		if (propertiesAlreadyLoaded == false) {
 			// get parameters previously set by user, or set default values
 			_readSQLJavaObject = true;	// set to the default
-			String readSQLJavaObjectString = DTProperties.get(
-				thisClassName, "readSQLJavaObject");
+			String readSQLJavaObjectString = DataTypeProps.getProperty(thisClassName, "readSQLJavaObject");
 			if (readSQLJavaObjectString != null && readSQLJavaObjectString.equals("false"))
 				_readSQLJavaObject = false;
 
@@ -599,9 +598,7 @@ public class DataTypeJavaObject extends BaseDataTypeComponent
 		public void ok() {
 			// get the values from the controls and set them in the static properties
 			_readSQLJavaObject = _showSQLJavaObjectChk.isSelected();
-			DTProperties.put(
-				thisClassName,
-				"readSQLJavaObject", Boolean.valueOf(_readSQLJavaObject).toString());
+			DataTypeProps.putDataTypeProperty(thisClassName, "readSQLJavaObject", Boolean.valueOf(_readSQLJavaObject).toString());
 		}
 
 	 } // end of inner class

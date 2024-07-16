@@ -4,8 +4,11 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class DataTypeGeneral
 {
@@ -36,7 +39,7 @@ public class DataTypeGeneral
       if (propertiesAlreadyLoaded == false)
       {
          String useColumnLabelInsteadColumnName =
-               DTProperties.get(DataTypeGeneral.class.getName(), USE_COLUMN_LABEL_INSTEAD_COLUMN_NAME);
+               DataTypeProps.getProperty(DataTypeGeneral.class.getName(), USE_COLUMN_LABEL_INSTEAD_COLUMN_NAME);
 
          if (useColumnLabelInsteadColumnName != null && useColumnLabelInsteadColumnName.equals("true"))
          {
@@ -81,9 +84,7 @@ public class DataTypeGeneral
       {
          // get the values from the controls and set them in the static properties
          _useColumnLabelInsteadColumnName = _chkUseColumnLabelInsteadColumnName.isSelected();
-         DTProperties.put(
-               DataTypeGeneral.class.getName(),
-               USE_COLUMN_LABEL_INSTEAD_COLUMN_NAME, Boolean.valueOf(_useColumnLabelInsteadColumnName).toString());
+         DataTypeProps.putDataTypeProperty(DataTypeGeneral.class.getName(), USE_COLUMN_LABEL_INSTEAD_COLUMN_NAME, Boolean.valueOf(_useColumnLabelInsteadColumnName).toString());
       }
 
    }

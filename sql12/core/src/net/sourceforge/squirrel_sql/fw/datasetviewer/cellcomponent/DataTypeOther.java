@@ -137,8 +137,7 @@ public class DataTypeOther extends BaseDataTypeComponent
 		if (propertiesAlreadyLoaded == false) {
 			// get parameters previously set by user, or set default values
 			_readSQLOther = false;	// set to the default
-			String readSQLOtherString = DTProperties.get(
-				thisClassName, "readSQLOther");
+			String readSQLOtherString = DataTypeProps.getProperty(thisClassName, "readSQLOther");
 			if (readSQLOtherString != null && readSQLOtherString.equals("true"))
 				_readSQLOther = true;
 
@@ -557,9 +556,7 @@ public class DataTypeOther extends BaseDataTypeComponent
 		public void ok() {
 			// get the values from the controls and set them in the static properties
 			_readSQLOther = _showSQLOtherChk.isSelected();
-			DTProperties.put(
-				thisClassName,
-				"readSQLOther", Boolean.valueOf(_readSQLOther).toString());
+			DataTypeProps.putDataTypeProperty(thisClassName, "readSQLOther", Boolean.valueOf(_readSQLOther).toString());
 		}
 	 
 	 } // end of inner class
