@@ -7,7 +7,10 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BlobDescriptor;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlobProperties;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClobProperties;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -19,6 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -63,7 +67,7 @@ public class ResultImageDisplayPanel extends JPanel
 
    private void updateImageDisplay(ColumnDisplayDefinition cdd, Object valueToDisplay)
    {
-      _scrImage.setViewportView(getDisplayLabel(cdd, valueToDisplay));
+      _scrImage.setViewportView(getDisplayComponent(cdd, valueToDisplay));
    }
 
    private JPanel createUpdatePanel(int selRow, int selCol, DataSetViewerTable table, ColumnDisplayDefinition cdd)
@@ -156,7 +160,7 @@ public class ResultImageDisplayPanel extends JPanel
       }
    }
 
-   private JLabel getDisplayLabel(ColumnDisplayDefinition cdd, Object valueToDisplay)
+   private JComponent getDisplayComponent(ColumnDisplayDefinition cdd, Object valueToDisplay)
    {
       try
       {
@@ -170,13 +174,41 @@ public class ResultImageDisplayPanel extends JPanel
          {
             image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode((String) valueToDisplay)));
          }
-         else if (valueToDisplay instanceof ClobDescriptor)
-         {
-            image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(((ClobDescriptor)valueToDisplay).getData())));
-         }
          else if (valueToDisplay instanceof BlobDescriptor)
          {
-            image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(((BlobDescriptor)valueToDisplay).getData())));
+            byte[] data = ((BlobDescriptor) valueToDisplay).getData();
+
+            if(null == data)
+            {
+               if(false == isReadCompleteBlobs())
+               {
+                  String msg = s_stringMgr.getString("ResultImageDisplayPanel.null.blob.not.read", StringUtilities.NULL_AS_STRING);
+                  return new MultipleLineLabel(msg);
+               }
+               else
+               {
+                  return new JLabel(StringUtilities.NULL_AS_STRING);
+               }
+            }
+            image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(data)));
+         }
+         else if (valueToDisplay instanceof ClobDescriptor)
+         {
+            String data = ((ClobDescriptor) valueToDisplay).getData();
+            if(null == data)
+            {
+               if(false == isReadCompleteClobs())
+               {
+                  String msg = s_stringMgr.getString("ResultImageDisplayPanel.null.clob.not.read", StringUtilities.NULL_AS_STRING);
+                  return new MultipleLineLabel(msg);
+               }
+               else
+               {
+                  return new JLabel(StringUtilities.NULL_AS_STRING);
+               }
+            }
+
+            image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
          }
          else
          {
@@ -186,9 +218,19 @@ public class ResultImageDisplayPanel extends JPanel
          if(null == image)
          {
             String msg = s_stringMgr.getString("ResultImageDisplayPanel.could.create.image", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName());
+
+            if(cdd.getSqlType() == Types.BLOB && false == isReadCompleteClobs())
+            {
+               msg = s_stringMgr.getString("ResultImageDisplayPanel.could.create.image.blob.not.read", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName());
+            }
+            else if(cdd.getSqlType() == Types.CLOB && false == isReadCompleteBlobs())
+            {
+               msg = s_stringMgr.getString("ResultImageDisplayPanel.could.create.image.clob.not.read", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName());
+            }
+
             s_log.error(msg);
             Main.getApplication().getMessageHandler().showErrorMessage(msg);
-            return new JLabel(msg);
+            return new MultipleLineLabel(msg);
          }
 
          JLabel lblImage = new JLabel();
@@ -198,9 +240,32 @@ public class ResultImageDisplayPanel extends JPanel
       catch(Exception e)
       {
          String msg = s_stringMgr.getString("ResultImageDisplayPanel.image.display.error", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName(), e);
+
+         if(cdd.getSqlType() == Types.BLOB && false == isReadCompleteClobs())
+         {
+            msg = s_stringMgr.getString("ResultImageDisplayPanel.image.display.error.blob.not.read", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName(), e);
+         }
+         else if(cdd.getSqlType() == Types.CLOB && false == isReadCompleteBlobs())
+         {
+            msg = s_stringMgr.getString("ResultImageDisplayPanel.image.display.error.clob.not.read", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName(), e);
+         }
+
+
          s_log.error(msg, e);
          Main.getApplication().getMessageHandler().showErrorMessage(msg);
-         return new JLabel(msg);
+         return new MultipleLineLabel(msg);
       }
+   }
+
+   private static boolean isReadCompleteClobs()
+   {
+      DataTypeBlobProperties props = new DataTypeBlobProperties().loadProperties();
+      return props.isReadCompleteBlobs() && false == props.isReadBlobsNever();
+   }
+
+   private static boolean isReadCompleteBlobs()
+   {
+      DataTypeClobProperties props = new DataTypeClobProperties().loadProperties();
+      return props.isReadCompleteClobs() && false == props.isReadClobsNever();
    }
 }

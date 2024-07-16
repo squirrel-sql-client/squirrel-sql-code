@@ -31,7 +31,7 @@ public class DataTypeBlobProperties
    private boolean _readBlobsOnCellVisible = false;
    private boolean _readBlobsNever = true;
 
-   void loadProperties()
+   public DataTypeBlobProperties loadProperties()
    {
       if(_propertiesAlreadyLoaded == false)
       {
@@ -47,6 +47,8 @@ public class DataTypeBlobProperties
 
          _propertiesAlreadyLoaded = true;
       }
+
+      return this;
    }
 
    public void saveProperties()

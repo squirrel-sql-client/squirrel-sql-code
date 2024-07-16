@@ -132,7 +132,7 @@ public class DataTypeClobProperties
       _readClobsNever = readClobsNever;
    }
 
-   public void loadProperties()
+   public DataTypeClobProperties loadProperties()
    {
 
       if (_propertiesAlreadyLoaded == false)
@@ -152,6 +152,8 @@ public class DataTypeClobProperties
 
          _propertiesAlreadyLoaded = true;
       }
+
+      return this;
    }
 
    public void saveProperties()

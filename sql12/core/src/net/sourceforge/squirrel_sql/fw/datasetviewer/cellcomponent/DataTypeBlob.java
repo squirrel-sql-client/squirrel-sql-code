@@ -146,7 +146,7 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 			useValue = Utilities.toBoxedByteArray(value, BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
 		}
 
-		if(useValue.length == BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY)
+		if(null != useValue && useValue.length == BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY)
 		{
 			BigDataRenderResult.showMaxBytesReachedMessage(colDef);
 		}
