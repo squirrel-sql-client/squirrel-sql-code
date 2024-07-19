@@ -29,6 +29,7 @@ class CellDataDialog extends JDialog
       getContentPane().setLayout(new GridLayout(1,1));
 
       _cellDisplayPanel = new CellDisplayPanel(() -> onDisplayModeChanged(colDef, value, row, col, isModelEditable, table));
+      _cellDisplayPanel.setCurrentColumnDisplayDefinition(colDef);
       getContentPane().add(_cellDisplayPanel);
 
       onDisplayModeChanged(colDef, value, row, col, isModelEditable, table);

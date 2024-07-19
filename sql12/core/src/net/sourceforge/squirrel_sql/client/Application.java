@@ -65,6 +65,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeComponentFactoryRegistry;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypePropertiesManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellImportExportInfoSaver;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDetailDisplayModeManager;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
@@ -235,6 +236,8 @@ public class Application implements IApplication
 	private DataTypeComponentFactoryRegistry _dataTypeComponentFactoryRegistry = new DataTypeComponentFactoryRegistry();
 
 	private DataTypePropertiesManager _dataTypePropertiesManager = new DataTypePropertiesManager();
+
+	private CellDetailDisplayModeManager _cellDetailDisplayModeManager = new CellDetailDisplayModeManager();
 
 	public Application()
 	{
@@ -1549,4 +1552,10 @@ public class Application implements IApplication
 	{
 		return _dataTypePropertiesManager;
 	}
+
+   @Override
+   public CellDetailDisplayModeManager getCellDetailDisplayModeManager()
+   {
+      return _cellDetailDisplayModeManager;
+   }
 }

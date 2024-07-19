@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -16,9 +16,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class CellDisplayPanel extends JPanel
 {
@@ -26,7 +23,6 @@ public class CellDisplayPanel extends JPanel
    private final JPanel _pnlContent = new JPanel(new GridLayout(1, 1));
    private final DisplayPanelListener _displayPanelListener;
 
-   private List<Pair<ColumnDisplayDefinition, DisplayMode>> _columnsToNonDefaultDisplayMode = new ArrayList<>();
    private ColumnDisplayDefinition _currentColumnDisplayDefinition;
    private JComboBox<DisplayMode> _cboDisplayMode = new JComboBox<>(DisplayMode.values());
 
@@ -50,11 +46,7 @@ public class CellDisplayPanel extends JPanel
 
       if(null != _currentColumnDisplayDefinition)
       {
-         _columnsToNonDefaultDisplayMode.removeIf(p -> p.getLeft().matchesByQualifiedName(_currentColumnDisplayDefinition));
-         if(getDisplayMode() != DisplayMode.DEFAULT)
-         {
-            _columnsToNonDefaultDisplayMode.add(Pair.of(_currentColumnDisplayDefinition, getDisplayMode()));
-         }
+         Main.getApplication().getCellDetailDisplayModeManager().putDisplayMode(_currentColumnDisplayDefinition, getDisplayMode());
       }
 
       _displayPanelListener.displayModeChanged();
@@ -85,17 +77,14 @@ public class CellDisplayPanel extends JPanel
       _pnlContent.add(contentComponent);
    }
 
-   public void setCurrentColumnDisplayDefinition(ColumnDisplayDefinition columnDisplayDefinition)
+   public void setCurrentColumnDisplayDefinition(ColumnDisplayDefinition cdd)
    {
-      _currentColumnDisplayDefinition = columnDisplayDefinition;
+      _currentColumnDisplayDefinition = cdd;
 
-      DisplayMode modeToSel = DisplayMode.DEFAULT;
-      Optional<Pair<ColumnDisplayDefinition, DisplayMode>> nonDefaultDisplay =
-            _columnsToNonDefaultDisplayMode.stream().filter(p -> p.getLeft().matchesByQualifiedName(columnDisplayDefinition)).findFirst();
-
-      if(nonDefaultDisplay.isPresent())
+      DisplayMode modeToSel = Main.getApplication().getCellDetailDisplayModeManager().getNonDefaultDisplayMode(cdd);
+      if(null == modeToSel)
       {
-         modeToSel = nonDefaultDisplay.get().getRight();
+         modeToSel = DisplayMode.DEFAULT;
       }
 
       // If changed this will fire onDisplayModeChanged()
