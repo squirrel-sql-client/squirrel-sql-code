@@ -131,7 +131,8 @@ public class Completor
 		_listMouseAdapter =
 			new MouseAdapter()
 			{
-				public void mouseClicked(MouseEvent e)	{onMousClicked(e);}
+				public void mouseClicked(MouseEvent e)	{
+               onMouseClicked(e);}
 			};
 
 		_filterKeyListener =
@@ -322,11 +323,15 @@ public class Completor
       }
    }
 
-   private void onMousClicked(MouseEvent e)
+   private void onMouseClicked(MouseEvent e)
 	{
 		if(2 == e.getClickCount())
 		{
 			completionSelected(KeyEvent.VK_ENTER, 0);
+         if(_txtComp.editorEqualsFilter())
+         {
+            _txtComp.getEditor().requestFocus();
+         }
 		}
 	}
 
