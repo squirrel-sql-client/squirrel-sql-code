@@ -34,6 +34,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
    private JScrollPane _scrollPane;
    private JSplitPane _splitPane;
    private boolean _adjustingSplitPane = false;
+   private CellDetailCloseListener _cellDetailCloseListener;
 
    public ResultDataSetAndCellDetailDisplayHandler(IDataSetViewer dataSetViewer, ResultTableType resultTableType)
    {
@@ -51,7 +52,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
       GUIUtils.setMinimumWidth(_lblNoCell, 0);
 
 
-      _rightCellDisplayPanel = new CellDisplayPanel(() -> onDisplayChanged());
+      _rightCellDisplayPanel = new CellDisplayPanel(() -> onDisplayChanged(), () -> onClose());
       _splitPane.setRightComponent(_rightCellDisplayPanel);
 
       _splitPane.addComponentListener(new ComponentAdapter()
@@ -73,6 +74,14 @@ public class ResultDataSetAndCellDetailDisplayHandler
       else
       {
          setCellDetailVisible(false, true);
+      }
+   }
+
+   private void onClose()
+   {
+      if(null != _cellDetailCloseListener)
+      {
+         _cellDetailCloseListener.close();
       }
    }
 
@@ -250,5 +259,10 @@ public class ResultDataSetAndCellDetailDisplayHandler
    private void onDisplayChanged()
    {
       fireCellSelectionChangedForCurrentSelectedCell();
+   }
+
+   public void setCloseListener(CellDetailCloseListener cellDetailCloseListener)
+   {
+      _cellDetailCloseListener = cellDetailCloseListener;
    }
 }

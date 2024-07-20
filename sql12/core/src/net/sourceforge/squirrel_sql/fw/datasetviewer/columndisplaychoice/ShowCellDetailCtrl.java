@@ -50,13 +50,33 @@ public class ShowCellDetailCtrl
       {
          CellDetailDisplayAvailableInfo.INFO_NO_DISPLAY_HANDLER.displayNotAvailableMessage();
          _button.setSelected(false);
+         return;
       }
       else if(false == selectedTabsDisplayHandler.getCellDetailDisplayAvailableInfo().isAvailable())
       {
          selectedTabsDisplayHandler.getCellDetailDisplayAvailableInfo().displayNotAvailableMessage();
          _button.setSelected(false);
+         return;
       }
 
-      _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler().setCellDetailVisible(_button.isSelected());
+      selectedTabsDisplayHandler.setCellDetailVisible(_button.isSelected());
    }
+
+   public void finishedCreatingResultTab()
+   {
+      ResultDataSetAndCellDetailDisplayHandler selectedTabsDisplayHandler = _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler();
+      if(null != selectedTabsDisplayHandler)
+      {
+         selectedTabsDisplayHandler.setCloseListener(() -> onClosedByPanelButton());
+      }
+   }
+
+   private void onClosedByPanelButton()
+   {
+      if(_button.isSelected())
+      {
+         _button.doClick();
+      }
+   }
+
 }

@@ -1,11 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -22,13 +25,21 @@ public class CellDisplayPanel extends JPanel
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDisplayPanel.class);
    private final JPanel _pnlContent = new JPanel(new GridLayout(1, 1));
    private final DisplayPanelListener _displayPanelListener;
+   private final CellDetailCloseListener _cellDetailCloseListener;
 
    private ColumnDisplayDefinition _currentColumnDisplayDefinition;
    private JComboBox<DisplayMode> _cboDisplayMode = new JComboBox<>(DisplayMode.values());
+   private JButton _btnClose = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.CLOSE));
 
    public CellDisplayPanel(DisplayPanelListener displayPanelListener)
    {
+      this(displayPanelListener, null);
+   }
+
+   public CellDisplayPanel(DisplayPanelListener displayPanelListener, CellDetailCloseListener cellDetailCloseListener)
+   {
       _displayPanelListener = displayPanelListener;
+      _cellDetailCloseListener = cellDetailCloseListener;
       setLayout(new BorderLayout(3, 3));
       add(createDisplaySelectionPanel(), BorderLayout.NORTH);
       add(_pnlContent, BorderLayout.CENTER);
@@ -65,8 +76,19 @@ public class CellDisplayPanel extends JPanel
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,3,3,0), 0,0);
       ret.add(GUIUtils.setPreferredWidth(_cboDisplayMode, _cboDisplayMode.getPreferredSize().width + 40), gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(3,3,3,0), 0,0);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,3,3,0), 0,0);
+      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("DisplayPanel.info.button")).getButton(), gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(3,3,3,0), 0,0);
       ret.add(new JPanel(), gbc);
+
+      if(null != _cellDetailCloseListener)
+      {
+         gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+         ret.add(GUIUtils.styleAsToolbarButton(_btnClose), gbc);
+         _btnClose.addActionListener(e -> _cellDetailCloseListener.close());
+      }
 
       return ret;
    }

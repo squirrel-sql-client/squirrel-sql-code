@@ -67,6 +67,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -130,6 +131,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private ResultLabelNameSwitcher _resultLabelNameSwitcher;
    private AdditionalResultTabsController _additionalResultTabsController;
    private MarkDuplicatesChooserController _markDuplicatesChooserController;
+   private ShowCellDetailCtrl _showCellDetailCtrl;
 
    /**
     * Ctor.
@@ -174,6 +176,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       createGUI();
       propertiesHaveChanged(null);
+
+      SwingUtilities.invokeLater(() -> _showCellDetailCtrl.finishedCreatingResultTab());
    }
 
    /**
@@ -589,8 +593,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,10,0,0), 0,0);
       ret.add(new TabButton(getRerunCurrentSQLResultTabAction()), gbc);
 
+      _showCellDetailCtrl = new ShowCellDetailCtrl(this);
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
-      ret.add(new ShowCellDetailCtrl(this).getTabButton(), gbc);
+      ret.add(_showCellDetailCtrl.getTabButton(), gbc);
 
       _markDuplicatesChooserController = new MarkDuplicatesChooserController(this);
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
