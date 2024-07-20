@@ -19,12 +19,15 @@ package net.sourceforge.squirrel_sql.client.session.action.dataimport.action;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.gui.session.IToolsPopupDescription;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.awt.event.ActionEvent;
 
@@ -33,8 +36,11 @@ import java.awt.event.ActionEvent;
  *
  * @author Thorsten Mürell
  */
-public class ImportTableDataAction extends SquirrelAction implements ISessionAction, IObjectTreeAction
+public class ImportTableDataAction extends SquirrelAction implements ISessionAction, IObjectTreeAction, IToolsPopupDescription
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ImportTableDataAction.class);
+
+
    private IObjectTreeAPI _objectTreeAPI;
    private ISession _session;
 
@@ -76,5 +82,11 @@ public class ImportTableDataAction extends SquirrelAction implements ISessionAct
          }
       }
    }
+
+   public String getToolsPopupDescription()
+   {
+      return s_stringMgr.getString("ImportTableDataAction.tools.popup.description");
+   }
+
 
 }
