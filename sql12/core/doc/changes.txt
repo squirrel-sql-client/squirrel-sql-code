@@ -6,6 +6,7 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/34
 SQL result table:
   - Option to display cell details on the left of the table, see new toggle button with flip chart icon.
   - Option to view contents of cell detail or cell data popup as image.
