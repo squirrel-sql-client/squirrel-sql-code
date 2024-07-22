@@ -39,6 +39,9 @@ SQL editor's right mouse menu offers to execute SQLs.
 
 Bug fixes:
 
+SQL result: Resize mouse cursor didn't show between column headers
+  Side effect of implementation of https://github.com/squirrel-sql-client/squirrel-sql-code/issues/34
+
 Code completion: When a completion entry was selected by mouse click to SQL editor lost focus.
 
 SQL result: Display of current row and column, selection count and summing didn't work after tables was made editable.

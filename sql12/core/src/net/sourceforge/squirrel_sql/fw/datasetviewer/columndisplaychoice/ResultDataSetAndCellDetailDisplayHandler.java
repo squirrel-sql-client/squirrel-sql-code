@@ -1,5 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.beans.PropertyChangeEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -9,15 +18,6 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.beans.PropertyChangeEvent;
 
 public class ResultDataSetAndCellDetailDisplayHandler
 {
@@ -35,6 +35,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
    private JSplitPane _splitPane;
    private boolean _adjustingSplitPane = false;
    private CellDetailCloseListener _cellDetailCloseListener;
+   private boolean _cellDetailSplitActive;
 
    public ResultDataSetAndCellDetailDisplayHandler(IDataSetViewer dataSetViewer, ResultTableType resultTableType)
    {
@@ -88,7 +89,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
    private void onSplitPaneResized()
    {
-      if(false == _splitPane.isEnabled())
+      if( false == isCellDetailSplitActive() )
       {
          _splitPane.setDividerLocation(Integer.MAX_VALUE);
       }
@@ -96,7 +97,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
    private void onRowColSelectionChanged(DataSetViewerTablePanel dataSetViewer)
    {
-      if(false == _splitPane.isEnabled())
+      if( false == isCellDetailSplitActive() )
       {
          return;
       }
@@ -146,7 +147,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
    private void onDividerLocationChanged(PropertyChangeEvent e)
    {
-      if(_adjustingSplitPane || false == _splitPane.isEnabled())
+      if(_adjustingSplitPane || false == isCellDetailSplitActive() )
       {
          return;
       }
@@ -222,15 +223,15 @@ public class ResultDataSetAndCellDetailDisplayHandler
       try
       {
          _adjustingSplitPane = true;
-         if(false == visible && (_splitPane.isEnabled() || initializing))
+         if(false == visible && (isCellDetailSplitActive() || initializing))
          {
             _splitPane.setDividerLocation(Integer.MAX_VALUE);
             _splitPane.setDividerSize(0);
-            _splitPane.setEnabled(false);
+            setCellDetailSplitActive(false);
          }
-         else if(visible && (false == _splitPane.isEnabled() || initializing))
+         else if(visible && (false == isCellDetailSplitActive() || initializing))
          {
-            _splitPane.setEnabled(true);
+            setCellDetailSplitActive(true);
             _splitPane.setDividerSize(new JSplitPane().getDividerSize());
             _splitPane.setDividerLocation(Props.getInt(PREF_KEY_CELL_DETAIL_DIVIDER_POS, _splitPane.getMaximumDividerLocation()/2));
 
@@ -242,7 +243,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
          if(false == initializing)
          {
-            ColumnDisplayUtil.setShowCellDetail(_splitPane.isEnabled());
+            ColumnDisplayUtil.setShowCellDetail(isCellDetailSplitActive());
          }
       }
       finally
@@ -250,6 +251,19 @@ public class ResultDataSetAndCellDetailDisplayHandler
          _adjustingSplitPane = false;
       }
    }
+
+   private void setCellDetailSplitActive(boolean enabled)
+   {
+      //_splitPane.setEnabled(enabled); No good --> Prevents adjusting mouse cursor
+      _cellDetailSplitActive = enabled;
+   }
+
+   private boolean isCellDetailSplitActive()
+   {
+      //return _splitPane.isEnabled();
+      return _cellDetailSplitActive;
+   }
+
 
    private void fireCellSelectionChangedForCurrentSelectedCell()
    {
