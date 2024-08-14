@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Hibernate Plugin: Generating SQL from HQL now uses the SQL-Extractor of the hypersistence-utils library,
+  see https://github.com/vladmihalcea/hypersistence-utils.
+  To generate SQL from HQL execute a HQL and use the SQL button on the upper right of the HQL result tab.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/34
 SQL result table:
   - Option to display cell details on the left of the table, see new toggle button with flip chart icon.
