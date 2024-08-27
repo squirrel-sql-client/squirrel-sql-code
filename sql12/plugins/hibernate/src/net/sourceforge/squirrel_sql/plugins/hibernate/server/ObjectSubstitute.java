@@ -41,6 +41,7 @@ public class ObjectSubstitute implements Serializable
       String className = any.isEmpty() ? "<unknown>" : any.get().getClass().getName();
       String propertyName = "value " + (1);
       HibernatePropertyInfo indentifierHibernatePropertyInfo = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
+      indentifierHibernatePropertyInfo.setPlainValueProperty(true);
 
       _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(any.orElse(null), cl), indentifierHibernatePropertyInfo));
 
@@ -52,6 +53,7 @@ public class ObjectSubstitute implements Serializable
          className = null == primitiveOrUnknownObjectList.get(i) ? "<unknown>" : primitiveOrUnknownObjectList.get(i).getClass().getName();
          propertyName = "value " + (i + 1);
          hibernatePropertyInfos[i-1] = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
+         hibernatePropertyInfos[i-1].setPlainValueProperty(true);
 
          _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(primitiveOrUnknownObjectList.get(i), cl), hibernatePropertyInfos[i-1]));
       }

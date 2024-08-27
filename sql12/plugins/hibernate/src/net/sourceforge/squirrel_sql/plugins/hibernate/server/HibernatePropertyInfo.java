@@ -12,6 +12,7 @@ public class HibernatePropertyInfo implements Serializable
    private String _collectionClassName;
    private boolean _identifier;
    private String _classNameRegardingCollection;
+   private boolean plainValueProperty;
 
    public HibernatePropertyInfo(String propertyName, String className, String tableName, String[] columnNames)
    {
@@ -84,5 +85,15 @@ public class HibernatePropertyInfo implements Serializable
    public String getClassNameRegardingCollection()
    {
       return _classNameRegardingCollection;
+   }
+
+   public void setPlainValueProperty(boolean plainValueProperty)
+   {
+      this.plainValueProperty = plainValueProperty;
+   }
+
+   public boolean isPlainValueProperty()
+   {
+      return plainValueProperty;
    }
 }

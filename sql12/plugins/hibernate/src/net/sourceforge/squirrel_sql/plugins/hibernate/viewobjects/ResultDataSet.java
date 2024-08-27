@@ -15,9 +15,9 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
 public class ResultDataSet implements IDataSet
 {
-    private static final int DISPLAY_WIDTH = 20;
+   private static final int DISPLAY_WIDTH = 20;
 
-    private int _curIx = -1;
+   private int _curIx = -1;
    private ColumnDisplayDefinition[] _columnDisplayDefinitions;
    private SingleType _singleType;
 
@@ -29,8 +29,17 @@ public class ResultDataSet implements IDataSet
 
       for (PropertyInfo propertyInfo : singleType.getMappedClassInfo().getAttributes())
       {
-         String propertyName = propertyInfo.getHibernatePropertyInfo().getPropertyName();
-         columnDisplayDefinitions.add(new ColumnDisplayDefinition(DISPLAY_WIDTH, propertyName));
+         String viewerDisplayColName = propertyInfo.getHibernatePropertyInfo().getPropertyName();
+
+         if(propertyInfo.getHibernatePropertyInfo().isPlainValueProperty())
+         {
+            viewerDisplayColName += " (Type=" + propertyInfo.getHibernatePropertyInfo().getClassName() + ")";
+         }
+
+         ColumnDisplayDefinition cdd = new ColumnDisplayDefinition(DISPLAY_WIDTH, viewerDisplayColName);
+         cdd.setUserProperty(propertyInfo.getHibernatePropertyInfo().getPropertyName());
+
+         columnDisplayDefinitions.add(cdd);
       }
 
       _columnDisplayDefinitions = columnDisplayDefinitions.toArray(new ColumnDisplayDefinition[columnDisplayDefinitions.size()]);
@@ -60,7 +69,7 @@ public class ResultDataSet implements IDataSet
          return HibernateUtil.OBJECT_IS_NULL;
       }
 
-      HibernatePropertyReader hpr = new HibernatePropertyReader(_columnDisplayDefinitions[columnIndex].getColumnName(), obj);
+      HibernatePropertyReader hpr = new HibernatePropertyReader(_columnDisplayDefinitions[columnIndex].getUserProperty(), obj);
 
       if(hpr.isNull())
       {
