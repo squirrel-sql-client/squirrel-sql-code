@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Table cell data popup now offers find, Xml/Json-reformatting and export functions for all tables.
+  To open the cell data popup double-click a table cell.
+
 Hibernate Plugin: Generating SQL from HQL now uses the SQL-Extractor of the hypersistence-utils library,
   see https://github.com/vladmihalcea/hypersistence-utils.
   To generate SQL from HQL execute a HQL and use the SQL button on the upper right of the HQL result tab.
