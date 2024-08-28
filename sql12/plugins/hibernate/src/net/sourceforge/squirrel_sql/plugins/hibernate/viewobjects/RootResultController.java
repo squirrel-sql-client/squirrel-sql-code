@@ -1,16 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
-
-import javax.swing.*;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import java.util.ArrayList;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 
 public class RootResultController
 {
@@ -20,11 +23,11 @@ public class RootResultController
    private ArrayList<MappedClassInfo> _mappedClassInfos;
    private JTree _resultTree;
 
-   public RootResultController(RootType rootType, JPanel pnlResults, ArrayList<MappedClassInfo> mappedClassInfos)
+   public RootResultController(RootType rootType, JPanel pnlResults, ArrayList<MappedClassInfo> mappedClassInfos, ResultControllerChannel resultControllerChannel)
    {
       RootType rootType1 = rootType;
       _mappedClassInfos = mappedClassInfos;
-
+      resultControllerChannel.setActiveControllersListener(() -> onTypedValuesDisplayModeChanged());
 
       if(rootType1.getResultType() instanceof TupelType)
       {
@@ -59,6 +62,11 @@ public class RootResultController
       pnlResults.removeAll();
       pnlResults.add(new JScrollPane(_resultTree));
 
+   }
+
+   private void onTypedValuesDisplayModeChanged()
+   {
+      GUIUtils.getExpandedLeafNodes(_resultTree).forEach(n -> ((DefaultTreeModel)_resultTree.getModel()).nodeChanged(n));
    }
 
    private void onTreeExpanded(TreeExpansionEvent event)

@@ -129,7 +129,11 @@ public class ObjectResultTabController
 
    private void repaintDisplay()
    {
-      // TODO
+      _tab.pnlResults.revalidate();
+      //_tab.pnlResults.validate();
+      _tab.pnlResults.repaint();
+
+      _resultsController.typedValuesDisplayModeChanged();
    }
 
    private MappedClassInfo getBestPlainValueArrayMappedClassInfo(List<ObjectSubstituteRoot> objects)
