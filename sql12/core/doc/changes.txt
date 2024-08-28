@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Table display now uses the background color cyan for all cells containing new lines
+  not only in SQL result tables and in Object tree "Content" tables.
+
 Table cell data popup now offers find, Xml/Json-reformatting and export functions for all tables.
   To open the cell data popup double-click a table cell.
 

@@ -18,11 +18,13 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * String handling utilities.
@@ -36,10 +38,11 @@ import java.util.function.Predicate;
  */
 public class StringUtilities
 {
-
    public static final String NULL_AS_STRING = "<null>";
 
    public static final char[] ILLEGAL_FILE_NAME_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
+
+   private final static ILogger s_log = LoggerController.createLogger(StringUtilities.class);
 
 
    /**
@@ -553,5 +556,43 @@ public class StringUtilities
    public static String replaceNonBreakingSpacesBySpaces(String text)
    {
       return StringUtils.replaceChars(text, "\u00A0\u1680\u180e\u2000\u200a\u202f\u205f\u3000", " ");
+   }
+
+   public static boolean isStringContainingNewLine(Object value)
+   {
+      if(value instanceof String && ((String) value).indexOf('\n') > -1)
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+   }
+
+   public static boolean isToStringContainingNewLine(Object value)
+   {
+      if(isStringContainingNewLine(value))
+      {
+         return true;
+      }
+      else
+      {
+         if(null == value)
+         {
+            return false;
+         }
+
+         try
+         {
+            return value.toString().indexOf('\n') > -1;
+         }
+         catch(Exception e)
+         {
+            // in case value.toString() raises an exception.
+            s_log.warn(e);
+            return false;
+         }
+      }
    }
 }
