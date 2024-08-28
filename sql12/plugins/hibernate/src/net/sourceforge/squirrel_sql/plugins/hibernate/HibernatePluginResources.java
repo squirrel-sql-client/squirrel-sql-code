@@ -34,6 +34,8 @@ public final class HibernatePluginResources extends PluginResources
 		String NEXT_NAV_IMAGE = "next_nav";
 		String PREV_NAV_IMAGE = "prev_nav";
 		String REPLACE_IMAGE = "replace";
+
+		String DISPLAY_CHOICE_IMAGE = "displayChoice";
 	}
 
 }

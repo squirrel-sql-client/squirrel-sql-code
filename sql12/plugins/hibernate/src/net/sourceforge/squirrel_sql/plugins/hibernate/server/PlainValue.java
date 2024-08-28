@@ -4,16 +4,16 @@ import java.io.Serializable;
 
 public class PlainValue implements Serializable
 {
-   private Object _value;
+   private PlainValueRepresentation _value;
    private HibernatePropertyInfo _hibernatePropertyInfo;
 
-   public PlainValue(Object value, HibernatePropertyInfo hibernatePropertyInfo)
+   public PlainValue(PlainValueRepresentation value, HibernatePropertyInfo hibernatePropertyInfo)
    {
       _value = value;
       _hibernatePropertyInfo = hibernatePropertyInfo;
    }
 
-   public Object getValue()
+   public PlainValueRepresentation getValue()
    {
       return _value;
    }
