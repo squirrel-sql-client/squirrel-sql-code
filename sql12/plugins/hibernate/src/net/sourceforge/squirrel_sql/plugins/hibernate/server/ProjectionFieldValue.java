@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 import java.io.Serializable;
 import java.util.Objects;
 
+
 public class ProjectionFieldValue implements Serializable
 {
    public static final String HIBERNATE_UNINITIALIZED = "<uninitialized>";
@@ -32,17 +33,69 @@ public class ProjectionFieldValue implements Serializable
    {
       switch( getProjectionDisplayMode() )
       {
+         case DEFAULT_MODE:
+            return asDefaultString();
          case JSON_MODE:
             return asJsonString();
+         case JSON_MODE_INC_TYPES:
+            return asJsonStringIncType();
+         case XML_MODE:
+            return asXmlString();
+         case XML_MODE_INC_TYPES:
+            return asXmlStringIncTypes();
+         default:
+            throw new IllegalStateException("Unknown ProjectionDisplayMode: " + getProjectionDisplayMode());
       }
 
-      return asDefaultString();
+   }
+
+   private String asJsonStringIncType()
+   {
+      return "{\"type\" : " + getJsonTypeName() + ", \"field\" : " + getJsonFieldName() + ", \"value\" : " + getJsonValue() + "}";
    }
 
    private String asJsonString()
    {
       return getJsonFieldName()  + " : " + getJsonValue();
    }
+
+   private String asXmlString()
+   {
+      return "<field name=\"" + getXmlFieldName() + "\">" + getXmlValue() + "</field>";
+   }
+
+   private String asXmlStringIncTypes()
+   {
+      return "<field name=\"" + getXmlFieldName() + "\" type=\"" + getXmlTypeName()  + "\">" + getXmlValue() + "</field>";
+   }
+
+   private String getXmlValue()
+   {
+      if(valuesIsNull)
+      {
+         return "null";
+      }
+
+      if(Objects.equals(valueAsString,  UNKNOWN_FIELD_VALUE))
+      {
+         return "unknown";
+      }
+
+      return HibernateServerStringUtils.escapeXmlChars(valueAsString);
+   }
+
+   private String getXmlFieldName()
+   {
+      String ret = Objects.equals(fieldName, UNKNOWN_FIELD_NAME) ? "unknownField" : fieldName;
+      return HibernateServerStringUtils.escapeXmlChars(ret);
+   }
+
+   private String getXmlTypeName()
+   {
+      String ret = Objects.equals(fieldTypeName, UNKNOWN_TYPE_NAME) ? "unknownType" : fieldTypeName;
+      return HibernateServerStringUtils.escapeXmlChars(ret);
+   }
+
 
    private String getJsonValue()
    {
@@ -53,28 +106,48 @@ public class ProjectionFieldValue implements Serializable
 
       if(Objects.equals(valueAsString,  UNKNOWN_FIELD_VALUE))
       {
-         return "null";
+         return "<unknown>";
       }
 
-      return jsonValueWithQuotes ? "\"" + valueAsString + "\"" : valueAsString;
+      return jsonValueWithQuotes ? "\"" + HibernateServerStringUtils.escapeJsonChars(valueAsString) + "\"" : valueAsString;
    }
 
    private String getJsonFieldName()
    {
-      return Objects.equals(fieldName,  UNKNOWN_TYPE_NAME) ? "\"<unknownField>\"" : "\"" + fieldName + "\"";
+      return Objects.equals(fieldName,  UNKNOWN_FIELD_NAME) ? "\"<unknownField>\"" : "\"" + HibernateServerStringUtils.escapeJsonChars(fieldName) + "\"";
+   }
+
+   private String getJsonTypeName()
+   {
+      return Objects.equals(fieldTypeName,  UNKNOWN_TYPE_NAME) ? "\"<unknownType>\"" : "\"" + HibernateServerStringUtils.escapeJsonChars(fieldTypeName) + "\"";
    }
 
    private String asDefaultString()
    {
-      if( false == Objects.equals(fieldName,  UNKNOWN_TYPE_NAME) )
-      {
-         return fieldName + "="  + (Objects.equals(valueAsString,  UNKNOWN_FIELD_NAME) ? "<unknown>" : valueAsString);
-      }
-      else
-      {
-         return (Objects.equals(valueAsString,  UNKNOWN_FIELD_VALUE) ? "<unknown>" : valueAsString);
-      }
+      return getDefaultFieldName() + "=" + getDefaultValue();
    }
+
+   private String getDefaultValue()
+   {
+      if(valuesIsNull)
+      {
+         return "null";
+      }
+
+      if(Objects.equals(valueAsString,  UNKNOWN_FIELD_VALUE))
+      {
+         return "<unknown>";
+      }
+
+      return valueAsString;
+   }
+
+   private String getDefaultFieldName()
+   {
+      return Objects.equals(fieldName,  UNKNOWN_FIELD_NAME) ? "<unknownField>" : fieldName;
+   }
+
+
 
    public void setProjectionDisplaySwitch(ProjectionDisplaySwitch projectionDisplaySwitch)
    {

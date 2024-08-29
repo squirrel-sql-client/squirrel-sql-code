@@ -99,11 +99,21 @@ public class ProjectionFieldValueList implements Serializable
 
       switch( _list.get(0).getProjectionDisplayMode() )
       {
+         case DEFAULT_MODE:
+            return _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining("|"));
          case JSON_MODE:
             return "{\n" + _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining(",\n")) + "\n}";
+         case JSON_MODE_INC_TYPES:
+            return "{\"fields\" : [\n" + _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining(",\n")) + "]\n}";
+         case XML_MODE:
+         case XML_MODE_INC_TYPES:
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<fields>\n" +
+                  _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining("\n")) + "\n</fields>";
+         default:
+            throw new IllegalStateException("Unknown ProjectionDisplayMode: " + _list.get(0).getProjectionDisplayMode());
+
       }
 
-      return _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining("|"));
    }
 
    /**

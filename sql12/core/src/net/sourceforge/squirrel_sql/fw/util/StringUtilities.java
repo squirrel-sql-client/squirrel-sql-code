@@ -259,12 +259,28 @@ public class StringUtilities
    	 return System.getProperty("line.separator", "\n");
     }
 
-   public static String escapeHtmlChars(String sql)
+   public static String escapeJsonChars(String str)
    {
-      String buf = sql.replaceAll("&", "&amp;");
-      buf = buf.replaceAll("<", "&lt;");
-      buf = buf.replaceAll(">", "&gt;");
-      buf = buf.replaceAll("\"", "&quot;");
+      String buf = StringUtils.replace(str,"\\", "\\\\"); // Must be first
+      buf = StringUtils.replace(buf,"\"", "\\\"");
+      buf = StringUtils.replace(buf,"\n", "\\n");
+      buf = StringUtils.replace(buf,"\t", "\\t");
+      return buf;
+   }
+
+   public static String escapeXmlChars(String str)
+   {
+      String buf = escapeHtmlChars(str);
+      buf = StringUtils.replace(buf,"'", "&apos;");
+      return buf;
+   }
+
+   public static String escapeHtmlChars(String str)
+   {
+      String buf = StringUtils.replace(str,"&", "&amp;");
+      buf = StringUtils.replace(buf,"<", "&lt;");
+      buf = StringUtils.replace(buf,">", "&gt;");
+      buf = StringUtils.replace(buf,"\"", "&quot;");
       return buf;
    }
 
