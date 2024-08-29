@@ -101,7 +101,7 @@ public class PlainValueRepresentation implements Serializable
       }
       else if( null != projectionFieldValueList )
       {
-         return projectionFieldValueList.asString();
+         return projectionFieldValueList.toUiRepresentationString();
       }
 
       return ret;

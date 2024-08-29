@@ -15,37 +15,20 @@ public class ProjectionFieldValue implements Serializable
    private final boolean valuesIsNull;
    private final String fieldName;
    private final String fieldTypeName;
+   private final boolean jsonValueWithQuotes;
+
    private ProjectionDisplaySwitch projectionDisplaySwitch;
 
-   public ProjectionFieldValue(String valueAsString, boolean valuesIsNull, String fieldName, String fieldTypeName)
+   public ProjectionFieldValue(String valueAsString, boolean valuesIsNull, String fieldName, String fieldTypeName, boolean jsonValueWithQuotes)
    {
       this.valueAsString = valueAsString;
       this.valuesIsNull = valuesIsNull;
       this.fieldName = fieldName;
       this.fieldTypeName = fieldTypeName;
+      this.jsonValueWithQuotes = jsonValueWithQuotes;
    }
 
-   public String getValueAsString()
-   {
-      return valueAsString;
-   }
-
-   public boolean isValuesIsNull()
-   {
-      return valuesIsNull;
-   }
-
-   public String getFieldName()
-   {
-      return fieldName;
-   }
-
-   public String getFieldTypeName()
-   {
-      return fieldTypeName;
-   }
-
-   public String asString()
+   public String toUiRepresentationString()
    {
       switch( getProjectionDisplayMode() )
       {
@@ -58,15 +41,27 @@ public class ProjectionFieldValue implements Serializable
 
    private String asJsonString()
    {
+      return getJsonFieldName()  + " : " + getJsonValue();
+   }
 
-      if( false == Objects.equals(fieldName,  UNKNOWN_TYPE_NAME) )
+   private String getJsonValue()
+   {
+      if(valuesIsNull)
       {
-         return "\"" + fieldName + "\" : \""  + (Objects.equals(valueAsString,  UNKNOWN_FIELD_NAME) ? "<unknown>" : valueAsString) + "\"";
+         return "null";
       }
-      else
+
+      if(Objects.equals(valueAsString,  UNKNOWN_FIELD_VALUE))
       {
-         return "\"<unknownField>\" : \""  + (Objects.equals(valueAsString,  UNKNOWN_FIELD_NAME) ? "<unknown>" : valueAsString) + "\"";
+         return "null";
       }
+
+      return jsonValueWithQuotes ? "\"" + valueAsString + "\"" : valueAsString;
+   }
+
+   private String getJsonFieldName()
+   {
+      return Objects.equals(fieldName,  UNKNOWN_TYPE_NAME) ? "\"<unknownField>\"" : "\"" + fieldName + "\"";
    }
 
    private String asDefaultString()

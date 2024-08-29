@@ -11,15 +11,15 @@ public class ProjectionFieldValueList implements Serializable
 
    public void add(Object value, String fieldName, Class<?> fieldType)
    {
-      _list.add(new ProjectionFieldValue(asString(value), isNull(value), fieldName, asQualifiedTypeName(fieldType)));
+      _list.add(new ProjectionFieldValue(prepareTransportToUI(value), isNull(value), fieldName, asQualifiedTypeName(fieldType), isJsonValueWithQuotes(fieldType)));
    }
 
    public void addUntyped(Object value)
    {
-      _list.add(new ProjectionFieldValue(asString(value), isNull(value), tryGetTypeName(value), ProjectionFieldValue.UNKNOWN_FIELD_NAME));
+      _list.add(new ProjectionFieldValue(prepareTransportToUI(value), isNull(value), tryGetTypeName(value), ProjectionFieldValue.UNKNOWN_FIELD_NAME, true));
    }
 
-   private String asString(Object value)
+   private String prepareTransportToUI(Object value)
    {
       if( isNull(value) )
       {
@@ -74,8 +74,23 @@ public class ProjectionFieldValueList implements Serializable
       }
    }
 
+   private boolean isJsonValueWithQuotes(Class<?> fieldType)
+   {
+      return false ==
+             (
+                      fieldType.isPrimitive()
+                   || Boolean.class == fieldType
+                   || Character.class == fieldType
+                   || Byte.class == fieldType
+                   || Short.class == fieldType
+                   || Integer.class == fieldType
+                   || Long.class == fieldType
+                   || Float.class == fieldType
+                   || Double.class == fieldType
+             );
+   }
 
-   public String asString()
+   public String toUiRepresentationString()
    {
       if(_list.isEmpty())
       {
@@ -85,10 +100,10 @@ public class ProjectionFieldValueList implements Serializable
       switch( _list.get(0).getProjectionDisplayMode() )
       {
          case JSON_MODE:
-            return "{\n" + _list.stream().map(e -> e.asString()).collect(Collectors.joining(",\n")) + "\n}";
+            return "{\n" + _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining(",\n")) + "\n}";
       }
 
-      return _list.stream().map(e -> e.asString()).collect(Collectors.joining("|"));
+      return _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining("|"));
    }
 
    /**
