@@ -25,13 +25,12 @@ public class RootResultController
 
    public RootResultController(RootType rootType, JPanel pnlResults, ArrayList<MappedClassInfo> mappedClassInfos, ResultControllerChannel resultControllerChannel)
    {
-      RootType rootType1 = rootType;
       _mappedClassInfos = mappedClassInfos;
       resultControllerChannel.setActiveControllersListener(() -> onTypedValuesDisplayModeChanged());
 
-      if(rootType1.getResultType() instanceof TupelType)
+      if( rootType.getResultType() instanceof TupelType)
       {
-         String msg = s_stringMgr.getString("RootResultController.MutibleTypesMessage", getClassNames((TupelType) rootType1.getResultType()));
+         String msg = s_stringMgr.getString("RootResultController.MutibleTypesMessage", getClassNames((TupelType) rootType.getResultType()));
          pnlResults.removeAll();
          pnlResults.add(new MultipleLineLabel(msg));
          return;
@@ -44,7 +43,7 @@ public class RootResultController
       _resultTree.setModel(model);
       _resultTree.setRootVisible(false);
 
-      initRoot((SingleType) rootType1.getResultType(), root);
+      initRoot((SingleType) rootType.getResultType(), root);
 
 
       _resultTree.addTreeExpansionListener(new TreeExpansionListener()

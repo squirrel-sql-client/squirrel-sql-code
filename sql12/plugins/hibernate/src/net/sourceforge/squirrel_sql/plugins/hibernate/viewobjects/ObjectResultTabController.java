@@ -112,7 +112,7 @@ public class ObjectResultTabController
       JPopupMenu popup = new JPopupMenu();
       for( ProjectionDisplayMode value : ProjectionDisplayMode.values() )
       {
-         JRadioButtonMenuItem item = new JRadioButtonMenuItem(value.name());
+         JRadioButtonMenuItem item = new JRadioButtonMenuItem(ProjectionDisplayModeRenderer.render(value));
          item.setSelected(projectionDisplaySwitch.getTypedValuesDisplayMode() == value);
          bg.add(item);
 
