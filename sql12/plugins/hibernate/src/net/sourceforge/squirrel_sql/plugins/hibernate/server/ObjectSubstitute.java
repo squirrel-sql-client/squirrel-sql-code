@@ -103,14 +103,14 @@ public class ObjectSubstitute implements Serializable
       }
       else
       {
-         return PlainValueRepresentation.ofTypedValueList(toTypedValueList(o, cl));
+         return PlainValueRepresentation.ofProjectionFieldValue(toTypedValueList(o, cl));
       }
    }
 
-   private TypedValueList toTypedValueList(Object o, ClassLoader cl)
+   private ProjectionFieldValueList toTypedValueList(Object o, ClassLoader cl)
    {
 
-      TypedValueList ret = new TypedValueList();
+      ProjectionFieldValueList ret = new ProjectionFieldValueList();
       try
       {
          Field[] declaredFields = o.getClass().getDeclaredFields();
@@ -134,7 +134,7 @@ public class ObjectSubstitute implements Serializable
                }
                else
                {
-                  ret.add(TypedValue.HIBERNATE_UNINITIALIZED, fieldName, fieldType);
+                  ret.add(ProjectionFieldValue.HIBERNATE_UNINITIALIZED, fieldName, fieldType);
                }
             }
             catch(Throwable e)

@@ -7,8 +7,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PlainValueRepresentation implements Serializable
 {
    private Object standardJdkTypeValue;
-   private TypedValueList typedValueList;
+   private ProjectionFieldValueList projectionFieldValueList;
 
+   /**
+    * Use the factory methods below.
+    */
    private PlainValueRepresentation()
    {
    }
@@ -20,10 +23,10 @@ public class PlainValueRepresentation implements Serializable
       return ret;
    }
 
-   public static PlainValueRepresentation ofTypedValueList(TypedValueList typedValueList)
+   public static PlainValueRepresentation ofProjectionFieldValue(ProjectionFieldValueList projectionFieldValueList)
    {
       PlainValueRepresentation ret = new PlainValueRepresentation();
-      ret.typedValueList = typedValueList;
+      ret.projectionFieldValueList = projectionFieldValueList;
       return ret;
    }
 
@@ -31,7 +34,7 @@ public class PlainValueRepresentation implements Serializable
    {
       AtomicBoolean found = new AtomicBoolean(false);
 
-      TypedValueVisitor visitor = tv -> {
+      ProjectionFieldValueVisitor visitor = tv -> {
          found.set(true);
          return false;
       };
@@ -40,17 +43,17 @@ public class PlainValueRepresentation implements Serializable
       return found.get();
    }
 
-   public static void distributeTypedValuesDisplaySwitch(List<ObjectSubstituteRoot> objects, TypedValuesDisplaySwitch typedValuesDisplaySwitch)
+   public static void distributeProjectionDisplaySwitch(List<ObjectSubstituteRoot> objects, ProjectionDisplaySwitch projectionDisplaySwitch)
    {
-      TypedValueVisitor visitor = tv -> {
-         tv.setTypedValuesDisplaySwitch(typedValuesDisplaySwitch);
+      ProjectionFieldValueVisitor visitor = pfv -> {
+         pfv.setProjectionDisplaySwitch(projectionDisplaySwitch);
          return true;
       };
 
       visitTypedValues(objects, visitor);
    }
 
-   public static void visitTypedValues(List<ObjectSubstituteRoot> objects, TypedValueVisitor visitor)
+   public static void visitTypedValues(List<ObjectSubstituteRoot> objects, ProjectionFieldValueVisitor visitor)
    {
       for( ObjectSubstituteRoot object : objects )
       {
@@ -60,9 +63,9 @@ public class PlainValueRepresentation implements Serializable
             {
                for( PlainValue pv : object.getArrayItemAt(i).getPlainValues() )
                {
-                  if(null != pv.getValue().typedValueList)
+                  if(null != pv.getValue().projectionFieldValueList )
                   {
-                     if(false == pv.getValue().typedValueList.visitValues(visitor))
+                     if(false == pv.getValue().projectionFieldValueList.visitValues(visitor))
                      {
                         return;
                      }
@@ -74,9 +77,9 @@ public class PlainValueRepresentation implements Serializable
          {
             for( PlainValue pv : object.getObjectSubstitute().getPlainValues() )
             {
-               if(null != pv.getValue().typedValueList)
+               if(null != pv.getValue().projectionFieldValueList )
                {
-                  if(false == pv.getValue().typedValueList.visitValues(visitor))
+                  if(false == pv.getValue().projectionFieldValueList.visitValues(visitor))
                   {
                      return;
                   }
@@ -96,9 +99,9 @@ public class PlainValueRepresentation implements Serializable
       {
          return "" + standardJdkTypeValue;
       }
-      else if( null != typedValueList )
+      else if( null != projectionFieldValueList )
       {
-         return typedValueList.asString();
+         return projectionFieldValueList.asString();
       }
 
       return ret;

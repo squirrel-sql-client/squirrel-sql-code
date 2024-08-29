@@ -21,8 +21,8 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.MappedClassInfoData;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.PlainValueRepresentation;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.TypedValuesDisplayMode;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.TypedValuesDisplaySwitch;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ProjectionDisplayMode;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ProjectionDisplaySwitch;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateSQLUtil;
 
 public class ObjectResultTabController
@@ -43,10 +43,10 @@ public class ObjectResultTabController
       {
          _tab.btnPlainTypedValuesDisplay.setVisible(true);
 
-         TypedValuesDisplaySwitch typedValuesDisplaySwitch = new TypedValuesDisplaySwitch();
-         PlainValueRepresentation.distributeTypedValuesDisplaySwitch(objects, typedValuesDisplaySwitch);
+         ProjectionDisplaySwitch projectionDisplaySwitch = new ProjectionDisplaySwitch();
+         PlainValueRepresentation.distributeProjectionDisplaySwitch(objects, projectionDisplaySwitch);
 
-         _tab.btnPlainTypedValuesDisplay.addActionListener(e -> onPlainTypedValuesDisplay(typedValuesDisplaySwitch));
+         _tab.btnPlainTypedValuesDisplay.addActionListener(e -> onPlainTypedValuesDisplay(projectionDisplaySwitch));
       }
 
       _tab.btnClose.addActionListener(e -> l.closeTab(ObjectResultTabController.this));
@@ -105,19 +105,19 @@ public class ObjectResultTabController
       //CommandLineOutput.displayObjects(mappedClassInfos, qrmr,  con.getPersistenCollectionClass());
    }
 
-   private void onPlainTypedValuesDisplay(TypedValuesDisplaySwitch typedValuesDisplaySwitch)
+   private void onPlainTypedValuesDisplay(ProjectionDisplaySwitch projectionDisplaySwitch)
    {
       ButtonGroup bg = new ButtonGroup();
 
       JPopupMenu popup = new JPopupMenu();
-      for( TypedValuesDisplayMode value : TypedValuesDisplayMode.values() )
+      for( ProjectionDisplayMode value : ProjectionDisplayMode.values() )
       {
          JRadioButtonMenuItem item = new JRadioButtonMenuItem(value.name());
-         item.setSelected(typedValuesDisplaySwitch.getTypedValuesDisplayMode() == value);
+         item.setSelected(projectionDisplaySwitch.getTypedValuesDisplayMode() == value);
          bg.add(item);
 
          item.addActionListener(e -> {
-            typedValuesDisplaySwitch.setTypedValuesDisplayMode(value);
+            projectionDisplaySwitch.setTypedValuesDisplayMode(value);
             repaintDisplay();
          });
 

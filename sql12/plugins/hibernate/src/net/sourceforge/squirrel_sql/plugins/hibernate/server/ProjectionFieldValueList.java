@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TypedValueList implements Serializable
+public class ProjectionFieldValueList implements Serializable
 {
-   private List<TypedValue> _list = new ArrayList<>();
+   private List<ProjectionFieldValue> _list = new ArrayList<>();
 
    public void add(Object value, String fieldName, Class<?> fieldType)
    {
-      _list.add(new TypedValue(asString(value), isNull(value), fieldName, asQualifiedTypeName(fieldType)));
+      _list.add(new ProjectionFieldValue(asString(value), isNull(value), fieldName, asQualifiedTypeName(fieldType)));
    }
 
    public void addUntyped(Object value)
    {
-      _list.add(new TypedValue(asString(value), isNull(value), tryGetTypeName(value), TypedValue.UNKNOWN_FIELD_NAME));
+      _list.add(new ProjectionFieldValue(asString(value), isNull(value), tryGetTypeName(value), ProjectionFieldValue.UNKNOWN_FIELD_NAME));
    }
 
    private String asString(Object value)
@@ -32,7 +32,7 @@ public class TypedValueList implements Serializable
       }
       catch(Exception e)
       {
-         return TypedValue.UNKNOWN_FIELD_VALUE;
+         return ProjectionFieldValue.UNKNOWN_FIELD_VALUE;
       }
    }
 
@@ -40,7 +40,7 @@ public class TypedValueList implements Serializable
    {
       if(null == fieldType)
       {
-         return TypedValue.UNKNOWN_TYPE_NAME;
+         return ProjectionFieldValue.UNKNOWN_TYPE_NAME;
       }
 
       try
@@ -49,7 +49,7 @@ public class TypedValueList implements Serializable
       }
       catch(Exception e)
       {
-         return TypedValue.UNKNOWN_TYPE_NAME;
+         return ProjectionFieldValue.UNKNOWN_TYPE_NAME;
       }
    }
 
@@ -64,13 +64,13 @@ public class TypedValueList implements Serializable
       {
          if(isNull(value))
          {
-            return TypedValue.UNKNOWN_TYPE_NAME;
+            return ProjectionFieldValue.UNKNOWN_TYPE_NAME;
          }
          return value.getClass().getName();
       }
       catch(Exception e)
       {
-         return TypedValue.UNKNOWN_TYPE_NAME;
+         return ProjectionFieldValue.UNKNOWN_TYPE_NAME;
       }
    }
 
@@ -82,7 +82,7 @@ public class TypedValueList implements Serializable
          return "<noFields>";
       }
 
-      switch( _list.get(0).getTypedValuesDisplayMode() )
+      switch( _list.get(0).getProjectionDisplayMode() )
       {
          case JSON_MODE:
             return "{\n" + _list.stream().map(e -> e.asString()).collect(Collectors.joining(",\n")) + "\n}";
@@ -94,11 +94,11 @@ public class TypedValueList implements Serializable
    /**
     * @return true if visiting is to continue
     */
-   public boolean visitValues(TypedValueVisitor visitor)
+   public boolean visitValues(ProjectionFieldValueVisitor visitor)
    {
-      for( TypedValue typedValue : _list )
+      for( ProjectionFieldValue projectionFieldValue : _list )
       {
-         if(false == visitor.visit(typedValue))
+         if(false == visitor.visit(projectionFieldValue))
          {
             return false;
          }

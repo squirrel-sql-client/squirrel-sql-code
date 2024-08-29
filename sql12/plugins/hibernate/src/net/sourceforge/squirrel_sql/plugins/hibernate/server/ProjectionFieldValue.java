@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class TypedValue implements Serializable
+public class ProjectionFieldValue implements Serializable
 {
    public static final String HIBERNATE_UNINITIALIZED = "<uninitialized>";
 
@@ -15,9 +15,9 @@ public class TypedValue implements Serializable
    private final boolean valuesIsNull;
    private final String fieldName;
    private final String fieldTypeName;
-   private TypedValuesDisplaySwitch typedValuesDisplaySwitch;
+   private ProjectionDisplaySwitch projectionDisplaySwitch;
 
-   public TypedValue(String valueAsString, boolean valuesIsNull, String fieldName, String fieldTypeName)
+   public ProjectionFieldValue(String valueAsString, boolean valuesIsNull, String fieldName, String fieldTypeName)
    {
       this.valueAsString = valueAsString;
       this.valuesIsNull = valuesIsNull;
@@ -47,7 +47,7 @@ public class TypedValue implements Serializable
 
    public String asString()
    {
-      switch( getTypedValuesDisplayMode() )
+      switch( getProjectionDisplayMode() )
       {
          case JSON_MODE:
             return asJsonString();
@@ -81,18 +81,18 @@ public class TypedValue implements Serializable
       }
    }
 
-   public void setTypedValuesDisplaySwitch(TypedValuesDisplaySwitch typedValuesDisplaySwitch)
+   public void setProjectionDisplaySwitch(ProjectionDisplaySwitch projectionDisplaySwitch)
    {
-      this.typedValuesDisplaySwitch = typedValuesDisplaySwitch;
+      this.projectionDisplaySwitch = projectionDisplaySwitch;
    }
 
-   public TypedValuesDisplayMode getTypedValuesDisplayMode()
+   public ProjectionDisplayMode getProjectionDisplayMode()
    {
-      if(null == typedValuesDisplaySwitch)
+      if( null == projectionDisplaySwitch )
       {
-         return TypedValuesDisplayMode.DEFAULT_MODE;
+         return ProjectionDisplayMode.DEFAULT_MODE;
       }
 
-      return typedValuesDisplaySwitch.getTypedValuesDisplayMode();
+      return projectionDisplaySwitch.getTypedValuesDisplayMode();
    }
 }
