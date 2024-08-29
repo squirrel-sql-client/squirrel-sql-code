@@ -77,8 +77,8 @@ public class ResultsController
 
    }
 
-   public void typedValuesDisplayModeChanged()
+   public void projectionDisplayModeChanged()
    {
-      _resultControllerChannel.typedValuesDisplayModeChanged();
+      _resultControllerChannel.projectionDisplayModeChanged();
    }
 }

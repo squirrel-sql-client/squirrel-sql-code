@@ -26,7 +26,7 @@ public class RootResultController
    public RootResultController(RootType rootType, JPanel pnlResults, ArrayList<MappedClassInfo> mappedClassInfos, ResultControllerChannel resultControllerChannel)
    {
       _mappedClassInfos = mappedClassInfos;
-      resultControllerChannel.setActiveControllersListener(() -> onTypedValuesDisplayModeChanged());
+      resultControllerChannel.setActiveControllersListener(() -> onProjectionDisplayModeChanged());
 
       if( rootType.getResultType() instanceof TupelType)
       {
@@ -63,7 +63,7 @@ public class RootResultController
 
    }
 
-   private void onTypedValuesDisplayModeChanged()
+   private void onProjectionDisplayModeChanged()
    {
       GUIUtils.getExpandedLeafNodes(_resultTree).forEach(n -> ((DefaultTreeModel)_resultTree.getModel()).nodeChanged(n));
    }

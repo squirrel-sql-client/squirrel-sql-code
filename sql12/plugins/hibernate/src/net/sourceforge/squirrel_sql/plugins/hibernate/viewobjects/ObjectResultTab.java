@@ -24,7 +24,7 @@ public class ObjectResultTab extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectResultTab.class);
 
-   JButton btnPlainTypedValuesDisplay;
+   JButton btnProjectionDisplay;
    JLabel lblHqlQuery;
    JButton btnClose;
    JTree treeTypes;
@@ -69,10 +69,10 @@ public class ObjectResultTab extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1,3, 1, 0), 0,0);
-      btnPlainTypedValuesDisplay = new JButton(resource.getIcon(HibernatePluginResources.IKeys.DISPLAY_CHOICE_IMAGE));
-      btnPlainTypedValuesDisplay.setToolTipText(s_stringMgr.getString("ObjectResultTab.choosePlainTypedValuesDisplay"));
-      btnPlainTypedValuesDisplay.setBorder(BorderFactory.createRaisedBevelBorder());
-      ret.add(btnPlainTypedValuesDisplay, gbc);
+      btnProjectionDisplay = new JButton(resource.getIcon(HibernatePluginResources.IKeys.DISPLAY_CHOICE_IMAGE));
+      btnProjectionDisplay.setToolTipText(s_stringMgr.getString("ObjectResultTab.chooseProjectionDisplay.tooltip"));
+      btnProjectionDisplay.setBorder(BorderFactory.createRaisedBevelBorder());
+      ret.add(btnProjectionDisplay, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1,3, 1, 0), 0,0);
       lblHqlQuery = new JLabel();

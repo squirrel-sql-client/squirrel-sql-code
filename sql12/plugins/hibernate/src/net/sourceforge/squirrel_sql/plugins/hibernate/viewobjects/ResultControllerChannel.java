@@ -4,11 +4,11 @@ public class ResultControllerChannel
 {
    private ResultControllerChannelListener _resultControllerChannelListener;
 
-   public void typedValuesDisplayModeChanged()
+   public void projectionDisplayModeChanged()
    {
       if(null != _resultControllerChannelListener)
       {
-         _resultControllerChannelListener.typedValuesDisplayModeChanged();
+         _resultControllerChannelListener.projectionDisplayModeChanged();
       }
    }
 

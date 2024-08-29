@@ -38,15 +38,15 @@ public class ObjectResultTabController
 
       initHqlQueryLabel(objects, hqlQuery, objects.size(), maxNumResults);
 
-      _tab.btnPlainTypedValuesDisplay.setVisible(false);
-      if( PlainValueRepresentation.containsTypedValueLists(objects) )
+      _tab.btnProjectionDisplay.setVisible(false);
+      if( PlainValueRepresentation.containsProjectionFieldValueList(objects) )
       {
-         _tab.btnPlainTypedValuesDisplay.setVisible(true);
+         _tab.btnProjectionDisplay.setVisible(true);
 
          ProjectionDisplaySwitch projectionDisplaySwitch = new ProjectionDisplaySwitch();
          PlainValueRepresentation.distributeProjectionDisplaySwitch(objects, projectionDisplaySwitch);
 
-         _tab.btnPlainTypedValuesDisplay.addActionListener(e -> onPlainTypedValuesDisplay(projectionDisplaySwitch));
+         _tab.btnProjectionDisplay.addActionListener(e -> showProjectionDisplayModePopup(projectionDisplaySwitch));
       }
 
       _tab.btnClose.addActionListener(e -> l.closeTab(ObjectResultTabController.this));
@@ -105,7 +105,7 @@ public class ObjectResultTabController
       //CommandLineOutput.displayObjects(mappedClassInfos, qrmr,  con.getPersistenCollectionClass());
    }
 
-   private void onPlainTypedValuesDisplay(ProjectionDisplaySwitch projectionDisplaySwitch)
+   private void showProjectionDisplayModePopup(ProjectionDisplaySwitch projectionDisplaySwitch)
    {
       ButtonGroup bg = new ButtonGroup();
 
@@ -113,18 +113,18 @@ public class ObjectResultTabController
       for( ProjectionDisplayMode value : ProjectionDisplayMode.values() )
       {
          JRadioButtonMenuItem item = new JRadioButtonMenuItem(ProjectionDisplayModeRenderer.render(value));
-         item.setSelected(projectionDisplaySwitch.getTypedValuesDisplayMode() == value);
+         item.setSelected(projectionDisplaySwitch.getProjectionDisplayMode() == value);
          bg.add(item);
 
          item.addActionListener(e -> {
-            projectionDisplaySwitch.setTypedValuesDisplayMode(value);
+            projectionDisplaySwitch.setProjectionDisplayMode(value);
             repaintDisplay();
          });
 
          popup.add(item);
       }
 
-      popup.show(_tab.btnPlainTypedValuesDisplay, 0, _tab.btnPlainTypedValuesDisplay.getHeight());
+      popup.show(_tab.btnProjectionDisplay, 0, _tab.btnProjectionDisplay.getHeight());
    }
 
    private void repaintDisplay()
@@ -133,7 +133,7 @@ public class ObjectResultTabController
       //_tab.pnlResults.validate();
       _tab.pnlResults.repaint();
 
-      _resultsController.typedValuesDisplayModeChanged();
+      _resultsController.projectionDisplayModeChanged();
    }
 
    private MappedClassInfo getBestPlainValueArrayMappedClassInfo(List<ObjectSubstituteRoot> objects)

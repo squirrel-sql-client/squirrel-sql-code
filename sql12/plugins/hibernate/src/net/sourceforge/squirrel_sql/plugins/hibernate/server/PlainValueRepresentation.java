@@ -30,7 +30,7 @@ public class PlainValueRepresentation implements Serializable
       return ret;
    }
 
-   public static boolean containsTypedValueLists(List<ObjectSubstituteRoot> objects)
+   public static boolean containsProjectionFieldValueList(List<ObjectSubstituteRoot> objects)
    {
       AtomicBoolean found = new AtomicBoolean(false);
 
@@ -39,7 +39,7 @@ public class PlainValueRepresentation implements Serializable
          return false;
       };
 
-      visitTypedValues(objects, visitor);
+      visitProjectionFieldValues(objects, visitor);
       return found.get();
    }
 
@@ -50,10 +50,10 @@ public class PlainValueRepresentation implements Serializable
          return true;
       };
 
-      visitTypedValues(objects, visitor);
+      visitProjectionFieldValues(objects, visitor);
    }
 
-   public static void visitTypedValues(List<ObjectSubstituteRoot> objects, ProjectionFieldValueVisitor visitor)
+   public static void visitProjectionFieldValues(List<ObjectSubstituteRoot> objects, ProjectionFieldValueVisitor visitor)
    {
       for( ObjectSubstituteRoot object : objects )
       {

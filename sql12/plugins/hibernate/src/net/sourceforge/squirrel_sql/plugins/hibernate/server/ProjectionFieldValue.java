@@ -161,6 +161,6 @@ public class ProjectionFieldValue implements Serializable
          return ProjectionDisplayMode.DEFAULT_MODE;
       }
 
-      return projectionDisplaySwitch.getTypedValuesDisplayMode();
+      return projectionDisplaySwitch.getProjectionDisplayMode();
    }
 }

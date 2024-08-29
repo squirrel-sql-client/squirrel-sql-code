@@ -103,11 +103,11 @@ public class ObjectSubstitute implements Serializable
       }
       else
       {
-         return PlainValueRepresentation.ofProjectionFieldValue(toTypedValueList(o, cl));
+         return PlainValueRepresentation.ofProjectionFieldValue(toProjectionFieldValueList(o, cl));
       }
    }
 
-   private ProjectionFieldValueList toTypedValueList(Object o, ClassLoader cl)
+   private ProjectionFieldValueList toProjectionFieldValueList(Object o, ClassLoader cl)
    {
 
       ProjectionFieldValueList ret = new ProjectionFieldValueList();

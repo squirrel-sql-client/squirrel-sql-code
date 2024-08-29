@@ -6,12 +6,12 @@ public class ProjectionDisplaySwitch implements Serializable
 {
    private ProjectionDisplayMode projectionDisplayMode = ProjectionDisplayMode.DEFAULT_MODE;
 
-   public ProjectionDisplayMode getTypedValuesDisplayMode()
+   public ProjectionDisplayMode getProjectionDisplayMode()
    {
       return projectionDisplayMode;
    }
 
-   public void setTypedValuesDisplayMode(ProjectionDisplayMode projectionDisplayMode)
+   public void setProjectionDisplayMode(ProjectionDisplayMode projectionDisplayMode)
    {
       this.projectionDisplayMode = projectionDisplayMode;
    }
