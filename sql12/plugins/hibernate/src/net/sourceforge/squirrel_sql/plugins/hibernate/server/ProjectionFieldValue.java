@@ -12,21 +12,21 @@ public class ProjectionFieldValue implements Serializable
    public static final String UNKNOWN_TYPE_NAME = null;
    public static final String UNKNOWN_FIELD_VALUE = null;
 
-   private final String valueAsString;
-   private final boolean valuesIsNull;
-   private final String fieldName;
-   private final String fieldTypeName;
-   private final boolean jsonValueWithQuotes;
+   private final String _valueAsString;
+   private final boolean _valuesIsNull;
+   private final String _fieldName;
+   private final String _fieldTypeName;
+   private final boolean _jsonValueWithQuotes;
 
    private ProjectionDisplaySwitch projectionDisplaySwitch;
 
    public ProjectionFieldValue(String valueAsString, boolean valuesIsNull, String fieldName, String fieldTypeName, boolean jsonValueWithQuotes)
    {
-      this.valueAsString = valueAsString;
-      this.valuesIsNull = valuesIsNull;
-      this.fieldName = fieldName;
-      this.fieldTypeName = fieldTypeName;
-      this.jsonValueWithQuotes = jsonValueWithQuotes;
+      _valueAsString = valueAsString;
+      _valuesIsNull = valuesIsNull;
+      _fieldName = fieldName;
+      _fieldTypeName = fieldTypeName;
+      _jsonValueWithQuotes = jsonValueWithQuotes;
    }
 
    public String toUiRepresentationString()
@@ -71,55 +71,57 @@ public class ProjectionFieldValue implements Serializable
 
    private String getXmlValue()
    {
-      if(valuesIsNull)
+      if( _valuesIsNull )
       {
          return "null";
       }
 
-      if(Objects.equals(valueAsString,  UNKNOWN_FIELD_VALUE))
+      if(Objects.equals(_valueAsString, UNKNOWN_FIELD_VALUE))
       {
          return "unknown";
       }
 
-      return HibernateServerStringUtils.escapeXmlChars(valueAsString);
+      return HibernateServerStringUtils.escapeXmlChars(_valueAsString);
    }
 
    private String getXmlFieldName()
    {
-      String ret = Objects.equals(fieldName, UNKNOWN_FIELD_NAME) ? "unknownField" : fieldName;
+      String ret = Objects.equals(_fieldName, UNKNOWN_FIELD_NAME) ? "unknownField" : _fieldName;
       return HibernateServerStringUtils.escapeXmlChars(ret);
    }
 
    private String getXmlTypeName()
    {
-      String ret = Objects.equals(fieldTypeName, UNKNOWN_TYPE_NAME) ? "unknownType" : fieldTypeName;
+      String ret = Objects.equals(_fieldTypeName, UNKNOWN_TYPE_NAME) ? "unknownType" : _fieldTypeName;
       return HibernateServerStringUtils.escapeXmlChars(ret);
    }
 
 
    private String getJsonValue()
    {
-      if(valuesIsNull)
+      if( _valuesIsNull )
       {
          return "null";
       }
 
-      if(Objects.equals(valueAsString,  UNKNOWN_FIELD_VALUE))
+      if(Objects.equals(_valueAsString, UNKNOWN_FIELD_VALUE))
       {
          return "<unknown>";
       }
 
-      return jsonValueWithQuotes ? "\"" + HibernateServerStringUtils.escapeJsonChars(valueAsString) + "\"" : valueAsString;
+      return _jsonValueWithQuotes ? "\"" + HibernateServerStringUtils.escapeJsonChars(_valueAsString) + "\"" : _valueAsString;
    }
 
    private String getJsonFieldName()
    {
-      return Objects.equals(fieldName,  UNKNOWN_FIELD_NAME) ? "\"<unknownField>\"" : "\"" + HibernateServerStringUtils.escapeJsonChars(fieldName) + "\"";
+      return Objects.equals(_fieldName, UNKNOWN_FIELD_NAME) ? "\"<unknownField>\"" : "\"" + HibernateServerStringUtils.escapeJsonChars(
+            _fieldName) + "\"";
    }
 
    private String getJsonTypeName()
    {
-      return Objects.equals(fieldTypeName,  UNKNOWN_TYPE_NAME) ? "\"<unknownType>\"" : "\"" + HibernateServerStringUtils.escapeJsonChars(fieldTypeName) + "\"";
+      return Objects.equals(_fieldTypeName, UNKNOWN_TYPE_NAME) ? "\"<unknownType>\"" : "\"" + HibernateServerStringUtils.escapeJsonChars(
+            _fieldTypeName) + "\"";
    }
 
    private String asDefaultString()
@@ -129,22 +131,22 @@ public class ProjectionFieldValue implements Serializable
 
    private String getDefaultValue()
    {
-      if(valuesIsNull)
+      if( _valuesIsNull )
       {
          return "null";
       }
 
-      if(Objects.equals(valueAsString,  UNKNOWN_FIELD_VALUE))
+      if(Objects.equals(_valueAsString, UNKNOWN_FIELD_VALUE))
       {
          return "<unknown>";
       }
 
-      return valueAsString;
+      return _valueAsString;
    }
 
    private String getDefaultFieldName()
    {
-      return Objects.equals(fieldName,  UNKNOWN_FIELD_NAME) ? "<unknownField>" : fieldName;
+      return Objects.equals(_fieldName, UNKNOWN_FIELD_NAME) ? "<unknownField>" : _fieldName;
    }
 
 

@@ -7,7 +7,13 @@ import java.util.stream.Collectors;
 
 public class ProjectionFieldValueList implements Serializable
 {
+   private final String _projectionClassName;
    private List<ProjectionFieldValue> _list = new ArrayList<>();
+
+   public ProjectionFieldValueList(String projectionClassName)
+   {
+      _projectionClassName = projectionClassName;
+   }
 
    public void add(Object value, String fieldName, Class<?> fieldType)
    {
@@ -104,11 +110,16 @@ public class ProjectionFieldValueList implements Serializable
          case JSON_MODE:
             return "{\n" + _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining(",\n")) + "\n}";
          case JSON_MODE_INC_TYPES:
-            return "{\"fields\" : [\n" + _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining(",\n")) + "]\n}";
+            return "{\"projectionClass\" : \"" + _projectionClassName + "\",\n\"fields\" : [\n" + _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining(",\n")) + "]\n}";
          case XML_MODE:
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<fields>\n" +
+                   _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining("\n")) + "\n</fields>";
          case XML_MODE_INC_TYPES:
-            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<fields>\n" +
-                  _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining("\n")) + "\n</fields>";
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+                   + "<projection>\n"
+                   + "<projectionClass>" + _projectionClassName + "</projectionClass>\n"
+                   + "<fields>\n"
+                   + _list.stream().map(pv -> pv.toUiRepresentationString()).collect(Collectors.joining("\n")) + "\n</fields>\n</projection>";
          default:
             throw new IllegalStateException("Unknown ProjectionDisplayMode: " + _list.get(0).getProjectionDisplayMode());
 

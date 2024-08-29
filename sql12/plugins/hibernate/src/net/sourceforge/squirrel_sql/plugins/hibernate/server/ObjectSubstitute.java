@@ -107,13 +107,13 @@ public class ObjectSubstitute implements Serializable
       }
    }
 
-   private ProjectionFieldValueList toProjectionFieldValueList(Object o, ClassLoader cl)
+   private ProjectionFieldValueList toProjectionFieldValueList(Object projectionObject, ClassLoader cl)
    {
 
-      ProjectionFieldValueList ret = new ProjectionFieldValueList();
+      ProjectionFieldValueList ret = new ProjectionFieldValueList(projectionObject.getClass().getName());
       try
       {
-         Field[] declaredFields = o.getClass().getDeclaredFields();
+         Field[] declaredFields = projectionObject.getClass().getDeclaredFields();
 
          for( Field f : declaredFields )
          {
@@ -125,7 +125,7 @@ public class ObjectSubstitute implements Serializable
                }
 
                f.setAccessible(true);
-               Object fieldVal = f.get(o);
+               Object fieldVal = f.get(projectionObject);
                String fieldName = f.getName();
                Class<?> fieldType = f.getType();
                if(HibernateServerUtil.isInitialized(cl, fieldVal))
@@ -144,7 +144,7 @@ public class ObjectSubstitute implements Serializable
       }
       catch(Throwable e)
       {
-         ret.addUntyped(o);
+         ret.addUntyped(projectionObject);
       }
 
       return ret;
