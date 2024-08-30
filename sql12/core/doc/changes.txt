@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Hibernate Plugin: Improved support for projection queries:
+  - The projection class's name is displayed in the projection's column header.
+  - When a HQL query contains a projection, a new button on the upper left of the result tab
+    allows to choose several projection display modes including JSON and XML.
+  Thanks to SHD (www.shd.de) for sponsoring this feature.
+
 Hibernate Plugin configuration: Adjusted persistence.xml description to reflect the option
   to specify jar files and/or classes directories to scan for Entities.
 
