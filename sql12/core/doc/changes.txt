@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Hibernate Plugin configuration: Adjusted persistence.xml description to reflect the option
+  to specify jar files and/or classes directories to scan for Entities.
+
 Hibernate Plugin: The Plugin configuration allows to copy a configuration's classpath to clipboard.
 
 Table display now uses the background color cyan for all cells containing new lines
