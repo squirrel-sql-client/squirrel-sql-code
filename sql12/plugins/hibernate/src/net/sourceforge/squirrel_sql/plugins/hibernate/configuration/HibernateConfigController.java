@@ -1,5 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -17,18 +30,6 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePrefsListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathItem;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class HibernateConfigController
 {
@@ -85,6 +86,7 @@ public class HibernateConfigController
 
 		_panel.btnClassPathMoveDown.addActionListener(e -> onMoveDownClasspathEntries());
 
+		_panel.btnCopyClasspathToClip.addActionListener(e -> onCopyClasspathToClip());
 
 		_panel.btnApplyConfigChanges.addActionListener(e -> onApplyConfigChanges(false));
 
@@ -99,6 +101,13 @@ public class HibernateConfigController
 		_panel.btnProcessDetails.addActionListener(e -> onProcessDetails());
 	}
 
+	private void onCopyClasspathToClip()
+	{
+		ClassPathItemListModel model = (ClassPathItemListModel) _panel.lstClassPath.getModel();
+		String classpath = Arrays.stream(model.getClassPathArray()).collect(Collectors.joining(File.pathSeparator + "\n"));
+		ClipboardUtil.copyToClip(classpath, true);
+	}
+
 	private void onAddClassPathFromClip()
 	{
 		ArrayList<String> cpEntries = new ArrayList<>();
@@ -108,7 +117,7 @@ public class HibernateConfigController
 
 		for( String split : splits )
 		{
-			cpEntries.addAll(Arrays.asList(split.trim().split(System.getProperties().getProperty("path.separator"))));
+			cpEntries.addAll(Arrays.asList(split.trim().split(File.pathSeparator)));
 		}
 
 		for( String cpEntry : cpEntries )

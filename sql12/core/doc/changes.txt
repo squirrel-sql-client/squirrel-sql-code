@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Hibernate Plugin: The Plugin configuration allows to copy a configuration's classpath to clipboard.
+
 Table display now uses the background color cyan for all cells containing new lines
   not only in SQL result tables and in Object tree "Content" tables.
 
