@@ -1,14 +1,14 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released, available in our GIT repository, snapshots and future releases.
-===============================================================================================
-
+4.8.0 (09/01/2024)
+==================
 Enhancements:
 
 Hibernate Plugin: Generating SQL from HQL now uses the SQL-Extractor of the hypersistence-utils library,
   see https://github.com/vladmihalcea/hypersistence-utils.
   To generate SQL from HQL execute a HQL and use the SQL button on the upper right of the HQL result tab.
+  To use this feature the hypersistence-utils library must included in the Hibernate Plugin's configuration.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/34
 SQL result table:
