@@ -1,8 +1,9 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-4.8.0 (09/01/2024)
-==================
+Not yet released, available in our GIT repository, snapshots and future releases.
+===============================================================================================
+
 Enhancements:
 
 Hibernate Plugin: Improved support for projection queries:
@@ -21,6 +22,11 @@ Table display now uses the background color cyan for all cells containing new li
 
 Table cell data popup now offers find, Xml/Json-reformatting and export functions for all tables.
   To open the cell data popup double-click a table cell.
+
+
+4.8.0 (09/01/2024)
+==================
+Enhancements:
 
 Hibernate Plugin: Generating SQL from HQL now uses the SQL-Extractor of the hypersistence-utils library,
   see https://github.com/vladmihalcea/hypersistence-utils.
