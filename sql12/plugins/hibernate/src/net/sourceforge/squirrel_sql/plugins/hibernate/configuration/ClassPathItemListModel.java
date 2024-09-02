@@ -1,15 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathItem;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathUtil;
-
-import javax.swing.DefaultListModel;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.DefaultListModel;
 
-public class ClassPathItemListModel extends DefaultListModel
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathItem;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathUtil;
+
+public class ClassPathItemListModel extends DefaultListModel<ClassPathItem>
 {
    public String[] getClassPathArray()
    {
@@ -60,7 +60,7 @@ public class ClassPathItemListModel extends DefaultListModel
 
 
    @Override
-   public void addElement(Object obj)
+   public void addElement(ClassPathItem obj)
    {
       throw new UnsupportedOperationException("Use addJar() or addJarDir()");
    }

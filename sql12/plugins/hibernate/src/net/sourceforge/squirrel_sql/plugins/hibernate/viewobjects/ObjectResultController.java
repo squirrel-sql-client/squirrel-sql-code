@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.util.List;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -9,11 +13,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
-
-import javax.swing.*;
-import java.util.List;
 
 public class ObjectResultController
 {
@@ -90,9 +90,10 @@ public class ObjectResultController
          }
       }
 
-      List<ObjectSubstituteRoot> list = queryListCreator.getList();
+      List<ObjectSubstituteRoot> queryResultList = queryListCreator.getQueryResultList();
 
-      if (null == list)
+
+      if (null == queryResultList)
       {
          return;
       }
@@ -111,7 +112,7 @@ public class ObjectResultController
       int maxNumResults = queryListCreator.getMaxNumResults();
       HibernateConnection con = queryListCreator.getConnection();
 
-      ObjectResultTabController ortc = new ObjectResultTabController(list, maxNumResults, con, hqlQuery, _resource, l, _session);
+      ObjectResultTabController ortc = new ObjectResultTabController(queryResultList, maxNumResults, con, hqlQuery, _resource, l, _session);
       int titelLen = Math.min(hqlQuery.length(), 14);
       String title = hqlQuery.trim().substring(0, titelLen).replaceAll("\n", " ");
       _objectResultTabbedPane.addTab(title, ortc.getPanel());

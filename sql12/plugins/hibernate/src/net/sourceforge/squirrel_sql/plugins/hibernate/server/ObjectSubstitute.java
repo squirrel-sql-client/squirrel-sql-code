@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,9 +41,13 @@ public class ObjectSubstitute implements Serializable
       Optional<Object> any = primitiveOrUnknownObjectCollection.stream().filter(Objects::nonNull).findAny();
       String className = any.isEmpty() ? "<unknown>" : any.get().getClass().getName();
       String propertyName = "value " + (1);
-      HibernatePropertyInfo indentifierHibernatePropertyInfo = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
-      _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(any.orElse(null), cl), indentifierHibernatePropertyInfo));
+      HibernatePropertyInfo indentifierHibernatePropertyInfo =
+            new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
+
+      indentifierHibernatePropertyInfo.setPlainValueProperty(true);
+
+      _plainValueByPropertyName.put(propertyName, new PlainValue(toPlainValueRepresentation(any.orElse(null), cl), indentifierHibernatePropertyInfo));
 
       HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[primitiveOrUnknownObjectCollection.size() - 1];
 
@@ -52,8 +57,9 @@ public class ObjectSubstitute implements Serializable
          className = null == primitiveOrUnknownObjectList.get(i) ? "<unknown>" : primitiveOrUnknownObjectList.get(i).getClass().getName();
          propertyName = "value " + (i + 1);
          hibernatePropertyInfos[i-1] = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
+         hibernatePropertyInfos[i-1].setPlainValueProperty(true);
 
-         _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(primitiveOrUnknownObjectList.get(i), cl), hibernatePropertyInfos[i-1]));
+         _plainValueByPropertyName.put(propertyName, new PlainValue(toPlainValueRepresentation(primitiveOrUnknownObjectList.get(i), cl), hibernatePropertyInfos[i - 1]));
       }
 
 
@@ -70,11 +76,11 @@ public class ObjectSubstitute implements Serializable
       {
          if(0 == count)
          {
-            ret.append(toPrimitiveType(o, cl));
+            ret.append(toPlainValueRepresentation(o, cl));
          }
          else
          {
-            ret.append(";").append(toPrimitiveType(o, cl));
+            ret.append(";").append(toPlainValueRepresentation(o, cl));
          }
 
          ++count;
@@ -89,49 +95,46 @@ public class ObjectSubstitute implements Serializable
       return ret.toString();
    }
 
-   private Object toPrimitiveType(Object o, ClassLoader cl)
+   private PlainValueRepresentation toPlainValueRepresentation(Object o, ClassLoader cl)
    {
       if(null == o || o.getClass().getName().startsWith("java."))
       {
-         return o;
+         return PlainValueRepresentation.ofStandardJdkType(o);
       }
       else
       {
-         return transformToString(o, cl);
+         return PlainValueRepresentation.ofProjectionFieldValue(toProjectionFieldValueList(o, cl));
       }
    }
 
-   private String transformToString(Object o, ClassLoader cl)
+   private ProjectionFieldValueList toProjectionFieldValueList(Object projectionObject, ClassLoader cl)
    {
 
-      StringBuilder sb = new StringBuilder();
+      ProjectionFieldValueList ret = new ProjectionFieldValueList(projectionObject.getClass().getName());
       try
       {
-         Field[] declaredFields = o.getClass().getDeclaredFields();
+         Field[] declaredFields = projectionObject.getClass().getDeclaredFields();
 
-         boolean valueAppended = false;
          for( Field f : declaredFields )
          {
-            if( valueAppended )
-            {
-               sb.append("|");
-               valueAppended = false;
-            }
-
             try
             {
+               if( f.getModifiers() == Modifier.STATIC)
+               {
+                  continue;
+               }
+
                f.setAccessible(true);
-               Object fieldVal = f.get(o);
+               Object fieldVal = f.get(projectionObject);
                String fieldName = f.getName();
+               Class<?> fieldType = f.getType();
                if(HibernateServerUtil.isInitialized(cl, fieldVal))
                {
-                  sb.append(fieldName + "=" + fieldVal);
-                  valueAppended = true;
+                  ret.add(fieldVal, fieldName, fieldType);
                }
                else
                {
-                  sb.append(fieldName + "=<uninitialized>");
-                  valueAppended = true;
+                  ret.add(ProjectionFieldValue.HIBERNATE_UNINITIALIZED, fieldName, fieldType);
                }
             }
             catch(Throwable e)
@@ -141,10 +144,10 @@ public class ObjectSubstitute implements Serializable
       }
       catch(Throwable e)
       {
-         sb.append("" + o);
+         ret.addUntyped(projectionObject);
       }
 
-      return sb.toString();
+      return ret;
    }
 
    void putSubstituteValueByPropertyName(String propertyName, PropertySubstitute propertySubstitute)
@@ -212,7 +215,7 @@ public class ObjectSubstitute implements Serializable
    {
       if ( false == _isPrimitiveTypePersistentCollection )
       {
-         return _substituteValueByPropertyName.get(propertyName).isPersistenCollection();
+         return _substituteValueByPropertyName.get(propertyName).isPersistentCollection();
       }
       else
       {
@@ -260,5 +263,10 @@ public class ObjectSubstitute implements Serializable
       {
          return _mappedClassInfoData;
       }
+   }
+
+   public Collection<PlainValue> getPlainValues()
+   {
+      return _plainValueByPropertyName.values();
    }
 }

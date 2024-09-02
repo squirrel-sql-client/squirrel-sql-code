@@ -18,6 +18,35 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.sql.Types;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDIffService;
@@ -40,35 +69,8 @@ import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.sql.Types;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author gwg
@@ -79,6 +81,8 @@ import java.sql.Types;
 public class PopupEditableIOPanel extends JPanel
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PopupEditableIOPanel.class);
+	public final static ILogger s_log = LoggerController.createLogger(PopupEditableIOPanel.class);
+
 	public static final String ACTION_BROWSE = "browse";
 	public static final String ACTION_EXPORT = "export";
 	public static final String ACTION_REFORMAT = "reformat";
@@ -165,8 +169,9 @@ public class PopupEditableIOPanel extends JPanel
 	/**
 	 * Constructor
 	 */
-	public PopupEditableIOPanel(ColumnDisplayDefinition colDef,
-										 Object value, boolean isEditable) {
+	public PopupEditableIOPanel(ColumnDisplayDefinition colDef, Object value, boolean isEditable)
+	{
+		super(new BorderLayout());
 
 		originalValue = value;	// save for possible future use
 
@@ -198,11 +203,8 @@ public class PopupEditableIOPanel extends JPanel
 			_textArea.setWrapStyleWord(true);
 		}
 
-		setLayout(new BorderLayout());
-
 		// add a panel containing binary data editing options, if needed
-		JPanel displayPanel = new JPanel();
-		displayPanel.setLayout(new BorderLayout());
+		JPanel displayPanel = new JPanel(new BorderLayout());
 		_scrollPane = new JScrollPane(_textArea);
 		/*
 		 * TODO: When 1.4 is the earliest version supported, include
@@ -246,7 +248,7 @@ public class PopupEditableIOPanel extends JPanel
 		if (CellComponentFactory.canDoFileIO(colDef))
 		{
 			// yes it can, so add controls
-			add(exportImportPanel(isEditable), BorderLayout.SOUTH);
+			add(createExportImportPanel(isEditable), BorderLayout.SOUTH);
 		}
 
 		_chkMnuLineWrap = new JCheckBoxMenuItem(new LineWrapAction());
@@ -267,7 +269,8 @@ public class PopupEditableIOPanel extends JPanel
 	/**
 	 * build the user interface for export/import operations
 	 */
-	private JPanel exportImportPanel(boolean isEditable) {
+	private JPanel createExportImportPanel(boolean isEditable)
+	{
 		JPanel eiPanel = new JPanel();
 		eiPanel.setLayout(new GridBagLayout());
 
@@ -590,11 +593,12 @@ public class PopupEditableIOPanel extends JPanel
 			// an error here may mean that the file cannot be
 			// reached or has moved or some such.  In any case,
 			// the file cannot be used for export.
-			JOptionPane.showMessageDialog(this,
-													// i18n[popupeditableIoPanel.cannotAccessFile=Cannot access file name {0}\nAborting export.]
-													s_stringMgr.getString("popupeditableIoPanel.cannotAccessFile", cboFileNameHandler.getItem()),
 
-													// i18n[popupeditableIoPanel.exportError3=Export Error]
+			String msg = s_stringMgr.getString("popupeditableIoPanel.cannotAccessFile", cboFileNameHandler.getItem());
+			s_log.error(msg, ex);
+
+			JOptionPane.showMessageDialog(this,
+													msg,
 													s_stringMgr.getString("popupeditableIoPanel.exportError3"), JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
@@ -656,11 +660,10 @@ public class PopupEditableIOPanel extends JPanel
 			}
 			catch (Exception ex)
 			{
+				String msg = s_stringMgr.getString("popupeditableIoPanel.cannotOpenFile", canonicalFilePathName, ex.getMessage());
+				s_log.error(msg, ex);
 
-				Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
-				JOptionPane.showMessageDialog(this,
-														s_stringMgr.getString("popupeditableIoPanel.cannotOpenFile", args),
-														s_stringMgr.getString("popupeditableIoPanel.exportError7"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, msg, s_stringMgr.getString("popupeditableIoPanel.exportError7"), JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 		}
@@ -719,11 +722,12 @@ public class PopupEditableIOPanel extends JPanel
 		}
 		catch (Exception ex)
 		{
+			String msg = s_stringMgr.getString("popupeditableIoPanel.cannotFindFile", canonicalFilePathName);
+			s_log.error(msg, ex);
+
 			JOptionPane.showMessageDialog(this,
-					// i18n[popupeditableIoPanel.cannotFindFile=Cannot find file {0}\nCheck file name and re-try export.]
-					s_stringMgr.getString("popupeditableIoPanel.cannotFindFile", canonicalFilePathName),
-					// i18n[popupeditableIoPanel.exportError8=Export Error]
-					s_stringMgr.getString("popupeditableIoPanel.exportError8"), JOptionPane.ERROR_MESSAGE);
+													msg,
+													s_stringMgr.getString("popupeditableIoPanel.exportError8"), JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		return outStream;
@@ -794,12 +798,12 @@ public class PopupEditableIOPanel extends JPanel
 		}
 		catch (Exception ex)
 		{
+			String msg = s_stringMgr.getString("popupeditableIoPanel.errWhileExecutin", command, ex.getMessage());
+			s_log.error(msg, ex);
 
-			Object[] args = new Object[]{command, ex.getMessage()};
+
 			JOptionPane.showMessageDialog(this,
-													// i18n[popupeditableIoPanel.errWhileExecutin=Error while executing command.\nThe command was:\n {0}\nThe error was:\n{1}]
-													s_stringMgr.getString("popupeditableIoPanel.errWhileExecutin", args),
-													// i18n[popupeditableIoPanel.executeError2=Execute Error]
+													msg,
 													s_stringMgr.getString("popupeditableIoPanel.executeError2"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -930,11 +934,13 @@ public class PopupEditableIOPanel extends JPanel
 			{
 				// should not happen since the file that was selected was
 				// just being shown in the Chooser dialog, but just to be safe...
+				String msg = s_stringMgr.getString("popupeditableIoPanel.errorGettingPath");
+
+				s_log.error(msg, ex);
+
 				JOptionPane.showMessageDialog(this,
-						// i18n[popupeditableIoPanel.errorGettingPath=Error getting full path name for selected file]
-						s_stringMgr.getString("popupeditableIoPanel.errorGettingPath"),
-						// i18n[popupeditableIoPanel.fileChooserError=File Chooser Error]
-						s_stringMgr.getString("popupeditableIoPanel.fileChooserError"), JOptionPane.ERROR_MESSAGE);
+														msg,
+														s_stringMgr.getString("popupeditableIoPanel.fileChooserError"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -965,22 +971,22 @@ public class PopupEditableIOPanel extends JPanel
 			// to get that name here and save it for later use.
 			canonicalFilePathName = file.getCanonicalPath();
 		}
-		catch (Exception ex) {
-
-			Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
+		catch (Exception ex)
+		{
+			String msg = s_stringMgr.getString("popupeditableIoPanel.fileOpenError", canonicalFilePathName, ex.getMessage());
+			s_log.error(msg, ex);
 
 			JOptionPane.showMessageDialog(this,
-				// i18n[popupeditableIoPanel.fileOpenError=There was an error opening file {0}.\nThe error was:\n{1}]
-				s_stringMgr.getString("popupeditableIoPanel.fileOpenError", args),
-				// i18n[popupeditableIoPanel.fileOpenErrorHeader=File Open Error]
-				s_stringMgr.getString("popupeditableIoPanel.fileOpenErrorHeader"),JOptionPane.ERROR_MESSAGE);
+													msg,
+													s_stringMgr.getString("popupeditableIoPanel.fileOpenErrorHeader"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
 		// hand file input stream to DataType object for import
 		// Also, handle File IO errors here so that DataType objects
 		// do not have to.
-		try {
+		try
+		{
 
 			// The DataObject returns a string to put into the
 			// popup which can later be converted to the appropriate
@@ -1014,22 +1020,25 @@ public class PopupEditableIOPanel extends JPanel
 
 			((RestorableJTextArea) _textArea).updateText(replacementText);
 		}
-		catch (Exception ex) {
+		catch (Exception ex)
+		{
+			String msg = s_stringMgr.getString("popupeditableIoPanel.errorReadingFile", canonicalFilePathName, ex.getMessage());
 
-			Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
+			s_log.error(msg, ex);
+
 			JOptionPane.showMessageDialog(this,
-				// i18n[popupeditableIoPanel.errorReadingFile=There was an error while reading file {0}.\nThe error was:\n{1}]
-				s_stringMgr.getString("popupeditableIoPanel.errorReadingFile", args),
-				// i18n[popupeditableIoPanel.importError2=Import Error]
-				s_stringMgr.getString("popupeditableIoPanel.importError2"),JOptionPane.ERROR_MESSAGE);
+													msg,
+													s_stringMgr.getString("popupeditableIoPanel.importError2"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
 		// cleanup resources used
-		try {
+		try
+		{
 			inStream.close();
 		}
-		catch (Exception ex) {
+		catch (Exception ex)
+		{
 			// I cannot think of any reason for doing anything
 			// at all here
 		}
@@ -1075,14 +1084,10 @@ public class PopupEditableIOPanel extends JPanel
 		}
 		catch (Exception ex)
 		{
+			String msg = s_stringMgr.getString("popupeditableIoPanel.errorWritingFile", canonicalFilePathName, ex.getMessage());
+			s_log.error(msg, ex);
 
-			Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
-
-			JOptionPane.showMessageDialog(this,
-													// i18n[popupeditableIoPanel.errorWritingFile=There was an error while writing file {0}.\nThe error was:\n{1}]
-													s_stringMgr.getString("popupeditableIoPanel.errorWritingFile", args),
-													// i18n[popupeditableIoPanel.exportError100=Export Error]
-													s_stringMgr.getString("popupeditableIoPanel.exportError100"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, msg, s_stringMgr.getString("popupeditableIoPanel.exportError100"), JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 

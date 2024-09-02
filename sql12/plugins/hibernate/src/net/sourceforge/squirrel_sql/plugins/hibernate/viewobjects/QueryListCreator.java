@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.util.List;
+import javax.swing.SwingWorker;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -10,9 +13,6 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HqlQueryResult;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HqlQueryErrorUtil;
-
-import javax.swing.*;
-import java.util.List;
 
 public class QueryListCreator extends SwingWorker<HqlQueryResult, Object>
 {
@@ -118,7 +118,7 @@ public class QueryListCreator extends SwingWorker<HqlQueryResult, Object>
       }
    }
 
-   public List<ObjectSubstituteRoot> getList()
+   public List<ObjectSubstituteRoot> getQueryResultList()
    {
       return _hqlQueryResult.getQueryResultList();
    }

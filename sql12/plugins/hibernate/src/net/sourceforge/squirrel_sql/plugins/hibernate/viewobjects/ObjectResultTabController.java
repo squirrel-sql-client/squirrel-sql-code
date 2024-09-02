@@ -1,26 +1,29 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.ButtonGroup;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
-import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.MappedClassInfoData;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.PlainValueRepresentation;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ProjectionDisplayMode;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ProjectionDisplaySwitch;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateSQLUtil;
-
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ObjectResultTabController
 {
@@ -35,23 +38,20 @@ public class ObjectResultTabController
 
       initHqlQueryLabel(objects, hqlQuery, objects.size(), maxNumResults);
 
-      _tab.btnClose.addActionListener(new ActionListener()
+      _tab.btnProjectionDisplay.setVisible(false);
+      if( PlainValueRepresentation.containsProjectionFieldValueList(objects) )
       {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            l.closeTab(ObjectResultTabController.this);
-         }
-      });
+         _tab.btnProjectionDisplay.setVisible(true);
 
-      _tab.btnCopySql.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onCopySqlToClip(con, hqlQuery, session);
-         }
-      });
+         ProjectionDisplaySwitch projectionDisplaySwitch = new ProjectionDisplaySwitch();
+         PlainValueRepresentation.distributeProjectionDisplaySwitch(objects, projectionDisplaySwitch);
+
+         _tab.btnProjectionDisplay.addActionListener(e -> showProjectionDisplayModePopup(projectionDisplaySwitch));
+      }
+
+      _tab.btnClose.addActionListener(e -> l.closeTab(ObjectResultTabController.this));
+
+      _tab.btnCopySql.addActionListener(e -> onCopySqlToClip(con, hqlQuery, session));
 
 
       if(0 == objects.size())
@@ -98,18 +98,42 @@ public class ObjectResultTabController
          public void treeCollapsed(TreeExpansionEvent event) {}
       });
 
-      _tab.treeTypes.addTreeSelectionListener(new TreeSelectionListener()
-      {
-         @Override
-         public void valueChanged(TreeSelectionEvent e)
-         {
-            onTreeSelectionChanged(e);
-         }
-      });
+      _tab.treeTypes.addTreeSelectionListener(e -> onTreeSelectionChanged(e));
 
       initRoot(rootNode);
 
       //CommandLineOutput.displayObjects(mappedClassInfos, qrmr,  con.getPersistenCollectionClass());
+   }
+
+   private void showProjectionDisplayModePopup(ProjectionDisplaySwitch projectionDisplaySwitch)
+   {
+      ButtonGroup bg = new ButtonGroup();
+
+      JPopupMenu popup = new JPopupMenu();
+      for( ProjectionDisplayMode value : ProjectionDisplayMode.values() )
+      {
+         JRadioButtonMenuItem item = new JRadioButtonMenuItem(ProjectionDisplayModeRenderer.render(value));
+         item.setSelected(projectionDisplaySwitch.getProjectionDisplayMode() == value);
+         bg.add(item);
+
+         item.addActionListener(e -> {
+            projectionDisplaySwitch.setProjectionDisplayMode(value);
+            repaintDisplay();
+         });
+
+         popup.add(item);
+      }
+
+      popup.show(_tab.btnProjectionDisplay, 0, _tab.btnProjectionDisplay.getHeight());
+   }
+
+   private void repaintDisplay()
+   {
+      _tab.pnlResults.revalidate();
+      //_tab.pnlResults.validate();
+      _tab.pnlResults.repaint();
+
+      _resultsController.projectionDisplayModeChanged();
    }
 
    private MappedClassInfo getBestPlainValueArrayMappedClassInfo(List<ObjectSubstituteRoot> objects)
@@ -130,7 +154,7 @@ public class ObjectResultTabController
       HibernateSQLUtil.copySqlToClipboard(con, hqlQuery, session);
    }
 
-   private void initHqlQueryLabel(List objects, String hqlQuery, int numResults, int maxNumResults)
+   private void initHqlQueryLabel(List<ObjectSubstituteRoot> objects, String hqlQuery, int numResults, int maxNumResults)
    {
       if (numResults == maxNumResults)
       {

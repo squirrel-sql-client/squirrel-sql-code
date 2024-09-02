@@ -1,14 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
 
 public class ResultsController
 {
@@ -20,6 +21,7 @@ public class ResultsController
    private ISession _session;
 
    private MultipleLineLabel _lblClear;
+   private ResultControllerChannel _resultControllerChannel = new ResultControllerChannel();
 
    public ResultsController(JPanel pnlResults, String hqlQuery, ArrayList<MappedClassInfo> allMappedClassInfos, ISession session)
    {
@@ -42,7 +44,7 @@ public class ResultsController
    {
       if(type instanceof RootType)
       {
-         new RootResultController((RootType)type, _pnlResults, _allMappedClassInfos);
+         new RootResultController((RootType)type, _pnlResults, _allMappedClassInfos, _resultControllerChannel);
       }
       else if(type instanceof TupelType)
       {
@@ -73,5 +75,10 @@ public class ResultsController
       _pnlResults.validate();
       _pnlResults.repaint();
 
+   }
+
+   public void projectionDisplayModeChanged()
+   {
+      _resultControllerChannel.projectionDisplayModeChanged();
    }
 }

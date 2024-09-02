@@ -1,5 +1,20 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
@@ -11,21 +26,6 @@ import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 /**
@@ -556,16 +556,18 @@ public class CellComponentFactory
     * Say whether or not object can be exported to and imported from
     * a file.  We put both export and import together in one test
     * on the assumption that all conversions can be done both ways.
+    * <p>
+    * If no DataType object, then we simply output as text, see {@link #exportObject(ColumnDisplayDefinition, FileOutputStream, String)} below.
     */
    public static boolean canDoFileIO(ColumnDisplayDefinition colDef)
    {
-
       IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
-      // if no DataType object, then there is nothing to handle File IO,
-      // so cannot do it
+      // if no DataType object, then we simply output as text, see CellComponentFactory.exportObject(...) below
       if (dataTypeObject == null)
-         return false;
+      {
+         return true;
+      }
 
       // let DataType object speak for itself
       return dataTypeObject.canDoFileIO();
@@ -599,21 +601,24 @@ public class CellComponentFactory
     * appropriate format.
     * Errors are returned by throwing an IOException containing the
     * cause of the problem as its message.
+    * <p>
+    * Uses the column's {@link IDataTypeComponent} to export. If there is no such object we simply output the text.
     */
    public static void exportObject(ColumnDisplayDefinition colDef, FileOutputStream outStream, String text)
          throws IOException
    {
-
       IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
-      // if no DataType object, then there is nothing to handle File IO,
-      // so cannot do it
       if (dataTypeObject == null)
-         throw new IOException(
-               "No internal Data Type class for this column's SQL type");
-
-      // let DataType object speak for itself
-      dataTypeObject.exportObject(outStream, text);
+      {
+         // if no DataType object we just write the text
+         outStream.write(text.getBytes());
+      }
+      else
+      {
+         // let DataType object speak for itself
+         dataTypeObject.exportObject(outStream, text);
+      }
    }
 
    /*

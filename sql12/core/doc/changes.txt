@@ -1,6 +1,29 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository, snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+Hibernate Plugin: Improved support for projection queries:
+  - The projection class's name is displayed in the projection's column header.
+  - When a HQL query contains a projection, a new button on the upper left of the result tab
+    allows to choose several projection display modes including JSON and XML.
+  Thanks to SHD (www.shd.de) for sponsoring this feature.
+
+Hibernate Plugin configuration: Adjusted persistence.xml description to reflect the option
+  to specify jar files and/or classes directories to scan for Entities.
+
+Hibernate Plugin: The Plugin configuration allows to copy a configuration's classpath to clipboard.
+
+Table display now uses the background color cyan for all cells containing new lines
+  not only in SQL result tables and in Object tree "Content" tables.
+
+Table cell data popup now offers find, Xml/Json-reformatting and export functions for all tables.
+  To open the cell data popup double-click a table cell.
+
+
 4.8.0 (09/01/2024)
 ==================
 Enhancements:

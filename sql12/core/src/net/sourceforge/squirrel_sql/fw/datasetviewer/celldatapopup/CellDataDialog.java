@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
+import java.awt.Component;
+import java.awt.GridLayout;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanel;
@@ -8,13 +15,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultI
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import java.awt.Component;
-import java.awt.GridLayout;
 
 class CellDataDialog extends JDialog
 {

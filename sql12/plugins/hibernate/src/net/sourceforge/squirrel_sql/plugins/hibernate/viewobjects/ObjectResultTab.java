@@ -1,20 +1,30 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
-
 public class ObjectResultTab extends JPanel
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(ObjectResultTab.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectResultTab.class);
 
-
+   JButton btnProjectionDisplay;
    JLabel lblHqlQuery;
    JButton btnClose;
    JTree treeTypes;
@@ -54,17 +64,27 @@ public class ObjectResultTab extends JPanel
 
    private JPanel createTopPanel(HibernatePluginResources resource)
    {
-      JPanel ret = new JPanel(new BorderLayout());
-      
-      lblHqlQuery = new JLabel();
-      ret.add(lblHqlQuery, BorderLayout.CENTER);
+      JPanel ret = new JPanel(new GridBagLayout());
 
-      ret.add(createButtonPanel(resource), BorderLayout.EAST);
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1,3, 1, 0), 0,0);
+      btnProjectionDisplay = new JButton(resource.getIcon(HibernatePluginResources.IKeys.DISPLAY_CHOICE_IMAGE));
+      btnProjectionDisplay.setToolTipText(s_stringMgr.getString("ObjectResultTab.chooseProjectionDisplay.tooltip"));
+      btnProjectionDisplay.setBorder(BorderFactory.createRaisedBevelBorder());
+      ret.add(btnProjectionDisplay, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1,3, 1, 0), 0,0);
+      lblHqlQuery = new JLabel();
+      ret.add(lblHqlQuery, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1,3, 1, 3), 0,0);
+      ret.add(createRightButtonPanel(resource), gbc);
 
       return ret;
    }
 
-   private JPanel createButtonPanel(HibernatePluginResources resource)
+   private JPanel createRightButtonPanel(HibernatePluginResources resource)
    {
       JPanel ret = new JPanel(new GridLayout(1,2,3,2));
 

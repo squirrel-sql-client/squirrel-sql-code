@@ -15,9 +15,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathItem;
 
 public class HibernateConfigPanel extends JPanel
 {
@@ -29,15 +31,16 @@ public class HibernateConfigPanel extends JPanel
    JButton btnRemoveConfig;
    JButton btnCopyConfig;
 
-   JList lstClassPath;
+   JList<ClassPathItem> lstClassPath;
 
    JButton btnClassPathAdd;
    JButton btnClassPathDirAdd;
    JButton btnClassPathAddFormClip;
    JButton btnClassPathRemove;
+   JButton btnClassPathReplace;
    JButton btnClassPathMoveUp;
    JButton btnClassPathMoveDown;
-   JButton btnClassPathReplace;
+   JButton btnCopyClasspathToClip;
 
    JTextField txtConfigName;
    JButton btnApplyConfigChanges;
@@ -88,7 +91,6 @@ public class HibernateConfigPanel extends JPanel
    private JPanel createConfigDefPanel(HibernatePluginResources resources)
    {
       JPanel ret = new JPanel(new GridBagLayout());
-      // i18n[HibernateConfigPanel.ConfiguirationDef=Configuration definition]
       ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("HibernatePanel.ConfiguirationDef")));
 
       GridBagConstraints gbc;
@@ -107,7 +109,6 @@ public class HibernateConfigPanel extends JPanel
       ret.add(createProcessPanel(), gbc);
 
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,5,5,5),0,0);
-      // i18n[HibernateConfigPanel.applyConfigChanges=Apply changes to this configuration]
       btnApplyConfigChanges = new JButton(s_stringMgr.getString("HibernatePanel.applyConfigChanges"));
       ret.add(btnApplyConfigChanges, gbc);
 
@@ -148,9 +149,6 @@ public class HibernateConfigPanel extends JPanel
       gbc = new GridBagConstraints(3,1,1,1,1,1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
       ret.add(new JPanel(), gbc);
 
-
-
-
       ButtonGroup btnGr = new ButtonGroup();
       btnGr.add(radCreateProcess);
       btnGr.add(radInVM);
@@ -189,10 +187,8 @@ public class HibernateConfigPanel extends JPanel
 
       gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
 
-      lstClassPath = new JList(new ClassPathItemListModel());
+      lstClassPath = new JList<>(new ClassPathItemListModel());
       lstClassPath.setCellRenderer(new ClassPathListCellRenderer(resources));
-
-
 
       ret.add(new JScrollPane(lstClassPath), gbc);
 
@@ -210,41 +206,46 @@ public class HibernateConfigPanel extends JPanel
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
       btnClassPathAdd = new JButton(s_stringMgr.getString("HibernatePanel.classPathAdd"));
       btnClassPathAdd.setIcon(resources.getIcon(HibernatePluginResources.IKeys.JAR_IMAGE));
       ret.add(btnClassPathAdd, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
       btnClassPathDirAdd = new JButton(s_stringMgr.getString("HibernatePanel.classPathDirAdd"));
       btnClassPathDirAdd.setIcon(resources.getIcon(HibernatePluginResources.IKeys.JAR_DIRECTORY_IMAGE));
       ret.add(btnClassPathDirAdd, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
       btnClassPathAddFormClip = new JButton(s_stringMgr.getString("HibernatePanel.classPathAddFromClip"));
       btnClassPathAddFormClip.setToolTipText(s_stringMgr.getString("HibernatePanel.classPathAddFromClip.tooltip"));
       btnClassPathAddFormClip.setIcon(resources.getIcon(HibernatePluginResources.IKeys.JAR_FROM_CLIP_IMAGE));
       ret.add(btnClassPathAddFormClip, gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnClassPathRemove = new JButton(resources.getIcon(HibernatePluginResources.IKeys.DELETE_IMAGE));
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
+      btnClassPathRemove = GUIUtils.styleAsToolbarButton(new JButton(resources.getIcon(HibernatePluginResources.IKeys.DELETE_IMAGE)));
       btnClassPathRemove.setToolTipText(s_stringMgr.getString("HibernatePanel.classPathRemove.tooltip"));
       ret.add(btnClassPathRemove, gbc);
 
-      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnClassPathReplace = new JButton(resources.getIcon(HibernatePluginResources.IKeys.REPLACE_IMAGE));
+      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,2,5,0), 0,0);
+      btnClassPathReplace = GUIUtils.styleAsToolbarButton(new JButton(resources.getIcon(HibernatePluginResources.IKeys.REPLACE_IMAGE)));
       btnClassPathReplace.setToolTipText(s_stringMgr.getString("HibernatePanel.classpath.replace.tooltip"));
       ret.add(btnClassPathReplace, gbc);
 
-      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnClassPathMoveUp = new JButton(resources.getIcon(HibernatePluginResources.IKeys.PREV_NAV_IMAGE));
+      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,2,5,0), 0,0);
+      btnClassPathMoveUp = GUIUtils.styleAsToolbarButton(new JButton(resources.getIcon(HibernatePluginResources.IKeys.PREV_NAV_IMAGE)));
       btnClassPathMoveUp.setToolTipText(s_stringMgr.getString("HibernatePanel.moveUp.tooltip"));
       ret.add(btnClassPathMoveUp, gbc);
 
-      gbc = new GridBagConstraints(6,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnClassPathMoveDown = new JButton(resources.getIcon(HibernatePluginResources.IKeys.NEXT_NAV_IMAGE));
+      gbc = new GridBagConstraints(6,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,2,5,0), 0,0);
+      btnClassPathMoveDown = GUIUtils.styleAsToolbarButton(new JButton(resources.getIcon(HibernatePluginResources.IKeys.NEXT_NAV_IMAGE)));
       btnClassPathMoveDown.setToolTipText(s_stringMgr.getString("HibernatePanel.moveDown.tooltip"));
       ret.add(btnClassPathMoveDown, gbc);
+
+      gbc = new GridBagConstraints(7,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,2,5,0), 0,0);
+      btnCopyClasspathToClip = GUIUtils.styleAsToolbarButton(new JButton(resources.getIcon(HibernatePluginResources.IKeys.COPY_IMAGE)));
+      btnCopyClasspathToClip.setToolTipText(s_stringMgr.getString("HibernatePanel.copy.classpath.tooltip"));
+      ret.add(btnCopyClasspathToClip, gbc);
 
       return ret;
    }

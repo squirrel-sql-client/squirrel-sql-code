@@ -129,7 +129,7 @@ public class PropertySubstitute  implements Serializable
 
    }
 
-   public boolean isPersistenCollection()
+   public boolean isPersistentCollection()
    {
       return null != _objectSubstituteCollection;
 

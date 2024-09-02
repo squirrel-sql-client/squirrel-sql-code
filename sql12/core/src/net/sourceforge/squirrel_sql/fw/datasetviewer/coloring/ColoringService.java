@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
 
+import java.awt.Color;
+import javax.swing.JTable;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellRenderer;
@@ -7,9 +10,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComp
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindColorHandler;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
-
-import javax.swing.JTable;
-import java.awt.Color;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 
 /**
@@ -45,13 +46,7 @@ public class ColoringService
 
       Color customBackground = null;
 
-      // if text cannot be edited in the cell but can be edited in
-      // the popup, shows that by changing the text colors.
-      // Note: isEditableInCell() and isEditableInPopup() may result in reading Blob types, depending on configurations in preferences.
-      //       That is not the problem because when the coloring is done the cell will be shown anyway and thus the read will need occur anyway.
-      if(dataTypeObject != null &&
-         dataTypeObject.isEditableInCell(value) == false &&
-         dataTypeObject.isEditableInPopup(value) == true)
+      if( requiresMultiLineBackground(dataTypeObject, value) )
       {
          // Use a CYAN background to indicate that the cell is
          // editable in the popup
@@ -111,6 +106,22 @@ public class ColoringService
          {
             cellRenderer.setBackground(_dataSetViewerTable.getBackground());
          }
+      }
+   }
+
+   private static boolean requiresMultiLineBackground(IDataTypeComponent dataTypeObject, Object value)
+   {
+      if(null != dataTypeObject)
+      {
+         // if text cannot be edited in the cell but can be edited in
+         // the popup, shows that by changing the text colors.
+         // Note: isEditableInCell() and isEditableInPopup() may result in reading Blob types, depending on configurations in preferences.
+         //       That is not the problem because when the coloring is done the cell will be shown anyway and thus the read will need occur anyway.
+         return dataTypeObject.isEditableInCell(value) == false && dataTypeObject.isEditableInPopup(value) == true;
+      }
+      else
+      {
+         return StringUtilities.isToStringContainingNewLine(value);
       }
    }
 
