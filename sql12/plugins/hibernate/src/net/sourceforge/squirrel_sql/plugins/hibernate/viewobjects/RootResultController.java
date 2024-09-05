@@ -26,7 +26,14 @@ public class RootResultController
    public RootResultController(RootType rootType, JPanel pnlResults, ArrayList<MappedClassInfo> mappedClassInfos, ResultControllerChannel resultControllerChannel)
    {
       _mappedClassInfos = mappedClassInfos;
-      resultControllerChannel.setActiveControllersListener(() -> onProjectionDisplayModeChanged());
+      resultControllerChannel.setActiveControllersListener(new ResultControllerChannelListener()
+      {
+         @Override
+         public void projectionDisplayModeChanged()
+         {
+            onProjectionDisplayModeChanged();
+         }
+      });
 
       if( rootType.getResultType() instanceof TupelType)
       {

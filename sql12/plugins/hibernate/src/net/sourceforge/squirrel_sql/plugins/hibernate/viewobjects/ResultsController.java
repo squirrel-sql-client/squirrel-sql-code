@@ -42,6 +42,8 @@ public class ResultsController
 
    public void typeChanged(Object type)
    {
+      _resultControllerChannel.setActiveControllersListener(null);
+
       if(type instanceof RootType)
       {
          new RootResultController((RootType)type, _pnlResults, _allMappedClassInfos, _resultControllerChannel);
@@ -52,12 +54,12 @@ public class ResultsController
       }
       else if(type instanceof SingleType)
       {
-         new SingleResultController((SingleType) type, _pnlResults, _session);
+         new SingleResultController((SingleType) type, _pnlResults, _session, _resultControllerChannel);
       }
       else if(type instanceof PersistentCollectionType)
       {
          PersistentCollectionType persistentCollectionType = (PersistentCollectionType) type;
-         new SingleResultController(persistentCollectionType.getSingleType(), _pnlResults, _session);
+         new SingleResultController(persistentCollectionType.getSingleType(), _pnlResults, _session, _resultControllerChannel);
       }
       _pnlResults.validate();
       _pnlResults.repaint();
@@ -80,5 +82,10 @@ public class ResultsController
    public void projectionDisplayModeChanged()
    {
       _resultControllerChannel.projectionDisplayModeChanged();
+   }
+
+   public void find()
+   {
+      _resultControllerChannel.findIfTableDisplay();
    }
 }

@@ -53,6 +53,8 @@ public class ObjectResultTabController
 
       _tab.btnCopySql.addActionListener(e -> onCopySqlToClip(con, hqlQuery, session));
 
+      _tab.btnFind.addActionListener(e -> onFind());
+
 
       if(0 == objects.size())
       {
@@ -153,6 +155,12 @@ public class ObjectResultTabController
    {
       HibernateSQLUtil.copySqlToClipboard(con, hqlQuery, session);
    }
+
+   private void onFind()
+   {
+      _resultsController.find();
+   }
+
 
    private void initHqlQueryLabel(List<ObjectSubstituteRoot> objects, String hqlQuery, int numResults, int maxNumResults)
    {

@@ -16,6 +16,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
@@ -30,6 +32,7 @@ public class ObjectResultTab extends JPanel
    JTree treeTypes;
    JPanel pnlResults;
    JButton btnCopySql;
+   JButton btnFind;
 
    public ObjectResultTab(HibernatePluginResources resource)
    {
@@ -86,7 +89,11 @@ public class ObjectResultTab extends JPanel
 
    private JPanel createRightButtonPanel(HibernatePluginResources resource)
    {
-      JPanel ret = new JPanel(new GridLayout(1,2,3,2));
+      JPanel ret = new JPanel(new GridLayout(1,3,3,2));
+
+      btnFind = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND));
+      btnFind.setBorder(BorderFactory.createRaisedBevelBorder());
+      ret.add(btnFind);
 
       btnCopySql = new JButton(resource.getIcon(HibernatePluginResources.IKeys.SQL_COPY_IMAGE));
       btnCopySql.setToolTipText(s_stringMgr.getString("ObjectResultTab.CopySqlToClip"));

@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Hibernate Plugin: HQL result tables offer a find function.
+
 Hibernate Plugin: Improved support for projection queries:
   - The projection class's name is displayed in the projection's column header.
   - When a HQL query contains a projection, a new button on the upper left of the result tab

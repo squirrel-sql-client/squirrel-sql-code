@@ -28,6 +28,11 @@ public class DataSetViewerFindHandler
       this(dataSetViewer, session, resultTableType, null);
    }
 
+   public DataSetViewerFindHandler(IDataSetViewer dataSetViewer, ResultTableType resultTableType, Window parent)
+   {
+      this(dataSetViewer, null, resultTableType, parent);
+   }
+
    public DataSetViewerFindHandler(IDataSetViewer dataSetViewer, ISession session, ResultTableType resultTableType, Window parent)
    {
       _resultDisplayHandler = new ResultDataSetAndCellDetailDisplayHandler(dataSetViewer, resultTableType);
