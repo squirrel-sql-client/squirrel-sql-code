@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Types;
 import java.util.ArrayList;
@@ -79,6 +80,11 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	@Override
 	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
 	{
+		if(javaSqlTypesConst == Types.TIMESTAMP && StringUtils.equalsIgnoreCase(typeNameOrNull, "datetime2"))
+		{
+			return "datetime2";
+		}
+
 		return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
 	}
 

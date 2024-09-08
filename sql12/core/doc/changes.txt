@@ -27,6 +27,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/38
+MSSQL Server, table scripting: datetime2 type was scripted as datetime.
+
 MSSQL Server, table scripting: Replaced deprecated types text, image by varchar(max), and varbinary(max).
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/17
