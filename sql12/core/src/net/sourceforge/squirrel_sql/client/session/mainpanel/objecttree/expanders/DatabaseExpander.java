@@ -99,7 +99,7 @@ public class DatabaseExpander implements INodeExpander
 			s_log.debug("DBMS doesn't support 'supportsSchemas()", ex);
 		}
 
-		List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		List<ObjectTreeNode> childNodes = new ArrayList<>();
 
 		if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.SESSION)
 		{
@@ -114,7 +114,7 @@ public class DatabaseExpander implements INodeExpander
 //			else if (supportsSchemas)
 			if (addedChildren.size() == 0 && supportsSchemas)
 			{
-				addedChildren = createSchemaNodes(session, md, null);
+				addedChildren = createSchemaNodes(session, md, null, new SchemaContainedInCatalogCheck(supportsCatalogs, md));
 				childNodes.addAll(addedChildren);
 			}
 //			else
@@ -128,10 +128,10 @@ public class DatabaseExpander implements INodeExpander
 			// If a driver says it supports schemas but doesn't
 			// provide schema nodes, try to get other nodes.
 			final String catalogName = parentDbinfo.getSimpleName();
-			List<ObjectTreeNode> addedChildren = new ArrayList<ObjectTreeNode>();
+			List<ObjectTreeNode> addedChildren = new ArrayList<>();
 			if (supportsSchemas)
 			{
-				addedChildren = createSchemaNodes(session, md, catalogName);
+				addedChildren = createSchemaNodes(session, md, catalogName, new SchemaContainedInCatalogCheck(supportsCatalogs, md));
 				childNodes.addAll(addedChildren);
 			}
 			//else
@@ -195,7 +195,7 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	protected List<ObjectTreeNode> createSchemaNodes(ISession session, SQLDatabaseMetaData md, String catalogName)
+	private List<ObjectTreeNode> createSchemaNodes(ISession session, SQLDatabaseMetaData md, String catalogName, SchemaContainedInCatalogCheck schemaContainedInCatalogCheck)
 		throws SQLException
 	{
 		final List<ObjectTreeNode> childNodes = new ArrayList<>();
@@ -209,6 +209,11 @@ public class DatabaseExpander implements INodeExpander
 
 			for (int i = 0; i < schemas.length; ++i)
 			{
+				if(false == schemaContainedInCatalogCheck.containedInCatalog(catalogName, schemas[i]))
+				{
+					continue;
+				}
+
             IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null, schemas[i], DatabaseObjectType.SCHEMA, md);
 
             if(filterMatcher.matches(dbo.getSimpleName()))

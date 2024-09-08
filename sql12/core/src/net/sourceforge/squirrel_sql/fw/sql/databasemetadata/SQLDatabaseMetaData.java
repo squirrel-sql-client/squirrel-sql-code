@@ -20,17 +20,53 @@ package net.sourceforge.squirrel_sql.fw.sql.databasemetadata;
  */
 
 import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetColumnReader;
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetDataSetDB2AIX64MetadataWrapper;
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
+import net.sourceforge.squirrel_sql.fw.sql.UDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * This class represents the metadata for a database. It is essentially a wrapper around
@@ -223,7 +259,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getSchemas()
 	 */
-	public synchronized String[] getSchemas() throws SQLException
+	public List<SQLSchema> getSchemas() throws SQLException
 	{
 		boolean hasGuest = false;
 		boolean hasSysFun = false;
@@ -232,7 +268,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		final boolean isDB2 = DialectFactory.isDB2(this);
 
-		final ArrayList<String> list = new ArrayList<String>();
+		final ArrayList<SQLSchema> list = new ArrayList<>();
 		ResultSet rs = privateGetJDBCMetaData().getSchemas();
 		try
 		{
@@ -251,8 +287,16 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 					{
 						hasSysFun = true;
 					}
-					list.add((String) row[0]);
-				}
+
+					if(2 == row.length)
+               {
+                  list.add(SQLSchemaUtil.ofSchemaAndCatalog((String) row[0], (String) row[1]));
+               }
+               else
+               {
+						list.add(SQLSchemaUtil.ofSchemaName((String) row[0]));
+               }
+            }
 			}
 		}
 		finally
@@ -264,17 +308,17 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		// a schema name.
 		if (isMSSQLorSYBASE && !hasGuest)
 		{
-			list.add("guest");
+			list.add(SQLSchemaUtil.ofSchemaName("guest"));
 		}
 
 		// Some drivers for DB2 don't return SYSFUN as a schema name. A
 		// number of system stored procs are kept in this schema.
 		if (isDB2 && !hasSysFun)
 		{
-			list.add("SYSFUN");
+			list.add(SQLSchemaUtil.ofSchemaName("SYSFUN"));
 		}
 
-		return list.toArray(new String[list.size()]);
+		return list;
 	}
 
 	/**

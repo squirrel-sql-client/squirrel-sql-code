@@ -56,6 +56,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaDataFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLSchemaUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -735,8 +736,9 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		{
 			if (hasSystemPrivilege(con) || aliasPrefs.isLoadAllSchemas())
 			{
-				result = md.getSchemas();
-			} else
+				result = SQLSchemaUtil.toSchemaNameArray(md.getSchemas());
+			}
+			else
 			{
 				currentUserName = md.getUserName();
 				stmt = con.getConnection().createStatement();

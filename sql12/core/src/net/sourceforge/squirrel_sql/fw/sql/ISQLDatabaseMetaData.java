@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLSchema;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 
 import java.sql.DatabaseMetaData;
@@ -118,7 +119,7 @@ public interface ISQLDatabaseMetaData {
      *
      * @throws  SQLException    Thrown if an SQL error occurs.
      */
-    String[] getSchemas() throws SQLException;
+    List<SQLSchema> getSchemas() throws SQLException;
 
     /**
      * Retrieves whether this database supports schemas at all.

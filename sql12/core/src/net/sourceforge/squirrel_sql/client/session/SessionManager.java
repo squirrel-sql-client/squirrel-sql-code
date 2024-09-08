@@ -32,15 +32,23 @@ import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLSchemaUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class manages sessions.
@@ -666,14 +674,14 @@ public class SessionManager
    {
       if(null == sessionIdentifierOrNull)
       {
-         return con.getSQLMetaData().getSchemas();
+         return SQLSchemaUtil.toSchemaNameArray(con.getSQLMetaData().getSchemas());
       }
 
 
       String[] ret = _allSchemasBySessionID.get(sessionIdentifierOrNull);
       if(null == ret)
       {
-         ret = con.getSQLMetaData().getSchemas();
+         ret = SQLSchemaUtil.toSchemaNameArray(con.getSQLMetaData().getSchemas());
          _allSchemasBySessionID.put(sessionIdentifierOrNull, ret);
       }
       return ret;
