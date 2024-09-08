@@ -27,6 +27,7 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/17
 For databases which support catalogs and schemas, e.g. MSSQL Server, catalog nodes contained schemas
   that didn't belong to the catalog.
   Technically speaking the result column "TABLE_CATALOG" returned by java.sql.DatabaseMetaData.getSchemas()
