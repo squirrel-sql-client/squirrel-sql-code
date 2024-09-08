@@ -42,9 +42,9 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 		{
 			super();
 			registerColumnType(Types.BIGINT, "bigint");
-			registerColumnType(Types.BINARY, "image");
+			registerColumnType(Types.BINARY, "binary");
 			registerColumnType(Types.BIT, "tinyint");
-			registerColumnType(Types.BLOB, "image");
+			registerColumnType(Types.BLOB, "varbinary(max)");
 			registerColumnType(Types.BOOLEAN, "tinyint");
 			registerColumnType(Types.CHAR, 8000, "char($l)");
 			registerColumnType(Types.CHAR, "text");
@@ -54,7 +54,7 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 			registerColumnType(Types.DOUBLE, "float($p)");
 			registerColumnType(Types.FLOAT, "float($p)");
 			registerColumnType(Types.INTEGER, "int");
-			registerColumnType(Types.LONGVARBINARY, "image");
+			registerColumnType(Types.LONGVARBINARY, "varbinary");
 			registerColumnType(Types.LONGVARCHAR, "text");
 			registerColumnType(Types.NCHAR, "nchar($l)");
 			registerColumnType(Types.NUMERIC, "numeric($p,$s)");
@@ -65,9 +65,8 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 			registerColumnType(Types.TIMESTAMP, "datetime");
 			registerColumnType(Types.TINYINT, "tinyint");
 			registerColumnType(Types.VARBINARY, 8000, "varbinary($l)");
-			registerColumnType(Types.VARBINARY, "image");
 			registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
-			registerColumnType(Types.VARCHAR, "text");
+			registerColumnType(Types.VARCHAR, "varchar(max)");
 		}
 	}
 
