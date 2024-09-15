@@ -210,10 +210,12 @@ public class DefaultDropDialog extends AbstractRefactoringDialog {
      * @param dbInfo InfoObjects of the selected items in the tree.
      * @return the simple names of the database item.
      */
-    private String[] getSimpleNames(IDatabaseObjectInfo[] dbInfo) {
+    private String[] getSimpleNames(IDatabaseObjectInfo[] dbInfo)
+    {
         String[] result = new String[dbInfo.length];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = dbInfo[i].getSimpleName();
+        for(int i = 0; i < result.length; i++)
+        {
+            result[i] = SimpleNameReader.getSimpleName(dbInfo[i]);
         }
         return result;
     }

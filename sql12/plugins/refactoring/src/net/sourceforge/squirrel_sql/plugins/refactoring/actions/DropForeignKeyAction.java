@@ -20,9 +20,9 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropForeignKeyCommand;
@@ -30,16 +30,6 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropForeignKeyC
 public class DropForeignKeyAction extends AbstractRefactoringAction
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DropForeignKeyAction.class);
-
-	private static interface i18n
-	{
-		String ACTION_PART = s_stringMgr.getString("DropForeignKeyAction.actionPart");
-
-		String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
-
-		String SINGLE_OBJECT_MESSAGE =
-			s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
-	}
 
 	public DropForeignKeyAction(IApplication app, Resources rsrc)
 	{
@@ -61,7 +51,9 @@ public class DropForeignKeyAction extends AbstractRefactoringAction
 	@Override
 	protected String getErrorMessage()
 	{
-		return i18n.SINGLE_OBJECT_MESSAGE;
+		return s_stringMgr.getString("Shared.singleObjectMessage",
+											  s_stringMgr.getString("Shared.tableObject"),
+											  s_stringMgr.getString("DropForeignKeyAction.actionPart"));
 	}
 
 	/**

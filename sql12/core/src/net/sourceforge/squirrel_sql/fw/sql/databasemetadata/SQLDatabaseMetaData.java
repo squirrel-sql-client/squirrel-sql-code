@@ -1294,7 +1294,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				return new ForeignKeyInfo[0];
 			}
 
-			return getForeignKeyInfo(rs);
+			return getForeignKeyInfo(rs, ForeignKeyType.IMPORTED);
 		}
 	}
 
@@ -1303,8 +1303,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	public synchronized ForeignKeyInfo[] getImportedKeysInfo(ITableInfo ti) throws SQLException
 	{
-		return getForeignKeyInfo(privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(),
-			ti.getSchemaName(), ti.getSimpleName()));
+		return getForeignKeyInfo(privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName()), ForeignKeyType.IMPORTED);
 	}
 
 	/**
@@ -1315,9 +1314,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		ResultSet rs = null;
 		try
 		{
-			rs =
-				privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(), ti.getSchemaName(),
-					ti.getSimpleName());
+			rs = privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
 			ResultSetDataSet rsds = new ResultSetDataSet();
 			rsds.setResultSet(rs, null, true, DialectFactory.getDialectType(this));
 			return rsds;
@@ -1346,7 +1343,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				return new ForeignKeyInfo[0];
 			}
 
-			return getForeignKeyInfo(rs);
+			return getForeignKeyInfo(rs, ForeignKeyType.EXPORTED);
 		}
 	}
 
@@ -1355,15 +1352,13 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	public synchronized ForeignKeyInfo[] getExportedKeysInfo(ITableInfo ti) throws SQLException
 	{
-		return getForeignKeyInfo(privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(),
-			ti.getSchemaName(), ti.getSimpleName()));
+		return getForeignKeyInfo(privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName()), ForeignKeyType.EXPORTED);
 	}
 
-	private ForeignKeyInfo[] getForeignKeyInfo(ResultSet rs) throws SQLException
+	private ForeignKeyInfo[] getForeignKeyInfo(ResultSet rs, ForeignKeyType foreignKeyType) throws SQLException
 	{
 		final Map<String, ForeignKeyInfo> keys = new HashMap<String, ForeignKeyInfo>();
-		final Map<String, ArrayList<ForeignKeyColumnInfo>> columns =
-			new HashMap<String, ArrayList<ForeignKeyColumnInfo>>();
+		final Map<String, ArrayList<ForeignKeyColumnInfo>> columns = new HashMap<>();
 
 		try
 		{
@@ -1371,10 +1366,23 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			while (rdr.next())
 			{
 				final ForeignKeyInfo fki =
-					new ForeignKeyInfo(rdr.getString(1), rdr.getString(2), rdr.getString(3), rdr.getString(4),
-						rdr.getString(5), rdr.getString(6), rdr.getString(7), rdr.getString(8), rdr.getLong(10)
-							.intValue(), rdr.getLong(11).intValue(), rdr.getString(12), rdr.getString(13),
-						rdr.getLong(14).intValue(), null, this);
+						new ForeignKeyInfo(rdr.getString(1),
+												 rdr.getString(2),
+												 rdr.getString(3),
+												 rdr.getString(4),
+												 rdr.getString(5),
+												 rdr.getString(6),
+												 rdr.getString(7),
+												 rdr.getString(8),
+												 rdr.getLong(10).intValue(),
+												 rdr.getLong(11).intValue(),
+												 rdr.getString(12),
+												 rdr.getString(13),
+												 rdr.getLong(14).intValue(),
+												 null,
+												 this,
+												 foreignKeyType);
+
 				final String key = createForeignKeyInfoKey(fki);
 				if (!keys.containsKey(key))
 				{

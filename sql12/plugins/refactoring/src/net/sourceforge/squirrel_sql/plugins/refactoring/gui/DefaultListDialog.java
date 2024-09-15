@@ -143,7 +143,7 @@ public class DefaultListDialog extends JDialog
 		{
 			for (IDatabaseObjectInfo info : _objectInfo)
 			{
-				if (info.getSimpleName().equals(simpleNames[index]))
+				if (SimpleNameReader.getSimpleName(info).equals(simpleNames[index]))
 				{
 					idbo.add(info);
 					break;
@@ -234,12 +234,14 @@ public class DefaultListDialog extends JDialog
 	private String[] getSimpleNames(IDatabaseObjectInfo[] dbInfo)
 	{
 		ArrayList<String> simpleNames = new ArrayList<String>();
-		for (IDatabaseObjectInfo info : dbInfo)
+		for(IDatabaseObjectInfo info : dbInfo)
 		{
-			if (!simpleNames.contains(info.getSimpleName()))
-				simpleNames.add(info.getSimpleName());
+			if(!simpleNames.contains(SimpleNameReader.getSimpleName(info)))
+			{
+				simpleNames.add(SimpleNameReader.getSimpleName(info));
+			}
 		}
-		return simpleNames.toArray(new String[] {});
+		return simpleNames.toArray(new String[]{});
 	}
 
 	private GridBagConstraints getLabelConstraints(GridBagConstraints c)

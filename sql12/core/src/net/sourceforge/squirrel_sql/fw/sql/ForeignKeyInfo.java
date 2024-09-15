@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.ForeignKeyType;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 
 /**
@@ -32,10 +33,14 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
     */
    public interface IPropertyNames
    {
-      /** Primary Key Catalog name. */
+      /**
+       * Primary Key Catalog name.
+       */
       String PK_CATALOG_NAME = "primaryKeyCatalogName";
 
-      /** Primary Key Schema name. */
+      /**
+       * Primary Key Schema name.
+       */
       String PK_SCHEMA_NAME = "primaryKeySchemaName";
    }
 
@@ -49,26 +54,33 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
    private final int _deleteRule;
    private final String _pkName;
    private final int _deferability;
+   private final ForeignKeyType _foreignKeyType;
    private ForeignKeyColumnInfo[] _columnInfo;
 
+   /**
+    * @param exportedFk if false it is an imported FK
+    */
    public ForeignKeyInfo(String pkCatalog, String pkSchema, String pkTableName,
                          String pkColumnName, String fkCatalog, String fkSchema,
                          String fkTableName, String fkColumnName,
                          int updateRule, int deleteRule, String fkName,
                          String pkName, int deferability,
-                         ForeignKeyColumnInfo[] columnInfo, SQLDatabaseMetaData md)
+                         ForeignKeyColumnInfo[] columnInfo,
+                         SQLDatabaseMetaData md,
+                         ForeignKeyType foreignKeyType)
    {
       super(fkCatalog, fkSchema, fkName, DatabaseObjectType.FOREIGN_KEY, md);
       _pkCatalog = pkCatalog;
       _pkSchema = pkSchema;
       _pkTableName = pkTableName;
-        _pkColumnName = pkColumnName;
+      _pkColumnName = pkColumnName;
       _fkTableName = fkTableName;
-        _fkColumnName = fkColumnName;
+      _fkColumnName = fkColumnName;
       _updateRule = updateRule;
       _deleteRule = deleteRule;
       _pkName = pkName;
       _deferability = deferability;
+      _foreignKeyType = foreignKeyType;
       setForeignKeyColumnInfo(columnInfo);
    }
 
@@ -87,11 +99,11 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
       return _pkTableName;
    }
 
-    public String getPrimaryKeyColumnName()
-    {
-        return _pkColumnName;
-    }
-    
+   public String getPrimaryKeyColumnName()
+   {
+      return _pkColumnName;
+   }
+
    public String getPrimaryKeyName()
    {
       return _pkName;
@@ -112,10 +124,11 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
       return _fkTableName;
    }
 
-    public String getForeignKeyColumnName() {
-        return _fkColumnName;
-    }
-    
+   public String getForeignKeyColumnName()
+   {
+      return _fkColumnName;
+   }
+
    public String getForeignKeyName()
    {
       return getSimpleName();
@@ -144,5 +157,10 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
    public void setForeignKeyColumnInfo(ForeignKeyColumnInfo[] value)
    {
       _columnInfo = value != null ? value : new ForeignKeyColumnInfo[0];
+   }
+
+   public ForeignKeyType getForeignKeyType()
+   {
+      return _foreignKeyType;
    }
 }

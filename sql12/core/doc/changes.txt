@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Refactoring Plugin: Now supports dropping imported and exported constraints/foreign keys.
+  Before this change only dropping imported constraints/foreign keys was supported.
+
 Hibernate Plugin: HQL result tables offer a find function.
 
 Hibernate Plugin: Improved support for projection queries:

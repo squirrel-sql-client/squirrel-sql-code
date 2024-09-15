@@ -19,11 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
@@ -32,12 +27,19 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.ForeignKeyType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DefaultDropDialog;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DefaultListDialog;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DropForeignKeyCommand extends AbstractRefactoringCommand
 {
@@ -75,26 +77,30 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 	@Override
 	protected void onExecute() throws SQLException
 	{
-		if (!(_info[0] instanceof ITableInfo))
+		if(!(_info[0] instanceof ITableInfo))
+		{
 			return;
+		}
 
 		ITableInfo ti = (ITableInfo) _info[0];
 
-		ForeignKeyInfo[] fkInfo = _session.getMetaData().getImportedKeysInfo(ti);
+		List<ForeignKeyInfo> foreignKeyInfos = new ArrayList<>();
+		foreignKeyInfos.addAll(List.of(_session.getMetaData().getImportedKeysInfo(ti)));
+		foreignKeyInfos.addAll(List.of(_session.getMetaData().getExportedKeysInfo(ti)));
 
 		// Don't show foreignKeys dialog if only one index exists to be modified
-		if (fkInfo.length == 1)
+		if(foreignKeyInfos.size() == 1)
 		{
-			_foreignKeyInfo = fkInfo;
+			_foreignKeyInfo = new ForeignKeyInfo[]{foreignKeyInfos.get(0)};
 			showCustomDialog();
-		} else if (fkInfo.length == 0)
+		}
+		else if(foreignKeyInfos.isEmpty())
 		{
-			_session.showErrorMessage(s_stringMgr.getString("DropForeignKeyCommand.noKeyToDrop",
-				_info[0].getSimpleName()));
-		} else
+			_session.showErrorMessage(s_stringMgr.getString("DropForeignKeyCommand.noKeyToDrop", _info[0].getSimpleName()));
+		}
+		else
 		{
-			_listDialog =
-				new DefaultListDialog(fkInfo, ti.getSimpleName(), DefaultListDialog.DIALOG_TYPE_FOREIGN_KEY);
+			_listDialog = new DefaultListDialog(foreignKeyInfos.toArray(new IDatabaseObjectInfo[0]), ti.getSimpleName(), DefaultListDialog.DIALOG_TYPE_FOREIGN_KEY);
 			_listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
 			_listDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 			_listDialog.setVisible(true);
@@ -107,26 +113,27 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 	@Override
 	protected String[] generateSQLStatements()
 	{
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 
 		for (ForeignKeyInfo fgInfo : _foreignKeyInfo)
 		{
 			StringBuilder sql = new StringBuilder();
-			sql.append(_dialect.getDropForeignKeySQL(fgInfo.getForeignKeyName(),
-				_info[0].getSimpleName(),
-				_qualifier,
-				_sqlPrefs)); // only
-			// gives
-			// the
-			// SQL
-			// without
-			// the
-			// Cascade/Restrict
-			// Constraint
-			if (customDialog.isCascadeSelected())
+
+			// only gives the SQL without the Cascade/Restrict Constraint
+         if(fgInfo.getForeignKeyType() == ForeignKeyType.IMPORTED)
+         {
+            sql.append(_dialect.getDropForeignKeySQL(fgInfo.getForeignKeyName(), fgInfo.getForeignKeyTableName(), _qualifier,_sqlPrefs));
+         }
+         else
+         {
+				sql.append(_dialect.getDropForeignKeySQL(fgInfo.getForeignKeyName(), fgInfo.getForeignKeyTableName(), _qualifier,_sqlPrefs));
+         }
+
+         if(customDialog.isCascadeSelected())
 			{
 				sql.append(" CASCADE");
-			} else
+			}
+			else
 			{
 				sql.append(" RESTRICT");
 			}
@@ -196,9 +203,7 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 					@Override
 					public void run()
 					{
-						customDialog =
-							new DefaultDropDialog(_foreignKeyInfo, DefaultDropDialog.DIALOG_TYPE_FOREIGN_KEY, SessionUtils.getOwningFrame(_session)
-                  );
+						customDialog = new DefaultDropDialog(_foreignKeyInfo, DefaultDropDialog.DIALOG_TYPE_FOREIGN_KEY, SessionUtils.getOwningFrame(_session));
 						customDialog.addExecuteListener(new ExecuteListener());
 						customDialog.addEditSQLListener(new EditSQLListener(customDialog));
 						customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
