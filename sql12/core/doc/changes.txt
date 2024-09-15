@@ -30,6 +30,10 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Refactoring Plugin: When refactoring SQLs were chosen to be edited
+  from within an Object tree besides an additional SQL editor the main SQL editor was activated
+  instead of the additional editor.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/38
 MSSQL Server, table scripting: datetime2 type was scripted as datetime.
 

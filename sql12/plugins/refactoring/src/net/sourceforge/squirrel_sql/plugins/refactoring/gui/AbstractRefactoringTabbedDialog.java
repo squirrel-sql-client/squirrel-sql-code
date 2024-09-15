@@ -23,13 +23,20 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 /**
  * A tabbed dialog.
@@ -58,32 +65,7 @@ public abstract class AbstractRefactoringTabbedDialog extends JDialog implements
     /**
      * Internationalized strings for this class.
      */
-    private static final StringManager s_stringMgr =
-            StringManagerFactory.getStringManager(AbstractRefactoringTabbedDialog.class);
-
-
-    protected interface i18n {
-        //i18n[AbstractRefactoringDialog.cancelButtonLabel=Cancel]
-        String CANCEL_BUTTON_LABEL =
-                s_stringMgr.getString("AbstractRefactoringDialog.cancelButtonLabel");
-
-        //i18n[AbstractRefactoringDialog.editButtonLabel=Edit SQL]
-        String EDIT_BUTTON_LABEL =
-                s_stringMgr.getString("AbstractRefactoringDialog.editButtonLabel");
-
-        //i18n[AbstractRefactoringDialog.executeButtonLabel=Execute]
-        String EXECUTE_BUTTON_LABEL =
-                s_stringMgr.getString("AbstractRefactoringDialog.executeButtonLabel");
-
-        //i18n[AbstractRefactoringDialog.showButtonLabel=Show SQL]
-        String SHOWSQL_BUTTON_LABEL =
-                s_stringMgr.getString("AbstractRefactoringDialog.showButtonLabel");
-
-        //i18n[AbstractRefactoringDialog.tableNameLabel=Table Name: ]
-        String TABLE_NAME_LABEL =
-                s_stringMgr.getString("AbstractRefactoringDialog.tableNameLabel");
-
-    }
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractRefactoringTabbedDialog.class);
 
 
     public AbstractRefactoringTabbedDialog(Dimension size) {
@@ -165,14 +147,14 @@ public abstract class AbstractRefactoringTabbedDialog extends JDialog implements
 
     protected JPanel getButtonPanel() {
         JPanel result = new JPanel();
-        executeButton = new JButton(AbstractRefactoringTabbedDialog.i18n.EXECUTE_BUTTON_LABEL);
+        executeButton = new JButton(s_stringMgr.getString("AbstractRefactoringDialog.executeButtonLabel"));
         result.add(executeButton);
 
-        editSQLButton = new JButton(AbstractRefactoringTabbedDialog.i18n.EDIT_BUTTON_LABEL);
+        editSQLButton = new JButton(s_stringMgr.getString("AbstractRefactoringDialog.editButtonLabel"));
         result.add(editSQLButton);
-        showSQLButton = new JButton(AbstractRefactoringTabbedDialog.i18n.SHOWSQL_BUTTON_LABEL);
+        showSQLButton = new JButton(s_stringMgr.getString("AbstractRefactoringDialog.showButtonLabel"));
         result.add(showSQLButton);
-        cancelButton = new JButton(AbstractRefactoringTabbedDialog.i18n.CANCEL_BUTTON_LABEL);
+        cancelButton = new JButton(s_stringMgr.getString("AbstractRefactoringDialog.cancelButtonLabel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);

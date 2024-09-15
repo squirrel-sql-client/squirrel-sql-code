@@ -78,25 +78,6 @@ public abstract class AbstractRefactoringDialog extends JDialog implements IDisp
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(AbstractRefactoringDialog.class);
 
-	protected interface i18n
-	{
-		// i18n[AbstractRefactoringDialog.cancelButtonLabel=Cancel]
-		String CANCEL_BUTTON_LABEL = s_stringMgr.getString("AbstractRefactoringDialog.cancelButtonLabel");
-
-		// i18n[AbstractRefactoringDialog.editButtonLabel=Edit SQL]
-		String EDIT_BUTTON_LABEL = s_stringMgr.getString("AbstractRefactoringDialog.editButtonLabel");
-
-		// i18n[AbstractRefactoringDialog.executeButtonLabel=Execute]
-		String EXECUTE_BUTTON_LABEL = s_stringMgr.getString("AbstractRefactoringDialog.executeButtonLabel");
-
-		// i18n[AbstractRefactoringDialog.showButtonLabel=Show SQL]
-		String SHOWSQL_BUTTON_LABEL = s_stringMgr.getString("AbstractRefactoringDialog.showButtonLabel");
-
-		// i18n[AbstractRefactoringDialog.tableNameLabel=Table Name: ]
-		String TABLE_NAME_LABEL = s_stringMgr.getString("AbstractRefactoringDialog.tableNameLabel");
-
-	}
-
 	public AbstractRefactoringDialog(Frame owningFrame)
 	{
       super(owningFrame);
@@ -215,14 +196,14 @@ public abstract class AbstractRefactoringDialog extends JDialog implements IDisp
 	protected JPanel getButtonPanel()
 	{
 		JPanel result = new JPanel();
-		executeButton = new JButton(i18n.EXECUTE_BUTTON_LABEL);
+		executeButton = new JButton(s_stringMgr.getString("AbstractRefactoringDialog.executeButtonLabel"));
 		result.add(executeButton);
 
-		editSQLButton = new JButton(i18n.EDIT_BUTTON_LABEL);
+		editSQLButton = new JButton(s_stringMgr.getString("AbstractRefactoringDialog.editButtonLabel"));
 		result.add(editSQLButton);
-		showSQLButton = new JButton(i18n.SHOWSQL_BUTTON_LABEL);
+		showSQLButton = new JButton(s_stringMgr.getString("AbstractRefactoringDialog.showButtonLabel"));
 		result.add(showSQLButton);
-		cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
+		cancelButton = new JButton(s_stringMgr.getString("AbstractRefactoringDialog.cancelButtonLabel"));
 		cancelButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)

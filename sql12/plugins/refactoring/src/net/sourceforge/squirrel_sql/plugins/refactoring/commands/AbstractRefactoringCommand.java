@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.db.IDisposableDialog;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -198,10 +199,12 @@ public abstract class AbstractRefactoringCommand implements ICommand
 				try
 				{
 					listener.finished(generateSQLStatements());
-				} catch (UserCancelledOperationException ucoe)
+				}
+				catch(UserCancelledOperationException ucoe)
 				{
 					_session.showErrorMessage(i18n.DIALECT_SELECTION_CANCELLED);
-				} catch (Exception e)
+				}
+				catch(Exception e)
 				{
 					_session.showErrorMessage(e);
 					s_log.error("Unexpected exception on sql generation: " + e.getMessage(), e);
@@ -308,7 +311,16 @@ public abstract class AbstractRefactoringCommand implements ICommand
          {
             _parentDialog.dispose();
          }
-         String current = _session.getSQLPanelAPIOfActiveSessionWindow().getEntireSQLScript();
+
+			boolean forceMainSqlTab = false;
+			ISQLPanelAPI sqlPanelAPIOfActiveSessionWindow = _session.getSQLPanelAPIOfActiveSessionWindow(true);
+			if(null == sqlPanelAPIOfActiveSessionWindow)
+			{
+				sqlPanelAPIOfActiveSessionWindow = _session.getSessionInternalFrame().getMainSQLPanelAPI();
+				forceMainSqlTab = true;
+			}
+
+			String current = sqlPanelAPIOfActiveSessionWindow.getEntireSQLScript();
          String viewableScript;
          if (current.isEmpty() || current.endsWith("\n"))
          {
@@ -318,9 +330,13 @@ public abstract class AbstractRefactoringCommand implements ICommand
          {
             viewableScript = "\n" + script;
          }
-         _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(viewableScript, true);
-         _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-      }
+         sqlPanelAPIOfActiveSessionWindow.appendSQLScript(viewableScript, true);
+
+			if(forceMainSqlTab || false == sqlPanelAPIOfActiveSessionWindow.getSQLPanelSplitter().isSplit())
+			{
+				_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+			}
+		}
    }
 
 	/**
