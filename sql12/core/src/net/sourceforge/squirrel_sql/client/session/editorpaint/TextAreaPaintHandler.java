@@ -5,13 +5,14 @@ import net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret.MultiC
 
 import javax.swing.JTextArea;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextAreaPaintHandler
 {
    private MarkCurrentSqlHandler _markCurrentSqlHandler;
-   private TextAreaPaintListener _textAreaPaintListener;
-
    private MultiCaretHandler _multiCaretHandler;
+   private List<TextAreaPaintListener> _textAreaPaintListeners = new ArrayList<>();
 
 
    public TextAreaPaintHandler(JTextArea editor, EditorPaintService paintService, ISession session)
@@ -20,10 +21,17 @@ public class TextAreaPaintHandler
       _multiCaretHandler = new MultiCaretHandler(editor, paintService);
    }
 
-   public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+   public void addTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
    {
-      _textAreaPaintListener = textAreaPaintListener;
+      _textAreaPaintListeners.remove(textAreaPaintListener);
+      _textAreaPaintListeners.add(textAreaPaintListener);
    }
+
+   public void removeTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+   {
+      _textAreaPaintListeners.remove(textAreaPaintListener);
+   }
+
 
    public MarkCurrentSqlHandler getMarkCurrentSqlHandler()
    {
@@ -34,9 +42,9 @@ public class TextAreaPaintHandler
    {
       _markCurrentSqlHandler.paintMark(g);
 
-      if(null != _textAreaPaintListener)
+      for(TextAreaPaintListener listener : _textAreaPaintListeners.toArray(new TextAreaPaintListener[0]))
       {
-         _textAreaPaintListener.paint();
+         listener.paint();
       }
    }
 

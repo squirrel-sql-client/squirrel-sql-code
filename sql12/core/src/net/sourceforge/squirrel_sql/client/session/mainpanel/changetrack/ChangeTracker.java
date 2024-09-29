@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesAddressBook;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListController;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListControllerChannel;
@@ -33,6 +34,7 @@ public class ChangeTracker
    private boolean _enabled;
    private IFileEditorAPI _fileEditorAPI;
    private ChangeTrackCloseDispatcher _changeTrackCloseDispatcher = new ChangeTrackCloseDispatcher();
+   private TextAreaPaintListener _textAreaPaintListener;
 
    public ChangeTracker(ISQLEntryPanel sqlEntry)
    {
@@ -102,7 +104,8 @@ public class ChangeTracker
          }
       });
 
-      _sqlEntry.setTextAreaPaintListener(() -> _changeTrackPanel.requestGutterRepaint());
+      _textAreaPaintListener = () -> _changeTrackPanel.requestGutterRepaint();
+      _sqlEntry.addTextAreaPaintListener(_textAreaPaintListener);
    }
 
    public void reInitChangeTrackingOnFileMoved()
@@ -258,6 +261,7 @@ public class ChangeTracker
 
    public void close()
    {
+      _sqlEntry.removeTextAreaPaintListener(_textAreaPaintListener);
       _changeTrackCloseDispatcher.close();
    }
 }

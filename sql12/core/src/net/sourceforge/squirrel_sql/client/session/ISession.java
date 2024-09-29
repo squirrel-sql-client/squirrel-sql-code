@@ -45,7 +45,7 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
-import javax.swing.*;
+import javax.swing.Action;
 import java.sql.SQLException;
 
 /**
@@ -315,6 +315,8 @@ public interface ISession extends IHasIdentifier
     * @return an implementation of IQueryTokenizer
     */
    IQueryTokenizer getQueryTokenizer();
+
+   IQueryTokenizer getNewQueryTokenizer();
        
    /**
     * Sets the exception formatter to use when handling messages.

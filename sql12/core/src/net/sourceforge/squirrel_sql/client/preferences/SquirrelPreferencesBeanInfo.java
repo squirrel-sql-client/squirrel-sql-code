@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SquirrelPreferences</CODE>.
@@ -60,6 +60,13 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 
             prop(MARK_CURRENT_SQL, SquirrelPreferences.class, "isMarkCurrentSql", "setMarkCurrentSql"),
             prop(CURRENT_SQL_MARK_COLOR_RGB, SquirrelPreferences.class, "getCurrentSqlMarkColorRGB", "setCurrentSqlMarkColorRGB"),
+            
+            prop(RESULT_TAB_HEADER_MAX_CHARS_IN_TAB, SquirrelPreferences.class, "getResultTabHeaderMaxCharsInTab", "setResultTabHeaderMaxCharsInTab"),
+            prop(RESULT_TAB_HEADER_MARK_CURRENT_SQLS_HEADER, SquirrelPreferences.class, "isResultTabHeaderMarkCurrentSQLsHeader", "setResultTabHeaderMarkCurrentSQLsHeader"),
+            prop(RESULT_TAB_HEADER_MARK_COLOR_RGB, SquirrelPreferences.class, "getResultTabHeaderMarkColorRGB", "setResultTabHeaderMarkColorRGB"),
+            prop(RESULT_TAB_HEADER_MARK_THICKNESS, SquirrelPreferences.class, "getResultTabHeaderMarkThickness", "setResultTabHeaderMarkThickness"),
+            prop(RESULT_TAB_HEADER_AUTO_ACTIVATE_TAB, SquirrelPreferences.class, "isResultTabHeaderAutoActivateTab", "setResultTabHeaderAutoActivateTab"),
+            prop(RESULT_TAB_HEADER_COMPARE_SQLS_NORMALIZED, SquirrelPreferences.class, "isResultTabHeaderCompareSqlsNormalized", "setResultTabHeaderCompareSqlsNormalized"),
 
             prop(USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS, SquirrelPreferences.class, "isUseStatementSeparatorAsSqlToExecuteBounds", "setUseStatementSeparatorAsSqlToExecuteBounds"),
 

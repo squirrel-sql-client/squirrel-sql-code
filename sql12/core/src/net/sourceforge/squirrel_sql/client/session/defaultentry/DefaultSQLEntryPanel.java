@@ -19,19 +19,24 @@ package net.sourceforge.squirrel_sql.client.session.defaultentry;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.PrioritizedCaretMouseListener;
+import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoManager;
-import java.awt.*;
+import java.awt.Font;
 import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 
@@ -85,12 +90,18 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 	@Override
-	public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+	public void addTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
 	{
-		_defaultTextArea.setTextAreaPaintListener(textAreaPaintListener);
+		_defaultTextArea.addTextAreaPaintListener(textAreaPaintListener);
 	}
 
-   @Override
+	@Override
+	public void removeTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+	{
+		_defaultTextArea.removeTextAreaPaintListener(textAreaPaintListener);
+	}
+
+	@Override
    public TextAreaPaintHandler getTextAreaPaintHandler()
    {
       return _defaultTextArea.getTextAreaPaintHandler();

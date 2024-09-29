@@ -24,13 +24,16 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rtextarea.RTextAreaUI;
 
-import javax.swing.*;
+import javax.swing.InputMap;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
@@ -323,9 +326,14 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 //      RtfFix.copyAsStyledText(this);
 //   }
 
-   public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+   public void addTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
    {
-      _textAreaPaintHandler.setTextAreaPaintListener(textAreaPaintListener);
+      _textAreaPaintHandler.addTextAreaPaintListener(textAreaPaintListener);
+   }
+
+   public void removeTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+   {
+      _textAreaPaintHandler.removeTextAreaPaintListener(textAreaPaintListener);
    }
 
    public TextAreaPaintHandler getTextAreaPaintHandler()

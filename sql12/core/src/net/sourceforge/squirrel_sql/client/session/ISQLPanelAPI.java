@@ -30,7 +30,9 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import java.util.ArrayList;
 
 /**
@@ -279,5 +281,7 @@ public interface ISQLPanelAPI extends IFileEditorAPI
    UndoRedoActionContext getUndoRedoActionContext();
 
 	SQLPanelPosition getSQLPanelPosition();
+
+   void activateLastMarkedResultTabHeader();
 }
 

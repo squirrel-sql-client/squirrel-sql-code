@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabMatchingCurrentSqlHandler;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -49,10 +50,21 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -124,6 +136,8 @@ public class SQLPanel extends JPanel
 	private SQLPanelPosition _sqlPanelPosition;
 	private ChangeTracker _changeTracker;
 
+	private ResultTabMatchingCurrentSqlHandler _resultTabMatchingCurrentSqlHandler;
+
 
 	public SQLPanel(ISession session, SQLPanelPosition sqlPanelPosition, TitleFilePathHandler titleFileHandler)
 	{
@@ -153,6 +167,7 @@ public class SQLPanel extends JPanel
 		}
 
 		_sqlPanelSplitter = new SQLPanelSplitter(this);
+		_resultTabMatchingCurrentSqlHandler = new ResultTabMatchingCurrentSqlHandler(getSQLEntryPanel(), getSQLExecPanel());
 	}
 
 	public SQLPanelSplitter getSqlPanelSplitter()
@@ -378,6 +393,7 @@ public class SQLPanel extends JPanel
 		_sqlListenerService.close();
 
 		_changeTracker.close();
+		_resultTabMatchingCurrentSqlHandler.close();
 
 		_sqlPanelListenerManager.fireSQLPanelParentClosing();
    }
@@ -651,6 +667,11 @@ public class SQLPanel extends JPanel
 		_sqlHistoryComboBox.addActionListener(_sqlComboListener);
 
 		SwingUtilities.invokeLater(() -> _sqlEntry.getTextComponent().requestFocus());
+	}
+
+	public void activateLastMarkedResultTabHeader()
+	{
+		_resultTabMatchingCurrentSqlHandler.activateLastMarkedResultTabHeader();
 	}
 
 

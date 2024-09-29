@@ -128,8 +128,8 @@ public class CodeReformator implements ICodeReformator
 
    private void validate(String beforeReformat, String afterReformat) throws CodeReformatException
    {
-      String normalizedBefore = getNormalized(beforeReformat);
-      String normalizedAfter = getNormalized(afterReformat);
+      String normalizedBefore = getNormalizedSql(beforeReformat);
+      String normalizedAfter = getNormalizedSql(afterReformat);
 
       if (!normalizedBefore.equalsIgnoreCase(normalizedAfter))
       {
@@ -166,9 +166,9 @@ public class CodeReformator implements ICodeReformator
     * and after reformatting should be the same. So normalized Strings may be
     * used for validation of the reformating process.
     */
-   private String getNormalized(String s)
+   public String getNormalizedSql(String sql)
    {
-      String ret = s.replaceAll("\\(", " ( ");
+      String ret = sql.replaceAll("\\(", " ( ");
       ret = ret.replaceAll("\\)", " ) ");
       ret = ret.replaceAll(",", " , ");
       String sep = _codeReformatorConfig.getStatementSeparator();

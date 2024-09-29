@@ -28,7 +28,11 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
-import net.sourceforge.squirrel_sql.client.gui.session.*;
+import net.sourceforge.squirrel_sql.client.gui.session.CurrentSchemaModel;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
@@ -44,16 +48,29 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.TokenizerSessPropsInteractions;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
@@ -1101,12 +1118,17 @@ class Session implements ISession
          // give the default tokenizer.  It is important to not cache this
          // object so that session property changes to the current session
          // are reflected in this default tokenizer.
-         tokenizer = new QueryTokenizer(_props.getSQLStatementSeparator(),
-                                        _props.getStartOfLineComment(),
-                                        _props.getRemoveMultiLineComment(),
-                                        _props.getRemoveLineComment());
+         tokenizer = getNewQueryTokenizer();
       }
       return tokenizer;
+   }
+
+   public QueryTokenizer getNewQueryTokenizer()
+   {
+      return new QueryTokenizer(_props.getSQLStatementSeparator(),
+                                _props.getStartOfLineComment(),
+                                _props.getRemoveMultiLineComment(),
+                                _props.getRemoveLineComment());
    }
 
    /**

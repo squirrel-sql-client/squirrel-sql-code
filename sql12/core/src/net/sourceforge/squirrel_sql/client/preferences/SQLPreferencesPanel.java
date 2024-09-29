@@ -1,10 +1,14 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabHeaderPrefsPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -14,14 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public final class SQLPreferencesPanel extends JPanel
 {
@@ -53,10 +54,10 @@ public final class SQLPreferencesPanel extends JPanel
    JRadioButton debugJdbcWriter = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugwriter"));
    JLabel jdbcDebugLogFileNameLbl = new OutputLabel(" ");
 
-   SQLPreferencesPanel(ChangeTrackPrefsPanel changeTrackPrefsPanel)
+   SQLPreferencesPanel(ChangeTrackPrefsPanel changeTrackPrefsPanel, ResultTabHeaderPrefsPanel resultTabHeaderPrefsPanel)
    {
       super(new GridBagLayout());
-      createUserInterface(changeTrackPrefsPanel);
+      createUserInterface(changeTrackPrefsPanel,resultTabHeaderPrefsPanel);
    }
 
 
@@ -65,7 +66,7 @@ public final class SQLPreferencesPanel extends JPanel
       return (ColorIcon) btnCurrentSqlMarkColorRGB.getIcon();
    }
 
-   private void createUserInterface(ChangeTrackPrefsPanel panel)
+   private void createUserInterface(ChangeTrackPrefsPanel changeTrackPrefsPanel, ResultTabHeaderPrefsPanel resultTabHeaderPrefsPanel)
    {
       final GridBagConstraints gbc = new GridBagConstraints();
       gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -73,16 +74,16 @@ public final class SQLPreferencesPanel extends JPanel
       gbc.gridx = 0;
       gbc.gridy = 0;
       gbc.weightx = 1;
-      add(createGeneralPanel(), gbc);
+      add(createGeneralPanel(resultTabHeaderPrefsPanel), gbc);
       ++gbc.gridy;
       add(createFilePanel(), gbc);
       ++gbc.gridy;
-      add(panel, gbc);
+      add(changeTrackPrefsPanel, gbc);
       ++gbc.gridy;
       add(createDebugPanel(), gbc);
    }
 
-   private JPanel createGeneralPanel()
+   private JPanel createGeneralPanel(ResultTabHeaderPrefsPanel resultTabHeaderPrefsPanel)
    {
       JPanel pnl = new JPanel(new GridBagLayout());
       pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.general")));
@@ -161,16 +162,22 @@ public final class SQLPreferencesPanel extends JPanel
       gbc.gridy = 7;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.HORIZONTAL;
-      pnl.add(createReloadSQLContentsPanel(), gbc);
+      pnl.add(resultTabHeaderPrefsPanel , gbc);
 
       gbc.gridx = 0;
       gbc.gridy = 8;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      pnl.add(createReloadSQLContentsPanel(), gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 9;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
       pnl.add(createMaxTextOutputColumnWidthPanel(), gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 9;
+      gbc.gridy = 10;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
       pnl.add(chkNotifyExternalFileChanges, gbc);

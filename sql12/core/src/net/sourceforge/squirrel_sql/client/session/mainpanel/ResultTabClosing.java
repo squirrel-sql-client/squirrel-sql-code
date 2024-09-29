@@ -1,18 +1,19 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabComponent;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
-
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResultTabClosing
 {
@@ -148,6 +149,10 @@ public class ResultTabClosing
       if(null == _tabbedExecutionsPanel.getTabComponentAt(indexOfTab))
       {
          return _tabbedExecutionsPanel.getIconAt(indexOfTab);
+      }
+      else if(_tabbedExecutionsPanel.getTabComponentAt(indexOfTab) instanceof ResultTabComponent)
+      {
+         return ((ResultTabComponent)_tabbedExecutionsPanel.getTabComponentAt(indexOfTab)).getIcon();
       }
       else if(_tabbedExecutionsPanel.getTabComponentAt(indexOfTab) instanceof JLabel)
       {

@@ -135,6 +135,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Fi
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindResultColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.MarkResultTabHeaderMatchingCurSqlAction;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 
 /**
@@ -200,6 +201,11 @@ public class ActionRegistry
       if (inMainSessionWindow)
       {
          toolsPopupController.addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
+      }
+
+      if(Main.getApplication().getSquirrelPreferences().isResultTabHeaderMarkCurrentSQLsHeader())
+      {
+         toolsPopupController.addAction("resulttabsql", ac.get(MarkResultTabHeaderMatchingCurSqlAction.class));
       }
 
       toolsPopupController.addAction("quote", ac.get(InQuotesAction.class));
@@ -339,6 +345,9 @@ public class ActionRegistry
       actionCollection.add(new InQuotesAction(app));
       actionCollection.add(new RemoveQuotesAction(app));
       actionCollection.add(new ConvertToStringBuilderAction(app));
+
+      actionCollection.add(new MarkResultTabHeaderMatchingCurSqlAction());
+
       actionCollection.add(new EscapeDateAction(app));
       actionCollection.add(new CutSqlAction(app));
       actionCollection.add(new CopySqlAction(app));

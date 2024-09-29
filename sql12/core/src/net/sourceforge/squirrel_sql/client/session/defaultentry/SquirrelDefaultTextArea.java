@@ -9,8 +9,8 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextArea;
+import java.awt.Graphics;
 
 public class SquirrelDefaultTextArea extends JTextArea
 {
@@ -58,9 +58,9 @@ public class SquirrelDefaultTextArea extends JTextArea
       _textAreaPaintHandler.getMarkCurrentSqlHandler().setActive(b);
    }
 
-   public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+   public void addTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
    {
-      _textAreaPaintHandler.setTextAreaPaintListener(textAreaPaintListener);
+      _textAreaPaintHandler.addTextAreaPaintListener(textAreaPaintListener);
    }
 
    public TextAreaPaintHandler getTextAreaPaintHandler()
@@ -85,5 +85,10 @@ public class SquirrelDefaultTextArea extends JTextArea
    public void setPrioritizedCaretMouseListener(PrioritizedCaretMouseListener prioritizedCaretMouseListener)
    {
       ((SquirrelDefaultCaretWithPrioritizedMouseListener)getCaret()).setPrioritizedCaretMouseListener(prioritizedCaretMouseListener);
+   }
+
+   public void removeTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+   {
+      _textAreaPaintHandler.removeTextAreaPaintListener(textAreaPaintListener);
    }
 }

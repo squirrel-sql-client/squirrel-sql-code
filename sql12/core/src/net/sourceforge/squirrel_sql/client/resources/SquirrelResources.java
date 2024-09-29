@@ -205,6 +205,8 @@ public class SquirrelResources extends Resources
 
 		String SHOW_DETAIL = "show_detail";
 
+		String RUN_ALL = "run_all";
+
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

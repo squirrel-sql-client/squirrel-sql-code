@@ -7,7 +7,11 @@ import net.sourceforge.squirrel_sql.client.gui.session.CurrentSchemaModel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
+import net.sourceforge.squirrel_sql.client.session.ModificationAwareSessionTitle;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
@@ -25,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
-import javax.swing.*;
+import javax.swing.Action;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -270,6 +274,12 @@ public class CliSessionAdapter implements ISession
 
    @Override
    public IQueryTokenizer getQueryTokenizer()
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public IQueryTokenizer getNewQueryTokenizer()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }

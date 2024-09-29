@@ -5,7 +5,12 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -42,16 +47,21 @@ public class CliSession extends CliSessionAdapter
 
          _sessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();
 
-         _tokenizer = new QueryTokenizer(_sessionProperties.getSQLStatementSeparator(),
-                                         _sessionProperties.getStartOfLineComment(),
-                                         _sessionProperties.getRemoveMultiLineComment(),
-                                         _sessionProperties.getRemoveLineComment());
+         _tokenizer = getNewQueryTokenizer();
 
       }
       catch (Exception e)
       {
          throw Utilities.wrapRuntime(e);
       }
+   }
+
+   public QueryTokenizer getNewQueryTokenizer()
+   {
+      return new QueryTokenizer(_sessionProperties.getSQLStatementSeparator(),
+                                _sessionProperties.getStartOfLineComment(),
+                                _sessionProperties.getRemoveMultiLineComment(),
+                                _sessionProperties.getRemoveLineComment());
    }
 
    @Override

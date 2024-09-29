@@ -20,16 +20,6 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Color;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.Serializable;
-import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-
 import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
@@ -45,6 +35,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+
+import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 /**
  * This class represents the application preferences.
  *
@@ -52,7 +52,6 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
  */
 public class SquirrelPreferences implements Serializable
 {
-
    public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
@@ -65,6 +64,14 @@ public class SquirrelPreferences implements Serializable
       String ALLOW_RUN_ALL_SQLS_IN_EDITOR = "allowRunAllSQLsInEditor";
       String MARK_CURRENT_SQL = "markCurrentSql";
       String CURRENT_SQL_MARK_COLOR_RGB = "currentSqlMarkColorRGB";
+
+		String RESULT_TAB_HEADER_MAX_CHARS_IN_TAB = "resultTabHeaderMaxCharsInTab";
+		String RESULT_TAB_HEADER_MARK_CURRENT_SQLS_HEADER = "resultTabHeaderMarkCurrentSQLsHeader";
+		String RESULT_TAB_HEADER_MARK_COLOR_RGB = "resultTabHeaderMarkColorRGB";
+		String RESULT_TAB_HEADER_MARK_THICKNESS = "resultTabHeaderMarkThickness";
+		String RESULT_TAB_HEADER_AUTO_ACTIVATE_TAB = "resultTabHeaderAutoActivateTab";
+		String RESULT_TAB_HEADER_COMPARE_SQLS_NORMALIZED = "resultTabHeaderCompareSqlsNormalized";
+
 		String USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS = "useStatementSeparatorAsSqlToExecuteBounds";
       String MAIN_FRAME_STATE = "mainFrameWindowState";
       String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
@@ -341,6 +348,12 @@ public class SquirrelPreferences implements Serializable
 	private boolean _showAliasPasswordShowButton;
 	private int _queryTimeout = 0;
 
+	private int _resultTabHeaderMaxCharsInTab = 20;
+	private boolean _resultTabHeaderMarkCurrentSQLsHeader = true;
+	private int _resultTabHeaderMarkColorRGB = Color.green.getRGB();
+	private int _resultTabHeaderMarkThickness = 2;
+	private boolean _resultTabHeaderAutoActivateTab = false;
+	private boolean _resultTabHeaderCompareSqlsNormalized;
 
 	public SquirrelPreferences()
 	{
@@ -1639,4 +1652,65 @@ public class SquirrelPreferences implements Serializable
 	{
 		_queryTimeout = queryTimeout;
 	}
+
+	public int getResultTabHeaderMaxCharsInTab()
+	{
+		return _resultTabHeaderMaxCharsInTab;
+	}
+
+	public void setResultTabHeaderMaxCharsInTab(int resultTabHeaderMaxCharsInTab)
+	{
+		_resultTabHeaderMaxCharsInTab = resultTabHeaderMaxCharsInTab;
+	}
+
+	public boolean isResultTabHeaderMarkCurrentSQLsHeader()
+	{
+		return _resultTabHeaderMarkCurrentSQLsHeader;
+	}
+
+	public void setResultTabHeaderMarkCurrentSQLsHeader(boolean resultTabHeaderMarkCurrentSQLsHeader)
+	{
+		_resultTabHeaderMarkCurrentSQLsHeader = resultTabHeaderMarkCurrentSQLsHeader;
+	}
+
+	public int getResultTabHeaderMarkColorRGB()
+	{
+		return _resultTabHeaderMarkColorRGB;
+	}
+
+	public void setResultTabHeaderMarkColorRGB(int resultTabHeaderMarkColorRGB)
+	{
+		_resultTabHeaderMarkColorRGB = resultTabHeaderMarkColorRGB;
+	}
+
+	public int getResultTabHeaderMarkThickness()
+	{
+		return _resultTabHeaderMarkThickness;
+	}
+
+	public void setResultTabHeaderMarkThickness(int resultTabHeaderMarkThickness)
+	{
+		_resultTabHeaderMarkThickness = resultTabHeaderMarkThickness;
+	}
+
+	public boolean isResultTabHeaderAutoActivateTab()
+	{
+		return _resultTabHeaderAutoActivateTab;
+	}
+
+	public void setResultTabHeaderAutoActivateTab(boolean resultTabHeaderAutoActivateTab)
+	{
+		_resultTabHeaderAutoActivateTab = resultTabHeaderAutoActivateTab;
+	}
+
+	public boolean isResultTabHeaderCompareSqlsNormalized()
+	{
+		return _resultTabHeaderCompareSqlsNormalized;
+	}
+
+	public void setResultTabHeaderCompareSqlsNormalized(boolean resultTabHeaderCompareSqlsNormalized)
+	{
+		_resultTabHeaderCompareSqlsNormalized = resultTabHeaderCompareSqlsNormalized;
+	}
+
 }

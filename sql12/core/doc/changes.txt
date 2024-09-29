@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL editor/SQL result tabs: SQuirreL now marks SQL result tab headers when the editor's current SQL
+   matches the SQL result tab's SQL.
+   This feature can be configured and switched of at
+   menu File --> Global Preferences --> tab SQL --> section SQL result tab header.
+   The feature furthermore comes with the option to configure the width of SQL result tab headers.
+
 Refactoring Plugin: Now supports dropping imported and exported constraints/foreign keys.
   Before this change only dropping imported constraints/foreign keys was supported.
 

@@ -18,20 +18,21 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Color;
-import java.awt.Component;
-import javax.swing.JColorChooser;
-import javax.swing.JFileChooser;
-import javax.swing.JScrollPane;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanelController;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabHeaderPrefsPanelController;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import java.awt.Color;
+import java.awt.Component;
 
 /**
  * This preferences panel allows maintenance of SQL preferences.
@@ -46,6 +47,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
    private JScrollPane _scrollPane;
 
 	private ChangeTrackPrefsPanelController _changeTrackPrefsPanelController = new ChangeTrackPrefsPanelController();
+	private ResultTabHeaderPrefsPanelController _resultTabHeaderPrefsPanelController = new ResultTabHeaderPrefsPanelController();
 
 	public SQLPreferencesController()
 	{
@@ -98,6 +100,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 		_panel.fileSpecifiedDir.setText(prefs.getFileSpecifiedDir());
 
 		_changeTrackPrefsPanelController.loadData(prefs);
+		_resultTabHeaderPrefsPanelController.loadData(prefs);
 	}
 
 	public void applyChanges()
@@ -146,6 +149,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 		prefs.setFileSpecifiedDir(null == specDir ? "" : specDir);
 
 		_changeTrackPrefsPanelController.applyChanges(prefs);
+		_resultTabHeaderPrefsPanelController.applyChanges(prefs);
 	}
 
 
@@ -199,7 +203,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 	{
 		if (_panel == null)
 		{
-			_panel = new SQLPreferencesPanel(_changeTrackPrefsPanelController.getPanel());
+			_panel = new SQLPreferencesPanel(_changeTrackPrefsPanelController.getPanel(), _resultTabHeaderPrefsPanelController.getPanel());
 			_scrollPane = new JScrollPane(_panel);
 
 			GUIUtils.forceScrollToBegin(_scrollPane);

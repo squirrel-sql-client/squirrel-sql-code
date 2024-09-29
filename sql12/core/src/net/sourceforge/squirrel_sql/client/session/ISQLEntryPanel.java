@@ -23,11 +23,15 @@ import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintList
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
-import java.awt.*;
+import java.awt.Font;
 import java.awt.event.MouseListener;
 
 public interface ISQLEntryPanel extends IHasIdentifier
@@ -193,9 +197,12 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	void goToLastEditLocation();
 
-	void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener);
+	void addTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener);
+
+	void removeTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener);
 
 	TextAreaPaintHandler getTextAreaPaintHandler();
 
 	void setPrioritizedCaretMouseListener(PrioritizedCaretMouseListener prioritizedCaretMouseListener);
+
 }

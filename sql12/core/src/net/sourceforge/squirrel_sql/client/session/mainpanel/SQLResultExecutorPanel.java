@@ -23,9 +23,17 @@ import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsToLeftAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsToRightAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabAnchoredAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabAdder;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabComponent;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
@@ -41,8 +49,19 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,25 +76,13 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLResultExecutorPanel.class);
 
-   public JTabbedPane getTabbedPane()
-   {
-      return _tabbedExecutionsPanel;
-   }
-
-   interface i18n {
-        // i18n[SQLResultExecuterPanel.exec=Executing SQL]
-        String EXEC_SQL_MSG = s_stringMgr.getString("SQLResultExecuterPanel.exec");
-        // i18n[SQLResultExecuterPanel.cancelMsg=Press Cancel to Stop]
-        String CANCEL_SQL_MSG =  s_stringMgr.getString("SQLResultExecuterPanel.cancelMsg");
-        
-    }
-    
-	private ISession _session;
+   private ISession _session;
 
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
 	private JTabbedPane _tabbedExecutionsPanel;
+   private ResultTabAdder _tabAdder = new ResultTabAdder();
 
-   private ArrayList<ResultFrame>_sqlResultFrames = new ArrayList<ResultFrame>();
+   private ArrayList<ResultFrame>_sqlResultFrames = new ArrayList<>();
 
 
 	/** Listeners */
@@ -320,7 +327,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
    private void showErrorPanel(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
    {
       ErrorPanel errorPanel = _resultTabFactory.createErrorPanel(sqlExecErrorMsgs, lastExecutedStatement);
-      _tabbedExecutionsPanel.add(s_stringMgr.getString("SQLResultExecuterPanel.ErrorTabHeader"), errorPanel);
+      _tabAdder.add(s_stringMgr.getString("SQLResultExecuterPanel.ErrorTabHeader"), errorPanel);
       _tabbedExecutionsPanel.setSelectedComponent(errorPanel);
    }
 
@@ -427,7 +434,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
          {
             // Sticky is turned off. Just remove sticky and return.
             _stickyTab = null;
-            setIconAt(_tabbedExecutionsPanel.getSelectedIndex(), null);
+            _tabAdder.setIconAt(_tabbedExecutionsPanel.getSelectedIndex(), null);
             return;
 
          }
@@ -437,7 +444,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
             int indexOfStickyTab = TabbedExcutionPanelUtil.getIndexOfTab(_stickyTab, _tabbedExecutionsPanel);
             if(-1 != indexOfStickyTab)
             {
-               setIconAt(indexOfStickyTab, null);
+               _tabAdder.setIconAt(indexOfStickyTab, null);
             }
             _stickyTab = null;
          }
@@ -458,7 +465,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
       ImageIcon icon = _tabIconManager.getStickyIcon();
 
-      setIconAt(selectedIndex, icon);
+      _tabAdder.setIconAt(selectedIndex, icon);
    }
 
    public void toggleCurrentSQLResultTabAnchored()
@@ -478,19 +485,14 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
       if (_resultTabClosing.isAnchoredAt(selectedIndex))
       {
-         setIconAt(selectedIndex, null);
+         _tabAdder.setIconAt(selectedIndex, null);
       }
       else
       {
-         setIconAt(selectedIndex, _tabIconManager.getAnchorIcon());
+         _tabAdder.setIconAt(selectedIndex, _tabIconManager.getAnchorIcon());
       }
    }
 
-   private void setIconAt(int index, ImageIcon icon)
-   {
-      //_tabbedExecutionsPanel.setIconAt(index, icon);
-      ((JLabel)_tabbedExecutionsPanel.getTabComponentAt(index)).setIcon(icon);
-   }
 
 
    public void closeCurrentResultTab()
@@ -640,7 +642,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
    @Override
    public void addCustomResult(CustomResultPanel resultPanel, String title, Icon icon)
    {
-      _tabbedExecutionsPanel.add(title, resultPanel);
+      _tabAdder.add(title, resultPanel);
       _tabbedExecutionsPanel.setSelectedComponent(resultPanel);
       int selectedIndex = _tabbedExecutionsPanel.getSelectedIndex();
 
@@ -705,10 +707,10 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       {
          public void run()
          {
-            _tabbedExecutionsPanel.addTab(SQLResultExecutorPanel.i18n.EXEC_SQL_MSG,
-                                          null,
-                                          cancelPanelCtrl.getPanel(),
-                                          SQLResultExecutorPanel.i18n.CANCEL_SQL_MSG);
+            _tabAdder.add(s_stringMgr.getString("SQLResultExecuterPanel.exec"),
+                    null,
+                    cancelPanelCtrl.getPanel(),
+                    s_stringMgr.getString("SQLResultExecuterPanel.cancelMsg"));
 
             _tabbedExecutionsPanel.setSelectedComponent(cancelPanelCtrl.getPanel());
          }
@@ -719,12 +721,10 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
 	private void addResultsTab(ResultTab tab, IResultTab resultTabToReplace)
 	{
+
       if(null == resultTabToReplace && null == _stickyTab)
       {
-   		_tabbedExecutionsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
-
-         final JLabel tabComponent = new JLabel(StringUtilities.shortenEnd(tab.getViewableSqlString(), 20, null));
-         _tabbedExecutionsPanel.setTabComponentAt(_tabbedExecutionsPanel.indexOfComponent(tab), tabComponent);
+         _tabAdder.add(getTabHeaderTitle(tab), null, tab, tab.getViewableSqlString());
 
          checkResultTabLimit();
          return;
@@ -779,17 +779,22 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       {
 
          _resultTabClosing.closeTabAt(indexToReplace);
-         _tabbedExecutionsPanel.insertTab(tab.getTitle(), tabIcon, tab, tab.getViewableSqlString(), indexToReplace);
+         _tabAdder.insert(getTabHeaderTitle(tab), tabIcon, tab, tab.getViewableSqlString(), indexToReplace);
 
-         final JLabel tabComponent = new JLabel(StringUtilities.shortenEnd(tab.getViewableSqlString(), 20, null));
-         _tabbedExecutionsPanel.setTabComponentAt(_tabbedExecutionsPanel.indexOfComponent(tab), tabComponent);
-
-         if(null != tabIcon)
-         {
-            setIconAt(indexToReplace, tabIcon);
-         }
+         //final JLabel tabComponent = new JLabel(getTabHeaderTitle(tab));
+         //_tabbedExecutionsPanel.setTabComponentAt(_tabbedExecutionsPanel.indexOfComponent(tab), tabComponent);
+         //if(null != tabIcon)
+         //{
+         //   _tabAdder.setIconAt(indexToReplace, tabIcon);
+         //}
       }
 	}
+
+   private String getTabHeaderTitle(ResultTab tab)
+   {
+      int maxChars = Main.getApplication().getSquirrelPreferences().getResultTabHeaderMaxCharsInTab();
+      return StringUtilities.shortenEnd(tab.getViewableSqlString(), maxChars, null);
+   }
 
    private void checkResultTabLimit()
    {
@@ -847,6 +852,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 	{
       final SessionProperties props = _session.getProperties();
 		_tabbedExecutionsPanel = UIFactory.getInstance().createTabbedPane(props.getSQLExecutionTabPlacement(), true);
+      _tabAdder.setTabbedPane(_tabbedExecutionsPanel);
 
       initTabPopup();
 
@@ -930,4 +936,13 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       Main.getApplication().getShortcutManager().setAccelerator(mnuItem, KeyStroke.getKeyStroke(accel), action);
    }
 
+   public JTabbedPane getTabbedPane()
+   {
+      return _tabbedExecutionsPanel;
+   }
+
+   public ResultTabComponent getResultTabComponentAt(int tabIx)
+   {
+      return _tabAdder.getResultTabComponentAt(tabIx);
+   }
 }

@@ -358,12 +358,14 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       }
    }
 
-   /**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getSqlString()
-     */
 	public String getSqlString()
 	{
 		return _exInfo != null ? _exInfo.getSQL() : null;
+	}
+
+	public String getOriginalSqlString()
+	{
+		return _exInfo != null ? _exInfo.getQueryHolder().getOriginalQuery() : null;
 	}
 
 	/**
@@ -371,20 +373,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
      */
 	public String getViewableSqlString()
 	{
-		return StringUtilities.cleanString(getSqlString());
-	}
-
-	/**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getTitle()
-     */
-	public String getTitle()
-	{
-		String title = _sql;
-		if (title.length() < 20)
-		{
-			return title;
-		}
-		return title.substring(0, 15);
+		return StringUtilities.cleanString(getOriginalSqlString());
 	}
 
    public void disposeTab()
@@ -416,7 +405,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	}
 
    @Override
-	public JComponent getTabbedPaneOfResultTabs()
+	public JTabbedPane getTabbedPaneOfResultTabs()
 	{
 		return _tabResultTabs;
 	}

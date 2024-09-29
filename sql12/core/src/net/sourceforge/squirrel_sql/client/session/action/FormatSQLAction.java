@@ -16,17 +16,17 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.awt.event.ActionEvent;
 
 /**
  * This action will format the SQL.
@@ -77,7 +77,6 @@ public class FormatSQLAction extends SquirrelAction implements ISQLPanelAction
 			}
 			catch (Throwable ex)
 			{
-				// i18n[editextras.errorProcessingFormat=Error processing Format SQL command: {0}]
 				final String msg = s_stringMgr.getString("editextras.errorProcessingFormat", ex);
 				_session.showErrorMessage(msg);
 				s_log.error(msg, ex);

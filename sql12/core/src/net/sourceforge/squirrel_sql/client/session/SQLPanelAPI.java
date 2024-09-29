@@ -21,13 +21,6 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Frame;
-import java.util.ArrayList;
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
@@ -62,9 +55,17 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.MarkResultTabHeaderMatchingCurSqlAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
+import java.awt.Frame;
+import java.util.ArrayList;
 
 /**
  * This class is the API through which plugins can work with the SQL Panel.
@@ -141,7 +142,15 @@ public class SQLPanelAPI implements ISQLPanelAPI
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(compareToClipboardAction);
       resources.configureMenuItem(compareToClipboardAction, item);
 
-		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
+      if(Main.getApplication().getSquirrelPreferences().isResultTabHeaderMarkCurrentSQLsHeader())
+      {
+         getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
+         Action markResultTabHeaderMatchingCurSqlAction = ac.get(MarkResultTabHeaderMatchingCurSqlAction.class);
+         item = getSQLEntryPanel().addToSQLEntryAreaMenu(markResultTabHeaderMatchingCurSqlAction);
+         resources.configureMenuItem(markResultTabHeaderMatchingCurSqlAction, item);
+      }
+
+      getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
 
 		item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(InQuotesAction.class));
 		resources.configureMenuItem(ac.get(InQuotesAction.class), item);
@@ -728,4 +737,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		return _panel.getSQLPanelPosition();
 	}
 
+	@Override
+	public void activateLastMarkedResultTabHeader()
+	{
+		_panel.activateLastMarkedResultTabHeader();
+	}
 }

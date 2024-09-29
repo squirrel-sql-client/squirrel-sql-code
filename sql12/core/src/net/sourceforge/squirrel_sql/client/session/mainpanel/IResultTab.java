@@ -23,8 +23,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JTabbedPane;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 public interface IResultTab
@@ -35,6 +36,8 @@ public interface IResultTab
     * @return Current SQL script.
     */
    String getSqlString();
+
+   String getOriginalSqlString();
 
    /**
     * Return the current SQL script with control characters removed.
@@ -52,7 +55,7 @@ public interface IResultTab
     * The tabs are "Results", "Meta data", "Info", ...
     * {@link #getCompleteResultTab()}
     */
-   JComponent getTabbedPaneOfResultTabs();
+   JTabbedPane getTabbedPaneOfResultTabs();
 
    /**
     * The complete Result tab with top buttons and everything.
