@@ -29,7 +29,6 @@ public class ResultTabHeaderPrefsPanel extends JPanel
    final JSpinner spnThickness;
    final JCheckBox chkCompareSqlsNormalized;
 
-   final JCheckBox chkAutoActivateTapHeader;
    final MultipleLineLabel lblNoteManualActivate;
 
    public ResultTabHeaderPrefsPanel()
@@ -75,13 +74,7 @@ public class ResultTabHeaderPrefsPanel extends JPanel
       add(chkCompareSqlsNormalized, gbc);
 
 
-
-
-      gbc = new GridBagConstraints(0,3,GridBagConstraints.REMAINDER,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,5,0,0), 0,0);
-      chkAutoActivateTapHeader = new JCheckBox(s_stringMgr.getString("ResultTabHeaderPrefsPanel.automatically.select.last.res.tab"));
-      add(chkAutoActivateTapHeader, gbc);
-
-      gbc = new GridBagConstraints(0,4,GridBagConstraints.REMAINDER,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(3,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,3,GridBagConstraints.REMAINDER,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5), 0,0);
       lblNoteManualActivate = new MultipleLineLabel(s_stringMgr.getString("ResultTabHeaderPrefsPanel.automatically.select.manually.by.shortcut"));
       add(lblNoteManualActivate, gbc);
 

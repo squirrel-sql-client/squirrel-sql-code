@@ -69,7 +69,6 @@ public class SquirrelPreferences implements Serializable
 		String RESULT_TAB_HEADER_MARK_CURRENT_SQLS_HEADER = "resultTabHeaderMarkCurrentSQLsHeader";
 		String RESULT_TAB_HEADER_MARK_COLOR_RGB = "resultTabHeaderMarkColorRGB";
 		String RESULT_TAB_HEADER_MARK_THICKNESS = "resultTabHeaderMarkThickness";
-		String RESULT_TAB_HEADER_AUTO_ACTIVATE_TAB = "resultTabHeaderAutoActivateTab";
 		String RESULT_TAB_HEADER_COMPARE_SQLS_NORMALIZED = "resultTabHeaderCompareSqlsNormalized";
 
 		String USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS = "useStatementSeparatorAsSqlToExecuteBounds";
@@ -352,7 +351,6 @@ public class SquirrelPreferences implements Serializable
 	private boolean _resultTabHeaderMarkCurrentSQLsHeader = true;
 	private int _resultTabHeaderMarkColorRGB = Color.green.getRGB();
 	private int _resultTabHeaderMarkThickness = 2;
-	private boolean _resultTabHeaderAutoActivateTab = false;
 	private boolean _resultTabHeaderCompareSqlsNormalized;
 
 	public SquirrelPreferences()
@@ -1691,16 +1689,6 @@ public class SquirrelPreferences implements Serializable
 	public void setResultTabHeaderMarkThickness(int resultTabHeaderMarkThickness)
 	{
 		_resultTabHeaderMarkThickness = resultTabHeaderMarkThickness;
-	}
-
-	public boolean isResultTabHeaderAutoActivateTab()
-	{
-		return _resultTabHeaderAutoActivateTab;
-	}
-
-	public void setResultTabHeaderAutoActivateTab(boolean resultTabHeaderAutoActivateTab)
-	{
-		_resultTabHeaderAutoActivateTab = resultTabHeaderAutoActivateTab;
 	}
 
 	public boolean isResultTabHeaderCompareSqlsNormalized()

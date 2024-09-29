@@ -40,7 +40,6 @@ public class ResultTabHeaderPrefsPanelController
       _panel.spnThickness.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
       _panel.chkCompareSqlsNormalized.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
 
-      _panel.chkAutoActivateTapHeader.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
       _panel.lblMarkLineThickness.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
       _panel.lblNoteManualActivate.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
    }
@@ -54,8 +53,6 @@ public class ResultTabHeaderPrefsPanelController
       _panel.spnThickness.setValue(prefs.getResultTabHeaderMarkThickness());
       _panel.chkMarkCurrentSQLsResultTabHeader.setSelected(prefs.isResultTabHeaderCompareSqlsNormalized());
 
-      _panel.chkAutoActivateTapHeader.setSelected(prefs.isResultTabHeaderAutoActivateTab());
-
       onMarkCurrentSQLsResultTabHeader();
    }
 
@@ -67,8 +64,6 @@ public class ResultTabHeaderPrefsPanelController
       prefs.setResultTabHeaderMarkColorRGB(_panel.getBtnSqlResultTabsMarkIcon().getColor().getRGB());
       prefs.setResultTabHeaderMarkThickness((Integer) _panel.spnThickness.getValue());
       prefs.setResultTabHeaderCompareSqlsNormalized(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
-
-      prefs.setResultTabHeaderAutoActivateTab(_panel.chkAutoActivateTapHeader.isSelected());
    }
 
    public ResultTabHeaderPrefsPanel getPanel()

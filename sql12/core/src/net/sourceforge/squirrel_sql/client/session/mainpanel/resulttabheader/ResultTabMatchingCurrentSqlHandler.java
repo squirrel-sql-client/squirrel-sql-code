@@ -54,7 +54,7 @@ public class ResultTabMatchingCurrentSqlHandler
       onTextAreaPaint(true);
    }
 
-   private void onTextAreaPaint(boolean forceActivateLastMarked)
+   private void onTextAreaPaint(boolean activateLastMarked)
    {
       String sqlToBeExecuted = _boundsOfSqlHandler.getSQLToBeExecuted();
 
@@ -115,8 +115,7 @@ public class ResultTabMatchingCurrentSqlHandler
              }
          }
 
-         if(    -1 != lastMarkedIndex
-             && (forceActivateLastMarked || Main.getApplication().getSquirrelPreferences().isResultTabHeaderAutoActivateTab()))
+         if( activateLastMarked && -1 != lastMarkedIndex)
          {
             _sqlExecPanel.getTabbedPane().setSelectedIndex(lastMarkedIndex);
          }
