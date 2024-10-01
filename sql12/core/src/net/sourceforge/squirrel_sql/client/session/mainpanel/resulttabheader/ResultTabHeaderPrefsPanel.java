@@ -27,6 +27,7 @@ public class ResultTabHeaderPrefsPanel extends JPanel
    final JButton btnSqlResultTabsMarkColor;
    final JLabel lblMarkLineThickness;
    final JSpinner spnThickness;
+   final JCheckBox chkMarkLastTabHeaderOnly;
    final JCheckBox chkCompareSqlsNormalized;
 
    final MultipleLineLabel lblNoteManualActivate;
@@ -70,11 +71,16 @@ public class ResultTabHeaderPrefsPanel extends JPanel
 
 
       gbc = new GridBagConstraints(0,2,GridBagConstraints.REMAINDER,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      chkMarkLastTabHeaderOnly = new JCheckBox(s_stringMgr.getString("ResultTabHeaderPrefsPanel.mark.last.matching.tab.header.only"));
+      add(chkMarkLastTabHeaderOnly, gbc);
+
+
+      gbc = new GridBagConstraints(0,3,GridBagConstraints.REMAINDER,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
       chkCompareSqlsNormalized = new JCheckBox(s_stringMgr.getString("ResultTabHeaderPrefsPanel.compare.sqls.normalized"));
       add(chkCompareSqlsNormalized, gbc);
 
 
-      gbc = new GridBagConstraints(0,3,GridBagConstraints.REMAINDER,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,4,GridBagConstraints.REMAINDER,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5), 0,0);
       lblNoteManualActivate = new MultipleLineLabel(s_stringMgr.getString("ResultTabHeaderPrefsPanel.automatically.select.manually.by.shortcut"));
       add(lblNoteManualActivate, gbc);
 

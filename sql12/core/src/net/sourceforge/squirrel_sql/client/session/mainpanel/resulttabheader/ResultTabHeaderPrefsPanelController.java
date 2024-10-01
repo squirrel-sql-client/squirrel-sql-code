@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader;
 
-import java.awt.Color;
-import javax.swing.JColorChooser;
-
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JColorChooser;
+import java.awt.Color;
 
 public class ResultTabHeaderPrefsPanelController
 {
@@ -38,6 +38,7 @@ public class ResultTabHeaderPrefsPanelController
    {
       _panel.btnSqlResultTabsMarkColor.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
       _panel.spnThickness.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
+      _panel.chkMarkLastTabHeaderOnly.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
       _panel.chkCompareSqlsNormalized.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
 
       _panel.lblMarkLineThickness.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
@@ -51,6 +52,7 @@ public class ResultTabHeaderPrefsPanelController
       _panel.chkMarkCurrentSQLsResultTabHeader.setSelected(prefs.isResultTabHeaderMarkCurrentSQLsHeader());
       _panel.getBtnSqlResultTabsMarkIcon().setColor(new Color(prefs.getResultTabHeaderMarkColorRGB()));
       _panel.spnThickness.setValue(prefs.getResultTabHeaderMarkThickness());
+      _panel.chkMarkLastTabHeaderOnly.setSelected(prefs.isResultTabHeaderMarkLastOnly());
       _panel.chkCompareSqlsNormalized.setSelected(prefs.isResultTabHeaderCompareSqlsNormalized());
 
       onMarkCurrentSQLsResultTabHeader();
@@ -63,6 +65,7 @@ public class ResultTabHeaderPrefsPanelController
       prefs.setResultTabHeaderMarkCurrentSQLsHeader(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
       prefs.setResultTabHeaderMarkColorRGB(_panel.getBtnSqlResultTabsMarkIcon().getColor().getRGB());
       prefs.setResultTabHeaderMarkThickness((Integer) _panel.spnThickness.getValue());
+      prefs.setResultTabHeaderMarkLastOnly(_panel.chkMarkLastTabHeaderOnly.isSelected());
       prefs.setResultTabHeaderCompareSqlsNormalized(_panel.chkCompareSqlsNormalized.isSelected());
    }
 

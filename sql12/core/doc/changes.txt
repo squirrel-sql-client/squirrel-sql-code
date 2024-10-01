@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL editor/SQL result tabs, SQL result tab header marks:
+  New check box to configure that only the last matching SQL result tab is marked.
+  See menu File --> Global Preferences --> tab SQL --> section "SQL result tab header".
+
 SQL editor/SQL result tabs: SQuirreL now marks SQL result tab headers when the editor's current SQL
   matches the SQL result tab's SQL.
   This feature can be configured and switched of at

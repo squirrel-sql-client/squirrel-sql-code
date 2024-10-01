@@ -11,7 +11,11 @@ import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfi
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.swing.JTabbedPane;
 import javax.swing.Timer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ResultTabMatchingCurrentSqlHandler
 {
@@ -67,7 +71,11 @@ public class ResultTabMatchingCurrentSqlHandler
          }
       }
 
-      for(IResultTab sqlResultTab : _sqlExecPanel.getAllSqlResultTabs())
+      List<IResultTab> resultTabsBufList = new ArrayList<>(_sqlExecPanel.getAllSqlResultTabs());
+      Collections.reverse(resultTabsBufList);
+
+      boolean activationOfLastDone = false;
+      for(IResultTab sqlResultTab : resultTabsBufList)
       {
          boolean tabMatchesSqlToBeExecuted;
 
@@ -101,25 +109,41 @@ public class ResultTabMatchingCurrentSqlHandler
             continue;
          }
 
-         int lastMarkedIndex = -1;
-         for(int i = 0; i < _sqlExecPanel.getTabbedPane().getTabCount(); i++)
+         int tabIndexMatchingTabComponent = getTabIndexMatchingTabComponent(_sqlExecPanel.getTabbedPane(), sqlResultTab);
+         if(-1 != tabIndexMatchingTabComponent)
          {
-             if( sqlResultTab == _sqlExecPanel.getTabbedPane().getComponentAt(i) )
-             {
-                ResultTabComponent resultTabComponent = _sqlExecPanel.getResultTabComponentAt(i);
-                if( null != resultTabComponent ) // Happens during bootstrap
-                {
-                   resultTabComponent.showTabHeaderMark(true);
-                   lastMarkedIndex = i;
-                }
-             }
+            ResultTabComponent resultTabComponent = _sqlExecPanel.getResultTabComponentAt(tabIndexMatchingTabComponent);
+            if( null != resultTabComponent ) // Happens during bootstrap
+            {
+               resultTabComponent.showTabHeaderMark(true);
+
+               if( activateLastMarked && false == activationOfLastDone)
+               {
+                  _sqlExecPanel.getTabbedPane().setSelectedIndex(tabIndexMatchingTabComponent);
+                  activationOfLastDone = true; // Note that resultTabsBufList is iterated in reverse order.
+               }
+            }
          }
 
-         if( activateLastMarked && -1 != lastMarkedIndex)
+         if(Main.getApplication().getSquirrelPreferences().isResultTabHeaderMarkLastOnly())
          {
-            _sqlExecPanel.getTabbedPane().setSelectedIndex(lastMarkedIndex);
+            // Note that resultTabsBufList is iterated in reverse order.
+            break;
          }
       }
+   }
+
+   private int getTabIndexMatchingTabComponent(JTabbedPane tabbedPane, IResultTab sqlResultTabComponent)
+   {
+      for(int i = 0; i < _sqlExecPanel.getTabbedPane().getTabCount(); i++)
+      {
+         if(sqlResultTabComponent == _sqlExecPanel.getTabbedPane().getComponentAt(i))
+         {
+            return i;
+         }
+      }
+
+      return -1;
    }
 
    public void close()

@@ -52,7 +52,7 @@ import java.util.Iterator;
  */
 public class SquirrelPreferences implements Serializable
 {
-   public interface IPropertyNames
+	public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
@@ -70,6 +70,7 @@ public class SquirrelPreferences implements Serializable
 		String RESULT_TAB_HEADER_MARK_COLOR_RGB = "resultTabHeaderMarkColorRGB";
 		String RESULT_TAB_HEADER_MARK_THICKNESS = "resultTabHeaderMarkThickness";
 		String RESULT_TAB_HEADER_COMPARE_SQLS_NORMALIZED = "resultTabHeaderCompareSqlsNormalized";
+		String RESULT_TAB_HEADER_MARK_LAST_ONLY = "resultTabHeaderMarkLastOnly";
 
 		String USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS = "useStatementSeparatorAsSqlToExecuteBounds";
       String MAIN_FRAME_STATE = "mainFrameWindowState";
@@ -352,6 +353,7 @@ public class SquirrelPreferences implements Serializable
 	private int _resultTabHeaderMarkColorRGB = Color.green.getRGB();
 	private int _resultTabHeaderMarkThickness = 2;
 	private boolean _resultTabHeaderCompareSqlsNormalized;
+	private boolean _resultTabHeaderMarkLastOnly;
 
 	public SquirrelPreferences()
 	{
@@ -1701,4 +1703,13 @@ public class SquirrelPreferences implements Serializable
 		_resultTabHeaderCompareSqlsNormalized = resultTabHeaderCompareSqlsNormalized;
 	}
 
+	public boolean isResultTabHeaderMarkLastOnly()
+	{
+		return _resultTabHeaderMarkLastOnly;
+	}
+
+	public void setResultTabHeaderMarkLastOnly(boolean resultTabHeaderMarkLastOnly)
+	{
+		_resultTabHeaderMarkLastOnly = resultTabHeaderMarkLastOnly;
+	}
 }
