@@ -18,18 +18,18 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
-
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * A base class for dialects where the most frequently implemented behavior can located, to avoid code
@@ -788,7 +788,19 @@ public abstract class CommonHibernateDialect implements HibernateDialect, String
 	 */
 	public boolean supportsDropConstraint()
 	{
-		return false;
+		return true;
+	}
+
+	@Override
+	public boolean supportsDropConstraintCascade()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean supportsDropConstraintRestrict()
+	{
+		return true;
 	}
 
 	/**

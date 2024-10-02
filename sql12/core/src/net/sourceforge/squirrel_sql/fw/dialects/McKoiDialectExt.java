@@ -18,6 +18,12 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.Dialect;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -26,12 +32,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
-
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * An extension to the standard Hibernate HSQL dialect
@@ -852,7 +852,6 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 
 	public boolean supportsDropConstraint()
 	{
-		
 		return true;
 	}
 

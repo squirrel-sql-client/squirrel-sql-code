@@ -18,9 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
-
 import java.sql.Types;
+
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 
 /**
  * An extension to the standard Hibernate TeiidDialect dialect
@@ -245,7 +245,6 @@ public class TeiidDialectExt extends CommonHibernateDialect
 	@Override
 	public boolean supportsDropConstraint()
 	{
-		
 		return false;
 	}
 

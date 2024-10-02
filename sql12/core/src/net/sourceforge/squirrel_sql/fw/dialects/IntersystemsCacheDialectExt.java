@@ -62,4 +62,16 @@ public class IntersystemsCacheDialectExt extends IntersystemsDialectExt
    {
       return DialectType.CACHE;
    }
+
+   @Override
+   public boolean supportsDropConstraintCascade()
+   {
+      return false;
+   }
+
+   @Override
+   public boolean supportsDropConstraintRestrict()
+   {
+      return false;
+   }
 }

@@ -18,16 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Collection;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * A dialect delegate for the Interbase database. This dialect's support and get..SQL methods have not been
@@ -863,7 +863,6 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsDropConstraint()
 	{
-
 		return false;
 	}
 

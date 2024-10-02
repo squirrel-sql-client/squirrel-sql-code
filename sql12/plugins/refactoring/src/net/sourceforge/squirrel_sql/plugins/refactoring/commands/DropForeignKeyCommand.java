@@ -19,6 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
@@ -34,12 +40,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DefaultDropDialog;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DefaultListDialog;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DropForeignKeyCommand extends AbstractRefactoringCommand
 {
@@ -131,12 +131,18 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 
          if(customDialog.isCascadeSelected())
 			{
-				sql.append(" CASCADE");
-			}
+            if( _dialect.supportsDropConstraintCascade() )
+            {
+               sql.append(" CASCADE");
+            }
+         }
 			else
 			{
-				sql.append(" RESTRICT");
-			}
+            if( _dialect.supportsDropConstraintRestrict() )
+            {
+               sql.append(" RESTRICT");
+            }
+         }
 
 			result.add(sql.toString());
 		}

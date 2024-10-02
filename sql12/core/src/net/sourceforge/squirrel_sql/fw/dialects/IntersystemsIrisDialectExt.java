@@ -62,4 +62,17 @@ public class IntersystemsIrisDialectExt extends IntersystemsDialectExt
    {
       return DialectType.INTERSYSTEMS_IRIS;
    }
+
+   @Override
+   public boolean supportsDropConstraintCascade()
+   {
+      return false;
+   }
+
+   @Override
+   public boolean supportsDropConstraintRestrict()
+   {
+      return false;
+   }
+
 }

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Refactoring: Dropping Foreign Keys is now available by default.
+  It is not available only when the dialect definition of an RDBMS explicitly does not support it.
+  See Object tree --> Right mouse click on table --> "Refactoring" --> "Referential Integrity" --> "Drop Foreign Key(s)"
+
 SQL editor/SQL result tabs, SQL result tab header marks:
   New check box to configure that only the last matching SQL result tab is marked.
   See menu File --> Global Preferences --> tab SQL --> section "SQL result tab header".
