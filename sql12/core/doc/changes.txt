@@ -44,6 +44,8 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+SQL result: When a SQL result was rerun, the SQL displayed on the result's info tab lost comments.
+
 SQL editor/SQL result tabs, SQL result tab header marks:
   Marking only the last matching SQL result tab didn't work when a result tab was rerun.
   See menu File --> Global Preferences --> tab SQL --> section "SQL result tab header".

@@ -418,12 +418,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 
    /**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reRunSQL()
-     */
-    public void reRunSQL()
-    {
-        _resultTabListener.rerunSQL(_exInfo.getSQL(), ResultTab.this);
-    }
+    * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reRunSQL()
+    */
+   public void reRunSQL()
+   {
+      _resultTabListener.rerunSQL(_exInfo.getQueryHolder().getOriginalQuery(), ResultTab.this);
+   }
     
 	/**
 	 * Session properties have changed so update GUI if required.
