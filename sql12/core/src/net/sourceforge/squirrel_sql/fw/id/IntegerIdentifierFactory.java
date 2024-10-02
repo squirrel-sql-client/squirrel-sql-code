@@ -52,7 +52,7 @@ public class IntegerIdentifierFactory implements IIdentifierFactory
 	 *
 	 * @return	The new identifier object.
 	 */
-	public synchronized IIdentifier createIdentifier()
+	public synchronized IntegerIdentifier createIdentifier()
 	{
 		return new IntegerIdentifier(_next++);
 	}

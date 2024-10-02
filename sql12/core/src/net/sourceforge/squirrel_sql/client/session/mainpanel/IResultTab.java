@@ -18,15 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import javax.swing.JComponent;
+import javax.swing.JTabbedPane;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
-
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
+import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 
 public interface IResultTab
 {
@@ -83,8 +84,7 @@ public interface IResultTab
 
    void setParentWindow(Window parent);
 
-
-   boolean isSQLResultTabSelected();
-
    ResultDataSetAndCellDetailDisplayHandler getSelectedResultTabsDisplayHandler();
+
+   IntegerIdentifier getIdentifier();
 }

@@ -23,6 +23,20 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
@@ -56,26 +70,12 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFind
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableToolbarCtrl;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 {
@@ -85,7 +85,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 
    /** Uniquely identifies this ResultTab. */
-	private IIdentifier _id;
+	private IntegerIdentifier _id;
 
 	/** Current session. */
 	private ISession _session;
@@ -146,7 +146,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
     *			<<TT>SQLResultExecuterPanel</TT> or <TT>IIdentifier</TT> passed.
     */
    public ResultTab(ISession session, SQLResultExecuterPanelFacade sqlResultExecuterPanelFacade,
-                    IIdentifier id, SQLExecutionInfo exInfo,
+                    IntegerIdentifier id, SQLExecutionInfo exInfo,
                     IDataSetUpdateableTableModel dataSetUpdateableTableModel, ResultTabListener resultTabListener)
       throws IllegalArgumentException
    {
@@ -682,7 +682,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    /**
  * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getIdentifier()
  */
-	public IIdentifier getIdentifier()
+	public IntegerIdentifier getIdentifier()
 	{
 		return _id;
 	}
@@ -738,12 +738,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    public boolean allowsEditing()
    {
       return _allowEditing;
-   }
-
-   @Override
-   public boolean isSQLResultTabSelected()
-   {
-      return 0 == _tabResultTabs.getSelectedIndex();
    }
 
    @Override

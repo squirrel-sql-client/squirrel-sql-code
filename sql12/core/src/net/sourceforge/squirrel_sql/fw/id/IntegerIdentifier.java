@@ -19,7 +19,7 @@ import java.io.Serializable;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class IntegerIdentifier implements IIdentifier, Serializable
+public class IntegerIdentifier implements IIdentifier, Serializable, Comparable<Integer>
 {
 	public interface IPropertyNames
 	{
@@ -41,6 +41,17 @@ public class IntegerIdentifier implements IIdentifier, Serializable
 			rc = ((IntegerIdentifier)rhs).toString().equals(toString());
 		}
 		return rc;
+	}
+
+	public int getIntValue()
+	{
+		return _id;
+	}
+
+	@Override
+	public int compareTo(Integer other)
+	{
+		return Integer.valueOf(_id).compareTo(other);
 	}
 
 	public synchronized int hashCode()
