@@ -18,14 +18,13 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
-import java.sql.Types;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import java.awt.Frame;
 
 /**
  * Defines a rename Table/View dialog.
@@ -117,33 +116,4 @@ public class AddAutoIncrementDialog extends AbstractRefactoringDialog {
 
         super.executeButton.setRequestFocusEnabled(true);
     }
-
-    public static void main(String[] args) {
-        //some data
-        String catalog = null;
-        String schema = "public";
-        String employeIdentifactionTable = "EmployeeIdentification";
-
-        String[] employeeColumns = {"EmployeeNumber", "Name", "PhoneNumber"};
-        TableColumnInfo newColumn = new TableColumnInfo(catalog,
-                                                        schema,
-                                                        employeIdentifactionTable,
-                                                        employeeColumns[0],
-                                                        Types.VARCHAR,
-                                                        JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR),
-                                                        30,
-                                                        0,
-                                                        0,
-                                                        1,
-                                                        null,
-                                                        null,
-                                                        0,
-                                                        1,
-                                                        "YES",
-                                                        null, null);
-
-        new AddAutoIncrementDialog(newColumn, null).setVisible(true);
-    }
-
-
 }

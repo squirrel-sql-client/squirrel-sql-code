@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -1242,21 +1243,26 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 		SqlGenerationPreferences prefs)
 	{
 		StringBuilder result = new StringBuilder();
-		if (prefs.isQualifyTableNames()) {
-			if (prefs.isQuoteIdentifiers()) {
+		if(prefs.isQualifyTableNames() && false == StringUtilities.isEmpty(qualifier.getSchema(), true))
+		{
+			if(prefs.isQuoteIdentifiers())
+			{
 				result.append(this.openQuote());
 			}
 			result.append(qualifier.getSchema());
-			if (prefs.isQuoteIdentifiers()) {
+			if(prefs.isQuoteIdentifiers())
+			{
 				result.append(this.closeQuote());
-			} 
+			}
 			result.append(".");
 		}
-		if (prefs.isQuoteIdentifiers()) {
+		if(prefs.isQuoteIdentifiers())
+		{
 			result.append(this.openQuote());
 		}
 		result.append(identifier);
-		if (prefs.isQuoteIdentifiers()) {
+		if(prefs.isQuoteIdentifiers())
+		{
 			result.append(this.closeQuote());
 		}
 		return result.toString();

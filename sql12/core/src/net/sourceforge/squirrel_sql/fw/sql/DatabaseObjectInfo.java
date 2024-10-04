@@ -44,16 +44,16 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 
 
 /** Catalog name. Can be <CODE>null</CODE> */
-   private final String _catalog;
+   private String _catalog;
 
    /** Schema name. Can be <CODE>null</CODE> */
-   private final String _schema;
+   private String _schema;
 
    /** Simple object name. */
-   private final String _simpleName;
+   private String _simpleName;
 
    /** Fully qualified name for this object. */
-   private final String _qualifiedName;
+   private String _qualifiedName;
 
    /** Object type. @see DatabaseObjectType.*/
    private DatabaseObjectType _dboType = DatabaseObjectType.OTHER;
@@ -66,9 +66,34 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
       }
       if (md == null)
       {
-         throw new IllegalArgumentException("SQLDatabaseMetaData == null");
+         //throw new IllegalArgumentException("SQLDatabaseMetaData == null");
+         initSimple(catalog, schema, simpleName);
       }
+      else
+      {
+         initAdvanced(catalog, schema, simpleName, dboType, md);
+      }
+   }
 
+   /**
+    * Default constructor for using instances of this class to contain 
+    * information about new objects that will be created soon.
+    */
+   public DatabaseObjectInfo(String catalog, String schema, String simpleName)
+   {
+      initSimple(catalog, schema, simpleName);
+   }
+
+   private void initSimple(String catalog, String schema, String simpleName)
+   {
+      _catalog = catalog;
+      _schema = schema;
+      _simpleName = simpleName;
+      _qualifiedName = simpleName;
+   }
+
+   private void initAdvanced(String catalog, String schema, String simpleName, DatabaseObjectType dboType, ISQLDatabaseMetaData md)
+   {
       _catalog = catalog;
       _schema = schema;
       _simpleName = simpleName;
@@ -76,17 +101,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
       _dboType = dboType;
    }
 
-   /**
-    * Default constructor for using instances of this class to contain 
-    * information about new objects that will be created soon.
-    */
-   public DatabaseObjectInfo(String catalog, String schema, String simpleName) {
-       _catalog = catalog;
-       _schema = schema;
-       _simpleName = simpleName;
-       _qualifiedName = simpleName;
-   }
-   
+
    public String toString()
    {
       return getSimpleName();

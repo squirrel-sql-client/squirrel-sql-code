@@ -19,12 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.sql.SQLException;
-import javax.swing.JOptionPane;
-
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
@@ -42,6 +36,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.SQLException;
 
 public class AddColumnCommand extends AbstractRefactoringCommand
 {
@@ -155,7 +155,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
 				{
 					public void run()
 					{
-						customDialog = new ColumnDetailDialog(ColumnDetailDialog.ADD_MODE);
+						customDialog = new ColumnDetailDialog(ColumnDetailDialog.ADD_MODE, _session);
 						customDialog.setTableName(_info[0].getQualifiedName());
 						customDialog.setSelectedDialect(_dialect.getDisplayName());
 						customDialog.addExecuteListener(new AddColumnExecuteListener());

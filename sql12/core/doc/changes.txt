@@ -44,6 +44,10 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/42
+  Refactoring "Add column" raised NullPointerException.
+  See table in Object tree --> right mouse click --> Refactoring --> Column --> Add Column
+
 SQL result: When a SQL result was rerun, the SQL displayed on the result's info tab lost comments.
 
 SQL editor/SQL result tabs, SQL result tab header marks:

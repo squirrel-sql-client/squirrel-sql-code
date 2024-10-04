@@ -19,20 +19,14 @@
 
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.sql.DatabaseMetaData;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -48,13 +42,20 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.DatabaseMetaData;
 
 /**
  * A dialog that can be used to get column info from the user for adding new 
@@ -63,7 +64,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
 
     private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColumnDetailDialog.class);
-    
+
     private JLabel tableNameLabel = null;
     private JTextField tableNameTextField = null;
     private JLabel columnNameLabel = null;
@@ -83,78 +84,82 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
     private JLabel commentLabel = null;
     private JTextArea commentTextArea = null;
     private JLabel nullableLabel = null;
-    private JCheckBox nullableCheckBox = null;    
-    
+    private JCheckBox nullableCheckBox = null;
+
     private JButton executeButton = null;
     private JButton editSQLButton = null;
     private JButton showSQLButton = null;
     private JButton cancelButton = null;
-    
+
     public static final int ADD_MODE = 0;
     public static final int MODIFY_MODE = 1;
-    
+
     private int _mode = ADD_MODE;
-    
-    private interface i18n {
+
+    private final ISession _session;
+
+    private interface i18n
+    {
         //i18n[ColumnDetailsDialog.editButtonLabel=Edit SQL]        
-        String EDIT_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.editButtonLabel");
+        String EDIT_BUTTON_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.editButtonLabel");
         //i18n[ColumnDetailsDialog.executeButtonLabel=Execute]
-        String EXECUTE_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.executeButtonLabel");
+        String EXECUTE_BUTTON_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.executeButtonLabel");
         //i18n[ColumnDetailsDialog.addColumnTitle=Add Column]
-        String ADD_COLUMN_TITLE = 
-            s_stringMgr.getString("ColumnDetailsDialog.addColumnTitle");  
+        String ADD_COLUMN_TITLE =
+              s_stringMgr.getString("ColumnDetailsDialog.addColumnTitle");
         //i18n[ColumnDetailsDialog.modifyColumnTitle=Modify Column]
-        String MODIFY_COLUMN_TITLE = 
-            s_stringMgr.getString("ColumnDetailsDialog.modifyColumnTitle");
+        String MODIFY_COLUMN_TITLE =
+              s_stringMgr.getString("ColumnDetailsDialog.modifyColumnTitle");
         //i18n[ColumnDetailsDialog.cancelButtonLabel=Cancel]
-        String CANCEL_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.cancelButtonLabel");
+        String CANCEL_BUTTON_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.cancelButtonLabel");
         //i18n[ColumnDetailsDialog.columnNameLabel=Column Name: ]
-        String COLUMN_NAME_LABEL=
-            s_stringMgr.getString("ColumnDetailsDialog.columnNameLabel");
+        String COLUMN_NAME_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.columnNameLabel");
         //i18n[ColumnDetailsDialog.commentLabel=Comment: ]        
-        String COMMENT_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.commentLabel");
+        String COMMENT_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.commentLabel");
         //i18n[ColumnDetailsDialog.defaultValueLabel=Default Value: ]
-        String DEFAULT_VALUE_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.defaultValueLabel");
+        String DEFAULT_VALUE_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.defaultValueLabel");
         //i18n[ColumnDetailsDialog.dialectLabel=Dialect: ]
-        String DIALECT_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.dialectLabel");
+        String DIALECT_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.dialectLabel");
         //i18n[ColumnDetailsDialog.lengthLabel=Length: ]
-        String LENGTH_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.lengthLabel");
+        String LENGTH_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.lengthLabel");
         //i18n[ColumnDetailsDialog.nullableLabel=Nullable: ]
-        String NULLABLE_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.nullableLabel");
+        String NULLABLE_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.nullableLabel");
         //i18n[ColumnDetailsDialog.newColumnValue=NewColumn]
-        String NEW_COLUMN_VALUE = 
-            s_stringMgr.getString("ColumnDetailsDialog.newColumnValue");
+        String NEW_COLUMN_VALUE =
+              s_stringMgr.getString("ColumnDetailsDialog.newColumnValue");
         //i18n[ColumnDetailsDialog.precisionLabel=Precision: ]
-        String PRECISION_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.precisionLabel");
+        String PRECISION_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.precisionLabel");
         //i18n[ColumnDetailsDialog.scaleLabel=Scale: ]
-        String SCALE_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.scaleLabel");
+        String SCALE_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.scaleLabel");
         //i18n[ColumnDetailsDialog.showButtonLabel=Show SQL]
-        String SHOW_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.showButtonLabel");
+        String SHOW_BUTTON_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.showButtonLabel");
         //i18n[ColumnDetailsDialog.tableNameLabel=Table Name: ]
-        String TABLE_NAME_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.tableNameLabel");
+        String TABLE_NAME_LABEL =
+              s_stringMgr.getString("ColumnDetailsDialog.tableNameLabel");
         //i18n[ColumnDetailsDialog.typeLabel=Type: ]
         String TYPE_LABEL =
-            s_stringMgr.getString("ColumnDetailsDialog.typeLabel");
+              s_stringMgr.getString("ColumnDetailsDialog.typeLabel");
     }
     
     /**
-     * 
      * @param tableName
+     * @param session
      */
-    public ColumnDetailDialog(int mode) {
-        setMode(mode);
+    public ColumnDetailDialog(int mode, ISession session) {
+       _session = session;
+       setMode(mode);
         init();
     }
     
@@ -272,7 +277,7 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
                                 octetLength,
                                 ordinalPosition,
                                 isNullable,
-                                null, null);
+                                null, _session.getMetaData());
         return result;
     }
     
