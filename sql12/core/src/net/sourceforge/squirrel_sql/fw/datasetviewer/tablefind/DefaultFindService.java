@@ -1,17 +1,20 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultFindService implements FindService
 {
@@ -92,6 +95,23 @@ public class DefaultFindService implements FindService
    public Dimension getVisibleSize()
    {
       return _table.getVisibleRect().getSize();
+   }
+
+   @Override
+   public Window getParentWindow()
+   {
+      return GUIUtils.getOwningWindow(_table);
+   }
+
+   @Override
+   public ColumnDisplayDefinition getColumnDisplayDefinitionByViewIndex(int columnViewIx)
+   {
+      if(_table.getColumnModel().getColumn(columnViewIx) instanceof ExtTableColumn)
+      {
+         return ((ExtTableColumn)_table.getColumnModel().getColumn(columnViewIx)).getColumnDisplayDefinition();
+      }
+
+      return null;
    }
 
    @Override

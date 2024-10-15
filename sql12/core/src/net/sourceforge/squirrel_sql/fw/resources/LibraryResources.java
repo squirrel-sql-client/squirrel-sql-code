@@ -57,6 +57,8 @@ public class LibraryResources extends Resources
       String HIDE = "hide";
       String HIDE_SELECTED = "hideSelected";
       String COLOR_CHOOSE = "colorChoose";
+      String SELECT_COLUMN = "selectColumn";
+      String SELECT_COLUMN_CHECKED = "selectColumnChecked";
       String CONFIGURE = "configure";
 
       String MARK_ALL_RESULTS = "mark_all_results";

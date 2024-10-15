@@ -5,8 +5,14 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class DataSetFindPanel extends JPanel
 {
@@ -23,6 +29,7 @@ public class DataSetFindPanel extends JPanel
    JButton btnHighlightFindResult;
    JButton btnShowRowsFoundInTable;
    JButton btnColorMatchedCells;
+   JButton btnNarrowColsToSearch;
 
    public DataSetFindPanel()
    {
@@ -85,7 +92,13 @@ public class DataSetFindPanel extends JPanel
       btnColorMatchedCells.setBorder(BorderFactory.createEtchedBorder());
       add(btnColorMatchedCells, gbc);
 
-      gbc = new GridBagConstraints(9,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(9,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
+      btnNarrowColsToSearch = new JButton(rsrc.getIcon(LibraryResources.IImageNames.SELECT_COLUMN));
+      btnNarrowColsToSearch.setToolTipText(s_stringMgr.getString("DataSetFindPanel.narrow.columns.to.search"));
+      btnNarrowColsToSearch.setBorder(BorderFactory.createEtchedBorder());
+      add(btnNarrowColsToSearch, gbc);
+
+      gbc = new GridBagConstraints(10,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnHideFindPanel = new JButton(rsrc.getIcon(LibraryResources.IImageNames.HIDE));
       btnHideFindPanel.setPressedIcon(rsrc.getIcon(LibraryResources.IImageNames.HIDE_SELECTED));
       btnHideFindPanel.setToolTipText(s_stringMgr.getString("DataSetFindPanel.hideFind"));

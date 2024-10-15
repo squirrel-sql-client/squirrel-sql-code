@@ -3,17 +3,27 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableNameAccess;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
 
 public class FindResultColumnCtrl
 {

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableNameAccess;
 
 public class FindColumnColWrapper
 {

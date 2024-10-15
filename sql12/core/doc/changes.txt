@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL result table: The find function now allows to narrow the columns to search.
+
 Refactoring: Dropping Foreign Keys is now available by default.
   It is not available only when the dialect definition of an RDBMS explicitly does not support it.
   See Object tree --> Right mouse click on table --> "Refactoring" --> "Referential Integrity" --> "Drop Foreign Key(s)"

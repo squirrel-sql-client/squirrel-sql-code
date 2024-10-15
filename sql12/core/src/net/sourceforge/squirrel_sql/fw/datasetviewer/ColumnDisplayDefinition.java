@@ -561,7 +561,8 @@ public class ColumnDisplayDefinition
 
 	public boolean matchesByQualifiedName(ColumnDisplayDefinition other)
 	{
-		if(false == StringUtils.equalsIgnoreCase(_tableName, other._tableName))
+		//if(false == StringUtils.equalsIgnoreCase(_tableName, other._tableName))
+		if(false == StringUtils.equalsIgnoreCase(TableNameAccess.getTableName(this), TableNameAccess.getTableName(other)))
 		{
 			return false;
 		}

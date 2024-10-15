@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-
 public class TableTraverser
 {
    private FindService _findService;

@@ -3,14 +3,15 @@ package net.sourceforge.squirrel_sql.client.gui.session.catalogspanel;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.checkedlistbox.CheckedListBoxHandler;
+import net.sourceforge.squirrel_sql.fw.gui.checkedlistbox.CheckedListBoxListener;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.JCheckBox;
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdditionalCatalogsController
 {
@@ -28,30 +29,27 @@ public class AdditionalCatalogsController
 
          AliasCatalogLoadModelJsonBean bean = Main.getApplication().getCatalogLoadModelManager().getAliasCatalogLoadModelJsonBean(session.getAlias());
 
-         DefaultListModel<CatalogChecked> listModel = new DefaultListModel<>();
-         for (String catalog : catalogs)
-         {
-            listModel.addElement(createCatalogChecked(catalog, bean));
-         }
+         CheckedListBoxHandler<CatalogChecked> checkedListBoxHandler =
+               new CheckedListBoxHandler<>(_dlg.chkLstCatalogs, new CheckedListBoxListener<>()
+               {
+                  @Override
+                  public void listBoxItemToInvert(CatalogChecked catClicked)
+                  {
+                     catClicked.setChecked(!catClicked.isChecked());
+                  }
 
-         _dlg.chkLstCatalogs.setModel(listModel);
+                  @Override
+                  public void listBoxItemToRender(CatalogChecked cat, JCheckBox renderer)
+                  {
+                     onRenderCheckBox(cat, renderer);
+                  }
+               });
 
-         _dlg.chkLstCatalogs.setCellRenderer(new CheckListRenderer());
+         checkedListBoxHandler.setItems(List.of(catalogs).stream().map(cat -> createCatalogChecked(cat, bean)).collect(Collectors.toList()));
 
-         // Add a mouse listener to toggle the checkbox when an item is clicked
-         _dlg.chkLstCatalogs.addMouseListener(new MouseAdapter()
-         {
-            @Override
-            public void mouseClicked(MouseEvent event)
-            {
-               onMouseClicked(event);
-            }
-         });
-
-
-         _dlg.btnSelectAll.addActionListener(e -> onSelectAll());
-         _dlg.btnInvertSelection.addActionListener(e -> onInvertSelection());
-         _dlg.btnOk.addActionListener(e -> onOk(session));
+         _dlg.btnSelectAll.addActionListener(e -> onSelectAll(checkedListBoxHandler));
+         _dlg.btnInvertSelection.addActionListener(e -> onInvertSelection(checkedListBoxHandler));
+         _dlg.btnOk.addActionListener(e -> onOk(session, checkedListBoxHandler));
 
          GUIUtils.initLocation(_dlg, 400, 600);
          GUIUtils.enableCloseByEscape(_dlg);
@@ -66,56 +64,39 @@ public class AdditionalCatalogsController
       }
    }
 
-   private void onInvertSelection()
+   private static void onRenderCheckBox(CatalogChecked cat, JCheckBox renderer)
    {
-      for (int i = 0; i < _dlg.chkLstCatalogs.getModel().getSize(); i++)
-      {
-         CatalogChecked catalogChecked = _dlg.chkLstCatalogs.getModel().getElementAt(i);
-         catalogChecked.setChecked(!catalogChecked.isChecked());
-      }
-      _dlg.chkLstCatalogs.repaint();
+      renderer.setSelected(cat.isChecked());
+      renderer.setText(cat.getCatalog());
    }
 
-   private void onSelectAll()
+   private void onInvertSelection(CheckedListBoxHandler<CatalogChecked> checkedListBoxHandler)
    {
-      for (int i = 0; i < _dlg.chkLstCatalogs.getModel().getSize(); i++)
-      {
-          _dlg.chkLstCatalogs.getModel().getElementAt(i).setChecked(true);
-      }
-      _dlg.chkLstCatalogs.repaint();
+      checkedListBoxHandler.getAllItems().forEach(i -> i.setChecked(!i.isChecked()));
+      checkedListBoxHandler.repaint();
    }
 
-   private void onMouseClicked(MouseEvent event)
+   private void onSelectAll(CheckedListBoxHandler<CatalogChecked> checkedListBoxHandler)
    {
-      int index = _dlg.chkLstCatalogs.locationToIndex(event.getPoint());
-      if (    index >= 0
-           && index < _dlg.chkLstCatalogs.getModel().getSize()
-           && _dlg.chkLstCatalogs.getCellBounds(index, index).contains(event.getPoint()))
-      {
-         CatalogChecked catalogChecked = _dlg.chkLstCatalogs.getModel().getElementAt(index);
-         catalogChecked.setChecked(!catalogChecked.isChecked());
-         _dlg.chkLstCatalogs.repaint(_dlg.chkLstCatalogs.getCellBounds(index, index));
-      }
+      checkedListBoxHandler.getAllItems().forEach(i -> i.setChecked(true));
+      checkedListBoxHandler.repaint();
    }
+
 
    public boolean isOk()
    {
       return _ok;
    }
 
-   private void onOk(ISession session)
+   private void onOk(ISession session, CheckedListBoxHandler<CatalogChecked> checkedListBoxHandler)
    {
       AliasCatalogLoadModelJsonBean bean = Main.getApplication().getCatalogLoadModelManager().getAliasCatalogLoadModelJsonBean(session.getAlias());
 
       bean.getAdditionalUserChosenCatalogs().clear();
 
-      for (CatalogChecked catalogChecked : Collections.list(((DefaultListModel<CatalogChecked>) _dlg.chkLstCatalogs.getModel()).elements()))
-      {
-         if (catalogChecked.isChecked())
-         {
-            bean.getAdditionalUserChosenCatalogs().add(catalogChecked.getCatalog());
-         }
-      }
+      checkedListBoxHandler.getAllItems()
+                           .stream().filter(CatalogChecked::isChecked)
+                           .forEach(i -> bean.getAdditionalUserChosenCatalogs().add(i.getCatalog()));
 
       _ok = true;
 

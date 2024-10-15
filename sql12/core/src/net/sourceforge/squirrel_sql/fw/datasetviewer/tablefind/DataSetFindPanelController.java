@@ -1,18 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.util.List;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -21,11 +8,25 @@ import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrame;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class DataSetFindPanelController
 {
@@ -45,8 +46,9 @@ public class DataSetFindPanelController
    private Color _traceColor = SquirrelConstants.FIND_COLOR_CURRENT;
    private FindTrace _trace = new FindTrace();
    private String _currentSearchString = null;
+   private ColsToSearchHolder _colsToSearchHolder = ColsToSearchHolder.UNFILTERED;
 
-   private static enum FindMode
+   private enum FindMode
    {
       FORWARD, BACKWARD, HIGHLIGHT
    }
@@ -67,6 +69,8 @@ public class DataSetFindPanelController
 
       _dataSetFindPanel.btnColorMatchedCells.addActionListener(e -> onColorMatchedCells());
 
+      _dataSetFindPanel.btnNarrowColsToSearch.addActionListener(e -> onNarrowColsToSearch());
+
       _dataSetFindPanel.btnHideFindPanel.addActionListener(e -> dataSetFindPanelListener.hideFindPanel());
 
       _dataSetFindPanel.chkCaseSensitive.addActionListener(e -> clearFind());
@@ -76,6 +80,17 @@ public class DataSetFindPanelController
       _editableComboBoxHandler = new EditableComboBoxHandler(_dataSetFindPanel.cboString, PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF_PREFIX);
 
       initKeyStrokes();
+   }
+
+   private void onNarrowColsToSearch()
+   {
+      _colsToSearchHolder = new NarrowColsToSearchCtrl(_colsToSearchHolder, ensureFindService()).getColsToSearchFilter();
+
+      _dataSetFindPanel.btnNarrowColsToSearch.setIcon(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.SELECT_COLUMN));
+      if(_colsToSearchHolder.isNarrowed())
+      {
+         _dataSetFindPanel.btnNarrowColsToSearch.setIcon(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.SELECT_COLUMN_CHECKED));
+      }
    }
 
    private void onColorMatchedCells()
@@ -220,7 +235,7 @@ public class DataSetFindPanelController
       _editableComboBoxHandler.addOrReplaceCurrentItem(_currentSearchString);
 
       boolean matchFound = false;
-      for(int i=0; i < _tableTraverser.getCellCount(); ++i)
+      for(int i = 0; i < _tableTraverser.getCellCount(); ++i)
       {
          if (FindMode.FORWARD == findMode || FindMode.HIGHLIGHT == findMode)
          {
@@ -231,7 +246,8 @@ public class DataSetFindPanelController
             _tableTraverser.backward();
          }
 
-         if(matches(_currentSearchString, _findService.getViewDataAsString(_tableTraverser.getRow(), _tableTraverser.getCol())))
+         if(   _colsToSearchHolder.isToSearch(_tableTraverser.getCol())
+            && matches(_currentSearchString, _findService.getViewDataAsString(_tableTraverser.getRow(), _tableTraverser.getCol())))
          {
             matchFound = true;
 
