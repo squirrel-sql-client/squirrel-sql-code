@@ -96,14 +96,14 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 
    private void onSelectionChanged(ListSelectionEvent e)
    {
-		if(e.getValueIsAdjusting())
-		{
-			return;
-		}
+		//if(e.getValueIsAdjusting())
+		//{
+		//	return;
+		//}
 
 		for(RowColSelectedCountListener l : _rowColSelectedCountListeners.toArray(new RowColSelectedCountListener[0]))
 		{
-			l.rowColSelectedCountOrPosChanged(_table.getSelectedRowCount(), _table.getSelectedColumnCount(), _table.getSelectedRow(), _table.getSelectedColumn());
+			l.rowColSelectedCountOrPosChanged(_table.getSelectedRowCount(), _table.getSelectedColumnCount(), _table.getSelectedRow(), _table.getSelectedColumn(), e.getValueIsAdjusting());
 		}
    }
 

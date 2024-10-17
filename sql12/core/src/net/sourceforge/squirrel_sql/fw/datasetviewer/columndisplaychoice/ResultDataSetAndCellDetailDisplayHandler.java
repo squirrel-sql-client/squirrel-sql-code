@@ -1,14 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.beans.PropertyChangeEvent;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -18,6 +9,15 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.beans.PropertyChangeEvent;
 
 public class ResultDataSetAndCellDetailDisplayHandler
 {
@@ -70,7 +70,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          setCellDetailVisible(ColumnDisplayUtil.isShowCellDetail(), true);
          _splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, e -> onDividerLocationChanged(e));
 
-         _dataSetViewer.addRowColSelectedCountListener((selRowCount, selColCount, selRow, selCol) -> onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer));
+         _dataSetViewer.addRowColSelectedCountListener((selRowCount, selColCount, selRow, selCol, isAdjusting) -> onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer, isAdjusting));
       }
       else
       {
@@ -95,9 +95,9 @@ public class ResultDataSetAndCellDetailDisplayHandler
       }
    }
 
-   private void onRowColSelectionChanged(DataSetViewerTablePanel dataSetViewer)
+   private void onRowColSelectionChanged(DataSetViewerTablePanel dataSetViewer, boolean isAdjusting)
    {
-      if( false == isCellDetailSplitActive() )
+      if( isAdjusting || false == isCellDetailSplitActive() )
       {
          return;
       }
@@ -267,7 +267,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
    private void fireCellSelectionChangedForCurrentSelectedCell()
    {
-      onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer);
+      onRowColSelectionChanged((DataSetViewerTablePanel)_dataSetViewer, false);
    }
 
    private void onDisplayChanged()

@@ -46,6 +46,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+SQL result table: Section count, position and sum were updated at the end of a selection only,
+  not as the used to be during the selection, too.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/42
   Refactoring "Add column" raised "IllegalArgumentException: SQLDatabaseMetaData == null."
   See table in Object tree --> right mouse click --> Refactoring --> Column --> Add Column
