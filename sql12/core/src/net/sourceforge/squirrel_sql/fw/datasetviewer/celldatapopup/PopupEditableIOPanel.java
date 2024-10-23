@@ -18,35 +18,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.sql.Types;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDIffService;
@@ -72,6 +43,35 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JToggleButton;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.sql.Types;
+
 /**
  * @author gwg
  *
@@ -85,7 +85,6 @@ public class PopupEditableIOPanel extends JPanel
 
 	public static final String ACTION_BROWSE = "browse";
 	public static final String ACTION_EXPORT = "export";
-	public static final String ACTION_REFORMAT = "reformat";
 	public static final String ACTION_FIND = "find";
 	public static final String ACTION_EXECUTE = "execute";
 	public static final String ACTION_APPLY = "apply";
@@ -129,6 +128,8 @@ public class PopupEditableIOPanel extends JPanel
 
 	private IOUtilities _iou = new IOUtilitiesImpl();
 
+	private final ReformatHandler _reformatHandler;
+
 	class BinaryOptionActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
@@ -155,8 +156,7 @@ public class PopupEditableIOPanel extends JPanel
 			previousShowAscii = showAscii.isSelected();
 		}
 	}
-	transient private BinaryOptionActionListener optionActionListener =
-		new BinaryOptionActionListener();
+	private BinaryOptionActionListener optionActionListener = new BinaryOptionActionListener();
 
 	// text put in file name field to indicate that we should
 	// create a temp file for export
@@ -180,6 +180,8 @@ public class PopupEditableIOPanel extends JPanel
 		_colDef = colDef;
 		_textArea = CellComponentFactory.getJTextArea(colDef, value);
 
+		_reformatHandler = new ReformatHandler(_textArea);
+
 		if (isEditable)
 		{
 			_textArea.setEditable(true);
@@ -188,8 +190,8 @@ public class PopupEditableIOPanel extends JPanel
 		else
 		{
 			_textArea.setEditable(false);
+			_reformatHandler.maybeDoInitialAutoReformat();
 		}
-
 
 		_textArea.setLineWrap(true);
 
@@ -259,7 +261,7 @@ public class PopupEditableIOPanel extends JPanel
 		_chkMnuWordWrap.setSelected(_textArea.getWrapStyleWord());
 		_popupMenu.add(_chkMnuWordWrap);
 
-		_popupMenu.add(new XMLReformatAction());
+		_popupMenu.add(new XMLJsonReformatAction());
 		_popupMenu.add(new CompareToClipAction()).setToolTipText(s_stringMgr.getString("popupEditableIoPanel.compare.to.clip.tooltip"));
 		_popupMenu.setTextComponent(_textArea);
 
@@ -286,7 +288,7 @@ public class PopupEditableIOPanel extends JPanel
 
 		// ensure, that the text field can use the extra space if the user resize the dialog.
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx=0.5;
+		gbc.weightx=1;
 		JComboBox<Object> cboFileName = new JComboBox<>();
 		cboFileNameHandler = new EditableComboBoxHandler(cboFileName, getClass().getName() + ".cboFileName");
 		cboFileNameHandler.selectFirstItemIfExists();
@@ -298,7 +300,7 @@ public class PopupEditableIOPanel extends JPanel
 		
 		eiPanel.add(cboFileName, gbc);
 		gbc.fill = GridBagConstraints.NONE;;
-		gbc.weightx=0.0;
+		gbc.weightx=0;
 
 		// add button for Brows
 		// i18n[popupeditableIoPanel.browse=Browse]
@@ -328,7 +330,7 @@ public class PopupEditableIOPanel extends JPanel
 		// panel is editable
 		if ( isEditable == false)
 		{
-			addReformatButton(eiPanel, gbc);
+			addReformatToggleButton(eiPanel, gbc, _reformatHandler.getBtnReformat());
 			addFindButton(eiPanel, gbc);
 
 			return eiPanel;
@@ -343,7 +345,7 @@ public class PopupEditableIOPanel extends JPanel
 		gbc.gridx++;
 		eiPanel.add(importButton, gbc);
 
-		addReformatButton(eiPanel, gbc);
+		addReformatToggleButton(eiPanel, gbc, _reformatHandler.getBtnReformat());
 		addFindButton(eiPanel, gbc);
 
 
@@ -366,10 +368,10 @@ public class PopupEditableIOPanel extends JPanel
 		
 		// ensure, that the text field can use the extra space if the user resize the dialog.
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx=0.5;
+		gbc.weightx=0;
 		eiPanel.add(externalCommandCombo, gbc);
 		gbc.fill = GridBagConstraints.NONE;;
-		gbc.weightx=0.0;
+		gbc.weightx=0;
 		
 		
 		// add button to execute external command
@@ -414,14 +416,11 @@ public class PopupEditableIOPanel extends JPanel
 		return eiPanel;
 	}
 
-	private void addReformatButton(JPanel eiPanel, GridBagConstraints gbc)
+	private JToggleButton addReformatToggleButton(JPanel eiPanel, GridBagConstraints gbc, JToggleButton btnReformat)
 	{
-		JButton reformatButton = new JButton(s_stringMgr.getString("popupEditableIoPanel.reformatXml"));
-		reformatButton.setActionCommand(ACTION_REFORMAT);
-		reformatButton.addActionListener(e -> onActionPerformed(e));
-
 		gbc.gridx++;
-		eiPanel.add(reformatButton, gbc);
+		eiPanel.add(btnReformat, gbc);
+		return btnReformat;
 	}
 
 	private void addFindButton(JPanel eiPanel, GridBagConstraints gbc)
@@ -476,10 +475,6 @@ public class PopupEditableIOPanel extends JPanel
 		else if (e.getActionCommand().equals(ACTION_IMPORT))
 		{
 			onActionImport();
-		}
-		else if(e.getActionCommand().equals(ACTION_REFORMAT))
-		{
-			reformat(GUIUtils.getOwningWindow(this));
 		}
 		else if(e.getActionCommand().equals(ACTION_FIND))
 		{
@@ -1194,17 +1189,17 @@ public class PopupEditableIOPanel extends JPanel
 	}
 
 
-	private class XMLReformatAction extends BaseAction
+	private class XMLJsonReformatAction extends BaseAction
 	{
-      XMLReformatAction()
+      XMLJsonReformatAction()
 		{
 			// i18n[popupEditableIoPanel.reformatXml=Reformat XML]
-			super(s_stringMgr.getString("popupEditableIoPanel.reformatXml"));
+			super(s_stringMgr.getString("popupEditableIoPanel.popup.menu.reformatXml"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			reformat(GUIUtils.getOwningWindow(PopupEditableIOPanel.this));
+			_reformatHandler.setReformated(true);
 		}
 	}
 
@@ -1254,12 +1249,6 @@ public class PopupEditableIOPanel extends JPanel
 		String title = s_stringMgr.getString("popupEditableIoPanel.clipboard.vs.cell.data");
 		DBDIffService.showDiff(leftClipboardTempFile, rightCellTextTempFile, title, GUIUtils.getOwningWindow(_textArea));
 	}
-
-	private void reformat(Window owningWindow)
-	{
-		_textArea.setText(CellDataPopupFormatter.format(_textArea.getText()));
-	}
-
 
 	/**
 	 * Helper function that ensures that the data is acceptable to the DataType

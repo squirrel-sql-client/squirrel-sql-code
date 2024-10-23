@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#617 | https://github.com/squirrel-sql-client/squirrel-sql-code/issues/41
+  SQL result table: The detail data display now allows to automatically reformat XML or Json data.
+  To configure automatic reformatting go to menu File --> Global preferences
+  --> tab "Data type controls" --> section General
+  Note: For detail data display double click a table cell or switch on cell detail display.
+  Furthermore the reformat button was made a toggle button which allows to switch back to the unformatted data.
+
 SQL result table: The find function now allows to narrow the columns to search.
 
 Refactoring: Dropping Foreign Keys is now available by default.

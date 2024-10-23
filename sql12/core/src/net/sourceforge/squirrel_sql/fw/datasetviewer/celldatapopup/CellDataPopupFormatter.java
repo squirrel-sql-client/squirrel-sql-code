@@ -28,7 +28,7 @@ public class CellDataPopupFormatter
    private static final ILogger s_log = LoggerController.createLogger(CellDataPopupFormatter.class);
 
 
-   public static String format(String toFormat)
+   public static FormattingResult format(String toFormat, boolean silent)
    {
       Exception jsonFormatException = null;
 
@@ -36,28 +36,31 @@ public class CellDataPopupFormatter
       jsonFormatException = formatResult.error;
       if (null == jsonFormatException)
       {
-         return formatResult.result;
+         return new FormattingResult(formatResult.result, true);
       }
 
       formatResult = tryXml(toFormat);
       if (null == formatResult.error)
       {
-         return formatResult.result;
+         return new FormattingResult(formatResult.result, true);
       }
 
-      String msg = s_stringMgr.getString(
-            "CellDataPopupFormatter.failed.reformat",
-            StringUtilities.removeNewLine("" + jsonFormatException),
-            StringUtilities.removeNewLine("" + formatResult.error));
+      if(false == silent)
+      {
+         String msg = s_stringMgr.getString(
+               "CellDataPopupFormatter.failed.reformat",
+               StringUtilities.removeNewLine("" + jsonFormatException),
+               StringUtilities.removeNewLine("" + formatResult.error));
 
-      Main.getApplication().getMessageHandler().showErrorMessage(msg);
+         Main.getApplication().getMessageHandler().showErrorMessage(msg);
 
-      s_log.error("Failed to reformat cell data as JSON and as XML.\n" +
-            "JSON error:\n" + Utilities.getStackTrace(jsonFormatException) +
-            "XML error:\n" + Utilities.getStackTrace(formatResult.error));
+         s_log.error("Failed to reformat cell data as JSON and as XML.\n" +
+               "JSON error:\n" + Utilities.getStackTrace(jsonFormatException) +
+               "XML error:\n" + Utilities.getStackTrace(formatResult.error));
+      }
 
 
-      return toFormat;
+      return new FormattingResult(toFormat, false);
    }
 
    private static FormatResult tryXml(String toFormat)
