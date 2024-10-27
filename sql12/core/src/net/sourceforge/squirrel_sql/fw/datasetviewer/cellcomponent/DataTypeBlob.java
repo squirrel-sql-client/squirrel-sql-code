@@ -139,14 +139,14 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 		Byte[] useValue;
 		if(value instanceof BlobDescriptor)
 		{
-			useValue = Utilities.toBoxedByteArray(((BlobDescriptor)value).getData(), BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+			useValue = Utilities.toBoxedByteArray(((BlobDescriptor)value).getData(), BigDataRenderResult.getMaxCharsInValuePopup());
 		}
 		else
 		{
-			useValue = Utilities.toBoxedByteArray(value, BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+			useValue = Utilities.toBoxedByteArray(value, BigDataRenderResult.getMaxCharsInValuePopup());
 		}
 
-		if(null != useValue && useValue.length == BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY)
+		if(null != useValue && useValue.length == BigDataRenderResult.getMaxCharsInValuePopup())
 		{
 			BigDataRenderResult.showMaxBytesReachedMessage(colDef);
 		}

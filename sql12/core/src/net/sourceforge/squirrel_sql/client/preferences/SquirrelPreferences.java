@@ -114,6 +114,7 @@ public class SquirrelPreferences implements Serializable
       String MAX_COLUMN_ADJUST_LENGTH_DEFINED = "maxColumnAdjustLengthDefined";
       String MAX_COLUMN_ADJUST_LENGTH = "maxColumnAdjustLength";
       String REMEMBER_VALUE_OF_POPUP = "rememberValueOfPopup";
+      String MAX_CHARS_IN_VALUE_POPUP = "maxCharsInValuePopup";
       String RELOAD_SQL_CONTENTS = "ReloadSqlContents";
       String MAX_TEXTOUTPUT_COLUMN_WIDTH = "MaxTextOutputColumnWidth";
       String NOTIFY_EXTERNAL_FILE_CHANGES = "NotifyExternalFileChanges";
@@ -302,6 +303,8 @@ public class SquirrelPreferences implements Serializable
 	private boolean _useStatementSeparatorAsSqlToExecuteBounds = false;
 
 	private boolean _rememberValueOfPopup = false;
+
+	private int _maxCharsInValuePopup = 10000;
 
 	private boolean _reloadSqlContents;
 
@@ -1370,6 +1373,17 @@ public class SquirrelPreferences implements Serializable
 	{
 		_rememberValueOfPopup = b;
 	}
+
+	public int getMaxCharsInValuePopup()
+	{
+		return _maxCharsInValuePopup;
+	}
+
+	public void setMaxCharsInValuePopup(int maxCharsInValuePopup)
+	{
+		_maxCharsInValuePopup = maxCharsInValuePopup;
+	}
+
 
 	public boolean isReloadSqlContents()
 	{

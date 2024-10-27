@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/43
+  The maximum number of characters to display in the table cell data popup can now be configured.
+  See menu File -- > Global Preferences --> tab General --> section "Table cell data value popup".
+
 #617 | https://github.com/squirrel-sql-client/squirrel-sql-code/issues/41
   SQL result table: The detail data display now allows to automatically reformat XML or Json data.
   To configure automatic reformatting go to menu File --> Global preferences

@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesController;
 import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -45,6 +46,7 @@ final class GeneralPreferencesGUI extends JPanel
    private JCheckBox _showPluginFilesInSplashScreen = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showpluginfiles"));
    private JCheckBox _useShortSessionTitle = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.useShortSessionTitle"));
    private JCheckBox _rememberValueOfPopup = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.rememberValueOfPopup"));
+   private IntegerField _maxCharsInValuePopup = new IntegerField(8, 0);
 
 
    //      private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
@@ -98,6 +100,7 @@ final class GeneralPreferencesGUI extends JPanel
       _showPluginFilesInSplashScreen.setSelected(prefs.getShowPluginFilesInSplashScreen());
       _useShortSessionTitle.setSelected(prefs.getUseShortSessionTitle());
       _rememberValueOfPopup.setSelected(prefs.isRememberValueOfPopup());
+      _maxCharsInValuePopup.setInt(prefs.getMaxCharsInValuePopup());
 
       _confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
       _warnJreJdbcMismatch.setSelected(prefs.getWarnJreJdbcMismatch());
@@ -151,6 +154,7 @@ final class GeneralPreferencesGUI extends JPanel
       prefs.setShowPluginFilesInSplashScreen(_showPluginFilesInSplashScreen.isSelected());
       prefs.setUseShortSessionTitle(_useShortSessionTitle.isSelected());
       prefs.setRememberValueOfPopup(_rememberValueOfPopup.isSelected());
+      prefs.setMaxCharsInValuePopup(_maxCharsInValuePopup.getInt());
       prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
       prefs.setWarnJreJdbcMismatch(_warnJreJdbcMismatch.isSelected());
       prefs.setWarnForUnsavedFileEdits(_warnForUnsavedFileEdits.isSelected());
@@ -251,7 +255,7 @@ final class GeneralPreferencesGUI extends JPanel
       ++gbc.gridy;
       pnl.add(_useShortSessionTitle, gbc);
       ++gbc.gridy;
-      pnl.add(_rememberValueOfPopup, gbc);
+      pnl.add(createValuePopupPanel(), gbc);
 
       ++gbc.gridy;
       final GridBagConstraints gbcThemes = (GridBagConstraints) gbc.clone();
@@ -266,6 +270,26 @@ final class GeneralPreferencesGUI extends JPanel
       pnl.add(_messagePrefsCtrl.getPanel(), gbcMessagePanel);
 
       return pnl;
+   }
+
+   private JPanel createValuePopupPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0, 1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      ret.add(_rememberValueOfPopup, gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,0,0), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.maxCharNumbersInValueOfPopup")), gbc);
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2,5,0,0), 0,0);
+      ret.add(_maxCharsInValuePopup, gbc);
+
+      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("GeneralPreferencesPanel.value.popup.title")));
+
+      return ret;
    }
 
    private JPanel createGeneralPanel()

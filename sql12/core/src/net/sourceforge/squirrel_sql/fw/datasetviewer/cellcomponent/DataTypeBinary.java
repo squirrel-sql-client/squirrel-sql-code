@@ -282,7 +282,7 @@ public class DataTypeBinary extends BaseDataTypeComponent
 		
 		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
-		 BigDataRenderResult renderResult = _renderObject(value, BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+		 BigDataRenderResult renderResult = _renderObject(value, BigDataRenderResult.getMaxCharsInValuePopup());
 
 		 if(renderResult.isMaxBytesReached())
 		 {

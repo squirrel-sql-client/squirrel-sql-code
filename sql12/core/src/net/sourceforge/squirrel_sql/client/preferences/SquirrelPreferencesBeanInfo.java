@@ -112,6 +112,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(MAX_COLUMN_ADJUST_LENGTH, SquirrelPreferences.class, "getMaxColumnAdjustLength", "setMaxColumnAdjustLength"),
 
             prop(REMEMBER_VALUE_OF_POPUP, SquirrelPreferences.class, "isRememberValueOfPopup", "setRememberValueOfPopup"),
+            prop(MAX_CHARS_IN_VALUE_POPUP, SquirrelPreferences.class, "getMaxCharsInValuePopup", "setMaxCharsInValuePopup"),
 
             prop(RELOAD_SQL_CONTENTS, SquirrelPreferences.class, "isReloadSqlContents", "setReloadSqlContents"),
 

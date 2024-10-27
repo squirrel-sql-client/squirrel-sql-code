@@ -345,9 +345,9 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 		// use the _renderer object to do the rendering.
 		String renderedValue = DefaultColumnRenderer.renderObject(value);
 
-		if(renderedValue.length() > BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY)
+		if(renderedValue.length() > BigDataRenderResult.getMaxCharsInValuePopup())
 		{
-			renderedValue = renderedValue.substring(0, BigDataRenderResult.MAX_BYTES_IN_CELL_DETAIL_DISPLAY);
+			renderedValue = renderedValue.substring(0, BigDataRenderResult.getMaxCharsInValuePopup());
 			BigDataRenderResult.showStringLenReachedMessage(colDef);
 		}
 
