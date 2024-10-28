@@ -57,6 +57,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Find in preferences/configurations dialog:
+  Double clicking any empty node now always shows the preference/configuration.
+
 SQL result table: Section count, position and sum were updated at the end of a selection only,
   not as the used to be during the selection, too.
 
