@@ -1,13 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
-import com.github.difflib.patch.DeleteDelta;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.text.BadLocationException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -16,6 +8,16 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.text.BadLocationException;
+
+import com.github.difflib.patch.DeleteDelta;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class DeletedLinesGutterItem implements GutterItem
 {
@@ -101,7 +103,11 @@ public class DeletedLinesGutterItem implements GutterItem
 
          revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
 
-         popupMenu.add(revertablePopupPanel);
+         // The ScrollPane prevents NollPointer exception deep inside Swing code
+         // when the popup is too wide to fit on the screen.
+         final JScrollPane scrollPane = new JScrollPane(revertablePopupPanel);
+         scrollPane.setBorder(BorderFactory.createEmptyBorder());
+         popupMenu.add(scrollPane);
          popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, me.getY());
       }
    }

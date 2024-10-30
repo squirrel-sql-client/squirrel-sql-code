@@ -57,6 +57,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Change tracking, left gutter popup to show deleted changes:
+  Fixed Nullpointer when popup was too long.
+
 Find in preferences/configurations dialog:
   Double clicking any empty node now always shows the preference/configuration.
 
