@@ -1,17 +1,17 @@
 package net.sourceforge.squirrel_sql.fw.sql.tablenamefind;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TableNameFindService
 {
@@ -56,9 +56,10 @@ public class TableNameFindService
       }
 
       // Get the table name in its original upper-lower case.
-      String table = sql.trim().substring(matcher.start(1), matcher.end(1));
+      int matchEnd = Math.min(sql.trim().length(), matcher.end(1)); // Prevents StringIndexOutOfBoundsException when sql contains German sz-Umlaut.
+      String table = sql.trim().substring(matcher.start(1), matchEnd);
 
-      String behindTable = ucSql.substring(matcher.end(1)).trim();
+      String behindTable = ucSql.substring(matchEnd).trim();
 
       SingleTableSqlEnum ret = behindTableAllowsEditing(behindTable);
 

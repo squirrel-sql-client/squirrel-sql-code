@@ -57,6 +57,8 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Fixed StringIndexOutOfBoundsException when executed SQL contains the German Umlaut sz.
+
 Change tracking, left gutter popup to show deleted changes:
   Fixed Nullpointer when popup was too long.
 
