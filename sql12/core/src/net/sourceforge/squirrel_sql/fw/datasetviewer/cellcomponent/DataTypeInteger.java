@@ -563,4 +563,10 @@ public class DataTypeInteger extends BaseDataTypeComponent
 		outWriter.flush();
 		outWriter.close();
 	 }
+	@Override
+	public Integer getHorizontalAlignmentOrNull()
+	{
+		return NumberTypeUtil.getHorizontalAlignmentOrNull();
+	}
+
 }

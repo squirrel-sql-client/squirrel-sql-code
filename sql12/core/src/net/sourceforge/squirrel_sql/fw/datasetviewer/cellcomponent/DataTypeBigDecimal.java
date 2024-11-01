@@ -656,4 +656,11 @@ public class DataTypeBigDecimal extends FloatingPointBase
 		outWriter.flush();
 		outWriter.close();
 	 }
+
+	@Override
+	public Integer getHorizontalAlignmentOrNull()
+	{
+		return NumberTypeUtil.getHorizontalAlignmentOrNull();
+	}
+
 }

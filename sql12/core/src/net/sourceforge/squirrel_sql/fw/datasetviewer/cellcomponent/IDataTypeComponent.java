@@ -252,4 +252,6 @@ public interface IDataTypeComponent {
 	String[] getSupportedOperators();
 
 	String getColumnForContentSelect(DialectType dialectType, String columnPrefix);
+
+   Integer getHorizontalAlignmentOrNull();
 }

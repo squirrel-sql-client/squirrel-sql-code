@@ -541,4 +541,10 @@ public class DataTypeShort extends BaseDataTypeComponent
 		outWriter.flush();
 		outWriter.close();
 	 }
+
+	@Override
+	public Integer getHorizontalAlignmentOrNull()
+	{
+		return NumberTypeUtil.getHorizontalAlignmentOrNull();
+	}
 }

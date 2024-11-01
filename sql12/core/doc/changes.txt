@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/44
+  SQL result table: Numeric values can now be right aligned,
+  see menu File --> Global Preferences tab Data Types --> section "General"
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/43
   The maximum number of characters to display in the table cell data popup can now be configured.
   See menu File -- > Global Preferences --> tab General --> section "Table cell data value popup".

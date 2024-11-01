@@ -53,8 +53,7 @@ import java.io.OutputStreamWriter;
 public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController
-			.createLogger(BaseDataTypeComponent.class);
+	private static ILogger s_log = LoggerController.createLogger(BaseDataTypeComponent.class);
 
 	/** the whole column definition */
 	protected ColumnDisplayDefinition _colDef;
@@ -361,4 +360,9 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
       return columnPrefix + DialectUtils2.checkColumnDoubleQuotes(dialectType, _colDef.getColumnName());
    }
 
+	@Override
+	public Integer getHorizontalAlignmentOrNull()
+	{
+		return null;
+	}
 }

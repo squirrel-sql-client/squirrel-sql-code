@@ -127,14 +127,14 @@ public class DataTypeFloat extends FloatingPointBase
 
       if (value == null || FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
       {
-         return (String)DefaultColumnRenderer.renderObject(value);
+         return DefaultColumnRenderer.renderObject(value);
       }
       else
       {
 
          try
          {
-            return (String)DefaultColumnRenderer.renderObject(_numberFormat.format(value));
+            return DefaultColumnRenderer.renderObject(_numberFormat.format(value));
          }
          catch (Exception e)
          {
@@ -143,7 +143,7 @@ public class DataTypeFloat extends FloatingPointBase
                _renderExceptionHasBeenLogged = true;
                s_log.error("Could not format \"" + value + "\" as number type", e);
             }
-            return (String) DefaultColumnRenderer.renderObject(value);
+            return DefaultColumnRenderer.renderObject(value);
          }
 
 
@@ -604,4 +604,10 @@ public class DataTypeFloat extends FloatingPointBase
       outWriter.flush();
       outWriter.close();
     }
+
+   @Override
+   public Integer getHorizontalAlignmentOrNull()
+   {
+      return NumberTypeUtil.getHorizontalAlignmentOrNull();
+   }
 }
