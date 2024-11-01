@@ -1,20 +1,24 @@
 package net.sourceforge.squirrel_sql.fw.sql.tablenamefind;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TableNameFindService
 {
+   private final static ILogger s_log = LoggerController.createLogger(TableNameFindService.class);
+
    private static final Pattern FILL_COLUMN_NAME_PATTERN = Pattern.compile(".+:([^:]+):[^:]+$");
 
    public static String findTableNameBySqlOrResultMetaData(String sql, ResultSet srcResult, ISession session) throws SQLException
@@ -43,65 +47,73 @@ public class TableNameFindService
 
    private static String _findTableNameInSQL(String sql)
    {
-      Pattern patternBeforeTable = Pattern.compile("SELECT\\s+[A-Z0-9_\\*\\.',\\s\"]*\\s+FROM\\s+([A-Z0-9_\\.\"]+)");
-      String ucSql = sql.toUpperCase().trim();
-      // Bug 1371587 - remove useless accent characters if they exist
-      ucSql = ucSql.replaceAll("\\`", "");
-      Matcher matcher;
-
-      matcher = patternBeforeTable.matcher(ucSql);
-      if(false == matcher.find())
+      try
       {
-         return null;
-      }
+         Pattern patternBeforeTable = Pattern.compile("SELECT\\s+[A-Z0-9_\\*\\.',\\s\"]*\\s+FROM\\s+([A-Z0-9_\\.\"]+)");
+         String ucSql = sql.toUpperCase().trim();
+         // Bug 1371587 - remove useless accent characters if they exist
+         ucSql = ucSql.replaceAll("\\`", "");
+         Matcher matcher;
 
-      // Get the table name in its original upper-lower case.
-      int matchEnd = Math.min(sql.trim().length(), matcher.end(1)); // Prevents StringIndexOutOfBoundsException when sql contains German sz-Umlaut.
-      String table = sql.trim().substring(matcher.start(1), matchEnd);
-
-      String behindTable = ucSql.substring(matchEnd).trim();
-
-      SingleTableSqlEnum ret = behindTableAllowsEditing(behindTable);
-
-      if(SingleTableSqlEnum.SINGLE_TABLE_SQL_UNKNOWN == ret)
-      {
-         // This might be because an table alias is used maybe with an AS before it.
-
-         Pattern patternBehindTable;
-         if(behindTable.startsWith("AS") && 2 < behindTable.length() && Character.isWhitespace(behindTable.charAt(2)))
-         {
-            patternBehindTable = Pattern.compile("AS\\s+([A-Z0-9_]+)\\s+");
-         }
-         else
-         {
-            patternBehindTable = Pattern.compile("([A-Z0-9_]+)\\s+|[A-Z0-9_]+$");
-         }
-
-         matcher = patternBehindTable.matcher(behindTable);
+         matcher = patternBeforeTable.matcher(ucSql);
          if(false == matcher.find())
          {
             return null;
          }
 
-         String behindAlias = behindTable.substring(matcher.end(0)).trim();
+         // Get the table name in its original upper-lower case.
+         int matchEnd = Math.min(sql.trim().length(), matcher.end(1)); // Prevents StringIndexOutOfBoundsException when sql contains German sz-Umlaut.
+         String table = sql.trim().substring(matcher.start(1), matchEnd);
 
-         ret = behindTableAllowsEditing(behindAlias);
+         String behindTable = ucSql.substring(matchEnd).trim();
 
-         if(SingleTableSqlEnum.SINGLE_TABLE_SQL_TRUE == ret)
+         SingleTableSqlEnum ret = behindTableAllowsEditing(behindTable);
+
+         if(SingleTableSqlEnum.SINGLE_TABLE_SQL_UNKNOWN == ret)
+         {
+            // This might be because an table alias is used maybe with an AS before it.
+
+            Pattern patternBehindTable;
+            if(behindTable.startsWith("AS") && 2 < behindTable.length() && Character.isWhitespace(behindTable.charAt(2)))
+            {
+               patternBehindTable = Pattern.compile("AS\\s+([A-Z0-9_]+)\\s+");
+            }
+            else
+            {
+               patternBehindTable = Pattern.compile("([A-Z0-9_]+)\\s+|[A-Z0-9_]+$");
+            }
+
+            matcher = patternBehindTable.matcher(behindTable);
+            if(false == matcher.find())
+            {
+               return null;
+            }
+
+            String behindAlias = behindTable.substring(matcher.end(0)).trim();
+
+            ret = behindTableAllowsEditing(behindAlias);
+
+            if(SingleTableSqlEnum.SINGLE_TABLE_SQL_TRUE == ret)
+            {
+               return table;
+            }
+            else
+            {
+               return null;
+            }
+         }
+         else if(SingleTableSqlEnum.SINGLE_TABLE_SQL_TRUE == ret)
          {
             return table;
          }
-         else
+         else //(ALLOWS_EDITING_FALSE == ret)
          {
             return null;
          }
       }
-      else if(SingleTableSqlEnum.SINGLE_TABLE_SQL_TRUE == ret)
+      catch(Exception e)
       {
-         return table;
-      }
-      else //(ALLOWS_EDITING_FALSE == ret)
-      {
+         s_log.error("Error on trying to read the table from an SQL:\n--BEGIN SQL\n" + sql + "\n--END SQL", e);
          return null;
       }
    }
