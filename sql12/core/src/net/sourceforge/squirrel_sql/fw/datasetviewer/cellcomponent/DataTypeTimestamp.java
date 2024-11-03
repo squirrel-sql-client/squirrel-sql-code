@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.I
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -279,8 +279,8 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
                MouseEvent tableEvt = SwingUtilities.convertMouseEvent(
                      (RestorableJTextField) DataTypeTimestamp.this._textComponent,
                      evt, DataTypeTimestamp.this._table);
-               CellDataPopup.showDialog(DataTypeTimestamp.this._table,
-                     DataTypeTimestamp.this._colDef, tableEvt, true);
+               CellDataDialogHandler.showDialog(DataTypeTimestamp.this._table,
+                                                DataTypeTimestamp.this._colDef, tableEvt, true);
             }
          }
       });   // end of mouse listener

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/41
+  Table cell data popup dialog now offers a toggle button to pin the dialog.
+  When pinned any further cell data will be displayed in the pinned dialog.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/44
   SQL result table: Numeric values can now be right aligned,
   see menu File --> Global Preferences tab Data Types --> section "General"

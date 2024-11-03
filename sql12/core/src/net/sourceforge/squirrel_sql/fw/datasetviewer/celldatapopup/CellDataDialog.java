@@ -1,12 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
-import java.awt.Component;
-import java.awt.GridLayout;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanel;
@@ -16,25 +10,71 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import java.awt.GridLayout;
+
 class CellDataDialog extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataDialog.class);
-   private final CellDisplayPanel _cellDisplayPanel;
 
-   public CellDataDialog(Component comp, String columnName, ColumnDisplayDefinition colDef,
-                         Object value, int row, int col,
-                         boolean isModelEditable, JTable table)
+   private CellDisplayPanel _cellDisplayPanel;
+
+   public CellDataDialog(JTable parentTable,
+                         String columnName,
+                         int rowIx,
+                         int colIx,
+                         ColumnDisplayDefinition colDef,
+                         Object objectToDisplay,
+                         boolean isModelEditable)
    {
-      super(SwingUtilities.windowForComponent(comp), s_stringMgr.getString("cellDataPopup.valueofColumn", columnName));
+      super(SwingUtilities.windowForComponent(parentTable));
       getContentPane().setLayout(new GridLayout(1,1));
 
-      _cellDisplayPanel = new CellDisplayPanel(() -> onDisplayModeChanged(colDef, value, row, col, isModelEditable, table));
+      initCellDisplayPanel(parentTable, columnName, rowIx, colIx, colDef, objectToDisplay, isModelEditable,false);
+
+      GUIUtils.enableCloseByEscape(this);
+   }
+
+   public void initCellDisplayPanel(JTable table,
+                                    String columnName,
+                                    int rowIx,
+                                    int colIx,
+                                    ColumnDisplayDefinition colDef,
+                                    Object value,
+                                    boolean isModelEditable,
+                                    boolean pinned)
+   {
+      if(null != _cellDisplayPanel)
+      {
+         getContentPane().remove(_cellDisplayPanel);
+         _cellDisplayPanel.dispose();
+         _cellDisplayPanel = null;
+      }
+
+      setTitle(s_stringMgr.getString("cellDataPopup.valueofColumn", columnName));
+      _cellDisplayPanel =
+            new CellDisplayPanel(() -> onDisplayModeChanged(colDef, value, rowIx, colIx, isModelEditable, table),
+                                 sticky -> onToggleSticky(sticky), pinned);
+
       _cellDisplayPanel.setCurrentColumnDisplayDefinition(colDef);
       getContentPane().add(_cellDisplayPanel);
 
-      onDisplayModeChanged(colDef, value, row, col, isModelEditable, table);
+      onDisplayModeChanged(colDef, value, rowIx, colIx, isModelEditable, table);
+   }
 
-      GUIUtils.enableCloseByEscape(this);
+   private void onToggleSticky(boolean sticky)
+   {
+      if(sticky)
+      {
+         Main.getApplication().getStickyCellDataDialog().setStickyCellDataDialog(this);
+      }
+      else
+      {
+         Main.getApplication().getStickyCellDataDialog().clearStickyCellDataDialog();
+      }
    }
 
    private void onDisplayModeChanged(ColumnDisplayDefinition colDef, Object value, int row, int col, boolean isModelEditable, JTable table)
@@ -61,5 +101,10 @@ class CellDataDialog extends JDialog
       _cellDisplayPanel.setContentComponent(pnlToDisplay);
 
       _cellDisplayPanel.revalidate();
+   }
+
+   public void switchOffPinned()
+   {
+      _cellDisplayPanel.switchOffPinned();
    }
 }

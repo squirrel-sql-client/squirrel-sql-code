@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.table.ButtonTableHeader;
@@ -15,11 +15,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -392,7 +396,7 @@ public final class DataSetViewerTable extends JTable
          if (RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX != modelIndex)
          {
             ColumnDisplayDefinition colDefs[] = _dataSetViewerTablePanel.getColumnDefinitions();
-            CellDataPopup.showDialog(this, colDefs[modelIndex], evt, _dataSetViewerTablePanel.isTableEditable());
+            CellDataDialogHandler.showDialog(this, colDefs[modelIndex], evt, _dataSetViewerTablePanel.isTableEditable());
          }
       }
    }

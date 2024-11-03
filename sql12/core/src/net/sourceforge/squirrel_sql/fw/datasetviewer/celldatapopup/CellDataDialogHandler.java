@@ -32,6 +32,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -40,12 +41,12 @@ import java.awt.event.WindowEvent;
  * Generate a popup window to display and manipulate the
  * complete contents of a cell.
  */
-public class CellDataPopup
+public class CellDataDialogHandler
 {
    public static final String PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH = "Squirrel.popupEditableIOPanelWidth";
    public static final String PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT = "Squirrel.popupEditableIOPanelHeight";
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataPopup.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataDialogHandler.class);
 
    /**
     * function to create the popup display when called from JTable
@@ -55,32 +56,43 @@ public class CellDataPopup
                                  MouseEvent evt,
                                  boolean isModelEditable)
    {
-      CellDataPopup popup = new CellDataPopup();
-      popup.createAndShowDialog(table, evt, colDef, isModelEditable);
-   }
-
-   private void createAndShowDialog(JTable table, MouseEvent evt,
-                                    ColumnDisplayDefinition colDef, boolean isModelEditable)
-   {
       Point pt = evt.getPoint();
-      int row = table.rowAtPoint(pt);
-      int col = table.columnAtPoint(pt);
+      int rowIx = table.rowAtPoint(pt);
+      int colIx = table.columnAtPoint(pt);
 
-      Object obj = table.getValueAt(row, col);
+      Object obj = table.getValueAt(rowIx, colIx);
 
       // since user is now using popup, stop editing
       // using the in-cell editor, if any
-      CellEditor editor = table.getCellEditor(row, col);
+      CellEditor editor = table.getCellEditor(rowIx, colIx);
       if (editor != null)
-		{
-			editor.cancelCellEditing();
-		}
+      {
+         editor.cancelCellEditing();
+      }
 
-      Component parent = SwingUtilities.windowForComponent(table);
+      if(null == Main.getApplication().getStickyCellDataDialog().getStickyPopup())
+      {
+         createAndShowCellDataDialog(table, table.getColumnName(colIx), rowIx, colIx, colDef, obj, isModelEditable, evt);
+      }
+      else
+      {
+         CellDataDialog cellDataDialog = Main.getApplication().getStickyCellDataDialog().getStickyPopup();
+         cellDataDialog.initCellDisplayPanel(table, table.getColumnName(colIx), rowIx, colIx, colDef, obj, isModelEditable, true);
+      }
+   }
 
-      final CellDataDialog dialog = new CellDataDialog(table, table.getColumnName(col), colDef, obj, row, col, isModelEditable, table);
+   private static void createAndShowCellDataDialog(JTable parentTable,
+                                                   String columnName,
+                                                   int rowIx,
+                                                   int colIx,
+                                                   ColumnDisplayDefinition colDef,
+                                                   Object objectToDisplay,
+                                                   boolean isModelEditable,
+                                                   MouseEvent evt)
+   {
+      CellDataDialog cellDataDialog = new CellDataDialog(parentTable, columnName, rowIx, colIx, colDef, objectToDisplay, isModelEditable);
 
-      dialog.pack();
+      cellDataDialog.pack();
 
       Dimension dim;
       if (Main.getApplication().getSquirrelPreferences().isRememberValueOfPopup())
@@ -91,7 +103,7 @@ public class CellDataPopup
       }
       else
       {
-         dim = dialog.getSize();
+         dim = cellDataDialog.getSize();
          if (dim.width < 300)
          {
             dim.width = 300;
@@ -110,42 +122,27 @@ public class CellDataPopup
          }
       }
 
-      Point dialogPos = parent.getLocation();
+      Window parentWindow = SwingUtilities.windowForComponent(parentTable);
+      Point dialogPos = parentWindow.getLocation();
 
-      dialogPos.x += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).x;
-      dialogPos.y += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).y;
-
-//		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-//
-//		if (dialogPos.x + dim.width > screenSize.getWidth())
-//		{
-//			dialogPos.x = (int)screenSize.getWidth() - dim.width;
-//		}
-//
-//		if (dialogPos.y + dim.height > screenSize.getHeight())
-//		{
-//			dialogPos.y = (int)screenSize.getHeight() - dim.height;
-//		}
-
+      dialogPos.x += SwingUtilities.convertPoint((Component) evt.getSource(), evt.getPoint(), parentWindow).x;
+      dialogPos.y += SwingUtilities.convertPoint((Component) evt.getSource(), evt.getPoint(), parentWindow).y;
 
       Rectangle dialogRect = GUIUtils.ensureBoundsOnOneScreen(new Rectangle(dialogPos.x, dialogPos.y, dim.width, dim.height));
 
 
-      dialog.setBounds(dialogRect);
-      //dialog.setSize(dim);
+      cellDataDialog.setBounds(dialogRect);
 
-      dialog.addWindowListener(new WindowAdapter()
+      cellDataDialog.addWindowListener(new WindowAdapter()
       {
          @Override
          public void windowClosing(WindowEvent e)
          {
-            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, dialog.getSize().width);
-            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, dialog.getSize().height);
+            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, cellDataDialog.getSize().width);
+            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, cellDataDialog.getSize().height);
          }
       });
 
-      dialog.setVisible(true);
+      cellDataDialog.setVisible(true);
    }
-
-
 }

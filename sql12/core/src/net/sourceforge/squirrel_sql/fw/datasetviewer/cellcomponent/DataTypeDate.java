@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
@@ -332,8 +332,8 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 					MouseEvent tableEvt = SwingUtilities.convertMouseEvent(
 						(RestorableJTextField)DataTypeDate.this._textComponent,
 						evt, DataTypeDate.this._table);
-					CellDataPopup.showDialog(DataTypeDate.this._table,
-						DataTypeDate.this._colDef, tableEvt, true);
+					CellDataDialogHandler.showDialog(DataTypeDate.this._table,
+                                                DataTypeDate.this._colDef, tableEvt, true);
 				}
 			}
 		});	// end of mouse listener

@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -197,8 +197,8 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 					MouseEvent tableEvt =
 						SwingUtilities.convertMouseEvent((RestorableJTextField) DataTypeDouble.this._textComponent,
 							evt, DataTypeDouble.this._table);
-					CellDataPopup.showDialog(DataTypeDouble.this._table, DataTypeDouble.this._colDef, tableEvt,
-						true);
+					CellDataDialogHandler.showDialog(DataTypeDouble.this._table, DataTypeDouble.this._colDef, tableEvt,
+                                                true);
 				}
 			}
 		}); // end of mouse listener

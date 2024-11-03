@@ -65,6 +65,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeComponentFactoryRegistry;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypePropertiesManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellImportExportInfoSaver;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.PinnedCellDataDialogHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDetailDisplayModeManager;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
@@ -238,6 +239,7 @@ public class Application implements IApplication
 	private DataTypePropertiesManager _dataTypePropertiesManager = new DataTypePropertiesManager();
 
 	private CellDetailDisplayModeManager _cellDetailDisplayModeManager = new CellDetailDisplayModeManager();
+	private PinnedCellDataDialogHandler _pinnedCellDataDialogHandler = new PinnedCellDataDialogHandler();
 
 	public Application()
 	{
@@ -1557,5 +1559,11 @@ public class Application implements IApplication
    public CellDetailDisplayModeManager getCellDetailDisplayModeManager()
    {
       return _cellDetailDisplayModeManager;
+   }
+
+   @Override
+   public PinnedCellDataDialogHandler getStickyCellDataDialog()
+   {
+      return _pinnedCellDataDialogHandler;
    }
 }

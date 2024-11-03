@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTe
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
@@ -326,8 +326,8 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
 					MouseEvent tableEvt = SwingUtilities.convertMouseEvent(
 						(RestorableJTextField)DerbyClobDataTypeComponent.this._textComponent,
 						evt, table);
-					CellDataPopup.showDialog(table,
-						DerbyClobDataTypeComponent.this._colDef, tableEvt, true);
+					CellDataDialogHandler.showDialog(table,
+                                                DerbyClobDataTypeComponent.this._colDef, tableEvt, true);
 				}
 			}
 		});	// end of mouse listener

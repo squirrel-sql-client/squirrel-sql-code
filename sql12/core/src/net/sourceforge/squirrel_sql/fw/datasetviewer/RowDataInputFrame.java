@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -264,7 +264,7 @@ public class RowDataInputFrame extends JDialog
 
 						Point pt = evt.getPoint();
 						int col = RowDataJTable.this.columnAtPoint(pt);
-						CellDataPopup.showDialog(RowDataJTable.this, _colDefs[col], evt, true);
+						CellDataDialogHandler.showDialog(RowDataJTable.this, _colDefs[col], evt, true);
 					}
 				}
 				public void mouseReleased(MouseEvent evt)

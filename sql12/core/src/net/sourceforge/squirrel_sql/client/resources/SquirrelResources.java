@@ -207,6 +207,8 @@ public class SquirrelResources extends Resources
 
 		String RUN_ALL = "run_all";
 
+		String PINNED = "pinned";
+
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)
