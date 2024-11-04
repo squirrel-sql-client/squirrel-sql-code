@@ -38,7 +38,7 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
    {
       JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-      if(null != _dataTypeObject.getHorizontalAlignmentOrNull())
+      if(null != _dataTypeObject && null != _dataTypeObject.getHorizontalAlignmentOrNull())
       {
          label.setHorizontalAlignment(_dataTypeObject.getHorizontalAlignmentOrNull());
       }

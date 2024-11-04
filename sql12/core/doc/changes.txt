@@ -65,12 +65,15 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/45#issuecomment-2455169657
+  Fixed NullPointerException that occurred in some tables.
+
 Saved Session groups management dialog: Fixed IllegalArgumentException when empty was deleted.
 
 Fixed StringIndexOutOfBoundsException when executed SQL contains the German Umlaut sz.
 
 Change tracking, left gutter popup to show deleted changes:
-  Fixed Nullpointer when popup was too long.
+  Fixed NullPointerException when popup was too long.
 
 Find in preferences/configurations dialog:
   Double clicking any empty node now always shows the preference/configuration.
