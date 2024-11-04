@@ -1,5 +1,17 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SavedSessionGrouped;
@@ -15,17 +27,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public class SavedSessionsManager
 {
@@ -257,9 +258,24 @@ public class SavedSessionsManager
 
    public SavedSessionGrouped getSavedSessionGrouped(String groupId)
    {
-      return getSavedSessionsGrouped().stream()
-                                      .filter(g -> null != g.getGroup() && StringUtils.equals(g.getGroup().getGroupId(), groupId))
-                                      .findFirst().orElseThrow(() -> new IllegalArgumentException("Failed to find group by groupId=" + groupId));
+      return getSavedSessionGrouped(groupId, true);
+   }
+
+   public SavedSessionGrouped getSavedSessionGrouped(String groupId, boolean throwIfNotExisting)
+   {
+      Optional<SavedSessionGrouped> res =
+            getSavedSessionsGrouped().stream().filter(g -> null != g.getGroup() && StringUtils.equals(g.getGroup().getGroupId(), groupId)).findFirst();
+
+      if(res.isEmpty())
+      {
+         if(throwIfNotExisting)
+         {
+            throw new IllegalArgumentException("Failed to find group by groupId=" + groupId);
+         }
+         return null;
+      }
+
+      return res.get();
    }
 
    public SavedSessionGrouped getSavedSessionGrouped(SavedSessionJsonBean savedSession)

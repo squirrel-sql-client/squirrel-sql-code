@@ -1,5 +1,18 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SaveSessionResult;
@@ -11,18 +24,6 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class SavedSessionsGroupCtrl
 {
@@ -229,8 +230,11 @@ public class SavedSessionsGroupCtrl
 
       if(null != _groupBeingEdited)
       {
-         SavedSessionGrouped groupBeingEdited = Main.getApplication().getSavedSessionsManager().getSavedSessionGrouped(_groupBeingEdited.getGroupId());
-         Main.getApplication().getSavedSessionsManager().delete(List.of(groupBeingEdited));
+         SavedSessionGrouped groupBeingEdited = Main.getApplication().getSavedSessionsManager().getSavedSessionGrouped(_groupBeingEdited.getGroupId(), false);
+         if( null != groupBeingEdited )
+         {
+            Main.getApplication().getSavedSessionsManager().delete(List.of(groupBeingEdited));
+         }
       }
 
       String groupNameForMessagePanel = null != _groupBeingEdited ? _groupBeingEdited.getGroupName() : _dlg.txtGroupName.getText();

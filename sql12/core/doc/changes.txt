@@ -65,6 +65,8 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Saved Session groups management dialog: Fixed IllegalArgumentException when empty was deleted.
+
 Fixed StringIndexOutOfBoundsException when executed SQL contains the German Umlaut sz.
 
 Change tracking, left gutter popup to show deleted changes:
