@@ -658,7 +658,7 @@ public class CodeReformator implements ICodeReformator
          return in;
       }
 
-      StringBuffer ret = new StringBuffer();
+      StringBuilder ret = new StringBuilder(in.length());
       int aposCount = 0;
       char lastAppended = '\0';
       for (int i = 0; i < in.length(); ++i)

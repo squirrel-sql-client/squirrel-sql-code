@@ -1,22 +1,20 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import javax.swing.JTabbedPane;
-import javax.swing.Timer;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecutorPanel;
 import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
-import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.swing.JTabbedPane;
+import javax.swing.Timer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class ResultTabMatchingCurrentSqlHandler
 {
@@ -29,6 +27,7 @@ public class ResultTabMatchingCurrentSqlHandler
 
    private Timer _paintTimer;
 
+   private NormalizedSqlCompareCache _normalizedSqlCompareCache = new NormalizedSqlCompareCache();
 
    public ResultTabMatchingCurrentSqlHandler(ISQLEntryPanel entryPanel, SQLResultExecutorPanel sqlExecPanel)
    {
@@ -93,13 +92,11 @@ public class ResultTabMatchingCurrentSqlHandler
             }
             else
             {
-               CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(_entryPanel.getSession()));
-               String resultTabSqlNormalized = cr.getNormalizedSql(sqlResultTab.getSqlString());
-               String sqlToBeExecutedNormalized = cr.getNormalizedSql(qt.nextQuery().getCleanQuery());
+               String resultTabSqlNormalized = _normalizedSqlCompareCache.getResultTabSqlNormalized(_entryPanel.getSession(), sqlResultTab);
+               String sqlToBeExecutedNormalized = _normalizedSqlCompareCache.getEditorSqlNormalized(_entryPanel.getSession(), qt.nextQuery().getCleanQuery());
 
                tabMatchesSqlToBeExecuted = StringUtils.equalsIgnoreCase(resultTabSqlNormalized, sqlToBeExecutedNormalized);
             }
-
          }
          else
          {

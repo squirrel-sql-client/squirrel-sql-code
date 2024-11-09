@@ -65,6 +65,11 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+SQL editor/SQL result tabs/marking SQL result tab headers:
+  Memory and CPU usage was improved in case SQLs where compared
+  disregarding comments line feeds and other white spaces.
+  See menu File --> Global Preferences --> tab SQL --> section "SQL result tab header".
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/45#issuecomment-2455169657
   Fixed NullPointerException that occurred in some tables.
 

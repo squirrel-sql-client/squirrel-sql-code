@@ -38,7 +38,7 @@ public class IntegerIdentifier implements IIdentifier, Serializable, Comparable<
 		boolean rc = false;
 		if (rhs != null && rhs.getClass().equals(getClass()))
 		{
-			rc = ((IntegerIdentifier)rhs).toString().equals(toString());
+			rc = rhs.toString().equals(toString());
 		}
 		return rc;
 	}
