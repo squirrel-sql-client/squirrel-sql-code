@@ -33,7 +33,7 @@ public interface IExportData {
 	 * The header row.
 	 * @return the header.
 	 */
-	Iterator<String> getHeaders();
+	Iterator<String> getHeaderColumns();
 
 	/**
 	 * The rows of data.
@@ -41,6 +41,8 @@ public interface IExportData {
 	 * @return the rows to export.
 	 */
 	Iterator<ExportDataRow> getRows();
+
+	int getColumnCount();
 
 	void close();
 }

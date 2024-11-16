@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/46
+  SQL result and table export to MS-Excel files: New options to make exported sheets
+  auto filtered and to choose if header rows are bold, centered and/or frozen.
+  Note: Export to MS-Excel files and other formats is available through the right mouse menu of tables.
+  The SQL editor allows to export SQL results through the right mouse menu and tools popup (ctrl+t).
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/45
   Table cell data popup dialog now offers a toggle button to pin the dialog.
   When pinned any further cell data will be displayed in the pinned dialog.

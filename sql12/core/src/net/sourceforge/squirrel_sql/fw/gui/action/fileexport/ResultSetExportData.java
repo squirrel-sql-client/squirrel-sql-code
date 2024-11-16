@@ -92,10 +92,10 @@ public class ResultSetExportData implements IExportData
     * Gets the headers for the data.
     * This depends on the extracted meta data of the result set.
     *
-    * @see IExportData#getHeaders()
+    * @see IExportData#getHeaderColumns()
     */
    @Override
-   public Iterator<String> getHeaders()
+   public Iterator<String> getHeaderColumns()
    {
       List<String> headers = new ArrayList<>();
       for (ColumnDisplayDefinition col : this._colDispDef)
@@ -150,6 +150,12 @@ public class ResultSetExportData implements IExportData
          }
       };
 
+   }
+
+   @Override
+   public int getColumnCount()
+   {
+      return _colDispDef.size();
    }
 
    @Override

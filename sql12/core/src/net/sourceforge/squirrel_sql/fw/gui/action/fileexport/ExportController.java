@@ -7,10 +7,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -153,6 +156,11 @@ public class ExportController
 
          _dlg.chkUseColoring.setEnabled(false);
          _dlg.btnUseColoringInfo.setEnabled(false);
+         _dlg.chkExcelAutoFilter.setEnabled(false);
+         _dlg.chkExcelFirstRowFrozen.setEnabled(false);
+         _dlg.chkExcelFirstRowCentered.setEnabled(false);
+         _dlg.chkExcelFirstRowBold.setEnabled(false);
+
 
 
          if(_dlg.chkSeparatorTab.isSelected())
@@ -184,6 +192,11 @@ public class ExportController
          _dlg.chkUseColoring.setEnabled(_dlg.radFormatXLSX.isSelected());
          _dlg.btnUseColoringInfo.setEnabled(_dlg.radFormatXLSX.isSelected());
 
+         _dlg.chkExcelAutoFilter.setEnabled(true);
+         _dlg.chkExcelFirstRowFrozen.setEnabled(true);
+         _dlg.chkExcelFirstRowCentered.setEnabled(_dlg.radFormatXLSX.isSelected());
+         _dlg.chkExcelFirstRowBold.setEnabled(_dlg.radFormatXLSX.isSelected());
+
 
          if(replaceEnding)
          {
@@ -202,7 +215,10 @@ public class ExportController
 
          _dlg.chkUseColoring.setEnabled(false);
          _dlg.btnUseColoringInfo.setEnabled(false);
-
+         _dlg.chkExcelAutoFilter.setEnabled(false);
+         _dlg.chkExcelFirstRowFrozen.setEnabled(false);
+         _dlg.chkExcelFirstRowCentered.setEnabled(false);
+         _dlg.chkExcelFirstRowBold.setEnabled(false);
 
          if(replaceEnding)
          {
@@ -432,40 +448,29 @@ public class ExportController
 
    private void writeControlsToPrefs(TableExportPreferences prefs)
    {
-      // Preferences.put(PREF_KEY_CSV_FILE, );
       prefs.setFile(_cboFileHandler.getItem());
       _cboFileHandler.saveCurrentItem();
 
-      //Preferences.put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
       prefs.setEncoding(_dlg.cboCharsets.getSelectedItem().toString());
-
-      //Preferences.putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
       prefs.setWithHeaders(_dlg.chkWithHeaders.isSelected());
-
-      //Preferences.putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
       prefs.setFormatCSV(_dlg.radFormatCSV.isSelected());
 
-      //Preferences.putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLSX.isSelected());
       prefs.setFormatXLS(_dlg.radFormatXLSX.isSelected());
-
       prefs.setUseColoring(_dlg.chkUseColoring.isSelected());
-
-      //Preferences.putBoolean(PREF_KEY_FORMAT_XLS_OLD, _dlg.radFormatXLS.isSelected());
       prefs.setFormatXLSOld(_dlg.radFormatXLS.isSelected());
+      prefs.setExcelAutoFilter(_dlg.chkExcelAutoFilter.isSelected());
+      prefs.setExcelFirstRowFrozen(_dlg.chkExcelFirstRowFrozen.isSelected());
+      prefs.setExcelFirstRowCentered(_dlg.chkExcelFirstRowCentered.isSelected());
+      prefs.setExcelFirstRowBold(_dlg.chkExcelFirstRowBold.isSelected());
 
-      //Preferences.putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
+
       prefs.setFormatXML(_dlg.radFormatXML.isSelected());
-
-      //Preferences.putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
       prefs.setFormatJSON(_dlg.radFormatJSON.isSelected());
 
-      //Preferences.putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
       prefs.setSeperatorTab(_dlg.chkSeparatorTab.isSelected());
 
-      //Preferences.put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
       prefs.setSeperatorChar(_dlg.txtSeparatorChar.getText());
 
-      //Preferences.put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
       prefs.setLineSeperator(((LineSeparator)_dlg.cboLineSeparators.getSelectedItem()).name());
 
       _exportSelectionPanelController.writeControlsToPrefs(prefs);
@@ -492,6 +497,10 @@ public class ExportController
          _cboFileHandler.addOrReplaceCurrentItem(prefs.getFile());
       }
       _dlg.chkUseColoring.setSelected(prefs.isUseColoring());
+      _dlg.chkExcelAutoFilter.setSelected(prefs.isExcelAutoFilter());
+      _dlg.chkExcelFirstRowFrozen.setSelected(prefs.isExcelFirstRowFrozen());
+      _dlg.chkExcelFirstRowCentered.setSelected(prefs.isExcelFirstRowCentered());
+      _dlg.chkExcelFirstRowBold.setSelected(prefs.isExcelFirstRowBold());
 
       _dlg.cboCharsets.setSelectedItem(prefs.getEncoding());
       _dlg.chkWithHeaders.setSelected(prefs.isWithHeaders());
@@ -556,7 +565,7 @@ public class ExportController
 
    private boolean formatIsNewXlsx(TableExportPreferences preferences)
    {
-      return preferences.isFormatXLS();
+      return preferences.isFormatXLS();  // instead of preferences.isFormatXLSOld();
    }
 
    private String replaceXlsByXlsx(String fileName)

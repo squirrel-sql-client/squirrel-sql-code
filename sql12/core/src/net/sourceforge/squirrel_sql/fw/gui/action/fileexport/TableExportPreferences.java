@@ -58,6 +58,10 @@ public class TableExportPreferences
    private boolean _useColoring;
    private boolean _exportMultipleSQLResults;
    private boolean _limitRowsChecked;
+   private boolean _excelAutoFilter;
+   private boolean _excelFirstRowFrozen;
+   private boolean _excelFirstRowBold;
+   private boolean _excelFirstRowCentered;
 
    public boolean isFormatXLS()
    {
@@ -247,5 +251,45 @@ public class TableExportPreferences
    public void setLimitRowsChecked(boolean limitRowsChecked)
    {
       _limitRowsChecked = limitRowsChecked;
+   }
+
+   public void setExcelAutoFilter(boolean excelAutoFilter)
+   {
+      _excelAutoFilter = excelAutoFilter;
+   }
+
+   public boolean isExcelAutoFilter()
+   {
+      return _excelAutoFilter;
+   }
+
+   public void setExcelFirstRowFrozen(boolean excelFirstRowFrozen)
+   {
+      _excelFirstRowFrozen = excelFirstRowFrozen;
+   }
+
+   public boolean isExcelFirstRowFrozen()
+   {
+      return _excelFirstRowFrozen;
+   }
+
+   public void setExcelFirstRowBold(boolean excelFirstRowBold)
+   {
+      _excelFirstRowBold = excelFirstRowBold;
+   }
+
+   public boolean isExcelFirstRowBold()
+   {
+      return _excelFirstRowBold;
+   }
+
+   public boolean isExcelFirstRowCentered()
+   {
+      return _excelFirstRowCentered;
+   }
+
+   public void setExcelFirstRowCentered(boolean excelFirstCentered)
+   {
+      _excelFirstRowCentered = excelFirstCentered;
    }
 }

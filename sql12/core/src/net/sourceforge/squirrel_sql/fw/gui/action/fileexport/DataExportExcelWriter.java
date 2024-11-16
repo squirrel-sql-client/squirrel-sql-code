@@ -24,7 +24,13 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -53,15 +59,15 @@ public class DataExportExcelWriter
    private final FileExportService _fileExportService;
    private Workbook _workbook; // The streaming api export for (very) large xlsx files
    private Sheet _sheet; // We write the data to this sheet
-   private boolean withHeader = false;
-   private HashMap<String, CellStyle> formatCache = null;
+   private boolean _withHeader = false;
+   private HashMap<String, CellStyle> _formatCache = null;
 
    public DataExportExcelWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
    {
       _fileExportService = new FileExportService(file, prefs, progressController);
    }
 
-   public long write(ExportDataInfoList exportDataInfoList) throws Exception
+   public long write(ExportDataInfoList exportDataInfoList, TableExportPreferences prefs) throws Exception
    {
       long rowsCount = 0;
 
@@ -73,7 +79,17 @@ public class DataExportExcelWriter
       {
          this._sheet = _workbook.createSheet(exportDataInfo.getExcelSheetTabName());
 
-         rowsCount += _writeExcelTab(exportDataInfo.getExportData());
+         rowsCount += _writeExcelTab(exportDataInfo.getExportData(), prefs);
+
+         if(prefs.isExcelFirstRowFrozen())
+         {
+            _sheet.createFreezePane(0, 1);
+         }
+
+         if(prefs.isExcelAutoFilter())
+         {
+            _sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, exportDataInfo.getExportData().getColumnCount()));
+         }
       }
       _fileExportService.progress(s_stringMgr.getString("DataExportExcelWriter.finishedLoading", NumberFormat.getInstance().format(rowsCount)));
 
@@ -96,17 +112,23 @@ public class DataExportExcelWriter
 
    }
 
-   private long _writeExcelTab(IExportData data)
+   private long _writeExcelTab(IExportData data, TableExportPreferences prefs)
    {
       if (_fileExportService.getPrefs().isWithHeaders())
       {
-         Iterator<String> headers = data.getHeaders();
+         _withHeader = true;
+
+         Iterator<String> headerColumns = data.getHeaderColumns();
+         ExcelHeaderRowBuilder excelHeaderRowBuilder = new ExcelHeaderRowBuilder(prefs, _sheet, _workbook);
 
          int colIdx = 0;
-         while (headers.hasNext())
+         while (headerColumns.hasNext())
          {
-            String columnName = headers.next();
-            addHeaderCell(colIdx, columnName);
+            Row headerRow = excelHeaderRowBuilder.getHeaderRow();
+
+            Cell cell = headerRow.createCell(colIdx);
+            cell.setCellValue(headerColumns.next());
+
             colIdx++;
          }
       }
@@ -209,21 +231,21 @@ public class DataExportExcelWriter
    {
       CreationHelper creationHelper = _workbook.getCreationHelper();
       CellStyle cellStyle;
-      if (formatCache == null)
+      if (_formatCache == null)
       {
          cellStyle = _workbook.createCellStyle();
          cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat(format));
-         formatCache = new HashMap<String, CellStyle>();
-         formatCache.put(format, cellStyle);
+         _formatCache = new HashMap<String, CellStyle>();
+         _formatCache.put(format, cellStyle);
       }
       else
       {
-         cellStyle = formatCache.get(format);
+         cellStyle = _formatCache.get(format);
          if (cellStyle == null)
          {
             cellStyle = _workbook.createCellStyle();
             cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat(format));
-            formatCache.put(format, cellStyle);
+            _formatCache.put(format, cellStyle);
          }
       }
       retVal.setCellStyle(cellStyle);
@@ -267,18 +289,6 @@ public class DataExportExcelWriter
       }
    }
 
-   private void addHeaderCell(int colIdx, String columnName)
-   {
-      this.withHeader = true;
-      Row headerRow = _sheet.getRow(0);
-      if (headerRow == null)
-      {
-         headerRow = _sheet.createRow(0);
-      }
-      Cell cell = headerRow.createCell(colIdx);
-      cell.setCellValue(columnName);
-   }
-
    private void addCell(ExportCellData cell)
    {
       final Cell excelCell;
@@ -296,7 +306,7 @@ public class DataExportExcelWriter
 
    private int calculateRowIdx(ExportCellData cell)
    {
-      if (this.withHeader)
+      if (this._withHeader)
       {
          return cell.getRowIndex() + 1;
       }

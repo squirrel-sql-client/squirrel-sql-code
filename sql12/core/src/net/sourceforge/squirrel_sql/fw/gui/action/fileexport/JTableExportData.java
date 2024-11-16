@@ -93,10 +93,10 @@ public class JTableExportData implements IExportData
    /**
     * Reads the header of the table.
     *
-    * @see IExportData#getHeaders()
+    * @see IExportData#getHeaderColumns()
     */
    @Override
-   public Iterator<String> getHeaders()
+   public Iterator<String> getHeaderColumns()
    {
       List<String> headers = new ArrayList<String>();
       for (int colIdx = 0; colIdx < _nbrSelCols; ++colIdx)
@@ -148,9 +148,14 @@ public class JTableExportData implements IExportData
    }
 
    @Override
+   public int getColumnCount()
+   {
+      return _nbrSelCols;
+   }
+
+   @Override
    public void close()
    {
 
    }
-
 }

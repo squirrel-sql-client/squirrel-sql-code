@@ -72,7 +72,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
 
          if (_fileExportService.getPrefs().isWithHeaders())
          {
-            Iterator<String> headers = exportData.getHeaders();
+            Iterator<String> headers = exportData.getHeaderColumns();
 
             int colIdx = 0;
             beforeHeader();

@@ -49,7 +49,7 @@ public class ExportFileWriter
 
             file = checkAndPrepareExportFile(file);
 
-            ret += new DataExportExcelWriter(file, prefs, progressController).write(exportDataInfoList);
+            ret += new DataExportExcelWriter(file, prefs, progressController).write(exportDataInfoList, prefs);
          }
          else
          {
