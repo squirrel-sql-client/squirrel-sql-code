@@ -60,7 +60,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -71,6 +70,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  * @author gwg
@@ -89,6 +89,11 @@ public class PopupEditableIOPanel extends JPanel
 	public static final String ACTION_EXECUTE = "execute";
 	public static final String ACTION_APPLY = "apply";
 	public static final String ACTION_IMPORT = "import";
+
+	public static final String RADIX_HEX = "Hex";
+	public static final String RADIX_DECIMAL = "Decimal";
+	public static final String RADIX_OCTAL = "Octal";
+	public static final String RADIX_BINARY = "Binary";
 
 	// The text area displaying the object contents
 	private final JTextArea _textArea;
@@ -129,34 +134,7 @@ public class PopupEditableIOPanel extends JPanel
 	private IOUtilities _iou = new IOUtilitiesImpl();
 
 	private final ReformatHandler _reformatHandler;
-
-	class BinaryOptionActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-
-			// user asked to see binary data in a different format
-			int base = 16;	// default to hex
-			if (previousRadixListItem.equals("Decimal")) base = 10;
-			else if (previousRadixListItem.equals("Octal")) base = 8;
-			else if (previousRadixListItem.equals("Binary")) base = 2;
-
-			Byte[] bytes = BinaryDisplayConverter.convertToBytes(_textArea.getText(),
-				base, previousShowAscii);
-
-			// return the expected format for this data
-			base = 16;	// default to hex
-			if (radixList.getSelectedItem().equals("Decimal")) base = 10;
-			else if (radixList.getSelectedItem().equals("Octal")) base = 8;
-			else if (radixList.getSelectedItem().equals("Binary")) base = 2;
-
-			((RestorableJTextArea) _textArea).updateText(
-				BinaryDisplayConverter.convertToString(bytes,
-				base, showAscii.isSelected()));
-
-			previousRadixListItem = (String)radixList.getSelectedItem();
-			previousShowAscii = showAscii.isSelected();
-		}
-	}
-	private BinaryOptionActionListener optionActionListener = new BinaryOptionActionListener();
+	private boolean _dontReactToBinaryDisplayChanges;
 
 	// text put in file name field to indicate that we should
 	// create a temp file for export
@@ -180,7 +158,7 @@ public class PopupEditableIOPanel extends JPanel
 		_colDef = colDef;
 		_textArea = CellComponentFactory.getJTextArea(colDef, value);
 
-		_reformatHandler = new ReformatHandler(_textArea);
+		_reformatHandler = new ReformatHandler(_textArea, CellComponentFactory.useBinaryEditingPanel(_colDef), () -> onOriginalTextWasRestored());
 
 		if (isEditable)
 		{
@@ -222,14 +200,14 @@ public class PopupEditableIOPanel extends JPanel
 		{
 			// this is a binary field, so allow for multiple viewing options
 
-			String[] radixListData = { "Hex", "Decimal", "Octal", "Binary" };
+			String[] radixListData = {RADIX_HEX, RADIX_DECIMAL, RADIX_OCTAL, RADIX_BINARY};
 			radixList = new JComboBox(radixListData);
-			radixList.addActionListener(optionActionListener);
-			previousRadixListItem = "Hex";
+			radixList.addActionListener(e -> updateBinaryDisplay());
+			previousRadixListItem = RADIX_HEX;
 
 			showAscii = new JCheckBox(s_stringMgr.getString("popupeditableIoPanel.showAscii"));
 			previousShowAscii = false;
-			showAscii.addActionListener(optionActionListener);
+			showAscii.addActionListener(e -> updateBinaryDisplay());
 
 			JPanel displayControlsPanel = new JPanel();
 			// use default sequential layout
@@ -265,6 +243,62 @@ public class PopupEditableIOPanel extends JPanel
 
 		new PasteFromHistoryAttach(_textArea);
 	}
+
+	private void updateBinaryDisplay()
+	{
+		if(_dontReactToBinaryDisplayChanges)
+		{
+			return;
+		}
+
+		if( _reformatHandler.isReformatted() )
+		{
+			Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("popupEditableIoPanel.cannot.update.binary.display.while.reformatted"));
+			return;
+		}
+
+		// user asked to see binary data in a different format
+		int base = 16;	// default to hex
+		if (previousRadixListItem.equals(RADIX_DECIMAL)) base = 10;
+		else if (previousRadixListItem.equals(RADIX_OCTAL)) base = 8;
+		else if (previousRadixListItem.equals(RADIX_BINARY)) base = 2;
+
+		Byte[] bytes = BinaryDisplayConverter.convertToBytes(_textArea.getText(),
+																			  base, previousShowAscii);
+
+		// return the expected format for this data
+		base = 16;	// default to hex
+		if (Objects.equals(radixList.getSelectedItem(), RADIX_DECIMAL)) base = 10;
+		else if (Objects.equals(radixList.getSelectedItem(), RADIX_OCTAL)) base = 8;
+		else if (Objects.equals(radixList.getSelectedItem(), RADIX_BINARY)) base = 2;
+
+		((RestorableJTextArea) _textArea).updateText(
+				BinaryDisplayConverter.convertToString(bytes, base, showAscii.isSelected()));
+
+		previousRadixListItem = (String)radixList.getSelectedItem();
+		previousShowAscii = showAscii.isSelected();
+	}
+
+	private void onOriginalTextWasRestored()
+	{
+		if(null == radixList || null == showAscii)
+		{
+			return;
+		}
+
+		try
+		{
+			_dontReactToBinaryDisplayChanges = true;
+			previousRadixListItem = RADIX_HEX;
+			radixList.setSelectedItem(RADIX_HEX);
+			showAscii.setSelected(false);
+		}
+		finally
+		{
+			_dontReactToBinaryDisplayChanges = false;
+		}
+	}
+
 
 	/**
 	 * build the user interface for export/import operations
@@ -995,13 +1029,13 @@ public class PopupEditableIOPanel extends JPanel
 			// If the user has selected a non-cannonical Binary format, we need
 			// to convert the text appropriately
 			if (radixList != null &&
-				! (radixList.getSelectedItem().equals("Hex") &&
+				! (radixList.getSelectedItem().equals(RADIX_HEX) &&
 					showAscii.isSelected() == false) ) {
 				// we need to convert to a different format
 				int base = 16;	// default to hex
-				if (radixList.getSelectedItem().equals("Decimal")) base = 10;
-				else if (radixList.getSelectedItem().equals("Octal")) base = 8;
-				else if (radixList.getSelectedItem().equals("Binary")) base = 2;
+				if (radixList.getSelectedItem().equals(RADIX_DECIMAL)) base = 10;
+				else if (radixList.getSelectedItem().equals(RADIX_OCTAL)) base = 8;
+				else if (radixList.getSelectedItem().equals(RADIX_BINARY)) base = 2;
 
 				Byte[] bytes = BinaryDisplayConverter.convertToBytes(replacementText,
 					16, false);
@@ -1269,16 +1303,16 @@ public class PopupEditableIOPanel extends JPanel
 		// if the data is not binary, then there is no need for conversion.
 		// if the data is Hex with ASCII not shown as chars, then no conversion needed.
 		if (radixList == null ||
-			(radixList.getSelectedItem().equals("Hex") && ! showAscii.isSelected()) ) {
+			(radixList.getSelectedItem().equals(RADIX_HEX) && ! showAscii.isSelected()) ) {
 			// no need for conversion
 			return _textArea.getText();
 		}
 
 		// The field is binary and not in the format expected by the DataType
 		int base = 16;	// default to hex
-		if (radixList.getSelectedItem().equals("Decimal")) base = 10;
-		else if (radixList.getSelectedItem().equals("Octal")) base = 8;
-		else if (radixList.getSelectedItem().equals("Binary")) base = 2;
+		if (radixList.getSelectedItem().equals(RADIX_DECIMAL)) base = 10;
+		else if (radixList.getSelectedItem().equals(RADIX_OCTAL)) base = 8;
+		else if (radixList.getSelectedItem().equals(RADIX_BINARY)) base = 2;
 
 		// the following can cause and exception if the text is not formatted correctly
 		Byte[] bytes = BinaryDisplayConverter.convertToBytes(_textArea.getText(),

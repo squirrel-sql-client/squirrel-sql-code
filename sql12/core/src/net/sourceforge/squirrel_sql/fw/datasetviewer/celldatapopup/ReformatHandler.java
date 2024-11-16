@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DisplayAsciiMode;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -13,14 +15,20 @@ public class ReformatHandler
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ReformatHandler.class);
 
    private final JTextArea _textArea;
+   private final ReformatHandlerListener _reformatHandlerListener;
+   private final boolean _originalUnformattedTextIsBinaryBase16BinaryData;
    private final JToggleButton _btnReformat;
    private String _originalUnformattedText;
    private boolean _reformatSilently = false;
 
-   public ReformatHandler(JTextArea textAreaWithOriginalUnformatedText)
+   public ReformatHandler(JTextArea textAreaWithOriginalUnformattedText,
+                          boolean originalUnformattedTextIsBinaryBase16BinaryData,
+                          ReformatHandlerListener reformatHandlerListener)
    {
-      _textArea = textAreaWithOriginalUnformatedText;
+      _textArea = textAreaWithOriginalUnformattedText;
+      _reformatHandlerListener = reformatHandlerListener;
       _originalUnformattedText = _textArea.getText();
+      _originalUnformattedTextIsBinaryBase16BinaryData = originalUnformattedTextIsBinaryBase16BinaryData;
 
       _btnReformat = new JToggleButton(s_stringMgr.getString("ReformatHandler.reformatXml"));
       //GUIUtils.setPreferredWidth(reformatButton, (int) (((double) reformatButton.getPreferredSize().width) * 1.2d));
@@ -76,7 +84,15 @@ public class ReformatHandler
    {
       if(_btnReformat.isSelected())
       {
-         FormattingResult formattingResult = CellDataPopupFormatter.format(_textArea.getText(), _reformatSilently);
+         String text = _textArea.getText();
+
+         if(_originalUnformattedTextIsBinaryBase16BinaryData)
+         {
+            Byte[] bytes = BinaryDisplayConverter.convertToBytes(_originalUnformattedText, 16, false);
+            text = BinaryDisplayConverter.convertToString(bytes, 16, DisplayAsciiMode.ASCII_NO_ADDITIONAL_SPACES);
+         }
+
+         FormattingResult formattingResult = CellDataPopupFormatter.format(text, _reformatSilently);
          if(formattingResult.isSuccess())
          {
             _textArea.setText(formattingResult.getResult());
@@ -89,7 +105,12 @@ public class ReformatHandler
       else
       {
          _textArea.setText(_originalUnformattedText);
+         _reformatHandlerListener.originalTextWasRestored();
       }
    }
 
+   public boolean isReformatted()
+   {
+      return _btnReformat.isSelected();
+   }
 }

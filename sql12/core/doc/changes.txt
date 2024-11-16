@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/47
+  Table cell data popup dialog: XML/Json Reformatting now works for binary/BLOB data.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/46
   SQL result and table export to MS-Excel files: New options to make exported sheets
   auto filtered and to choose if header rows are bold, centered and/or frozen.

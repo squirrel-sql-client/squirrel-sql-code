@@ -92,8 +92,13 @@ public class BinaryDisplayConverter {
 	/**
 	 * Convert from an array of Bytes into a string.
 	 */
-	public static String convertToString(Byte[] data, int base, boolean showAscii) {
-		
+	public static String convertToString(Byte[] data, int base, boolean showAscii)
+	{
+		return convertToString(data, base, showAscii ? DisplayAsciiMode.ASCII_DEFAULT : DisplayAsciiMode.ASCII_NO);
+	}
+
+	public static String convertToString(Byte[] data, int base, DisplayAsciiMode displayAsciiMode) {
+
 		// handle null
 		if (data == null)
 			return null;
@@ -110,11 +115,20 @@ public class BinaryDisplayConverter {
 
 			// if user wants to see ASCII chars as characters,
 			// see if this is one that should be displayed that way
-			if(showAscii)
+			if(DisplayAsciiMode.isShowAscii(displayAsciiMode))
 			{
 				if(printable.indexOf((char) value) > -1)
 				{
-					s = Character.valueOf((char) value) + "          ".substring(10 - (convConst.width - 1));
+					s = Character.toString((char) value);
+
+					if(displayAsciiMode == DisplayAsciiMode.ASCII_DEFAULT)
+               {
+                  s += "          ".substring(10 - (convConst.width - 1));
+               }
+            }
+				else if(displayAsciiMode == DisplayAsciiMode.ASCII_NO_ADDITIONAL_SPACES && Character.isWhitespace((char) value))
+				{
+					s = Character.toString((char) value);
 				}
 			}
 
@@ -156,8 +170,12 @@ public class BinaryDisplayConverter {
 				}
 			}
 			buf.append(s);
-			buf.append("  ");   // always add spaces at end for consistancy
-		}
+
+			if(displayAsciiMode != DisplayAsciiMode.ASCII_NO_ADDITIONAL_SPACES)
+         {
+            buf.append("  ");   // always add spaces at end for consistancy
+         }
+      }
 		return buf.toString();
 	}
 	
