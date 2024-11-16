@@ -227,20 +227,18 @@ public class PopupEditableIOPanel extends JPanel
 			radixList.addActionListener(optionActionListener);
 			previousRadixListItem = "Hex";
 
-			showAscii = new JCheckBox();
+			showAscii = new JCheckBox(s_stringMgr.getString("popupeditableIoPanel.showAscii"));
 			previousShowAscii = false;
 			showAscii.addActionListener(optionActionListener);
 
 			JPanel displayControlsPanel = new JPanel();
 			// use default sequential layout
 
-			// i18n[popupeditableIoPanel.numberBase=Number Base:]
 			displayControlsPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.numberBase")));
 			displayControlsPanel.add(radixList);
 			displayControlsPanel.add(new JLabel("    "));	// add some space
 			displayControlsPanel.add(showAscii);
-			// i18n[popupeditableIoPanel.showAscii=Show ASCII as chars]
-			displayControlsPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.showAscii")));
+			//displayControlsPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.showAscii")));
 			displayPanel.add(displayControlsPanel, BorderLayout.SOUTH);
 		}
 		add(displayPanel, BorderLayout.CENTER);

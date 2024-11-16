@@ -103,45 +103,60 @@ public class BinaryDisplayConverter {
 		ConversionConstants convConst = getConstants(base);
 		
 		// Convert each byte and put into string buffer
-		for (int i=0; i < data.length; i++) {
+		for(int i = 0; i < data.length; i++)
+		{
 			int value = data[i].byteValue();
 			String s = null;
-			
+
 			// if user wants to see ASCII chars as characters,
 			// see if this is one that should be displayed that way
-			if (showAscii) {
-				if (printable.indexOf((char)value) > -1) {
-					s = Character.valueOf((char)value) +
-						"          ".substring(10-(convConst.width - 1));
+			if(showAscii)
+			{
+				if(printable.indexOf((char) value) > -1)
+				{
+					s = Character.valueOf((char) value) + "          ".substring(10 - (convConst.width - 1));
 				}
 			}
-			
+
 			// if use is not looking for ASCII chars, or if this one is one that
 			// is not printable, then convert it into numeric form
-			if (s == null) {
-				switch (base) {
-					case DECIMAL:	
+			if(s == null)
+			{
+				switch(base)
+				{
+					case DECIMAL:
 						// convert signed to unsigned
-						if (value < 0)
+						if(value < 0)
+						{
 							value = 256 + value;
-						s = Integer.toString(value); break;
-					case OCTAL:		s = Integer.toOctalString(value); break;
-					case BINARY:	s = Integer.toBinaryString(value); break;
-					case HEX:	// fall through to default
+						}
+						s = Integer.toString(value);
+						break;
+					case OCTAL:
+						s = Integer.toOctalString(value);
+						break;
+					case BINARY:
+						s = Integer.toBinaryString(value);
+						break;
+					case HEX:   // fall through to default
 					default:
 						s = Integer.toHexString(value);
 				}
 				// some formats (e.g. hex & octal) extend a negative number to multiple places
 				// (e.g. FC becomes FFFC), so chop off extra stuff in front
-				if (s.length() > convConst.width)
+				if(s.length() > convConst.width)
+				{
 					s = s.substring(s.length() - convConst.width);
-			
+				}
+
 				// front pad with zeros and add to output
-				if (s.length() < convConst.width)
-					buf.append("00000000".substring(8-(convConst.width - s.length())));
+				if(s.length() < convConst.width)
+				{
+					buf.append("00000000".substring(8 - (convConst.width - s.length())));
+				}
 			}
 			buf.append(s);
-			buf.append("  ");	// always add spaces at end for consistancy
+			buf.append("  ");   // always add spaces at end for consistancy
 		}
 		return buf.toString();
 	}
