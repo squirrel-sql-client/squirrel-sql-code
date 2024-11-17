@@ -81,7 +81,9 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tokenizer.MysqlQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.mysql.types.MySQL5ByteTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.mysql.types.MySQL5SmallIntTypeDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.plugins.mysql.types.MySQLByteTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.mysql.types.MySQLSmallIntTypeDataTypeComponentFactory;
 
 import javax.swing.JMenu;
 
@@ -289,8 +291,11 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		
       /* Register custom DataTypeComponent factory for MySQL TINYINT UNSIGNED type */
       Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new MySQLByteTypeDataTypeComponentFactory());
-      /* Register custom DataTypeComponent factory for MySQL TINYINT UNSIGNED type */
       Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new MySQL5ByteTypeDataTypeComponentFactory());
+
+      /* Register custom DataTypeComponent factory for MySQL SMALLINT UNSIGNED type */
+      Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new MySQLSmallIntTypeDataTypeComponentFactory());
+      Main.getApplication().getDataTypeComponentFactoryRegistry().registerDataTypeFactory(new MySQL5SmallIntTypeDataTypeComponentFactory());
 
    }
 

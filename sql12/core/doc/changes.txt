@@ -74,6 +74,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+#1531 MySQL Plugin: SMALLINT UNSIGNED columns showed <Error> when the fields value exceeded 32767.
+  Note: To work with MYSQL SMALLINT UNSIGNED or TINYINT UNSIGNED types the MySQL Plugin must be installed.
+
 SQL editor/SQL result tabs/marking SQL result tab headers:
   Memory and CPU usage was improved in case SQLs where compared
   disregarding comments line feeds and other white spaces.
