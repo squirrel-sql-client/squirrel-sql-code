@@ -74,6 +74,10 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+#1530 Memory leak: SQL result tabs were not garbage collect as long as their Session was open.
+  Note: When a result tab of an open Session gets garbage collected the following line appears is SQuirreL's logs:
+  ...INFO ... Result tab finalized for open Session "<...>" with id=<...>
+
 #1531 MySQL Plugin: SMALLINT UNSIGNED columns showed <Error> when the fields value exceeded 32767.
   Note: To work with MYSQL's SMALLINT UNSIGNED or TINYINT UNSIGNED types the MySQL Plugin must be installed.
 

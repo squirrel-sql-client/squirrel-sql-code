@@ -152,7 +152,17 @@ public class ResultTabMatchingCurrentSqlHandler
          return;
       }
 
-      _paintTimer.stop();
-      _entryPanel.removeTextAreaPaintListener(_textAreaPaintListener);
+      try
+      {
+         _paintTimer.stop();
+         _paintTimer = null;
+         _entryPanel.removeTextAreaPaintListener(_textAreaPaintListener);
+         _textAreaPaintListener = null;
+      }
+      finally
+      {
+         _resultTabHeaderMarkingActive = false;
+      }
+
    }
 }

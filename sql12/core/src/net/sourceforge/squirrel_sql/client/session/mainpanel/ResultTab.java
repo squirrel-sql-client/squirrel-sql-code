@@ -23,20 +23,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
@@ -76,6 +62,22 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 {
@@ -132,6 +134,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private AdditionalResultTabsController _additionalResultTabsController;
    private MarkDuplicatesChooserController _markDuplicatesChooserController;
    private ShowCellDetailCtrl _showCellDetailCtrl;
+
+   private List<ResultTabCloseListener> _resultTabCloseListenerList = new ArrayList<>();
 
    /**
     * Ctor.
@@ -376,6 +380,16 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		return StringUtilities.cleanString(getOriginalSqlString());
 	}
 
+   /**
+    * No need to remove this Listener, Closing the ResultTab will clear the listener list.
+    */
+   @Override
+   public void addResultTabCloseListener(ResultTabCloseListener l)
+   {
+      _resultTabCloseListenerList.remove(l);
+      _resultTabCloseListenerList.add(l);
+   }
+
    public void disposeTab()
    {
       if (_metaDataDataSetViewerFindHandler != null)
@@ -389,6 +403,17 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _exInfo = null;
       _currentSqlLblCtrl.clear();
       _sql = "";
+
+      for( ResultTabCloseListener l : _resultTabCloseListenerList.toArray(new ResultTabCloseListener[0]) )
+      {
+         l.resultTabClosed();
+      }
+      _resultTabCloseListenerList.clear();
+
+      if(null != _resultDataSetViewerFindHandler && null != _resultDataSetViewerFindHandler.getDataSetViewer())
+      {
+         _resultDataSetViewerFindHandler.getDataSetViewer().setContinueReadChannel(null);
+      }
 
       _rsds.closeStatementAndResultSet();
    }
@@ -756,5 +781,14 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    public void selectSQLResultTabSelected()
    {
       _tabResultTabs.setSelectedIndex(0);
+   }
+
+   @Override
+   protected void finalize()
+   {
+      if(false == _session.isClosed())
+      {
+         s_log.info("Result tab finalized for open Session \"" + _session.getTitle() + "\" with id=" + _session.getIdentifier());
+      }
    }
 }

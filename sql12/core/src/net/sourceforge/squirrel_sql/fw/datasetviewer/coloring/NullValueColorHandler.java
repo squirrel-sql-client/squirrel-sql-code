@@ -6,13 +6,13 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 
 import java.awt.Color;
-import java.beans.PropertyChangeEvent;
 
 public class NullValueColorHandler
 {
    private boolean _colorNullValues;
    private DataSetViewerTable _dataSetViewerTable;
    private Color _nullValueColor;
+   private long _lastPropertiesCheckTime;
 
    public NullValueColorHandler(DataSetViewerTable dataSetViewerTable)
    {
@@ -29,31 +29,39 @@ public class NullValueColorHandler
       {
          _nullValueColor = new Color(session.getProperties().getNullValueColorRGB());
          _colorNullValues = session.getProperties().isColorNullValues();
-         session.getProperties().addPropertyChangeListener(evt -> onPropertyChange(evt));
       }
 
-
-   }
-
-   private void onPropertyChange(PropertyChangeEvent evt)
-   {
-      if(SessionProperties.IPropertyNames.COLOR_NULL_VALUES.equals(evt.getPropertyName())
-         || SessionProperties.IPropertyNames.NULL_VALUE_COLOR_RGB.equals(evt.getPropertyName())
-      )
-      {
-         _nullValueColor = new Color(_dataSetViewerTable.getSessionOrNull().getProperties().getNullValueColorRGB());
-         _colorNullValues = _dataSetViewerTable.getSessionOrNull().getProperties().isColorNullValues();
-         _dataSetViewerTable.repaint();
-      }
+      _lastPropertiesCheckTime = System.currentTimeMillis();
    }
 
    public Color getNullValueColor()
    {
+      checkForPropertiesUpdates();
       return _nullValueColor;
    }
 
    public boolean isColorNullValues()
    {
+      checkForPropertiesUpdates();
       return _colorNullValues;
+   }
+
+   private void checkForPropertiesUpdates()
+   {
+      long currentTimeMillis = System.currentTimeMillis();
+      if(currentTimeMillis - _lastPropertiesCheckTime < 2000)
+      {
+         return;
+      }
+
+      _lastPropertiesCheckTime = currentTimeMillis;
+
+      if(   _nullValueColor.getRGB() != _dataSetViewerTable.getSessionOrNull().getProperties().getNullValueColorRGB()
+         || _colorNullValues != _dataSetViewerTable.getSessionOrNull().getProperties().isColorNullValues())
+      {
+         _nullValueColor = new Color(_dataSetViewerTable.getSessionOrNull().getProperties().getNullValueColorRGB());
+         _colorNullValues = _dataSetViewerTable.getSessionOrNull().getProperties().isColorNullValues();
+         _dataSetViewerTable.repaint();
+      }
    }
 }

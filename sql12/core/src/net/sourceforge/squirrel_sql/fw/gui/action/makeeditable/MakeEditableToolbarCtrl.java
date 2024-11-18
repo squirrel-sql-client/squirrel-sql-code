@@ -13,7 +13,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JToggleButton;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,7 @@ public class MakeEditableToolbarCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MakeEditableToolbarCtrl.class);
 
-
-   private final ResultTab _resultTab;
+   private ResultTab _resultTab;
    private final ISession _session;
    private JToggleButton _button;
 
@@ -31,6 +32,11 @@ public class MakeEditableToolbarCtrl
    {
       _resultTab = resultTab;
       _session = session;
+
+      if(null != _resultTab)
+      {
+         _resultTab.addResultTabCloseListener(() -> _resultTab = null);
+      }
    }
 
    public JToggleButton getTabButton()

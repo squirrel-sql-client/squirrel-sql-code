@@ -12,6 +12,11 @@ public class ResultTabProvider
    public ResultTabProvider(IResultTab resultTab)
    {
       _resultTab = resultTab;
+
+      if(null != _resultTab)
+      {
+         _resultTab.addResultTabCloseListener(() -> _resultTab = null);
+      }
    }
 
    public boolean setSQLPanelAPI(ISQLPanelAPI panel)
