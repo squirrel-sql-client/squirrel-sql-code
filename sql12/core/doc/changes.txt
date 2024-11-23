@@ -76,6 +76,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Follow up to #1530: The number of a Session's finalized result tabs do not appear in SQuirreL's logs anymore
+  but in the "Session garbage collection status", see button on the left of the garbage collection button.
+
 Follow up to https://github.com/squirrel-sql-client/squirrel-sql-code/issues/46
 SQL result and table export to MS-Excel files: The options to make header rows bold and centered did not
   work for MS-Excel but for Libre Office only.

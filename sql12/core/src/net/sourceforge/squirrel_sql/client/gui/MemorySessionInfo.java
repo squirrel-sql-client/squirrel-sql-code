@@ -22,6 +22,7 @@ class MemorySessionInfo implements Comparable<MemorySessionInfo>
    java.util.Date created = new Date();
    Date closed;
    Date finalized;
+   int countFinalizedResultTabsWhileSessionOpen;
 
    public String toString()
    {
@@ -32,24 +33,22 @@ class MemorySessionInfo implements Comparable<MemorySessionInfo>
                   sessionId,
                   aliasName,
                   df.format(created),
+                  countFinalizedResultTabsWhileSessionOpen,
                   null == closed ? "" : df.format(closed),
-                  null == finalized ? "" : df.format(finalized)
+                  null == finalized ? "" : df.format(finalized),
             };
 
       if (null != closed && null == finalized)
       {
-         // i18n[MemoryPanel.sessionInfo.toString1=Session: ID={0}, Alias={1}: created at {2}, closed at {3}]
-         return s_stringMgr.getString("MemoryPanel.sessionInfo.toString1", params);
+         return s_stringMgr.getString("MemoryPanel.sessionInfo.toString1.incl.res.tab", params);
       }
       else if (null == closed)
       {
-         // i18n[MemoryPanel.sessionInfo.toString2=Session: ID={0}, Alias={1}: created at {2}]
-         return s_stringMgr.getString("MemoryPanel.sessionInfo.toString2", params);
+         return s_stringMgr.getString("MemoryPanel.sessionInfo.toString2.incl.res.tab", params);
       }
       else if (null != finalized)
       {
-         // i18n[MemoryPanel.sessionInfo.toString3=Session: ID={0}, Alias={1}: created at {2}, closed at {3}, finalized at {4}]
-         return s_stringMgr.getString("MemoryPanel.sessionInfo.toString3", params);
+         return s_stringMgr.getString("MemoryPanel.sessionInfo.toString3.incl.res.tab", params);
       }
       else
       {

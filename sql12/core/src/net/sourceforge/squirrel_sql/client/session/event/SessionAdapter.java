@@ -36,12 +36,10 @@ public class SessionAdapter implements ISessionListener
 	 */
 	public void sessionClosed(SessionEvent evt)
 	{
-		// Empty body.
 	}
 
 	public void allSessionsClosed()
 	{
-		//Empty body
 	}
 
 	/**
@@ -49,17 +47,14 @@ public class SessionAdapter implements ISessionListener
 	 */
 	public void sessionClosing(SessionEvent evt)
 	{
-		//Empty Bbody
 	}
 
 	public void sessionConnected(SessionEvent evt)
 	{
-		//Empty Body
 	}
 
 	public void sessionActivated(SessionEvent evt)
 	{
-		//Empty Body
 	}
 
 	public void connectionClosedForReconnect(SessionEvent evt)
@@ -77,4 +72,9 @@ public class SessionAdapter implements ISessionListener
 	public void sessionFinalized(IIdentifier sessionIdentifier)
 	{
 	}
+
+   @Override
+   public void resultTabOfOpenSessionFinalized(IIdentifier sessionIdentifier)
+   {
+   }
 }

@@ -126,11 +126,7 @@ public class MemoryPanel extends JPanel
 			public void sessionClosed(SessionEvent evt)
 			{
 				IIdentifier id = evt.getSession().getIdentifier();
-				MemorySessionInfo msi = _sessionInfosBySessionIDs.get(id);
-				if(null == msi)
-				{
-					throw new IllegalStateException("A session with ID " + id + " has not been created");
-				}
+				MemorySessionInfo msi = getMemorySessionInfo(id);
 				msi.closed = new Date();
 				updateGcStatus();
 			}
@@ -149,13 +145,15 @@ public class MemoryPanel extends JPanel
 
 			public void sessionFinalized(IIdentifier sessionId)
 			{
-				MemorySessionInfo msi = _sessionInfosBySessionIDs.get(sessionId);
-				if(null == msi)
-				{
-					throw new IllegalStateException("A session with ID " + sessionId + " has not been created");
-				}
+				MemorySessionInfo msi = getMemorySessionInfo(sessionId);
 				msi.finalized = new Date();
 				updateGcStatus();
+			}
+
+			@Override
+			public void resultTabOfOpenSessionFinalized(IIdentifier sessionId)
+			{
+				++getMemorySessionInfo(sessionId).countFinalizedResultTabsWhileSessionOpen;
 			}
 		});
 
@@ -168,6 +166,16 @@ public class MemoryPanel extends JPanel
 		});
 		t.start();
 
+	}
+
+	private MemorySessionInfo getMemorySessionInfo(IIdentifier id)
+	{
+		MemorySessionInfo msi = _sessionInfosBySessionIDs.get(id);
+		if(null == msi)
+		{
+			throw new IllegalStateException("A session with ID " + id + " has not been created");
+		}
+		return msi;
 	}
 
 	private void updateGcStatus()

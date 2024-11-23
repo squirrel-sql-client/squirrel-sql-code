@@ -66,4 +66,6 @@ public interface ISessionListener extends EventListener
 	void reconnectFailed(SessionEvent evt);
 
 	void sessionFinalized(IIdentifier sessionIdentifier);
+
+	void resultTabOfOpenSessionFinalized(IIdentifier sessionIdentifier);
 }

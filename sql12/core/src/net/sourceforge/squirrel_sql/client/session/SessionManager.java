@@ -571,8 +571,26 @@ public class SessionManager
             }
          }
       });
-
    }
+
+   public void fireResultTabOfOpenSessionFinalized(IIdentifier sessionIdentifier)
+   {
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            Object[] listeners = listenerList.getListenerList();
+            for (int i = listeners.length - 2; i >= 0; i -= 2)
+            {
+               if (listeners[i] == ISessionListener.class)
+               {
+                  ((ISessionListener)listeners[i + 1]).resultTabOfOpenSessionFinalized(sessionIdentifier);
+               }
+            }
+         }
+      });
+   }
+
 
    public void addAllowedSchemaChecker(IAllowedSchemaChecker allowedSchemaChecker)
    {

@@ -23,6 +23,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
@@ -788,7 +789,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    {
       if(false == _session.isClosed())
       {
-         s_log.info("Result tab finalized for open Session \"" + _session.getTitle() + "\" with id=" + _session.getIdentifier());
+         //s_log.info("Result tab finalized for open Session \"" + _session.getTitle() + "\" with id=" + _session.getIdentifier());
+         Main.getApplication().getSessionManager().fireResultTabOfOpenSessionFinalized(_session.getIdentifier());
+
       }
    }
 }
