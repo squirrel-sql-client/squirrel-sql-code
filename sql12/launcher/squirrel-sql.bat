@@ -30,7 +30,7 @@ set basedir=%basedir:~0,-1%
 if NOT "%removed%"=="\" goto strip
 set SQUIRREL_SQL_HOME=%basedir%
 
-"%LOCAL_JAVA%" -cp "%SQUIRREL_SQL_HOME%\lib\versioncheck.jar" JavaVersionChecker 11 12 13 14 15 16 17 18 19 20 21 22
+"%LOCAL_JAVA%" -cp "%SQUIRREL_SQL_HOME%\lib\versioncheck.jar" JavaVersionChecker 11 12 13 14 15 16 17 18 19 20 21 22 23
 if ErrorLevel 1 goto ExitForWrongJavaVersion
 
 :launchsquirrel

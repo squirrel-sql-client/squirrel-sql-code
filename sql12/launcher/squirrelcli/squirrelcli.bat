@@ -34,7 +34,7 @@ set SQUIRREL_CLI_HOME=%basedir%
 @rem that version of higher.  The arguments to JavaVersionChecker below specify the minimum acceptable version
 @rem (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should be all that is
 @rem necessary for the version form.
-"%LOCAL_JAVA%" -cp "%SQUIRREL_CLI_HOME%\..\lib\versioncheck.jar" JavaVersionChecker 11 12 13 14 15 16 17 18 19 20 21 22
+"%LOCAL_JAVA%" -cp "%SQUIRREL_CLI_HOME%\..\lib\versioncheck.jar" JavaVersionChecker 11 12 13 14 15 16 17 18 19 20 21 22 23
 if ErrorLevel 1 goto ExitForWrongJavaVersion
 
 :launchsquirrel
