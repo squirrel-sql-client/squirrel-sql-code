@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -9,6 +11,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class ExcelHeaderRowBuilder
 {
    private Row _headerRow;
+   private CellStyle _headerCellStyle;
 
    public ExcelHeaderRowBuilder(TableExportPreferences prefs, Sheet sheet, Workbook workbook)
    {
@@ -18,31 +21,39 @@ public class ExcelHeaderRowBuilder
          _headerRow = sheet.createRow(0);
       }
 
-      CellStyle cellStyle = null;
+      _headerCellStyle = null;
       if(prefs.isExcelFirstRowBold())
       {
-         cellStyle = workbook.createCellStyle();
+         _headerCellStyle = workbook.createCellStyle();
 
          Font boldFont = workbook.createFont();
-         boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-         cellStyle.setFont(boldFont);
-         _headerRow.setRowStyle(cellStyle);
+         //boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+         boldFont.setBold(true);
+         _headerCellStyle.setFont(boldFont);
+         //_headerRow.setRowStyle(cellStyle); does not work
       }
 
       if(prefs.isExcelFirstRowCentered())
       {
-         if(null == cellStyle)
+         if(null == _headerCellStyle)
          {
-            cellStyle = workbook.createCellStyle();
+            _headerCellStyle = workbook.createCellStyle();
          }
 
-         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-         _headerRow.setRowStyle(cellStyle);
+         _headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+         //_headerRow.setRowStyle(cellStyle); does not work
       }
    }
 
-   public Row getHeaderRow()
+   public Cell createHeaderCell(int colIdx)
    {
-      return _headerRow;
+      Cell ret = _headerRow.createCell(colIdx);
+
+      if(null != _headerCellStyle)
+      {
+         ret.setCellStyle(_headerCellStyle);
+      }
+
+      return ret;
    }
 }

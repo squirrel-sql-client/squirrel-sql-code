@@ -74,6 +74,14 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Follow up to https://github.com/squirrel-sql-client/squirrel-sql-code/issues/46
+SQL result and table export to MS-Excel files: The options to make header rows bold and centered did not
+  work for MS-Excel but for Libre Office only.
+  Details of the fix:
+  - Apache-Poi was upgraded to version 5.3.0.
+  - SQuirreL deliberately dropped dependency on Log4J in 2022. As Apache-Poi 5.3.0 directly depends
+    on Log4J, SQuirreL now has a Log4J mock to make Apache-Poi 5.3.0 work.
+
 #1530 Memory leak: SQL result tabs were not garbage collect as long as their Session was open.
   Note: When a result tab of an open Session gets garbage collected the following line appears is SQuirreL's logs:
   ...INFO ... Result tab finalized for open Session "<...>" with id=<...>

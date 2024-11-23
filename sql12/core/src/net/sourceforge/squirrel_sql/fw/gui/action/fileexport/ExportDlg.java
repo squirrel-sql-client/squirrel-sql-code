@@ -215,16 +215,9 @@ public class ExportDlg extends JDialog
       chkExcelFirstRowCentered = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.excel.option.first.row.centered"));
       ret.add(chkExcelFirstRowCentered, gbc);
 
-      gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("TableExportCsvDlg.option.first.row.centered.xlsx.only")).getButton(), gbc);
-
-
-      gbc = new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 3, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 3, 0, 0), 0, 0);
       chkExcelFirstRowBold = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.excel.option.first.row.bold"));
       ret.add(chkExcelFirstRowBold, gbc);
-
-      gbc = new GridBagConstraints(5, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("TableExportCsvDlg.option.first.row.bold.xlsx.only")).getButton(), gbc);
 
       return ret;
    }

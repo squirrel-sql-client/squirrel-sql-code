@@ -4,6 +4,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -51,7 +52,7 @@ public class ExcelCellColorer
       XSSFCellStyle cellStyle = excelCell.getSheet().getWorkbook().createCellStyle();
 
 
-      final XSSFColor xssfColor = new XSSFColor(color);
+      final XSSFColor xssfColor = new XSSFColor(color, new DefaultIndexedColorMap());
       cellStyle.setFillForegroundColor(xssfColor);
       //cellStyle.setFillBackgroundColor(xssfColor);
 

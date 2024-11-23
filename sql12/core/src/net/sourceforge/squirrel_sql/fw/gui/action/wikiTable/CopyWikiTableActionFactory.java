@@ -18,19 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
-import java.util.Collection;
-import java.util.List;
+import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-
-import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.util.Collection;
 
 /**
  * Factory, which creates the {@link CopyWikiTableAction} menu structure.
@@ -152,7 +149,8 @@ public class CopyWikiTableActionFactory implements ICopyWikiTableActionFactory {
 	 * @author Stefan Willinger
 	 * @see IWikiTableConfiguration#isEnabled()
 	 */
-	private static class EnabledConfigurationPredicate implements Predicate{
+	private static class EnabledConfigurationPredicate implements Predicate
+	{
 
 		/**
 		 * @see org.apache.commons.collections.Predicate#evaluate(java.lang.Object)

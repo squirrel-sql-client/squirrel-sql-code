@@ -124,9 +124,9 @@ public class DataExportExcelWriter
          int colIdx = 0;
          while (headerColumns.hasNext())
          {
-            Row headerRow = excelHeaderRowBuilder.getHeaderRow();
 
-            Cell cell = headerRow.createCell(colIdx);
+            //Cell cell = headerRow.createCell(colIdx);
+            Cell cell = excelHeaderRowBuilder.createHeaderCell(colIdx);
             cell.setCellValue(headerColumns.next());
 
             colIdx++;

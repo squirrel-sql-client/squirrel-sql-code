@@ -20,8 +20,13 @@ package net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.e
 import net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.IFileImporter;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,14 +69,14 @@ public class ExcelFileImporter implements IFileImporter
     */
    public boolean open() throws IOException
    {
-      try
-      {
+      //try
+      //{
          workbook = WorkbookFactory.create(importFile);
-      }
-      catch (InvalidFormatException fe)
-      {
-         throw new IOException(fe.toString());
-      }
+      //}
+      //catch (InvalidFormatException fe)
+      //{
+      //   throw new IOException(fe.toString());
+      //}
       reset();
       return true;
    }
@@ -93,15 +98,15 @@ public class ExcelFileImporter implements IFileImporter
       String[][] data = null;
       Workbook wb = null;
       Sheet sht = null;
-      try
-      {
+      //try
+      //{
          wb = WorkbookFactory.create(importFile);
          sht = getSheet(wb);
-      }
-      catch (InvalidFormatException fe)
-      {
-         throw new IOException(fe.toString());
-      }
+      //}
+      //catch (InvalidFormatException fe)
+      //{
+      //   throw new IOException(fe.toString());
+      //}
 
       ExcelRowReader excelRowReader = new ExcelRowReader(sht);
       if(0 == excelRowReader.getNumberOfNonNullRows())
@@ -226,7 +231,7 @@ public class ExcelFileImporter implements IFileImporter
       }
 
 
-      if (cell.getCellType() == Cell.CELL_TYPE_STRING)
+      if (cell.getCellType() == CellType.STRING)
       {
          String buf = getString(column);
 
@@ -261,7 +266,7 @@ public class ExcelFileImporter implements IFileImporter
          return null;
       }
 
-      if (cell.getCellType() == Cell.CELL_TYPE_STRING)
+      if (cell.getCellType() == CellType.STRING)
       {
 
          String buf = getString(column);

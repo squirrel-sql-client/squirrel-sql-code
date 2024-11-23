@@ -194,8 +194,8 @@ public class ExportController
 
          _dlg.chkExcelAutoFilter.setEnabled(true);
          _dlg.chkExcelFirstRowFrozen.setEnabled(true);
-         _dlg.chkExcelFirstRowCentered.setEnabled(_dlg.radFormatXLSX.isSelected());
-         _dlg.chkExcelFirstRowBold.setEnabled(_dlg.radFormatXLSX.isSelected());
+         _dlg.chkExcelFirstRowCentered.setEnabled(true);
+         _dlg.chkExcelFirstRowBold.setEnabled(true);
 
 
          if(replaceEnding)
