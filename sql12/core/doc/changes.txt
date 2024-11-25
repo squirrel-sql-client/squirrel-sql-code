@@ -79,6 +79,8 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Fixed NullPointer in class NullValueColorHandler.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/46
   Excel export: The "Auto filter" option activated the auto filter for
   one extra (empty) column at the end of the Excel sheet.

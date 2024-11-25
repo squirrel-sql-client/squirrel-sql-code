@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
 
+import java.awt.Color;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-
-import java.awt.Color;
 
 public class NullValueColorHandler
 {
@@ -56,12 +56,18 @@ public class NullValueColorHandler
 
       _lastPropertiesCheckTime = currentTimeMillis;
 
+      if( null != _dataSetViewerTable.getSessionOrNull() )
+      {
+         return;
+      }
+
       if(   _nullValueColor.getRGB() != _dataSetViewerTable.getSessionOrNull().getProperties().getNullValueColorRGB()
-         || _colorNullValues != _dataSetViewerTable.getSessionOrNull().getProperties().isColorNullValues())
+            || _colorNullValues != _dataSetViewerTable.getSessionOrNull().getProperties().isColorNullValues())
       {
          _nullValueColor = new Color(_dataSetViewerTable.getSessionOrNull().getProperties().getNullValueColorRGB());
          _colorNullValues = _dataSetViewerTable.getSessionOrNull().getProperties().isColorNullValues();
          _dataSetViewerTable.repaint();
       }
+
    }
 }
