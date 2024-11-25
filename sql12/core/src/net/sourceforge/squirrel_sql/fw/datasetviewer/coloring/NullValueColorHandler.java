@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
 
-import java.awt.Color;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
+
+import java.awt.Color;
 
 public class NullValueColorHandler
 {
@@ -18,20 +18,28 @@ public class NullValueColorHandler
    {
       _dataSetViewerTable = dataSetViewerTable;
 
+      final SessionProperties sessionProperties;
+
+      sessionProperties = getSessionProperties();
+      _nullValueColor = new Color(sessionProperties.getNullValueColorRGB());
+      _colorNullValues = sessionProperties.isColorNullValues();
+
+      _lastPropertiesCheckTime = System.currentTimeMillis();
+   }
+
+   private SessionProperties getSessionProperties()
+   {
+      final SessionProperties sessionProperties;
       final ISession session = _dataSetViewerTable.getSessionOrNull();
       if(null == session)
       {
-         final SessionProperties newSessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();
-         _nullValueColor = new Color(newSessionProperties.getNullValueColorRGB());
-         _colorNullValues = newSessionProperties.isColorNullValues();
+         sessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();
       }
       else
       {
-         _nullValueColor = new Color(session.getProperties().getNullValueColorRGB());
-         _colorNullValues = session.getProperties().isColorNullValues();
+         sessionProperties = session.getProperties();
       }
-
-      _lastPropertiesCheckTime = System.currentTimeMillis();
+      return sessionProperties;
    }
 
    public Color getNullValueColor()
@@ -56,16 +64,13 @@ public class NullValueColorHandler
 
       _lastPropertiesCheckTime = currentTimeMillis;
 
-      if( null != _dataSetViewerTable.getSessionOrNull() )
-      {
-         return;
-      }
+      SessionProperties sessionProperties = getSessionProperties();
 
-      if(   _nullValueColor.getRGB() != _dataSetViewerTable.getSessionOrNull().getProperties().getNullValueColorRGB()
-            || _colorNullValues != _dataSetViewerTable.getSessionOrNull().getProperties().isColorNullValues())
+      if(   _nullValueColor.getRGB() != sessionProperties.getNullValueColorRGB()
+            || _colorNullValues != sessionProperties.isColorNullValues())
       {
-         _nullValueColor = new Color(_dataSetViewerTable.getSessionOrNull().getProperties().getNullValueColorRGB());
-         _colorNullValues = _dataSetViewerTable.getSessionOrNull().getProperties().isColorNullValues();
+         _nullValueColor = new Color(sessionProperties.getNullValueColorRGB());
+         _colorNullValues = sessionProperties.isColorNullValues();
          _dataSetViewerTable.repaint();
       }
 
