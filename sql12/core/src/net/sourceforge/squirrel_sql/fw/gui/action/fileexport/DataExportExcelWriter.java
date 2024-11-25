@@ -18,6 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.sql.Types;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
@@ -33,15 +42,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.sql.Types;
-import java.text.NumberFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Exports {@link IExportData} to a Excel file.
@@ -88,7 +88,7 @@ public class DataExportExcelWriter
 
          if(prefs.isExcelAutoFilter())
          {
-            _sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, exportDataInfo.getExportData().getColumnCount()));
+            _sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, exportDataInfo.getExportData().getColumnCount() - 1));
          }
       }
       _fileExportService.progress(s_stringMgr.getString("DataExportExcelWriter.finishedLoading", NumberFormat.getInstance().format(rowsCount)));
