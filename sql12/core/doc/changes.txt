@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Find function in cell data popup and Object tree's text detail tabs:
+  The "Mark all" toggle button now writes the number of occurrences to SQuirreL's message panel.
+
 Introduced Java 23 compatibility.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/47

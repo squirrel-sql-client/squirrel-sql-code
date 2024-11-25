@@ -1,5 +1,23 @@
 package net.sourceforge.squirrel_sql.fw.gui.textfind;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.JTextComponent;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -7,15 +25,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.JTextComponent;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
 public class TextFindCtrl
 {
@@ -197,9 +206,11 @@ public class TextFindCtrl
          MatchBounds matchBounds =
                TextFinder.findNthOccurrence(_textComponentToSearch.getText(), _editableComboBoxHandler.getItem(), nextOccurrenceToFind, getSelectedFindMode());
 
+         int matchCount = 0;
          boolean firstMatch = true;
          while (null != matchBounds)
          {
+            ++matchCount;
             //////////////////////////////////////////////////////////////////////
             // Scrolls correctly and does not interfere with highlighting.
             if (firstMatch)
@@ -217,6 +228,8 @@ public class TextFindCtrl
             matchBounds =
                   TextFinder.findNthOccurrence(_textComponentToSearch.getText(), _editableComboBoxHandler.getItem(), nextOccurrenceToFind, getSelectedFindMode());
          }
+
+         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("TextFindCtrl.mark.count", matchCount));
       }
       catch (BadLocationException e)
       {
