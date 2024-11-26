@@ -1,10 +1,20 @@
 package net.sourceforge.squirrel_sql.fw.sql.commentandliteral;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 public class SQLCommentRemover
 {
    public static String removeComments(String sql)
    {
-      final SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(sql, "--", true, true);
+      String lineCommentBegin = "--";
+
+      if(StringUtilities.isNotEmpty(Main.getApplication().getSquirrelPreferences().getSessionProperties().getStartOfLineComment(), true))
+      {
+         lineCommentBegin = Main.getApplication().getSquirrelPreferences().getSessionProperties().getStartOfLineComment();
+      }
+
+      final SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(sql, lineCommentBegin, true, true);
 
       StringBuilder ret = new StringBuilder();
       for (int i = 0; i < sql.length(); ++i)

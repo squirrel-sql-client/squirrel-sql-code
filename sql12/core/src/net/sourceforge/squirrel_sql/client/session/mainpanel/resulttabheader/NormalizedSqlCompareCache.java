@@ -1,14 +1,15 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentRemover;
 
 public class NormalizedSqlCompareCache
 {
@@ -26,11 +27,17 @@ public class NormalizedSqlCompareCache
 
       if(null == resultTabEntry)
       {
-         resultTabEntry = new NormalizedSqlCompareCacheEntry(getReformator(session).getNormalizedSql(sqlResultTab.getSqlString()), ++_resultTabCounter);
+         resultTabEntry = new NormalizedSqlCompareCacheEntry(normalizeAndRemoveComments(session, sqlResultTab.getOriginalSqlString()), ++_resultTabCounter);
          _resultTabIdToEntry.put(sqlResultTab.getIdentifier(), resultTabEntry);
       }
 
       return resultTabEntry.getNormalizedSql();
+   }
+
+   private String normalizeAndRemoveComments(ISession session, String sql)
+   {
+      sql = SQLCommentRemover.removeComments(sql);
+      return getReformator(session).getNormalizedSql(sql);
    }
 
    public String getEditorSqlNormalized(ISession session, String editorSql)
@@ -39,7 +46,7 @@ public class NormalizedSqlCompareCache
 
       if(null == editorEntry)
       {
-         editorEntry = new NormalizedSqlCompareCacheEntry(getReformator(session).getNormalizedSql(editorSql), ++_editorSqlCounter);
+         editorEntry = new NormalizedSqlCompareCacheEntry(normalizeAndRemoveComments(session, editorSql), ++_editorSqlCounter);
          _editorSqlToEntry.put(editorSql, editorEntry);
       }
       return editorEntry.getNormalizedSql();
