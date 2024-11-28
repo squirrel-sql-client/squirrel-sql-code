@@ -165,19 +165,10 @@ public class QueryTokenizer implements IQueryTokenizer
         {
            final NextPositionAction nextPositionAction = commentAndLiteralHandler.nextPosition(i);
            if (!commentAndLiteralHandler.isInLiteral() && !commentAndLiteralHandler.isInMultiLineComment()) {
-               // Check for a line that contains '--#SET TERMINATOR x' to change the current new statement separator
-               if (script.startsWith(_lineCommentBegin + "#SET TERMINATOR ", i)) {
-                   if (i == 0 || script.charAt(i-1) == '\n') {
-                       // Only when the comment starts on a new line
-                       int newLinePos = script.indexOf('\n', i);
-                       if (newLinePos > i + 16  + _lineCommentBegin.length()) {
-                           String terminator = script.substring(i + 16 + _lineCommentBegin.length(), newLinePos).trim();
-                           if (!terminator.isEmpty()) {
-                               s_log.info("changing statement separator to '" + terminator + "'");
-                               setQuerySep(terminator);
-                           }
-                       }
-                   }
+               String newQuerySep = findSetTerminatorInstruction(script, i);
+               if (newQuerySep != null) {
+                   s_log.info("changing statement separator to '" + newQuerySep + "'");
+                   setQuerySep(newQuerySep);
                }
            }
 
@@ -220,6 +211,37 @@ public class QueryTokenizer implements IQueryTokenizer
         }
 
         _queryIterator = _queries.iterator();
+    }
+
+    /**
+     * Check for a line that contains '--#SET TERMINATOR x' to change the current new statement separator
+     * The line may start with spaces or tabs. Other characters are not allowed.
+     */
+    private String findSetTerminatorInstruction(String script, final int i) {
+        if (script.startsWith(_lineCommentBegin + "#SET TERMINATOR ", i)) {
+            // Check if the comment is only preceded with space or tabs
+            int j = i;
+            while (j-- > 0) {
+                char c = script.charAt(j);
+                if (c == '\n') {
+                    // Found the start of the line, break the loop
+                    break;
+                } else if (c != ' ' && c != '\t') {
+                    // Found non-whitespace character
+                    return null;
+                }
+            }
+
+            // Only when the comment starts on a new line
+            int newLinePos = script.indexOf('\n', i);
+            if (newLinePos > i + 16  + _lineCommentBegin.length()) {
+                String terminator = script.substring(i + 16 + _lineCommentBegin.length(), newLinePos).trim();
+                if (!terminator.isEmpty()) {
+                    return terminator;
+                }
+            }
+        }
+        return null;
     }
 
     /**
