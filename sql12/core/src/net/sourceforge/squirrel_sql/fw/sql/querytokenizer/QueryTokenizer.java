@@ -164,6 +164,22 @@ public class QueryTokenizer implements IQueryTokenizer
         for (int i = 0; i < script.length(); ++i)
         {
            final NextPositionAction nextPositionAction = commentAndLiteralHandler.nextPosition(i);
+           if (!commentAndLiteralHandler.isInLiteral() && !commentAndLiteralHandler.isInMultiLineComment()) {
+               // Check for a line that contains '--#SET TERMINATOR x' to change the current new statement separator
+               if (script.startsWith(_lineCommentBegin + "#SET TERMINATOR ", i)) {
+                   if (i == 0 || script.charAt(i-1) == '\n') {
+                       // Only when the comment starts on a new line
+                       int newLinePos = script.indexOf('\n', i);
+                       if (newLinePos > 0 && newLinePos > i+18) {
+                           String terminator = script.substring(i + 16 + _lineCommentBegin.length(), newLinePos).trim();
+                           if (!terminator.isEmpty()) {
+                               s_log.info("changing statement separator to '" + terminator + "'");
+                               setQuerySep(terminator);
+                           }
+                       }
+                   }
+               }
+           }
 
            curOriginalQuery.append(script.charAt(i));
 
