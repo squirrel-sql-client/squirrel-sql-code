@@ -18,10 +18,13 @@ package net.sourceforge.squirrel_sql.fw.sql.querytokenizer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.NextPositionAction;
 import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentAndLiteralHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -35,7 +38,11 @@ import java.util.List;
 
 public class QueryTokenizer implements IQueryTokenizer
 {
-	protected ArrayList<QueryHolder> _queries = new ArrayList<>();
+   private final static ILogger s_log = LoggerController.createLogger(QueryTokenizer.class);
+   StringManager s_stringMgr = StringManagerFactory.getStringManager(QueryTokenizer.class);
+
+
+   protected ArrayList<QueryHolder> _queries = new ArrayList<>();
     
 	protected Iterator<QueryHolder> _queryIterator;
 
@@ -48,7 +55,6 @@ public class QueryTokenizer implements IQueryTokenizer
 
    protected ITokenizerFactory _tokenizerFactory = null;
 
-   private final static ILogger s_log = LoggerController.createLogger(QueryTokenizer.class);
 
    public QueryTokenizer(String querySep,
                          String lineCommentBegin,
@@ -151,62 +157,79 @@ public class QueryTokenizer implements IQueryTokenizer
 
     public void setScriptToTokenize(String script)
     {
-        _queries.clear();
-        
-        script = script.replace('\r', ' ');
-
-        StringBuffer curQuery = new StringBuffer();
-        StringBuffer curOriginalQuery = new StringBuffer();
-
-
-       SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(script, _lineCommentBegin, _removeMultiLineComment, _removeLineComment);
-
-        for (int i = 0; i < script.length(); ++i)
-        {
-           final NextPositionAction nextPositionAction = commentAndLiteralHandler.nextPosition(i);
-
-           curOriginalQuery.append(script.charAt(i));
-
-           if(NextPositionAction.APPEND == nextPositionAction)
-           {
-              curQuery.append(script.charAt(i));
-           }
-           else
-           {
-              continue;
-           }
-
-            int querySepLen = getLenOfQuerySepIfAtLastCharOfQuerySep(script, i, _querySep, commentAndLiteralHandler.isInLiteral());
-
-            if(-1 < querySepLen && !commentAndLiteralHandler.isInMultiLineComment())
-            {
-                int newLength = curQuery.length() - querySepLen;
-                if(-1 < newLength && curQuery.length() > newLength)
-                {
-                    curQuery.setLength(newLength);
-
-                    String newQuery = curQuery.toString().trim();
-                    if(0 < newQuery.length())
-                    {
-                        _queries.add(new QueryHolder(curQuery.toString().trim(), curOriginalQuery.toString().trim()));
-                    }
-                }
-                curQuery.setLength(0);
-                curOriginalQuery.setLength(0);
-            }
-        }
-
-        String lastQuery = curQuery.toString().trim();
-        String lastOriginalQuery = curOriginalQuery.toString().trim();
-        if(0 < lastQuery.length())
-        {
-            _queries.add(new QueryHolder(lastQuery, lastOriginalQuery));
-        }
-
-        _queryIterator = _queries.iterator();
+       setScriptToTokenize(script, QueryTokenizePurpose.STATEMENT_EXECUTION);
     }
 
-    /**
+    public void setScriptToTokenize(String script, QueryTokenizePurpose queryTokenizePurpose)
+    {
+       _queries.clear();
+
+       script = script.replace('\r', ' ');
+
+       StringBuffer curQuery = new StringBuffer();
+       StringBuffer curOriginalQuery = new StringBuffer();
+
+       SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(script, _lineCommentBegin, _removeMultiLineComment, _removeLineComment);
+       ChangeStatementSeparatorSupport changeStatementSeparatorSupport = new ChangeStatementSeparatorSupport(queryTokenizePurpose, script, _lineCommentBegin);
+
+       for(int i = 0; i < script.length(); ++i)
+       {
+          final NextPositionAction nextPositionAction = commentAndLiteralHandler.nextPosition(i);
+
+          if(changeStatementSeparatorSupport.isActive())
+          {
+             String newQuerySep = changeStatementSeparatorSupport.findSetTerminatorInstruction(i, commentAndLiteralHandler);
+             if(newQuerySep != null)
+             {
+                String msg = s_stringMgr.getString("QueryTokenizer.change.statement.separator.message", _queries.size() + 1, newQuerySep);
+                Main.getApplication().getMessageHandler().showMessage(msg);
+                s_log.info(msg);
+                setQuerySep(newQuerySep);
+             }
+          }
+
+          curOriginalQuery.append(script.charAt(i));
+
+          if(NextPositionAction.APPEND == nextPositionAction)
+          {
+             curQuery.append(script.charAt(i));
+          }
+          else
+          {
+             continue;
+          }
+
+          int querySepLen = getLenOfQuerySepIfAtLastCharOfQuerySep(script, i, _querySep, commentAndLiteralHandler.isInLiteral());
+
+          if(-1 < querySepLen && !commentAndLiteralHandler.isInMultiLineComment())
+          {
+             int newLength = curQuery.length() - querySepLen;
+             if(-1 < newLength && curQuery.length() > newLength)
+             {
+                curQuery.setLength(newLength);
+
+                String newQuery = curQuery.toString().trim();
+                if(0 < newQuery.length())
+                {
+                   _queries.add(new QueryHolder(curQuery.toString().trim(), curOriginalQuery.toString().trim()));
+                }
+             }
+             curQuery.setLength(0);
+             curOriginalQuery.setLength(0);
+          }
+       }
+
+       String lastQuery = curQuery.toString().trim();
+       String lastOriginalQuery = curOriginalQuery.toString().trim();
+       if(0 < lastQuery.length())
+       {
+          _queries.add(new QueryHolder(lastQuery, lastOriginalQuery));
+       }
+
+       _queryIterator = _queries.iterator();
+    }
+
+   /**
      * Returns the number of queries that the tokenizer found in the script 
      * given in the last call to setScriptToTokenize, or 0 if 
      * setScriptToTokenize has not yet been called.

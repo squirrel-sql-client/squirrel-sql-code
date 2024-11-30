@@ -3,16 +3,31 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.AddressablePrefJPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesAddressBook;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.*;
+import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -397,7 +412,19 @@ class SQLPropertiesPanel extends JPanel
       gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,3,2,2), 0,0);
       ret.add(_stmtSepField, gbc);
 
-      ret.setBorder(BorderFactory.createEtchedBorder());
+
+      gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10,3,0,2), 0,0);
+      ret.add(new MultipleLineLabel(s_stringMgr.getString("SQLPropertiesPanel.separators.set.statement.separator.info.begin")), gbc);
+
+      gbc = new GridBagConstraints(0,3,2,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,3,0,2), 0,0);
+      MultipleLineLabel lblSepCommand = new MultipleLineLabel(s_stringMgr.getString("SQLPropertiesPanel.separators.set.statement.separator.info.command"));
+      lblSepCommand.setFont(new Font(Font.MONOSPACED, lblSepCommand.getFont().getStyle(), lblSepCommand.getFont().getSize()));
+      ret.add(lblSepCommand, gbc);
+
+      gbc = new GridBagConstraints(0,4,2,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,3,2,2), 0,0);
+      ret.add(new MultipleLineLabel(s_stringMgr.getString("SQLPropertiesPanel.separators.set.statement.separator.info.end")), gbc);
+
+      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPropertiesPanel.separators.title")));
 
       return ret;
    }

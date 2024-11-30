@@ -35,7 +35,9 @@ public interface IQueryTokenizer
      * @param script a string representing one or more SQL statements.
      */
     void setScriptToTokenize(String script);
-    
+
+    void setScriptToTokenize(String script, QueryTokenizePurpose queryTokenizePurpose);
+
     /**
      * Returns the number of queries that the tokenizer found in the script 
      * given in the last call to setScriptToTokenize, or 0 if 

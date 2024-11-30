@@ -1,12 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import javax.swing.JTabbedPane;
-import javax.swing.Timer;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
@@ -14,7 +7,15 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecutorPanel;
 import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizePurpose;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.swing.JTabbedPane;
+import javax.swing.Timer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class ResultTabMatchingCurrentSqlHandler
 {
@@ -84,7 +85,7 @@ public class ResultTabMatchingCurrentSqlHandler
          {
 
             IQueryTokenizer qt = _entryPanel.getSession().getNewQueryTokenizer();
-            qt.setScriptToTokenize(sqlToBeExecuted);
+            qt.setScriptToTokenize(sqlToBeExecuted, QueryTokenizePurpose.OTHER);
 
             if(false == qt.hasQuery())
             {

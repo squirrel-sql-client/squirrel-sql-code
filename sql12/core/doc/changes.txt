@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Pull request: https://github.com/squirrel-sql-client/squirrel-sql-code/pull/51
+  To change the statement separator during SQL execution, use the following command on a separate line:
+  --#SET TERMINATOR <separator>
+  This command does not change the separator permanently but for a single SQL execution only.
+  See also menu File --> New Session Properties --> tab SQL --> section "Statement separator"
+  Thanks to Roland Tapken for the pull request
+
 Find function in cell data popup and Object tree's text detail tabs:
   The "Mark all" toggle button now writes the number of occurrences to SQuirreL's message panel.
 
