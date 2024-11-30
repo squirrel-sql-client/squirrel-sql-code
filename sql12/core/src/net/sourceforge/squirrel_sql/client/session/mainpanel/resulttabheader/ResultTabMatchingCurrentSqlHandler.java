@@ -85,7 +85,7 @@ public class ResultTabMatchingCurrentSqlHandler
          {
 
             IQueryTokenizer qt = _entryPanel.getSession().getNewQueryTokenizer();
-            qt.setScriptToTokenize(sqlToBeExecuted, QueryTokenizePurpose.OTHER);
+            qt.setScriptToTokenize(sqlToBeExecuted, QueryTokenizePurpose.FIRST_STATEMENT_ONLY);
 
             if(false == qt.hasQuery())
             {

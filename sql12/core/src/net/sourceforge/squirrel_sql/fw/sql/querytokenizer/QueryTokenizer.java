@@ -212,6 +212,12 @@ public class QueryTokenizer implements IQueryTokenizer
                 if(0 < newQuery.length())
                 {
                    _queries.add(new QueryHolder(curQuery.toString().trim(), curOriginalQuery.toString().trim()));
+
+                   if(QueryTokenizePurpose.FIRST_STATEMENT_ONLY == queryTokenizePurpose)
+                   {
+                      _queryIterator = _queries.iterator();
+                      return;
+                   }
                 }
              }
              curQuery.setLength(0);

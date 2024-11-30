@@ -86,6 +86,8 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Improved the performance of SQL result tab header marking for large SQL editor content.
+
 SQL result tab header marks:
   The option "Compare SQLs disregarding comments, line feeds and other white spaces" did not work properly.
   The option can be found at menu File --> Global Preferences --> tab SQL --> section "SQL result tab header".
