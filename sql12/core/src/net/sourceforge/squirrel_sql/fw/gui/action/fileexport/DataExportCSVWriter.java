@@ -39,8 +39,8 @@ import java.util.List;
 public class DataExportCSVWriter extends AbstractDataExportFileWriter
 {
 
-   private List<String> headerCells = new ArrayList<String>();
-   private List<String> aRow = new ArrayList<String>();
+   private List<String> headerCells = new ArrayList<>();
+   private List<String> aRow = new ArrayList<>();
    private BufferedWriter bw;
 
 

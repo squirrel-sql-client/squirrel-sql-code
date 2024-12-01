@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL result and table export to CSV files:
+  New info button behind the CSV radio button informs about the way the export handles
+  values containing the separator character, line breaks, double quotes.
+
 #433 | Pull request: https://github.com/squirrel-sql-client/squirrel-sql-code/pull/51
   To change the statement separator during SQL execution, use the following command on a separate line:
   --#SET TERMINATOR <separator>

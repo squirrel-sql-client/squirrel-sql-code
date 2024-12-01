@@ -144,8 +144,7 @@ public class ExportDlg extends JDialog
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
-      radFormatCSV = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatCSV"));
-      ret.add(radFormatCSV, gbc);
+      ret.add(createCSVFormatPanel(), gbc);
 
 
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0);
@@ -173,6 +172,22 @@ public class ExportDlg extends JDialog
       bg.add(radFormatJSON);
 
       ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("TableExportCsvDlg.export.format.title")));
+
+      return ret;
+   }
+
+   private JPanel createCSVFormatPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      radFormatCSV = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatCSV"));
+      ret.add(radFormatCSV, gbc);
+
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("TableExportCsvDlg.formatCSV.info")).getButton(), gbc);
 
       return ret;
    }
