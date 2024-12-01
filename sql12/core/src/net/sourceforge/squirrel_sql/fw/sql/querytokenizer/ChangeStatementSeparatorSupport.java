@@ -44,12 +44,12 @@ public class ChangeStatementSeparatorSupport
          return null;
       }
 
-      if(isCommandPrecededBySpacesOrTabsOnly(_script, searchStartPos))
+      // Only when the comment starts on a new line
+      if(false == isCommandPrecededBySpacesOrTabsOnly(_script, searchStartPos))
       {
          return null;
       }
 
-      // Only when the comment starts on a new line
       int newLinePos = _script.indexOf('\n', searchStartPos);
       if(newLinePos > searchStartPos + _terminatorCommandInclLineCommentPrefix.length())
       {
@@ -79,10 +79,10 @@ public class ChangeStatementSeparatorSupport
          else if(c != ' ' && c != '\t')
          {
             // Found non-whitespace character
-            return true;
+            return false;
          }
       }
-      return false;
+      return true;
    }
 
    public boolean isActive()
