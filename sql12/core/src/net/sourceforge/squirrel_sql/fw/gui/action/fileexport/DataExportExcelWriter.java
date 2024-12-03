@@ -319,14 +319,11 @@ public class DataExportExcelWriter
    private void afterWorking() throws Exception
    {
       FileOutputStream out = new FileOutputStream(_fileExportService.getFile());
-      this._workbook.write(out);
+      _workbook.write(out);
+      out.flush();
       out.close();
 
-      // dispose of temporary files backing this workbook on disk
-      if (_workbook instanceof SXSSFWorkbook)
-      {
-         ((SXSSFWorkbook) _workbook).dispose();
-      }
+      _workbook.close();
    }
 
 }
