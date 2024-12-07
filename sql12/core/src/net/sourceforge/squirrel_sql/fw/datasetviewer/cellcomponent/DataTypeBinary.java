@@ -143,7 +143,7 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	/**
 	 * Render a value into text for this DataType.
 	 */
-	public String renderObject(Object value)
+	public String renderObject(Object value, DataTypeRenderingHint noGroupingSeparator)
 	{
 		return _renderObject(value, -1).getRenderResult();
 	}

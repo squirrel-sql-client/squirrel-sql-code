@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeRenderingHint;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
@@ -105,7 +106,12 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
          }
          else if (getPrefs().isUseGlobalPrefsFormating() && cell.getColumnDisplayDefinition() != null)
          {
-            objectNode.put(fieldName, CellComponentFactory.renderObject(cell.getObject(), cell.getColumnDisplayDefinition()));
+            DataTypeRenderingHint renderingHint = DataTypeRenderingHint.NONE;
+            if(false == getPrefs().isRenderGroupingSeparator())
+            {
+               renderingHint = DataTypeRenderingHint.NO_GROUPING_SEPARATOR;
+            }
+            objectNode.put(fieldName, CellComponentFactory.renderObject(cell.getObject(), cell.getColumnDisplayDefinition(), renderingHint));
          }
          else
          {

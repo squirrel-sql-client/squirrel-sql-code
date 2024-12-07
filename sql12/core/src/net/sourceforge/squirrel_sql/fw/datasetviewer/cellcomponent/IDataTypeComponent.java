@@ -62,7 +62,12 @@ public interface IDataTypeComponent {
      * Convert the given object into its printable String value for use in Text
      * output and the in-cell representations (CellRenderer and CellEditor).
      */
-    String renderObject(Object object);
+    default String renderObject(Object object)
+    {
+        return renderObject(object, DataTypeRenderingHint.NONE);
+    }
+
+    String renderObject(Object object, DataTypeRenderingHint noGroupingSeparator);
 
     /**
      * Returns true if data type may be edited within a table cell, false if

@@ -118,7 +118,7 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 	 * Render a value into text for this DataType.
 	 */
 	@Override
-	public String renderObject(Object value)
+	public String renderObject(Object value, DataTypeRenderingHint renderingHint)
 	{
 
 		// return (String)_renderer.renderObject(value);
@@ -130,7 +130,7 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 		else
 		{
 
-			try
+			try(DataTypeRenderingHintHandler handler = new DataTypeRenderingHintHandler(_numberFormat, renderingHint))
 			{
 				return DefaultColumnRenderer.renderObject(_numberFormat.format(value));
 			}

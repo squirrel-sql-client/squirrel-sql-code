@@ -162,8 +162,9 @@ public class DataTypeJavaObject extends BaseDataTypeComponent
 	/**
 	 * Render a value into text for this DataType.
 	 */
-	public String renderObject(Object value) {
-		return (String)DefaultColumnRenderer.renderObject(value);
+	public String renderObject(Object value, DataTypeRenderingHint renderingHint)
+	{
+		return DefaultColumnRenderer.renderObject(value);
 	}
 
 	/**

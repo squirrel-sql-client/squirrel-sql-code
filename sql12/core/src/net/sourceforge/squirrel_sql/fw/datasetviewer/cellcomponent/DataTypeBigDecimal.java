@@ -137,21 +137,20 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * Render a value into text for this DataType.
 	 */
 	@Override
-	public String renderObject(Object value) {
+	public String renderObject(Object value, DataTypeRenderingHint renderingHint) {
 
 
 		//return (String)_renderer.renderObject(value);
 
 		if (value == null || FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
 		{
-			return (String)DefaultColumnRenderer.renderObject(value);
+			return DefaultColumnRenderer.renderObject(value);
 		}
 		else
 		{
-
-         try
+         try(DataTypeRenderingHintHandler handler = new DataTypeRenderingHintHandler(_numberFormat, renderingHint))
          {
-            return (String)DefaultColumnRenderer.renderObject(_numberFormat.format(value));
+				return DefaultColumnRenderer.renderObject(_numberFormat.format(value));
          }
          catch (Exception e)
          {
@@ -160,7 +159,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
                _renderExceptionHasBeenLogged = true;
                s_log.error("Could not format \"" + value + "\" as number type", e);
             }
-            return (String) DefaultColumnRenderer.renderObject(value);
+            return DefaultColumnRenderer.renderObject(value);
          }
 
 

@@ -1,20 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
@@ -26,6 +11,21 @@ import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -179,10 +179,17 @@ public class CellComponentFactory
     */
    public static String renderObject(Object value, ColumnDisplayDefinition colDef)
    {
+      return renderObject(value, colDef, DataTypeRenderingHint.NONE);
+   }
+
+   public static String renderObject(Object value, ColumnDisplayDefinition colDef, DataTypeRenderingHint renderingHint)
+   {
       IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
-      if (dataTypeObject != null)
-         return dataTypeObject.renderObject(value);
+      if(dataTypeObject != null)
+      {
+         return dataTypeObject.renderObject(value, renderingHint);
+      }
 
       // default behavior: toString
       if (null == value)

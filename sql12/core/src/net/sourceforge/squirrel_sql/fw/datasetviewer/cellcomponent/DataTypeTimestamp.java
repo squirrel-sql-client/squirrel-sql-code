@@ -208,7 +208,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
    /**
     * Render a value into text for this DataType.
     */
-   public String renderObject(Object value)
+   public String renderObject(Object value, DataTypeRenderingHint renderingHint)
    {
       if (value == null || null == _dataTypeTimestampStatics.getDateFormat() )
       {

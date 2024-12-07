@@ -13,6 +13,7 @@ public class TableExportPreferencesDAO
    private static final String PREF_KEY_EXPORT_COMPLETE = "SquirrelSQL.csvexport.exportcomplete";
    private static final String PREF_KEY_EXPORT_MULTIPLE_SQL_RESULTS = "SquirrelSQL.csvexport.exportMultipleSQLResults";
    private static final String PREF_KEY_USE_GLOBAL_PREFS_FORMATING = "SquirrelSQL.csvexport.useGlobalPrefsFomating";
+   private static final String PREF_KEY_RENDER_GROUPING_SEPARATOR = "SquirrelSQL.csvexport.renderGroupingSeparator";
    private static final String PREF_KEY_EXECUTE_COMMAND = "SquirrelSQL.csvexport.executeCommand";
    private static final String PREF_KEY_COMMAND = "SquirrelSQL.csvexport.commandString";
    private static final String PREF_KEY_FORMAT_CSV = "SquirrelSQL.csvexport.formatCSV";
@@ -45,6 +46,7 @@ public class TableExportPreferencesDAO
       ret.setExportComplete(Props.getBoolean(PREF_KEY_EXPORT_COMPLETE, ret.isExportCompleteTableOrSingleFile()));
       ret.setExportMultipleSQLResults(Props.getBoolean(PREF_KEY_EXPORT_MULTIPLE_SQL_RESULTS, ret.isExportMultipleSQLResults()));
       ret.setUseGlobalPrefsFormating(Props.getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, ret.isUseGlobalPrefsFormating()));
+      ret.setRenderGroupingSeparator(Props.getBoolean(PREF_KEY_RENDER_GROUPING_SEPARATOR, ret.isRenderGroupingSeparator()));
       ret.setExecuteCommand(Props.getBoolean(PREF_KEY_EXECUTE_COMMAND, ret.isExecuteCommand()));
       ret.setCommand(Props.getString(PREF_KEY_COMMAND, ret.getCommand()));
       ret.setFormatCSV(Props.getBoolean(PREF_KEY_FORMAT_CSV, ret.isFormatCSV()));
@@ -77,6 +79,7 @@ public class TableExportPreferencesDAO
       Props.putBoolean(PREF_KEY_EXPORT_COMPLETE, prefs.isExportCompleteTableOrSingleFile());
       Props.putBoolean(PREF_KEY_EXPORT_MULTIPLE_SQL_RESULTS, prefs.isExportMultipleSQLResults());
       Props.putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, prefs.isUseGlobalPrefsFormating());
+      Props.putBoolean(PREF_KEY_RENDER_GROUPING_SEPARATOR, prefs.isRenderGroupingSeparator());
       Props.putBoolean(PREF_KEY_EXECUTE_COMMAND, prefs.isExecuteCommand());
       Props.putString(PREF_KEY_COMMAND, prefs.getCommand());
       Props.putBoolean(PREF_KEY_FORMAT_CSV, prefs.isFormatCSV());

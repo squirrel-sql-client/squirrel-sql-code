@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeRenderingHint;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -108,7 +109,13 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
       {
          if (getPrefs().isUseGlobalPrefsFormating() && cell.getColumnDisplayDefinition() != null)
          {
-            strCellValue = CellComponentFactory.renderObject(cell.getObject(), cell.getColumnDisplayDefinition());
+            DataTypeRenderingHint renderingHint = DataTypeRenderingHint.NONE;
+            if(false == getPrefs().isRenderGroupingSeparator())
+            {
+               renderingHint = DataTypeRenderingHint.NO_GROUPING_SEPARATOR;
+            }
+
+            strCellValue = CellComponentFactory.renderObject(cell.getObject(), cell.getColumnDisplayDefinition(), renderingHint);
          }
          else
          {

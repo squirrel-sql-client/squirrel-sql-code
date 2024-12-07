@@ -141,9 +141,9 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 	/**
 	 * Render a value into text for this DataType.
 	 */
-	public String renderObject(final Object value) {
-		String text = (String) DefaultColumnRenderer.renderObject(value);
-		return text;
+	public String renderObject(final Object value, DataTypeRenderingHint noGroupingSeparator)
+	{
+      return DefaultColumnRenderer.renderObject(value);
 	}
 
 	/**

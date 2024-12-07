@@ -133,12 +133,19 @@ public class ExportController
 
       _dlg.chkSeparatorTab.addActionListener(e -> onFormat(false));
 
+      _dlg.radUseGlobalPrefsFormating.addActionListener(e -> onAdjustEnableRenderGroupingSeparator());
+      _dlg.radUseDefaultFormating.addActionListener(e -> onAdjustEnableRenderGroupingSeparator());
 
       _dlg.chkExecCommand.addActionListener(e -> onChkExecCommand());
 
       _dlg.btnFile.addActionListener(e -> onFile());
 
       _dlg.btnCommandFile.addActionListener(e -> onCommandFile());
+   }
+
+   private void onAdjustEnableRenderGroupingSeparator()
+   {
+      _dlg.chkRenderGroupingSeparator.setEnabled(_dlg.radUseGlobalPrefsFormating.isSelected());
    }
 
    private void onFormat(boolean replaceEnding)
@@ -476,6 +483,7 @@ public class ExportController
       _exportSelectionPanelController.writeControlsToPrefs(prefs);
 
       prefs.setUseGlobalPrefsFormating(_dlg.radUseGlobalPrefsFormating.isSelected());
+      prefs.setRenderGroupingSeparator(_dlg.chkRenderGroupingSeparator.isSelected());
 
       prefs.setExecuteCommand(_dlg.chkExecCommand.isSelected());
 
@@ -551,6 +559,8 @@ public class ExportController
          _dlg.radUseDefaultFormating.setSelected(true);
       }
 
+      _dlg.chkRenderGroupingSeparator.setEnabled(_dlg.radUseGlobalPrefsFormating.isSelected());
+      _dlg.chkRenderGroupingSeparator.setSelected(prefs.isRenderGroupingSeparator());
 
       _dlg.chkExecCommand.setSelected(prefs.isExecuteCommand());
       onChkExecCommand();

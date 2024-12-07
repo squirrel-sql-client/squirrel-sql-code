@@ -123,7 +123,7 @@ public class DataTypeFloat extends FloatingPointBase
     * Render a value into text for this DataType.
     */
    @Override
-   public String renderObject(Object value) {
+   public String renderObject(Object value, DataTypeRenderingHint renderingHint) {
 
       if (value == null || FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
       {
@@ -132,7 +132,7 @@ public class DataTypeFloat extends FloatingPointBase
       else
       {
 
-         try
+         try(DataTypeRenderingHintHandler handler = new DataTypeRenderingHintHandler(_numberFormat, renderingHint))
          {
             return DefaultColumnRenderer.renderObject(_numberFormat.format(value));
          }

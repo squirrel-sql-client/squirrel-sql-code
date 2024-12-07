@@ -133,7 +133,7 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	/**
 	 * Render a value into text for this DataType.
 	 */
-	public String renderObject(Object value)
+	public String renderObject(Object value, DataTypeRenderingHint noGroupingSeparator)
 	{
 		String text = (String) DefaultColumnRenderer.renderObject(value);
 		if(s_properties.isMakeNewlinesVisibleInCell())

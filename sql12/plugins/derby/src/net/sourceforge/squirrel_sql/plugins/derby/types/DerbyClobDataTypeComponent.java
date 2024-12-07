@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.derby.types;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseKeyTextHandler;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeRenderingHint;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DefaultColumnRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IRestorableTextComponent;
@@ -164,7 +165,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
     * Render a value into text for this DataType.
     */
    @Override
-   public String renderObject(Object value) {
+   public String renderObject(Object value, DataTypeRenderingHint noGroupingSeparator) {
       return (String) DefaultColumnRenderer.renderObject(value);
    }
 

@@ -55,6 +55,7 @@ public class ExportDlg extends JDialog
    JCheckBox chkSeparatorTab;
    JCheckBox chkPlatformLineSeparator;
    JRadioButton radUseGlobalPrefsFormating;
+   JCheckBox chkRenderGroupingSeparator;
    JRadioButton radUseDefaultFormating;
    JCheckBox chkExecCommand;
    JComboBox cboCommand;
@@ -277,9 +278,13 @@ public class ExportDlg extends JDialog
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 2, 0), 0, 0);
       ret.add(radUseGlobalPrefsFormating, gbc);
 
+      chkRenderGroupingSeparator = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.renderGroupingSeparator"));
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 2, 0), 0, 0);
+      ret.add(chkRenderGroupingSeparator, gbc);
+
       // i18n[TableExportCsvDlg.useDefaultFormating=Use default formating]
       radUseDefaultFormating = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.useDefaultFormating"));
-      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0);
       ret.add(radUseDefaultFormating, gbc);
 
       gbc = new GridBagConstraints(1, 0, 1, 2, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
@@ -290,7 +295,7 @@ public class ExportDlg extends JDialog
       bg.add(radUseGlobalPrefsFormating);
       bg.add(radUseDefaultFormating);
 
-      ret.setBorder(BorderFactory.createEtchedBorder());
+      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("TableExportCsvDlg.formatting.panel.title")));
       return ret;
 
 

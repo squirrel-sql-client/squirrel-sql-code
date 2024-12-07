@@ -102,7 +102,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	/**
 	 * Render a value into text for this DataType.
 	 */
-	public String renderObject(Object value)
+	public String renderObject(Object value, DataTypeRenderingHint renderingHint)
 	{
 		return (String) DefaultColumnRenderer.renderObject(value);
 	}

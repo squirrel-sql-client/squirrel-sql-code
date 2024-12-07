@@ -227,7 +227,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * Render a value into text for this DataType.
 	 */
 	@Override
-	public String renderObject(Object value) {
+	public String renderObject(Object value, DataTypeRenderingHint noGroupingSeparator) {
 		String text = (String)DefaultColumnRenderer.renderObject(value);
 		if (_makeNewlinesVisibleInCell) {
 			 text = text.replaceAll("\n", "\\\\n");

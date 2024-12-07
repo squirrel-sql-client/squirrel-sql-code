@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/50
+  SQL result and table export to CSV or XML:
+  New formatting option "Include grouping separator if configured in Global Preferences"
+  which is applicable when the option "Use formatting as configured in Global Preferences" is used.
+  See section "Formatting" near the bottom of the export dialog.
+
 SQL result and table, sum display for numerical columns:
   The dialog opened by the "more ..." button now offers to show means and deviations of the selection.
 

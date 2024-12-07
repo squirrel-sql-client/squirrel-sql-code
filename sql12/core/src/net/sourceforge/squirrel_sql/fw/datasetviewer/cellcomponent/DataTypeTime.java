@@ -249,7 +249,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
    /**
     * Render a value into text for this DataType.
     */
-   public String renderObject(Object value)
+   public String renderObject(Object value, DataTypeRenderingHint renderingHint)
    {
       // use the Java default date-to-string
       if(useJavaDefaultFormat == true || value == null)

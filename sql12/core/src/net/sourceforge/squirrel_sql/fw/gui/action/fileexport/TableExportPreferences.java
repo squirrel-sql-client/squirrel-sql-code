@@ -47,6 +47,9 @@ public class TableExportPreferences
    // PREF_KEY_USE_GLOBAL_PREFS_FORMATING
    private boolean _useGlobalPrefsFormating = true;
 
+   // PREF_KEY_RENDER_GROUPING_SEPARATOR
+   private boolean _renderGroupingSeparator;
+
    // PREF_KEY_EXECUTE_COMMAND
    private boolean _executeCommand = false;
 
@@ -291,5 +294,15 @@ public class TableExportPreferences
    public void setExcelFirstRowCentered(boolean excelFirstCentered)
    {
       _excelFirstRowCentered = excelFirstCentered;
+   }
+
+   public boolean isRenderGroupingSeparator()
+   {
+      return _renderGroupingSeparator;
+   }
+
+   public void setRenderGroupingSeparator(boolean renderGroupingSeparator)
+   {
+      _renderGroupingSeparator = renderGroupingSeparator;
    }
 }
