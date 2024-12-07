@@ -63,6 +63,8 @@ public class SquirrelResources extends Resources
 		String SPLASH_SCREEN = "SplashScreen";
 		String SPLASH_SCREEN_LESS_HIGH = "SplashScreenLessHigh";
 
+		String PIC_MEAN_DEVIATION_DEFINITION = "MeanDeviationDefinition";
+
 
 		String VIEW = "View";
 

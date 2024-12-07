@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL result and table, sum display for numerical columns:
+  The dialog opened by the "more ..." button now offers to show means and deviations of the selection.
+
 SQL result and table export to CSV files:
   New info button behind the CSV radio button informs about the way the export handles
   values containing the separator character, line breaks, double quotes.

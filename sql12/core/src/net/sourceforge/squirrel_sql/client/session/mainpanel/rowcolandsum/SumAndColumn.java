@@ -11,7 +11,6 @@ public class SumAndColumn
 
    public SumAndColumn(ColumnDisplayDefinition columnDisplayDefinition, long longSum)
    {
-
       _columnDisplayDefinition = columnDisplayDefinition;
       _longSum = longSum;
    }
