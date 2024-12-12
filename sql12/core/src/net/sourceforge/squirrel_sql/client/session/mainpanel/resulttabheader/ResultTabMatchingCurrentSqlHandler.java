@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import javax.swing.JTabbedPane;
+import javax.swing.Timer;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
@@ -8,17 +15,14 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecutorPa
 import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizePurpose;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.JTabbedPane;
-import javax.swing.Timer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class ResultTabMatchingCurrentSqlHandler
 {
+   private static final ILogger s_log = LoggerController.createLogger(ResultTabMatchingCurrentSqlHandler.class);
+
    private boolean _resultTabHeaderMarkingActive;
 
    private BoundsOfSqlHandler _boundsOfSqlHandler;
@@ -29,6 +33,7 @@ public class ResultTabMatchingCurrentSqlHandler
    private Timer _paintTimer;
 
    private NormalizedSqlCompareCache _normalizedSqlCompareCache = new NormalizedSqlCompareCache();
+   private long _lastEditorSqlToLongWarningMillis = 0;
 
    public ResultTabMatchingCurrentSqlHandler(ISQLEntryPanel entryPanel, SQLResultExecutorPanel sqlExecPanel)
    {
@@ -81,7 +86,19 @@ public class ResultTabMatchingCurrentSqlHandler
       {
          boolean tabMatchesSqlToBeExecuted;
 
-         if(Main.getApplication().getSquirrelPreferences().isResultTabHeaderCompareSqlsNormalized())
+         if( null != sqlToBeExecuted && 8000 < sqlToBeExecuted.length() )
+         {
+            // Editor-SQL to long. Will skip search for matching result tab
+            long currentTimeMillis = System.currentTimeMillis();
+            if( currentTimeMillis - _lastEditorSqlToLongWarningMillis > 5000L)
+            {
+               _lastEditorSqlToLongWarningMillis = currentTimeMillis;
+               s_log.warn("Editor SQL too long (" + sqlToBeExecuted.length()  + " chars) to perform matching result tab search without severe editor performance impact.");
+            }
+
+            tabMatchesSqlToBeExecuted = false;
+         }
+         else if(Main.getApplication().getSquirrelPreferences().isResultTabHeaderCompareSqlsNormalized())
          {
 
             IQueryTokenizer qt = _entryPanel.getSession().getNewQueryTokenizer();

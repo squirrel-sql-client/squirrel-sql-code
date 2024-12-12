@@ -99,6 +99,10 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+SQL result tab header marks:
+  Fixed performance problem when the SQL editor contained SQLs that were longer than 8000 characters.
+  For SQLs that are longer than 8000 characters marking of result tab headers is skipped.
+
 Improved the performance of SQL result tab header marking for large SQL editor content.
 
 SQL result tab header marks:
