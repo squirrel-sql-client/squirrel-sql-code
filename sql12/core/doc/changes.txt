@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/53
+  Aliases tree display:
+  Alias folder icons now show if a folder is expanded or collapsed.
+  New Alias icon was introduced.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/50
   SQL result and table export to CSV or XML:
   New formatting option "Include grouping separator if configured in Global Preferences"

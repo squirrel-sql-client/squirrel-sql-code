@@ -211,6 +211,10 @@ public class SquirrelResources extends Resources
 
 		String PINNED = "pinned";
 
+		String FOLDER_OPEN = "folderOpen";
+		String FOLDER_CLOSED = "folderClosed";
+		String START_ALIAS = "startAlias";
+
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)
