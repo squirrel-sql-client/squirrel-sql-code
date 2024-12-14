@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.AliasColor;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -32,7 +33,7 @@ public class AliasTreeCellRenderer extends DefaultTreeCellRenderer
 
       _folderClosedIcon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FOLDER_CLOSED);
       _folderOpenIcon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FOLDER_OPEN);
-      _startAliasIcon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.START_ALIAS);
+      _startAliasIcon = Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.DOT_DATABASE);
    }
 
    @Override
