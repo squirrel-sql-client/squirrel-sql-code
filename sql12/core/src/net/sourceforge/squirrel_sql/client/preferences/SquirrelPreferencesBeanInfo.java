@@ -67,6 +67,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(RESULT_TAB_HEADER_MARK_THICKNESS, SquirrelPreferences.class, "getResultTabHeaderMarkThickness", "setResultTabHeaderMarkThickness"),
             prop(RESULT_TAB_HEADER_COMPARE_SQLS_NORMALIZED, SquirrelPreferences.class, "isResultTabHeaderCompareSqlsNormalized", "setResultTabHeaderCompareSqlsNormalized"),
             prop(RESULT_TAB_HEADER_MARK_LAST_ONLY, SquirrelPreferences.class, "isResultTabHeaderMarkLastOnly", "setResultTabHeaderMarkLastOnly"),
+            prop(RESULT_TAB_HEADER_MARK_MAX_SQL_LENGTH_TO_CHECK, SquirrelPreferences.class, "getResultTabHeaderMarkMaxSqlLengthToCheck", "setResultTabHeaderMarkMaxSqlLengthToCheck"),
 
             prop(USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS, SquirrelPreferences.class, "isUseStatementSeparatorAsSqlToExecuteBounds", "setUseStatementSeparatorAsSqlToExecuteBounds"),
 

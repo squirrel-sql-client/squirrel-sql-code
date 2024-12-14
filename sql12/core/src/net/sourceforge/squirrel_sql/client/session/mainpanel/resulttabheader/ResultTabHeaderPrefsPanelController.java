@@ -42,6 +42,11 @@ public class ResultTabHeaderPrefsPanelController
       _panel.chkCompareSqlsNormalized.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
 
       _panel.lblMarkLineThickness.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
+      _panel.txtMaxSqlLengthToCheck.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
+
+      _panel.lblMaxSqlLengthToCheckStart.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
+      _panel.lblMaxSqlLengthToCheckEnd.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
+
       _panel.lblNoteManualActivate.setEnabled(_panel.chkMarkCurrentSQLsResultTabHeader.isSelected());
    }
 
@@ -54,6 +59,7 @@ public class ResultTabHeaderPrefsPanelController
       _panel.spnThickness.setValue(prefs.getResultTabHeaderMarkThickness());
       _panel.chkMarkLastTabHeaderOnly.setSelected(prefs.isResultTabHeaderMarkLastOnly());
       _panel.chkCompareSqlsNormalized.setSelected(prefs.isResultTabHeaderCompareSqlsNormalized());
+      _panel.txtMaxSqlLengthToCheck.setInt(prefs.getResultTabHeaderMarkMaxSqlLengthToCheck());
 
       onMarkCurrentSQLsResultTabHeader();
    }
@@ -67,6 +73,11 @@ public class ResultTabHeaderPrefsPanelController
       prefs.setResultTabHeaderMarkThickness((Integer) _panel.spnThickness.getValue());
       prefs.setResultTabHeaderMarkLastOnly(_panel.chkMarkLastTabHeaderOnly.isSelected());
       prefs.setResultTabHeaderCompareSqlsNormalized(_panel.chkCompareSqlsNormalized.isSelected());
+
+      if(0 < _panel.txtMaxSqlLengthToCheck.getInt())
+      {
+         prefs.setResultTabHeaderMarkMaxSqlLengthToCheck(_panel.txtMaxSqlLengthToCheck.getInt());
+      }
    }
 
    public ResultTabHeaderPrefsPanel getPanel()

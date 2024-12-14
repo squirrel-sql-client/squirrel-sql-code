@@ -107,6 +107,8 @@ Bug fixes:
 SQL result tab header marks:
   Fixed performance problem when the SQL editor contained SQLs that were longer than 8000 characters.
   For SQLs that are longer than 8000 characters marking of result tab headers is skipped.
+  The maximum number of characters can be configured at menu File --> Global Preferences
+  --> tab SQL --> section "SQL result tab header". The default value is 8000.
 
 Improved the performance of SQL result tab header marking for large SQL editor content.
 

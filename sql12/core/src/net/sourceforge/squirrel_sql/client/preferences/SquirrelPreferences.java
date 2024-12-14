@@ -52,7 +52,7 @@ import java.util.Iterator;
  */
 public class SquirrelPreferences implements Serializable
 {
-	public interface IPropertyNames
+   public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
@@ -71,6 +71,7 @@ public class SquirrelPreferences implements Serializable
 		String RESULT_TAB_HEADER_MARK_THICKNESS = "resultTabHeaderMarkThickness";
 		String RESULT_TAB_HEADER_COMPARE_SQLS_NORMALIZED = "resultTabHeaderCompareSqlsNormalized";
 		String RESULT_TAB_HEADER_MARK_LAST_ONLY = "resultTabHeaderMarkLastOnly";
+		String RESULT_TAB_HEADER_MARK_MAX_SQL_LENGTH_TO_CHECK = "resultTabHeaderMarkMaxSqlLengthToCheck";
 
 		String USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS = "useStatementSeparatorAsSqlToExecuteBounds";
       String MAIN_FRAME_STATE = "mainFrameWindowState";
@@ -357,6 +358,7 @@ public class SquirrelPreferences implements Serializable
 	private int _resultTabHeaderMarkThickness = 2;
 	private boolean _resultTabHeaderCompareSqlsNormalized;
 	private boolean _resultTabHeaderMarkLastOnly;
+	private int _resultTabHeaderMarkMaxSqlLengthToCheck = 8000;
 
 	public SquirrelPreferences()
 	{
@@ -1726,4 +1728,15 @@ public class SquirrelPreferences implements Serializable
 	{
 		_resultTabHeaderMarkLastOnly = resultTabHeaderMarkLastOnly;
 	}
+
+	public int getResultTabHeaderMarkMaxSqlLengthToCheck()
+	{
+		return _resultTabHeaderMarkMaxSqlLengthToCheck;
+	}
+
+	public void setResultTabHeaderMarkMaxSqlLengthToCheck(int resultTabHeaderMarkMaxSqlLengthToCheck)
+	{
+		_resultTabHeaderMarkMaxSqlLengthToCheck = resultTabHeaderMarkMaxSqlLengthToCheck;
+	}
+
 }

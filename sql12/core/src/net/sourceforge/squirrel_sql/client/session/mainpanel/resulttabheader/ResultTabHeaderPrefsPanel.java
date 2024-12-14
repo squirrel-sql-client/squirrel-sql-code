@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader;
 
 import net.sourceforge.squirrel_sql.client.preferences.ColorIcon;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -29,6 +30,9 @@ public class ResultTabHeaderPrefsPanel extends JPanel
    final JSpinner spnThickness;
    final JCheckBox chkMarkLastTabHeaderOnly;
    final JCheckBox chkCompareSqlsNormalized;
+   final JLabel lblMaxSqlLengthToCheckStart;
+   final IntegerField txtMaxSqlLengthToCheck;
+   final JLabel lblMaxSqlLengthToCheckEnd;
 
    final MultipleLineLabel lblNoteManualActivate;
 
@@ -80,7 +84,20 @@ public class ResultTabHeaderPrefsPanel extends JPanel
       add(chkCompareSqlsNormalized, gbc);
 
 
-      gbc = new GridBagConstraints(0,4,GridBagConstraints.REMAINDER,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      lblMaxSqlLengthToCheckStart = new JLabel(s_stringMgr.getString("ResultTabHeaderPrefsPanel.MaxSqlLengthToCheck.label.start"));
+      add(lblMaxSqlLengthToCheckStart, gbc);
+
+      gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,2,0,0), 0,0);
+      txtMaxSqlLengthToCheck = new IntegerField(6);
+      add(txtMaxSqlLengthToCheck, gbc);
+
+      gbc = new GridBagConstraints(2,4,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,2,0,0), 0,0);
+      lblMaxSqlLengthToCheckEnd = new JLabel(s_stringMgr.getString("ResultTabHeaderPrefsPanel.MaxSqlLengthToCheck.label.end"));
+      add(lblMaxSqlLengthToCheckEnd, gbc);
+
+
+      gbc = new GridBagConstraints(0,5,GridBagConstraints.REMAINDER,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5), 0,0);
       lblNoteManualActivate = new MultipleLineLabel(s_stringMgr.getString("ResultTabHeaderPrefsPanel.automatically.select.manually.by.shortcut"));
       add(lblNoteManualActivate, gbc);
 
