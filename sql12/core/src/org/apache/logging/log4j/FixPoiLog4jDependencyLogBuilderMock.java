@@ -17,6 +17,18 @@ public class FixPoiLog4jDependencyLogBuilderMock implements LogBuilder
    }
 
    @Override
+   public LogBuilder withThrowable(Throwable throwable)
+   {
+      return this;
+   }
+
+   @Override
+   public LogBuilder withLocation()
+   {
+      return this;
+   }
+
+   @Override
    public void log(CharSequence message)
    {
       if(noLog()){return;}

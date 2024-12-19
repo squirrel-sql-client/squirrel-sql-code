@@ -4,6 +4,9 @@ import org.apache.logging.log4j.message.Message;
 
 public interface LogBuilder
 {
+   LogBuilder withThrowable(Throwable throwable);
+   LogBuilder withLocation();
+
    void log(CharSequence message);
    void log(String message);
    void log(String message, Object... params);
