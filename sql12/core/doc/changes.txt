@@ -181,12 +181,12 @@ Refactoring Plugin: When refactoring SQLs were chosen to be edited
   instead of the additional editor.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/38
-MSSQL Server, table scripting: datetime2 type was scripted as datetime.
+  MSSQL Server, table scripting: datetime2 type was scripted as datetime.
 
 MSSQL Server, table scripting: Replaced deprecated types text, image by varchar(max), and varbinary(max).
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/17
-For databases which support catalogs and schemas, e.g. MSSQL Server, catalog nodes contained schemas
+  For databases which support catalogs and schemas, e.g. MSSQL Server, catalog nodes contained schemas
   that didn't belong to the catalog.
   Technically speaking the result column "TABLE_CATALOG" returned by java.sql.DatabaseMetaData.getSchemas()
   was not regarded.
