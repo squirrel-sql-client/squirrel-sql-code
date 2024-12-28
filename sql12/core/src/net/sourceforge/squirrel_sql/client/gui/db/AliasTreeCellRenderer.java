@@ -6,8 +6,6 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTree;
@@ -22,18 +20,14 @@ public class AliasTreeCellRenderer extends DefaultTreeCellRenderer
    private final AliasTreePasteState _aliasPasteState;
    private AliasDragState _aliasDragState;
 
-   private final Icon _folderClosedIcon;
-   private final Icon _folderOpenIcon;
-   private final ImageIcon _startAliasIcon;
-
    public AliasTreeCellRenderer(AliasTreePasteState aliasPasteState, AliasDragState aliasDragState)
    {
       _aliasPasteState = aliasPasteState;
       _aliasDragState = aliasDragState;
 
-      _folderClosedIcon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FOLDER_CLOSED);
-      _folderOpenIcon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FOLDER_OPEN);
-      _startAliasIcon = Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.DOT_DATABASE);
+      super.setClosedIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FOLDER_CLOSED));
+      super.setOpenIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FOLDER_OPEN));
+      super.setLeafIcon(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.DOT_DATABASE));
    }
 
    @Override
@@ -56,20 +50,6 @@ public class AliasTreeCellRenderer extends DefaultTreeCellRenderer
          renderer.setBackground(itemColor);
          ((JComponent) renderer).setOpaque(true);
       }
-
-      if(value instanceof DefaultMutableTreeNode)
-      {
-         DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-         if(node.getUserObject() instanceof AliasFolder)
-         {
-            setIcon(expanded ? _folderOpenIcon : _folderClosedIcon);
-         }
-         else
-         {
-            setIcon(_startAliasIcon); // No icon for leaf nodes
-         }
-      }
-
 
       return modifyRenderer(renderer, value);
    }
