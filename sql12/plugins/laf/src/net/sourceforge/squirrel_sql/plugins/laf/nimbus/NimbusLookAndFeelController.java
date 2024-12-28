@@ -10,7 +10,14 @@ import net.sourceforge.squirrel_sql.plugins.laf.DefaultLookAndFeelController;
 import net.sourceforge.squirrel_sql.plugins.laf.LAFPlugin;
 import net.sourceforge.squirrel_sql.plugins.laf.LAFRegister;
 
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 public class NimbusLookAndFeelController extends DefaultLookAndFeelController
@@ -60,7 +67,7 @@ public class NimbusLookAndFeelController extends DefaultLookAndFeelController
                }
                else
                {
-                  NimbusDarkTheme.resetDefaultTheme(Main.getApplication().getMainFrame());
+                  SwingUtilities.invokeLater(() -> NimbusDarkTheme.resetDefaultTheme(Main.getApplication().getMainFrame()));
                }
 
                break;

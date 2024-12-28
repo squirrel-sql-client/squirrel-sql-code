@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Updated the following Look and Feels to their latest versions:
+  FlatLaf, Radiance, JTattoo, Nimrod, Kunstoff
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/53
   Aliases tree display:
   Alias folder icons now show if a folder is expanded or collapsed.

@@ -25,7 +25,7 @@ public class LAFLoader
    }
 
 
-   private static LookAndFeel _getLookAndFeel(String lookAndFeelClassName, SquirrelURLClassLoader lafClassLoader, boolean silentAndNullable)
+   private static LookAndFeel _getLookAndFeel(String lookAndFeelClassName, SquirrelURLClassLoader lafClassLoader, boolean readingLookAndFeelList)
    {
       LookAndFeel laf = new MetalLookAndFeel();
 
@@ -43,8 +43,8 @@ public class LAFLoader
                lafClass = Class.forName(lookAndFeelClassName);
             }
 
-            if(   false == silentAndNullable
-               && StringUtils.startsWithIgnoreCase(lookAndFeelClassName, "com.jgoodies")
+            if(   false == readingLookAndFeelList
+               && isJGoodies(lookAndFeelClassName)
                && SystemInfo.isLinux())
             {
                String jgoodiesLinuxMsg =
@@ -57,8 +57,12 @@ public class LAFLoader
          }
          catch (Throwable t)
          {
-            if (silentAndNullable)
+            if (readingLookAndFeelList)
             {
+               if(false == isJGoodies(lookAndFeelClassName))
+               {
+                  s_log.warn("Failed to load Look and Feel class " + lookAndFeelClassName, t);
+               }
                return null;
             }
             else
@@ -86,5 +90,10 @@ public class LAFLoader
       }
 
       return laf;
+   }
+
+   private static boolean isJGoodies(String lookAndFeelClassName)
+   {
+      return StringUtils.startsWithIgnoreCase(lookAndFeelClassName, "com.jgoodies");
    }
 }
