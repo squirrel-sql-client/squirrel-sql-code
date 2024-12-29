@@ -114,6 +114,12 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 		return _comp;
 	}
 
+	@Override
+	public Component getHeaderComponent()
+	{
+		return null;
+	}
+
 	protected void refreshComponent() throws DataSetException
 	{
 		if(getDatabaseObjectInfo().getDatabaseObjectType().isContainerNode())

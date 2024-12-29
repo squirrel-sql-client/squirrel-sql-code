@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/54
+  Object Tree: Content tabs now show the number of rows.
+  If the number of rows is limited, the display indicates this,
+  and the limited number of rows is written in red.
+  To configure the row limit for content tabs see menu File --> New Session Properties --> tab "Object Tree"
+
 Updated the following Look and Feels to their latest versions:
   FlatLaf, Radiance, JTattoo, Nimrod, Kunstoff
 

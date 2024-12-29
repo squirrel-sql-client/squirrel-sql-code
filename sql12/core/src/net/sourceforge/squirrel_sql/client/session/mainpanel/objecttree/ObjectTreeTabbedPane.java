@@ -17,12 +17,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.JTabbedPane;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -32,6 +26,14 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 /**
  * This is the tabbed panel displayed when a node is selected in the
  * object tree.
@@ -102,38 +104,43 @@ class ObjectTreeTabbedPane
         IObjectTab tab = _tabs.get(_tabPnl.getSelectedIndex());
         return tab;
     }
-    
+
 	synchronized void addObjectPanelTab(IObjectTab tab)
 	{
-		if (tab == null)
+		if(tab == null)
 		{
 			throw new IllegalArgumentException("Null IObjectTab passed");
 		}
-        // For some reason, when the Oracle plugin adds details tabs for 
-        // triggers, the _tabPnl's first tab ends up being the trigger details
-        // tab and not the generic database object info tab.  This causes the 
-        // _tabs length to be 1 tab greater than the tabs that are actually in 
-        // the _tabPnl.  This throws off the selection such that the tab 
-        // selected in the tab panel doesn't get rendered until the tab to the
-        // right of the selected tab is selected.  This is a work-around for 
-        // this problem until I can determine why the DatabaseObjectInfoTab 
-        // never makes it into the _tabPnl in the first place.
-		if (_tabs.size() == 1 && _tabPnl.getTabCount() == 0) {
-            log.debug(
-                "addObjectPanelTab: _tabs.size() == 1, but " +
-                "_tabPnl.getTabCount() == 0 - adding first tab component to " +
-                "the tabbed page");
-            IObjectTab firstTab = _tabs.get(0);
-            _tabPnl.addTab(firstTab.getTitle(), 
-                           null, 
-                           firstTab.getComponent(), 
-                           firstTab.getHint());
-        }
-        
-        tab.setSession(_app.getSessionManager().getSession(_sessionId));
-        final String title = tab.getTitle();
-        _tabPnl.addTab(title, null, tab.getComponent(), tab.getHint());
-        _tabs.add(tab);
+		// For some reason, when the Oracle plugin adds details tabs for
+		// triggers, the _tabPnl's first tab ends up being the trigger details
+		// tab and not the generic database object info tab.  This causes the
+		// _tabs length to be 1 tab greater than the tabs that are actually in
+		// the _tabPnl.  This throws off the selection such that the tab
+		// selected in the tab panel doesn't get rendered until the tab to the
+		// right of the selected tab is selected.  This is a work-around for
+		// this problem until I can determine why the DatabaseObjectInfoTab
+		// never makes it into the _tabPnl in the first place.
+		if(_tabs.size() == 1 && _tabPnl.getTabCount() == 0)
+		{
+			log.debug( "addObjectPanelTab: _tabs.size() == 1, but _tabPnl.getTabCount() == 0 - adding first tab component to the tabbed page");
+			IObjectTab firstTab = _tabs.get(0);
+			_tabPnl.addTab(firstTab.getTitle(), null,firstTab.getComponent(),firstTab.getHint());
+		}
+
+		tab.setSession(_app.getSessionManager().getSession(_sessionId));
+		final String title = tab.getTitle();
+		if(null == tab.getHeaderComponent())
+		{
+			_tabPnl.addTab(title, null, tab.getComponent(), tab.getHint());
+		}
+		else
+		{
+			JPanel pnlIncludingHeader = new JPanel(new BorderLayout());
+			pnlIncludingHeader.add(tab.getHeaderComponent(), BorderLayout.NORTH);
+			pnlIncludingHeader.add(tab.getComponent(), BorderLayout.CENTER);
+			_tabPnl.addTab(title, null, pnlIncludingHeader);
+		}
+		_tabs.add(tab);
 	}
 
 	void selectCurrentTab()

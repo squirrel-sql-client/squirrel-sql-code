@@ -18,8 +18,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.PleaseWaitDialog;
@@ -28,20 +28,30 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTable;
+import java.awt.Component;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,38 +65,31 @@ import java.sql.Statement;
 public class ContentsTab extends BaseTableTab
 	implements IDataSetUpdateableTableModel
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ContentsTab.class);
+   private static final ILogger s_log = LoggerController.createLogger(ContentsTab.class);
+
    private final DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ContentsTab.class);
-
-	/**
+   /**
 	 * Name of the table that this tab displayed last time it was loaded.
 	 * This is needed to prevent an on-demand edit operation from turning
 	 * all data into editable tables.
 	 * The initial value of "" allows us to dispense with a check for null
 	 * on the first pass.
 	 */
-	String previousTableName = "";
+   private String previousTableName = "";
 
    private final SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
-
-
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(ContentsTab.class);
-
-
-	private ObjectTreePanel _treePanel = null;
+	private ObjectTreePanel _treePanel;
 
    private PleaseWaitDialog _waitDialog = null;
 
-	private SquirrelPreferences _prefs = null;
-   
-   public ContentsTab(ObjectTreePanel treePanel) {
-      _treePanel = treePanel;
-   	_prefs = _treePanel.getSession().getApplication().getSquirrelPreferences();
+   private final ContentsTabHeaderController _contentsTabHeaderController;
 
+   public ContentsTab(ObjectTreePanel treePanel)
+   {
+      _treePanel = treePanel;
+      _contentsTabHeaderController = new ContentsTabHeaderController();
    }
 
 	/**
@@ -123,16 +126,15 @@ public class ContentsTab extends BaseTableTab
 		// i18n[ContentsTab.hint=View the contents of the selected table]
 		return s_stringMgr.getString("ContentsTab.hint");
 	}
-	
 
    public SQLFilterClauses getSQLFilterClauses()
    {
       return _sqlFilterClauses;
    }
 
-
    /**
     * Create the <TT>IDataSet</TT> to be displayed in this tab.
+    * This method is called outside the EDT.
     */
    @Override
    protected IDataSet createDataSet() throws DataSetException
@@ -205,14 +207,14 @@ public class ContentsTab extends BaseTableTab
                   }
                }
             }
-
-            // Some DBMS's (EG Think SQL) throw an exception on a call to
-            // getBestRowIdentifier.
             catch (Throwable th)
             {
-            	if (s_log.isDebugEnabled()) {
-	               s_log.debug("getBestRowIdentifier not supported for table "+ currentTableName, th);
-            	}
+               // Some DBMS's (EG Think SQL) throw an exception on a call to
+               // getBestRowIdentifier.
+               if(s_log.isDebugEnabled())
+               {
+                  s_log.debug("getBestRowIdentifier not supported for table " + currentTableName, th);
+               }
             }
 
             // of objects for getBestRowIdentifier. For PostgreSQL put this kludge in
@@ -227,19 +229,18 @@ public class ContentsTab extends BaseTableTab
             // you must create the table using "WITH OID" appended to the create
             // statement.  Otherwise, OID column is not available by default.
             //
-            if (pseudoColumn.length() == 0) {
-              String pc = md.getOptionalPseudoColumnForDataSelection(ti);
-              if (pc != null) {
+            if(pseudoColumn.length() == 0)
+            {
+               String pc = md.getOptionalPseudoColumnForDataSelection(ti);
+               if(pc != null)
+               {
                   pseudoColumn = ", " + pc;
-              }
+               }
             }
 
-            ResultSet rs = null;
             String coded = gatherColumnsForContentSelect(md, ti).toString();
 
-
-
-            rs = createResultSet(ti, stmt, coded + pseudoColumn, true);
+            ResultSet rs = createResultSet(ti, stmt, coded + pseudoColumn, true);
 
             if(null == rs)
             {
@@ -284,12 +285,8 @@ public class ContentsTab extends BaseTableTab
             // distinguish this table from other tables in the DB.
             // We also include the URL used to connect to the DB so that
             // the same table/DB on different machines is treated differently.
-            rsds.setContentsTabResultSet(rs,
-                                         _dataSetUpdateableTableModel.getFullTableName(),
-                                         DialectFactory.getDialectType(md));
-            if (rs != null) {
-                try { rs.close(); } catch (SQLException e) {}
-            }
+            rsds.setContentsTabResultSet(rs, _dataSetUpdateableTableModel.getFullTableName(), DialectFactory.getDialectType(md));
+            SQLUtilities.closeResultSet(rs);
 
 
             //?? remember which column is the rowID (if any) so we can
@@ -298,6 +295,8 @@ public class ContentsTab extends BaseTableTab
             {
                _dataSetUpdateableTableModel.setRowIDCol(rsds.getColumnCount() - 1);
             }
+
+            _contentsTabHeaderController.updateHeader(rsds.currentRowCount(), session.getProperties());
 
             return rsds;
          }
@@ -317,17 +316,18 @@ public class ContentsTab extends BaseTableTab
       }
    }
 
+   @Override
+   public Component getHeaderComponent()
+   {
+      return _contentsTabHeaderController.getHeaderComponent();
+   }
+
    private ResultSet createResultSet(ITableInfo ti, Statement stmt, String columnsExpression, boolean showWaitDialog)
    {
       final StringBuffer buf = new StringBuffer();
       try
       {
-
-         buf.append("select ")
-               .append(columnsExpression)
-               .append(" from ")
-               .append(ti.getQualifiedName())
-               .append(" tbl");
+         buf.append("select ").append(columnsExpression).append(" from ").append(ti.getQualifiedName()).append(" tbl");
 
          String clause = _sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
          if ((clause != null) && (clause.length() > 0))
@@ -340,8 +340,9 @@ public class ContentsTab extends BaseTableTab
             buf.append(" order by ").append(clause);
          }
 
-         if (s_log.isDebugEnabled()) {
-            s_log.debug("createDataSet running SQL: " + buf.toString());
+         if(s_log.isDebugEnabled())
+         {
+            s_log.debug("createDataSet running SQL: " + buf);
          }
 
          if (showWaitDialog)
@@ -355,9 +356,7 @@ public class ContentsTab extends BaseTableTab
       }
       catch (Throwable e)
       {
-         s_log.warn("Failed to execute content SQL: " + buf.toString(), e);
-
-         //throw (e instanceof RuntimeException ? (RuntimeException)e : new RuntimeException(e));
+         s_log.warn("Failed to execute content SQL: " + buf, e);
          return null;
       }
    }
@@ -397,12 +396,15 @@ public class ContentsTab extends BaseTableTab
     * @return Returns true if the ObjectTree tab is selected.
     *                 false is returned otherwise.
     */
-   private boolean objectTreeTabIsSelected() {
+   private boolean objectTreeTabIsSelected()
+   {
       boolean result = false;
       ISession session = _treePanel.getSession();
-      if (session != null) {
+      if(session != null)
+      {
          SessionPanel sessionPanel = session.getSessionPanel();
-         if (sessionPanel != null) {
+         if(sessionPanel != null)
+         {
             result = sessionPanel.isObjectTreeTabSelected();
          }
       }
@@ -415,35 +417,44 @@ public class ContentsTab extends BaseTableTab
     * 
     * @param stmt the Statement to cancel.
     */
-   private void showWaitDialog(final Statement stmt) {
-      
-   	
-      if (!_prefs.getShowPleaseWaitDialog()) return;
-      
+   private void showWaitDialog(final Statement stmt)
+   {
+      if(!isShowPleaseWaitDialog())
+      {
+         return;
+      }
+
       // Only do this if the object tree 
       // (and hence this contents tab) is visible.
-      if (objectTreeTabIsSelected()) {
-         
-         // Save off selections so that selection/focus can be restored 
+      if(objectTreeTabIsSelected())
+      {
+         // Save off selections so that selection/focus can be restored
          // later.
          _treePanel.saveSelectedPaths();
-         
-         GUIUtils.processOnSwingEventThread(new Runnable() {
-         @Override
-			public void run() {
+
+         GUIUtils.processOnSwingEventThread(new Runnable()
+         {
+            @Override
+            public void run()
+            {
                if(null != _waitDialog)
                {
                   disposeWaitDialog();
                }
-               _waitDialog = new PleaseWaitDialog(stmt, _app);
-               _waitDialog.showDialog(_app);                                          
+               _waitDialog = new PleaseWaitDialog(stmt, Main.getApplication());
+               _waitDialog.showDialog(Main.getApplication());
                // Restore the paths
                _treePanel.restoreSavedSelectedPaths();
             }
-         });         
+         });
       }
    }
-   
+
+   private boolean isShowPleaseWaitDialog()
+   {
+      return Main.getApplication().getSquirrelPreferences().getShowPleaseWaitDialog();
+   }
+
    /**
     * Hide the dialog if one is shown
     * 
@@ -451,7 +462,7 @@ public class ContentsTab extends BaseTableTab
     */
    private void disposeWaitDialog()
    {
-      if (!_prefs.getShowPleaseWaitDialog())
+      if (!isShowPleaseWaitDialog())
       {
          return;
       }

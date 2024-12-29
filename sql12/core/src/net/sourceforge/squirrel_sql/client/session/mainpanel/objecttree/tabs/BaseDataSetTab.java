@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -25,6 +26,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.awt.Component;
 
 public abstract class BaseDataSetTab extends BaseObjectTab
 {
@@ -37,7 +40,6 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 
 	public BaseDataSetTab()
 	{
-		super();
 	}
 
 	/**
@@ -89,6 +91,12 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 		return _comp;
 	}
 
+	@Override
+	public Component getHeaderComponent()
+	{
+		return null;
+	}
+
 	/**
 	 * Rebuild the tab. This usually means that some kind of configuration
 	 * data has changed (I.E. the output type has changed from text to table).
@@ -121,7 +129,7 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 			throw new IllegalStateException("Null ISession");
 		}
 
-		super._app.getThreadPool().addTask(() -> {
+		Main.getApplication().getThreadPool().addTask(() -> {
 			try
 			{
 				getComponent().load(createDataSet(), new DataModelImplementationDetails(session));

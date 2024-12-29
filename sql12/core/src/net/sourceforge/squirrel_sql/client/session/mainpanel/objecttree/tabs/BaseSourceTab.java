@@ -27,9 +27,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.JScrollPane;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.Component;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -127,6 +127,12 @@ public abstract class BaseSourceTab extends BaseObjectTab
          _textFindCtrl = new TextFindCtrl(_comp.getTextArea(), _scroller, true);
       }
       return _textFindCtrl.getContainerPanel();
+   }
+
+   @Override
+   public Component getHeaderComponent()
+   {
+      return null;
    }
 
    protected void refreshComponent()
