@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -28,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.CellEditor;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableColumn;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -70,16 +72,50 @@ public class CellDataDialogHandler
          editor.cancelCellEditing();
       }
 
-      if(null == Main.getApplication().getStickyCellDataDialog().getStickyPopup())
+      CellDataDialog pinnedCellDataDialog = Main.getApplication().getPinnedCellDataDialogHandler().getPinnedCellDataDialog();
+      if(null == pinnedCellDataDialog)
       {
          createAndShowCellDataDialog(table, table.getColumnName(colIx), rowIx, colIx, colDef, obj, isModelEditable, evt);
       }
-      else
-      {
-         CellDataDialog cellDataDialog = Main.getApplication().getStickyCellDataDialog().getStickyPopup();
-         cellDataDialog.initCellDisplayPanel(table, table.getColumnName(colIx), rowIx, colIx, colDef, obj, isModelEditable, true);
-      }
+
+      // Redundant because handled by showSelectedValueInPinnedCellDataDialog(...) below
+      //else
+      //{
+      //   pinnedCellDataDialog.initCellDisplayPanel(table, table.getColumnName(colIx), rowIx, colIx, colDef, obj, isModelEditable, true);
+      //}
    }
+
+   public static void showSelectedValueInPinnedCellDataDialog(JTable table, boolean isModelEditable)
+   {
+      CellDataDialog pinnedCellDataDialog = Main.getApplication().getPinnedCellDataDialogHandler().getPinnedCellDataDialog();
+
+      if(null == pinnedCellDataDialog)
+      {
+         return;
+      }
+
+      int selectedRow = table.getSelectedRow();
+      int selectedColumn = table.getSelectedColumn();
+
+      if(-1 == selectedRow || -1 == selectedColumn)
+      {
+         return;
+      }
+
+      TableColumn column = table.getColumnModel().getColumn(selectedColumn);
+
+      if(false == column instanceof ExtTableColumn)
+      {
+         return;
+      }
+
+      Object obj = table.getValueAt(selectedRow, selectedColumn);
+      ColumnDisplayDefinition colDef = ((ExtTableColumn) column).getColumnDisplayDefinition();
+
+      pinnedCellDataDialog.initCellDisplayPanel(table, table.getColumnName(selectedColumn), selectedRow, selectedColumn, colDef, obj, isModelEditable, true);
+   }
+
+
 
    private static void createAndShowCellDataDialog(JTable parentTable,
                                                    String columnName,

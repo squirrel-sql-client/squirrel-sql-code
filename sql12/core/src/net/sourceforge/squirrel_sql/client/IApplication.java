@@ -317,5 +317,5 @@ public interface IApplication
 
 	CellDetailDisplayModeManager getCellDetailDisplayModeManager();
 
-	PinnedCellDataDialogHandler getStickyCellDataDialog();
+	PinnedCellDataDialogHandler getPinnedCellDataDialogHandler();
 }

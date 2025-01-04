@@ -5,7 +5,7 @@ import java.awt.event.WindowEvent;
 
 public class PinnedCellDataDialogHandler
 {
-   private CellDataDialog _stickyCellDataDialog;
+   private CellDataDialog _pinnedCellDataDialog;
 
    private WindowAdapter _windowAdapter;
 
@@ -16,36 +16,36 @@ public class PinnedCellDataDialogHandler
          @Override
          public void windowClosing(WindowEvent e)
          {
-            clearStickyCellDataDialog();
+            clearPinnedCellDataDialog();
          }
 
          @Override
          public void windowClosed(WindowEvent e)
          {
-            clearStickyCellDataDialog();
+            clearPinnedCellDataDialog();
          }
       };
    }
 
-   public void setStickyCellDataDialog(CellDataDialog stickyCellDataDialog)
+   void setPinnedCellDataDialog(CellDataDialog pinnedCellDataDialog)
    {
-      clearStickyCellDataDialog();
-      _stickyCellDataDialog = stickyCellDataDialog;
-      _stickyCellDataDialog.addWindowListener(_windowAdapter);
+      clearPinnedCellDataDialog();
+      _pinnedCellDataDialog = pinnedCellDataDialog;
+      _pinnedCellDataDialog.addWindowListener(_windowAdapter);
    }
 
-   public void clearStickyCellDataDialog()
+   void clearPinnedCellDataDialog()
    {
-      if(null != _stickyCellDataDialog)
+      if(null != _pinnedCellDataDialog)
       {
-         _stickyCellDataDialog.switchOffPinned();
-         _stickyCellDataDialog.removeWindowListener(_windowAdapter);
-         _stickyCellDataDialog = null;
+         _pinnedCellDataDialog.switchOffPinned();
+         _pinnedCellDataDialog.removeWindowListener(_windowAdapter);
+         _pinnedCellDataDialog = null;
       }
    }
 
-   public CellDataDialog getStickyPopup()
+   CellDataDialog getPinnedCellDataDialog()
    {
-      return _stickyCellDataDialog;
+      return _pinnedCellDataDialog;
    }
 }

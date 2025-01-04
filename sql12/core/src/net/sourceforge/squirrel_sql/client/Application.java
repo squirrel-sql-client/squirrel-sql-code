@@ -1562,7 +1562,7 @@ public class Application implements IApplication
    }
 
    @Override
-   public PinnedCellDataDialogHandler getStickyCellDataDialog()
+   public PinnedCellDataDialogHandler getPinnedCellDataDialogHandler()
    {
       return _pinnedCellDataDialogHandler;
    }

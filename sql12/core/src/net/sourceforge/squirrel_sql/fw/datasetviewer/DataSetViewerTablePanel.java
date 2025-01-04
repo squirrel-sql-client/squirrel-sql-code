@@ -20,10 +20,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
 
@@ -96,10 +98,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 
    private void onSelectionChanged(ListSelectionEvent e)
    {
-		//if(e.getValueIsAdjusting())
-		//{
-		//	return;
-		//}
+		if(false == e.getValueIsAdjusting())
+		{
+			Main.getApplication().getPinnedCellDataDialogHandler();
+			CellDataDialogHandler.showSelectedValueInPinnedCellDataDialog(_table, isTableEditable());
+		}
 
 		for(RowColSelectedCountListener l : _rowColSelectedCountListeners.toArray(new RowColSelectedCountListener[0]))
 		{
@@ -300,14 +303,16 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 	 * MyTable.isCellEditable().  We do not bother to distinguish between
 	 * editable and non-editable cells within the same table.
 	 */
-	public boolean isTableEditable() {
+	public boolean isTableEditable()
+	{
 		return false;
 	}
 	
 	/**
 	 * Tell the table whether particular columns are editable.
 	 */
-	public boolean isColumnEditable(int col, Object originalValue) {
+	public boolean isColumnEditable(int col, Object originalValue)
+	{
 		return false;
 	}
 
@@ -318,7 +323,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 	 * to be able to view the entire contents of the cell even if it was not
 	 * completely loaded during the initial table setup.
 	 */
-	public boolean needToReRead(int col, Object originalValue) {
+	public boolean needToReRead(int col, Object originalValue)
+	{
 		// call the DataType object for this column and have it check the current value
 		return CellComponentFactory.needToReRead(getColDefs()[col], originalValue);
 	}

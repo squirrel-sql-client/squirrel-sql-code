@@ -69,11 +69,11 @@ class CellDataDialog extends JDialog
    {
       if(sticky)
       {
-         Main.getApplication().getStickyCellDataDialog().setStickyCellDataDialog(this);
+         Main.getApplication().getPinnedCellDataDialogHandler().setPinnedCellDataDialog(this);
       }
       else
       {
-         Main.getApplication().getStickyCellDataDialog().clearStickyCellDataDialog();
+         Main.getApplication().getPinnedCellDataDialogHandler().clearPinnedCellDataDialog();
       }
    }
 

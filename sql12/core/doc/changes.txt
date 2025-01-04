@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/48#issuecomment-2566434346
+ Cell data popup: When the popup is pinned it is updated by table selection change and single mouse click.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/54
   Object Tree: Content tabs now show the number of rows.
   If the number of rows is limited, the display indicates this,
