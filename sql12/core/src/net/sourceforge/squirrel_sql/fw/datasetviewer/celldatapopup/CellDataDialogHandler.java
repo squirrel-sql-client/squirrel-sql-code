@@ -51,13 +51,24 @@ public class CellDataDialogHandler
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataDialogHandler.class);
 
    /**
-    * function to create the popup display when called from JTable
+    * Method to open a cell data popup dialog.
+    * This method is called when a cell is double-clicked.
+    * <p>
+    * This method does nothing when a pinned cell data dialog exists
+    * because refreshes of a pinned cell data dialog are handled by
+    * {@link #showSelectedValueInPinnedCellDataDialog(JTable, boolean)}
     */
    public static void showDialog(JTable table,
                                  ColumnDisplayDefinition colDef,
                                  MouseEvent evt,
                                  boolean isModelEditable)
    {
+      CellDataDialog pinnedCellDataDialog = Main.getApplication().getPinnedCellDataDialogHandler().getPinnedCellDataDialog();
+      if(null != pinnedCellDataDialog)
+      {
+         return;
+      }
+
       Point pt = evt.getPoint();
       int rowIx = table.rowAtPoint(pt);
       int colIx = table.columnAtPoint(pt);
@@ -72,23 +83,16 @@ public class CellDataDialogHandler
          editor.cancelCellEditing();
       }
 
-      CellDataDialog pinnedCellDataDialog = Main.getApplication().getPinnedCellDataDialogHandler().getPinnedCellDataDialog();
-      if(null == pinnedCellDataDialog)
-      {
-         createAndShowCellDataDialog(table, table.getColumnName(colIx), rowIx, colIx, colDef, obj, isModelEditable, evt);
-      }
-
-      // Redundant because handled by showSelectedValueInPinnedCellDataDialog(...) below
-      //else
-      //{
-      //   pinnedCellDataDialog.initCellDisplayPanel(table, table.getColumnName(colIx), rowIx, colIx, colDef, obj, isModelEditable, true);
-      //}
+      createAndShowCellDataDialog(table, table.getColumnName(colIx), rowIx, colIx, colDef, obj, isModelEditable, evt);
    }
 
+   /**
+    *  This method refreshes data in a pinned cell data dialog.
+    *  It is called when the cell selection changes.
+    */
    public static void showSelectedValueInPinnedCellDataDialog(JTable table, boolean isModelEditable)
    {
       CellDataDialog pinnedCellDataDialog = Main.getApplication().getPinnedCellDataDialogHandler().getPinnedCellDataDialog();
-
       if(null == pinnedCellDataDialog)
       {
          return;
