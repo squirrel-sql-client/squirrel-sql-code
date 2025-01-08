@@ -6,7 +6,7 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
-Intersystems Cache Plugin: Statistics/query plan is now searchable.
+Intersystems Cache/IRIS Plugin: Statistics/query plan is now searchable.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/48#issuecomment-2566434346
  Cell data popup: When the popup is pinned it is updated by table selection change and single mouse click.
