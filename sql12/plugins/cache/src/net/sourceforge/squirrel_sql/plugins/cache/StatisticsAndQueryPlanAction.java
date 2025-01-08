@@ -1,11 +1,22 @@
 package net.sourceforge.squirrel_sql.plugins.cache;
 
+import java.awt.GridLayout;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.sql.Connection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.DataSetTextArea;
+import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFindCtrl;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -13,16 +24,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.sql.Connection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class StatisticsAndQueryPlanAction extends SquirrelAction implements ISQLPanelAction
@@ -73,7 +74,9 @@ public class StatisticsAndQueryPlanAction extends SquirrelAction implements ISQL
          DataSetTextArea dataSetTextArea = new DataSetTextArea(s_stringMgr.getString("StatisticsAndQueryPlanAction.reading.stats.for.sql", cleanedSQL));
 
          JScrollPane scrollPane = new JScrollPane(dataSetTextArea);
-         resultPanel.add(scrollPane);
+         TextFindCtrl textFindCtrl = new TextFindCtrl(dataSetTextArea, scrollPane, true);
+         resultPanel.add(textFindCtrl.getContainerPanel());
+
          SwingUtilities.invokeLater(() -> dataSetTextArea.scrollRectToVisible(new Rectangle(0, 0)));
 
          Connection con = _sqlPanelAPI.getSession().getSQLConnection().getConnection();
