@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Look and Feel Plugin: The following dark radiance L&Fs are available:
+  Graphite,GraphiteChalk,GraphiteAqua,GraphiteElectric,GraphiteGold,GraphiteSienna,GraphiteSunset,GraphiteGlass
+  Raven,NightShade,Twilight,Magellan
+
 Intersystems Cache/IRIS Plugin: Statistics/query plan is now searchable.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/48#issuecomment-2566434346
@@ -17,7 +21,7 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/54
   and the limited number of rows is written in red.
   To configure the row limit for content tabs see menu File --> New Session Properties --> tab "Object Tree"
 
-Updated the following Look and Feels to their latest versions:
+Look and Feel Plugin: Updated the following Look and Feels to their latest versions:
   FlatLaf, Radiance, JTattoo, Nimrod, Kunstoff
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/53

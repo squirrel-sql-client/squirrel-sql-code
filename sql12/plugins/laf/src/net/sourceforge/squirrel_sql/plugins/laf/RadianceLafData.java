@@ -64,6 +64,18 @@ public class RadianceLafData {
 		putClass("OfficeSilver2007", "org.pushingpixels.radiance.theming.extras.api.skinpack.RadianceOfficeSilver2007LookAndFeel");
 		putClass("OfficeBlue2007", "org.pushingpixels.radiance.theming.extras.api.skinpack.RadianceOfficeBlue2007LookAndFeel");
 		putClass("OfficeBlack2007", "org.pushingpixels.radiance.theming.extras.api.skinpack.RadianceOfficeBlack2007LookAndFeel");
+		putClass("NightShade", "org.pushingpixels.radiance.theming.api.skin.RadianceNightShadeLookAndFeel");
+		putClass("Twilight", "org.pushingpixels.radiance.theming.api.skin.RadianceTwilightLookAndFeel");
+		putClass("Magellan", "org.pushingpixels.radiance.theming.api.skin.RadianceMagellanLookAndFeel");
+		putClass("Graphite", "org.pushingpixels.radiance.theming.api.skin.RadianceGraphiteLookAndFeel");
+		putClass("GraphiteChalk", "org.pushingpixels.radiance.theming.api.skin.RadianceGraphiteChalkLookAndFeel");
+		putClass("GraphiteAqua", "org.pushingpixels.radiance.theming.api.skin.RadianceGraphiteAquaLookAndFeel");
+		putClass("GraphiteElectric", "org.pushingpixels.radiance.theming.api.skin.RadianceGraphiteElectricLookAndFeel");
+		putClass("GraphiteGold", "org.pushingpixels.radiance.theming.api.skin.RadianceGraphiteGoldLookAndFeel");
+		putClass("GraphiteSienna", "org.pushingpixels.radiance.theming.api.skin.RadianceGraphiteSiennaLookAndFeel");
+		putClass("GraphiteSunset", "org.pushingpixels.radiance.theming.api.skin.RadianceGraphiteSunsetLookAndFeel");
+		putClass("GraphiteGlass", "org.pushingpixels.radiance.theming.api.skin.RadianceGraphiteGlassLookAndFeel");
+		putClass("Raven", "org.pushingpixels.radiance.theming.api.skin.RadianceRavenLookAndFeel");
 	}
 
 	public Class<?> getSkinClassForName(String skinName) {
