@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -10,7 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -28,29 +29,6 @@ final class LAFPreferencesPanel extends JPanel
    StringManager s_stringMgr = StringManagerFactory.getStringManager(LAFPreferencesPanel.class);
 
    private static ILogger s_log = LoggerController.createLogger(LAFPreferencesPanel.class);
-
-   /**
-    * This interface defines locale specific strings. This should be
-    * replaced with a property file.
-    */
-   interface LAFPreferencesPanelI18n
-   {
-      StringManager s_stringMgr = StringManagerFactory.getStringManager(LAFPreferencesPanelI18n.class);
-
-      // i18n[laf.lookAndFeel=Look and Feel:]
-      String LOOK_AND_FEEL = s_stringMgr.getString("laf.lookAndFeel");
-      // i18n[laf.lafWarning=Note: Controls may not be drawn correctly after changes in this panel until the application is restarted.]
-      String LAF_WARNING = s_stringMgr.getString("laf.lafWarning");
-      // i18n[laf.lf=L & F]
-      String TAB_TITLE = s_stringMgr.getString("laf.lf");
-      // i18n[laf.settings=Look and Feel settings]
-      String TAB_HINT = s_stringMgr.getString("laf.settings");
-      // i18n[laf.jars=L & F jars:]
-      String LAF_LOC = s_stringMgr.getString("laf.jars");
-      // i18n[laf.lafPerformanceWarning=Also note: Some Look and Feels may cause performance problems.
-// If you think your selected Look and Feel slows down SQuirreL switch to a Metal or Plastic Look and Feel.]
-      String LAF_CRITICAL_WARNING = s_stringMgr.getString("laf.lafCriticalWarning");
-   }
 
    private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
    private JCheckBox _allowSetBorder = new JCheckBox(s_stringMgr.getString("laf.allowsetborder"));
@@ -76,8 +54,6 @@ final class LAFPreferencesPanel extends JPanel
     * configuration information.
     */
    private BaseLAFPreferencesPanelComponent _curLAFConfigComp;
-
-
 
    LAFPreferencesPanel(LAFPlugin plugin, LAFRegister lafRegister)
    {
@@ -146,10 +122,10 @@ final class LAFPreferencesPanel extends JPanel
       add(_lafPnl, gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
-      add(new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_WARNING), gbc);
+      add(new MultipleLineLabel(s_stringMgr.getString("laf.lafWarning")), gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
-      MultipleLineLabel enforedWarningLabel = new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_CRITICAL_WARNING);
+      MultipleLineLabel enforedWarningLabel = new MultipleLineLabel(s_stringMgr.getString("laf.lafCriticalWarning"));
       enforedWarningLabel.setForeground(Color.red);
       add(enforedWarningLabel, gbc);
 
@@ -165,21 +141,25 @@ final class LAFPreferencesPanel extends JPanel
       GridBagConstraints gbc = new GridBagConstraints();
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),0,0);
-      ret.add(new JLabel(LAFPreferencesPanelI18n.LOOK_AND_FEEL, SwingConstants.RIGHT), gbc);
+      ret.add(new JLabel(s_stringMgr.getString("laf.lookAndFeel")), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),0,0);
       ret.add(_lafCmb, gbc);
 
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),0,0);
-      ret.add(new JLabel(LAFPreferencesPanelI18n.LAF_LOC, SwingConstants.RIGHT), gbc);
+      ret.add(new JLabel(s_stringMgr.getString("laf.jars")), gbc);
 
-      gbc = new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
-      ret.add(new MultipleLineLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
+      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),0,0);
+      ret.add(GUIUtils.styleTextFieldToCopyableLabel(new JTextField(_plugin.getLookAndFeelFolder().getAbsolutePath())), gbc);
 
 
-      gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 0, 4, 4),0,0);
+      gbc = new GridBagConstraints(0,2,GridBagConstraints.REMAINDER, 1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 0, 4, 4),0,0);
+      //_configHolderPnl.setBorder(BorderFactory.createLineBorder(Color.red));
       ret.add(_configHolderPnl, gbc);
+
+      gbc = new GridBagConstraints(1,3,GridBagConstraints.REMAINDER, 1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0),0,0);
+      ret.add(new JPanel(), gbc);
 
       return ret;
    }

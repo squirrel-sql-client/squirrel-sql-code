@@ -142,11 +142,6 @@ public class RadianceLookAndFeelController extends DefaultLookAndFeelController 
 
 	private static final class RadianceSkinPrefsPanel extends BaseLAFPreferencesPanelComponent {
 
-		interface SkinPrefsPanelI18n {
-			// i18n[RadianceLookAndFeelController.radianceSkinLabel=Radiance Skin:]
-			String THEME_PACK = s_stringMgr.getString("RadianceLookAndFeelController.radianceSkinLabel");
-		}
-
 		private RadianceLookAndFeelController _ctrl;
 
 		private JComboBox _skinCmb = new JComboBox();
@@ -165,7 +160,7 @@ public class RadianceLookAndFeelController extends DefaultLookAndFeelController 
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(new JLabel(SkinPrefsPanelI18n.THEME_PACK, SwingConstants.RIGHT), gbc);
+			add(new JLabel(s_stringMgr.getString("RadianceLookAndFeelController.radianceSkinLabel"), SwingConstants.RIGHT), gbc);
 
 			++gbc.gridx;
 			add(_skinCmb, gbc);

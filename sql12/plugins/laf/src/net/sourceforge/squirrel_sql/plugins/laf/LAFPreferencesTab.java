@@ -122,7 +122,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 	 */
 	public String getTitle()
 	{
-		return LAFPreferencesPanel.LAFPreferencesPanelI18n.TAB_TITLE;
+		return s_stringMgr.getString("laf.lf");
 	}
 
 	/**
@@ -132,7 +132,6 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 	 */
 	public String getHint()
 	{
-		return LAFPreferencesPanel.LAFPreferencesPanelI18n.TAB_HINT;
+		return s_stringMgr.getString("laf.settings");
 	}
-
 }

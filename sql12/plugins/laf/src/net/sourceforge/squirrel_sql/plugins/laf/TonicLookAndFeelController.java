@@ -141,7 +141,7 @@ public class TonicLookAndFeelController extends DefaultLookAndFeelController
 		{
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = GridBagConstraints.WEST;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.fill = GridBagConstraints.NONE;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			gbc.gridx = 0;

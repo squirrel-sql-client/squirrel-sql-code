@@ -122,6 +122,8 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Look and Feel Plugin: Cleaned up L&F Preferences UI.
+
 #1532 MS Excel export: Fixed NoSuchMethodError
 
 SQL result tab header marks:

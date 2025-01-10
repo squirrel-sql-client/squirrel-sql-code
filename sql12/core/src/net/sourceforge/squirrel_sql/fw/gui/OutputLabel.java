@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dimension;
 
 import javax.swing.JLabel;
 /**
@@ -28,17 +27,6 @@ import javax.swing.JLabel;
  */
 public class OutputLabel extends JLabel
 {
-	/** Default preferred width. */
-	public static final int PREF_WIDTH = 200;
-
-	/**
-	 * Default ctor.
-	 */
-	public OutputLabel()
-	{
-		super();
-		commonCtor();
-	}
 
 	/**
 	 * Ctor specifying text.
@@ -48,7 +36,6 @@ public class OutputLabel extends JLabel
 	public OutputLabel(String text)
 	{
 		super(text);
-		commonCtor();
 		setToolTipText(text);
 	}
 
@@ -61,15 +48,5 @@ public class OutputLabel extends JLabel
 	{
 		super.setText(text);
 		setToolTipText(text);
-	}
-
-	/**
-	 * Common ctor code.
-	 */
-	private void commonCtor()
-	{
-		Dimension ps = getPreferredSize();
-		ps.width = PREF_WIDTH;
-		setPreferredSize(ps);
 	}
 }

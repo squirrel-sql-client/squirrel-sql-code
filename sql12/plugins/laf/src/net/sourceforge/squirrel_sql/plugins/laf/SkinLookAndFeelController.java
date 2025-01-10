@@ -19,13 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.fw.gui.DirectoryListComboBox;
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
-import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
@@ -36,12 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
-import javax.swing.JLabel;
 import javax.swing.LookAndFeel;
-import javax.swing.SwingConstants;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -54,8 +43,7 @@ import java.util.Iterator;
  */
 public class SkinLookAndFeelController extends DefaultLookAndFeelController
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SkinLookAndFeelController.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SkinLookAndFeelController.class);
 
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SkinLookAndFeelController.class);
@@ -170,120 +158,8 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		this.fileWrapperFactory = fileWrapperFactory;
 	}
 
-	private static final class SkinPrefsPanel extends BaseLAFPreferencesPanelComponent
+	public SkinPreferences getSkinPreferences()
 	{
-
-		/**
-		 * This interface defines locale specific strings. This should be replaced with a property file.
-		 */
-		interface SkinPrefsPanelI18n
-		{
-			// i18n[laf.skinThemPack=Theme Pack:]
-			String THEME_PACK = s_stringMgr.getString("laf.skinThemPack");
-
-			// i18n[laf.skinThemePackDir=Theme Pack Directory:]
-			String THEMEPACK_LOC = s_stringMgr.getString("laf.skinThemePackDir");
-		}
-
-		private SkinLookAndFeelController _ctrl;
-
-		private DirectoryListComboBox _themePackCmb = new DirectoryListComboBox();
-
-		SkinPrefsPanel(SkinLookAndFeelController ctrl)
-		{
-			super(new GridBagLayout());
-			_ctrl = ctrl;
-			createUserInterface();
-		}
-
-		private void createUserInterface()
-		{
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = GridBagConstraints.WEST;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			add(new JLabel(SkinPrefsPanelI18n.THEME_PACK, SwingConstants.RIGHT), gbc);
-
-			++gbc.gridx;
-			add(_themePackCmb, gbc);
-
-			gbc.gridx = 0;
-			++gbc.gridy;
-			add(new JLabel(SkinPrefsPanelI18n.THEMEPACK_LOC, SwingConstants.RIGHT), gbc);
-
-			++gbc.gridx;
-			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
-			add(new OutputLabel(themePackDir), gbc);
-		}
-
-		/**
-		 * @see BaseLAFPreferencesPanelComponent#loadPreferencesPanel()
-		 */
-		public void loadPreferencesPanel()
-		{
-			super.loadPreferencesPanel();
-			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
-			// i18n[laf.jarZip=JAR/Zip files]
-			final FileExtensionFilter filter = new FileExtensionFilter(s_stringMgr.getString("laf.jarZip"), new String[] { ".jar", ".zip" });
-			_themePackCmb.load(new File(themePackDir), filter);
-			_themePackCmb.setSelectedItem(_ctrl._prefs.getThemePackName());
-			if (_themePackCmb.getSelectedIndex() == -1 && _themePackCmb.getModel().getSize() > 0)
-			{
-				_themePackCmb.setSelectedIndex(0);
-			}
-		}
-
-		/**
-		 * @see BaseLAFPreferencesPanelComponent#applyChanges()
-		 */
-		public boolean applyChanges()
-		{
-			super.applyChanges();
-			_ctrl._prefs.setThemePackName((String) _themePackCmb.getSelectedItem());
-
-			// Force the LAF to be set even if Skin is the current one. This
-			// allows a change in theme to take affect.
-			return true;
-		}
-	}
-
-	public static final class SkinPreferences implements IHasIdentifier
-	{
-		private String _themePackDir;
-
-		private String _themePackName;
-
-		private IntegerIdentifier _id = new IntegerIdentifier(1);
-
-		public String getThemePackDirectory()
-		{
-			return _themePackDir;
-		}
-
-		public void setThemePackDirectory(String value)
-		{
-			_themePackDir = value;
-		}
-
-		public String getThemePackName()
-		{
-			return _themePackName;
-		}
-
-		public void setThemePackName(String value)
-		{
-			_themePackName = value;
-		}
-
-		/**
-		 * @return The unique identifier for this object.
-		 */
-		public IIdentifier getIdentifier()
-		{
-			return _id;
-		}
+		return _prefs;
 	}
 }
