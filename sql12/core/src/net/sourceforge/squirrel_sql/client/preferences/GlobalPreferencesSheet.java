@@ -36,8 +36,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -58,9 +67,6 @@ public class GlobalPreferencesSheet extends DialogWidget
 
    private final static ILogger s_log = LoggerController.createLogger(GlobalPreferencesSheet.class);
 
-   /**
-    * Singleton instance of this class.
-    */
    private static GlobalPreferencesSheet s_instance;
 
    /**
@@ -91,14 +97,13 @@ public class GlobalPreferencesSheet extends DialogWidget
 
       createGUI();
 
-      for (Iterator<IGlobalPreferencesPanel> it = _globalPreferencesPanels.iterator(); it.hasNext(); )
+      for(IGlobalPreferencesPanel pnl : _globalPreferencesPanels)
       {
-         IGlobalPreferencesPanel pnl = it.next();
          try
          {
             pnl.initialize(Main.getApplication());
          }
-         catch (Throwable th)
+         catch(Throwable th)
          {
             final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.loading", pnl.getTitle());
             s_log.error(msg, th);
@@ -217,9 +222,8 @@ public class GlobalPreferencesSheet extends DialogWidget
       Props.putInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, size.width);
       Props.putInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, size.height);
 
-      for (Iterator<IGlobalPreferencesPanel> it = _globalPreferencesPanels.iterator(); it.hasNext(); )
+      for(IGlobalPreferencesPanel pnl : _globalPreferencesPanels)
       {
-         IGlobalPreferencesPanel pnl = it.next();
          pnl.uninitialize(Main.getApplication());
       }
 
@@ -257,14 +261,13 @@ public class GlobalPreferencesSheet extends DialogWidget
       cursorChg.show();
       try
       {
-         for (Iterator<IGlobalPreferencesPanel> it = _globalPreferencesPanels.iterator(); it.hasNext(); )
+         for(IGlobalPreferencesPanel pnl : _globalPreferencesPanels)
          {
-            IGlobalPreferencesPanel pnl = it.next();
             try
             {
                pnl.applyChanges();
             }
-            catch (Throwable th)
+            catch(Throwable th)
             {
                final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.saving", pnl.getTitle());
                s_log.error(msg, th);

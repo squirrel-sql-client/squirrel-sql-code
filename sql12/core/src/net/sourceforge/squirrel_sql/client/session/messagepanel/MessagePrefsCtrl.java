@@ -141,27 +141,27 @@ public class MessagePrefsCtrl
       Main.getApplication().getMainFrame().getMessagePanel().applyMessagePanelStyle(prefs);
    }
 
-   public void switchToLight()
-   {
-      loadData(new SquirrelPreferences()); // Setting to default
-      applyChanges(Main.getApplication().getSquirrelPreferences());
-   }
-
-   public void switchToDark()
-   {
-      final SquirrelPreferences darkThemePrefs = new SquirrelPreferences(); // Start with default
-
-       darkThemePrefs.setMessagePanelMessageForeground(Color.green.getRGB());
-       darkThemePrefs.setMessagePanelMessageBackground(Color.white.getRGB());
-       darkThemePrefs.setMessagePanelMessageHistoryForeground(Color.black.getRGB());
-       darkThemePrefs.setMessagePanelMessageHistoryBackground(Color.white.getRGB());
-
-       darkThemePrefs.setMessagePanelWarningForeground(Color.yellow.getRGB());
-       darkThemePrefs.setMessagePanelWarningBackground(Color.white.getRGB());
-       darkThemePrefs.setMessagePanelWarningHistoryForeground(Color.yellow.darker().darker().getRGB());
-       darkThemePrefs.setMessagePanelWarningHistoryBackground(Color.white.getRGB());
-
-       loadData(darkThemePrefs);
-       applyChanges(Main.getApplication().getSquirrelPreferences());
-   }
+   //public void switchToLight()
+   //{
+   //   loadData(new SquirrelPreferences()); // Setting to default
+   //   applyChanges(Main.getApplication().getSquirrelPreferences());
+   //}
+   //
+   //public void switchToDark()
+   //{
+   //   final SquirrelPreferences darkThemePrefs = new SquirrelPreferences(); // Start with default
+   //
+   //    darkThemePrefs.setMessagePanelMessageForeground(Color.green.getRGB());
+   //    darkThemePrefs.setMessagePanelMessageBackground(Color.white.getRGB());
+   //    darkThemePrefs.setMessagePanelMessageHistoryForeground(Color.black.getRGB());
+   //    darkThemePrefs.setMessagePanelMessageHistoryBackground(Color.white.getRGB());
+   //
+   //    darkThemePrefs.setMessagePanelWarningForeground(Color.yellow.getRGB());
+   //    darkThemePrefs.setMessagePanelWarningBackground(Color.white.getRGB());
+   //    darkThemePrefs.setMessagePanelWarningHistoryForeground(Color.yellow.darker().darker().getRGB());
+   //    darkThemePrefs.setMessagePanelWarningHistoryBackground(Color.white.getRGB());
+   //
+   //    loadData(darkThemePrefs);
+   //    applyChanges(Main.getApplication().getSquirrelPreferences());
+   //}
 }

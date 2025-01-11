@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
 import net.sourceforge.squirrel_sql.client.gui.db.passwordaccess.PasswordAccessPrefsCtrl;
-import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesController;
 import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -257,11 +256,11 @@ final class GeneralPreferencesGUI extends JPanel
       ++gbc.gridy;
       pnl.add(createValuePopupPanel(), gbc);
 
-      ++gbc.gridy;
-      final GridBagConstraints gbcThemes = (GridBagConstraints) gbc.clone();
-      gbcThemes.fill = GridBagConstraints.NONE;
-      gbcThemes.anchor = GridBagConstraints.NORTHWEST;
-      pnl.add(new ThemesController(_messagePrefsCtrl).getPanel(), gbcThemes);
+      //++gbc.gridy;
+      //final GridBagConstraints gbcThemes = (GridBagConstraints) gbc.clone();
+      //gbcThemes.fill = GridBagConstraints.NONE;
+      //gbcThemes.anchor = GridBagConstraints.NORTHWEST;
+      //pnl.add(new ThemesController(_messagePrefsCtrl).getPanel(), gbcThemes);
 
       ++gbc.gridy;
       final GridBagConstraints gbcMessagePanel = (GridBagConstraints) gbc.clone();

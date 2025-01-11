@@ -147,7 +147,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 	 */
 	public String getTitle()
 	{
-		return FontSelectionPanel.i18n.TAB_TITLE;
+		return s_stringMgr.getString("laf.tabTitle");
 	}
 
 	/**
@@ -157,7 +157,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 	 */
 	public String getHint()
 	{
-		return FontSelectionPanel.i18n.TAB_HINT;
+		return s_stringMgr.getString("laf.tabHint");
 	}
 
 	/**
@@ -165,19 +165,6 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 	 */
 	private static final class FontSelectionPanel extends JPanel
 	{
-		/**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
-		 */
-		interface i18n
-		{
-			// i18n[laf.warning=Note: Changes may not take effect until the application is restarted.]
-			String LAF_WARNING =	s_stringMgr.getString("laf.warning");
-			// i18n[laf.tabTitle=Fonts]
-			String TAB_TITLE = s_stringMgr.getString("laf.tabTitle");
-			// i18n[laf.tabHint=Fonts]
-			String TAB_HINT = s_stringMgr.getString("laf.tabHint");
-		}
 
 		/** Button to select font for menus. */
 		private FontButton _menuFontBtn;
@@ -280,7 +267,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 
 			++gbc.gridy;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(new MultipleLineLabel(i18n.LAF_WARNING), gbc);
+			add(new MultipleLineLabel(s_stringMgr.getString("laf.warning")), gbc);
 		}
 
 		private JPanel createFontsPanel()

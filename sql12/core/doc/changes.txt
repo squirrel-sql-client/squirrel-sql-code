@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Look and Feel Plugin: The Look and Feel preferences now allows to adjust several controls,
+  e.g the SQL editor and the message panel, to dark Look and Feels.
+  See menu File -- > Global Preferences --> tab "L & F"
+  Note: This option replaces the previous theme choice at tab "General".
+  The new option now does support any Look and Feel instead of only FlatLaf's Flat Dark
+
 Look and Feel Plugin: The following dark radiance L&Fs are available:
   Graphite,GraphiteChalk,GraphiteAqua,GraphiteElectric,GraphiteGold,GraphiteSienna,GraphiteSunset,GraphiteGlass
   Raven,NightShade,Twilight,Magellan

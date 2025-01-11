@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -54,6 +55,7 @@ final class LAFPreferencesPanel extends JPanel
     * configuration information.
     */
    private BaseLAFPreferencesPanelComponent _curLAFConfigComp;
+   private LightDarkSwitchCtrl _lightDarkSwitchCtrl = new LightDarkSwitchCtrl();
 
    LAFPreferencesPanel(LAFPlugin plugin, LAFRegister lafRegister)
    {
@@ -88,6 +90,7 @@ final class LAFPreferencesPanel extends JPanel
       _lafCmb.setSelectedLookAndFeelClassName(selLafClassName);
 
       updateLookAndFeelConfigControl();
+      _lightDarkSwitchCtrl.load();
    }
 
    void applyChanges()
@@ -106,6 +109,7 @@ final class LAFPreferencesPanel extends JPanel
       try
       {
          _lafRegister.setLookAndFeel(forceChange);
+         _lightDarkSwitchCtrl.apply();
       }
       catch (Exception ex)
       {
@@ -122,12 +126,14 @@ final class LAFPreferencesPanel extends JPanel
       add(_lafPnl, gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
-      add(new MultipleLineLabel(s_stringMgr.getString("laf.lafWarning")), gbc);
+      MultipleLineLabel lblRestartWarning = new MultipleLineLabel(s_stringMgr.getString("laf.lafWarningRestart"));
+      lblRestartWarning.setFont(lblRestartWarning.getFont().deriveFont(Font.BOLD));
+      add(lblRestartWarning, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
-      MultipleLineLabel enforedWarningLabel = new MultipleLineLabel(s_stringMgr.getString("laf.lafCriticalWarning"));
-      enforedWarningLabel.setForeground(Color.red);
-      add(enforedWarningLabel, gbc);
+      MultipleLineLabel lblcriticalWarning = new MultipleLineLabel(s_stringMgr.getString("laf.lafCriticalWarning"));
+      lblcriticalWarning.setForeground(Color.red);
+      add(lblcriticalWarning, gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
       add(new JPanel(), gbc);
@@ -158,7 +164,10 @@ final class LAFPreferencesPanel extends JPanel
       //_configHolderPnl.setBorder(BorderFactory.createLineBorder(Color.red));
       ret.add(_configHolderPnl, gbc);
 
-      gbc = new GridBagConstraints(1,3,GridBagConstraints.REMAINDER, 1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0),0,0);
+      gbc = new GridBagConstraints(0,3,GridBagConstraints.REMAINDER, 1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
+      ret.add(_lightDarkSwitchCtrl.getPanel(), gbc);
+
+      gbc = new GridBagConstraints(1,4,GridBagConstraints.REMAINDER, 1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0),0,0);
       ret.add(new JPanel(), gbc);
 
       return ret;
