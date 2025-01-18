@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Upgraded JSQL-Parser (https://github.com/JSQLParser/JSqlParser) to version 5.1.
+
 Look and Feel Plugin: The Look and Feel preferences now allows to adjust several controls,
   e.g the SQL editor and the message panel, to dark Look and Feels.
   See menu File -- > Global Preferences --> tab "L & F"
@@ -127,6 +129,8 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
   To open the cell data popup double-click a table cell.
 
 Bug fixes:
+
+SQL editor: UNION keyword was marked red as error.
 
 Look and Feel Plugin: Cleaned up L&F Preferences UI.
 

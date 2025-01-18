@@ -12,6 +12,8 @@ public class StatementBeginPrediction
       int openBracketsCount = 0;
       int literalDelimsCount = 0;
 
+      UnionKeyWordCheck unionKeyWordCheck = new UnionKeyWordCheck();
+
       while( sqlEditorText.length() > ret)
       {
          if ('\'' == sqlEditorText.charAt(ret))
@@ -24,22 +26,21 @@ public class StatementBeginPrediction
 
          if (false == sqlCommentHelper.isInComment(ret) && false == SqlLiteralHelper.isInLiteral(literalDelimsCount))
          {
-            if ('(' == sqlEditorText.charAt(ret))
+            if('(' == sqlEditorText.charAt(ret))
             {
                ++openBracketsCount;
             }
-            else if (')' == sqlEditorText.charAt(ret))
+            else if(')' == sqlEditorText.charAt(ret))
             {
-                  --openBracketsCount;
+               --openBracketsCount;
             }
          }
-
 
          if(
                false == SqlLiteralHelper.isInLiteral(literalDelimsCount)
             && false == sqlCommentHelper.isInComment(ret)
             && false == isInBrackets(openBracketsCount)
-            && startsWithBeginKeyWord(sqlEditorText, ret)
+            && startsWithBeginKeyWord(sqlEditorText, ret, unionKeyWordCheck)
            )
          {
             break;
@@ -62,50 +63,44 @@ public class StatementBeginPrediction
    }
 
 
-   private static boolean startsWithBeginKeyWord(String sqlEditorText, int ret)
+   private static boolean startsWithBeginKeyWord(String sqlEditorText, int beginPos, UnionKeyWordCheck unionKeyWordCheck)
    {
-      return   startsWithIgnoreCase(sqlEditorText,ret, "SELECT")
-            || startsWithIgnoreCase(sqlEditorText, ret, "UPDATE")
-            || startsWithIgnoreCase(sqlEditorText, ret, "DELETE")
-            || startsWithIgnoreCase(sqlEditorText, ret, "INSERT")
-            || startsWithIgnoreCase(sqlEditorText, ret, "ALTER")
-            || startsWithIgnoreCase(sqlEditorText, ret, "CREATE")
-            || startsWithIgnoreCase(sqlEditorText, ret, "DROP");
+
+      boolean ret = isSelectBegin(sqlEditorText, beginPos, unionKeyWordCheck)
+            || StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "UPDATE")
+            || StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "DELETE")
+            || StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "INSERT")
+            || StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "ALTER")
+            || StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "CREATE")
+            || StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "DROP");
+
+      if(ret)
+      {
+         unionKeyWordCheck.reset();
+      }
+
+      return ret;
    }
 
-   private static boolean startsWithIgnoreCase(String sqlEditorText, int ret, String keyWord)
+   private static boolean isSelectBegin(String sqlEditorText, int beginPos, UnionKeyWordCheck unionKeyWordCheck)
    {
-      int beginPos = ret;
-      int endPos;
+      unionKeyWordCheck.check(sqlEditorText, beginPos);
+      boolean isSelectStart = StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "SELECT");
 
-      if(ret == 0)
-      {
-         // Either are at teh beginning ...
-         beginPos = 0;
-      }
-      else if(Character.isWhitespace(sqlEditorText.charAt(ret-1)))
-      {
-         // or a white space must be in front of the keyword.
-         beginPos = ret;
-      }
-      else
+      if(false == isSelectStart)
       {
          return false;
       }
 
-      if(sqlEditorText.length() == beginPos + keyWord.length())
+      if(false == unionKeyWordCheck.previousWasUnionOrUnionAll())
       {
-         endPos = beginPos + keyWord.length();
-      }
-      else if(sqlEditorText.length() > beginPos + keyWord.length() && Character.isWhitespace(sqlEditorText.charAt(beginPos + keyWord.length())))
-      {
-         endPos = beginPos + keyWord.length();
+         return true;
       }
       else
       {
+         unionKeyWordCheck.reset();
          return false;
       }
-
-      return keyWord.equalsIgnoreCase(sqlEditorText.substring(beginPos, endPos));
    }
+
 }
