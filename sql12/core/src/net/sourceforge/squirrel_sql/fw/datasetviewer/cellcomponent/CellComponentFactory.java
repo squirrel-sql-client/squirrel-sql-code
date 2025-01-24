@@ -693,7 +693,7 @@ public class CellComponentFactory
             new ArrayList<String>(Arrays.asList(initialClassNameList));
 
       // add to that the list of all names that have been registered by plugins
-//		Iterator<IDataTypeComponentFactory> pluginDataTypeFactories = 
+//		Iterator<IDataTypeComponentFactory> pluginDataTypeFactories =
 //		    _registeredDataTypes.values().iterator();
 //		while (pluginDataTypeFactories.hasNext()) {
 //		    TODO: add support for plugin-registered data-type preferences panels
@@ -859,6 +859,7 @@ public class CellComponentFactory
             case Types.TIMESTAMP:
             case -101: // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101
             case -102: // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' == -102
+            case -155: // MSSQL Server's 'TIMESTAMP WITH LOCAL TIME ZONE' == -155
                dataTypeComponent = new DataTypeTimestamp(table, colDef);
                break;
 
