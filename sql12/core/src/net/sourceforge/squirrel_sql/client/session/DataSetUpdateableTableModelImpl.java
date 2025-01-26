@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
@@ -8,7 +9,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -17,7 +22,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -60,8 +65,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     */
    String sqlOutputClassNameAtTimeOfForcedEdit = "";
 
-   private Vector<DataSetUpdateableTableModelListener> _dataSetUpdateableTableModelListener =
-         new Vector<DataSetUpdateableTableModelListener>();
+   private Vector<DataSetUpdateableTableModelListener> _dataSetUpdateableTableModelListener = new Vector<>();
 
    /**
     * Remember which column contains the rowID; if no rowID, this is -1
@@ -129,16 +133,23 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     */
    public void forceEditMode(boolean mode)
    {
+      if(mode == true)
+      {
+         if(false == DataChangesAllowedCheck.checkMakeEditableAllowed(_session))
+         {
+            return;
+         }
+      }
+
       editModeForced = mode;
-      sqlOutputClassNameAtTimeOfForcedEdit =
-            _session.getProperties().getTableContentsOutputClassName();
+      sqlOutputClassNameAtTimeOfForcedEdit = _session.getProperties().getTableContentsOutputClassName();
 
       DataSetUpdateableTableModelListener[] listeners =
             _dataSetUpdateableTableModelListener.toArray(new DataSetUpdateableTableModelListener[0]);
 
-      for (int i = 0; i < listeners.length; i++)
+      for(DataSetUpdateableTableModelListener listener : listeners)
       {
-         listeners[i].forceEditMode(mode);
+         listener.forceEditMode(mode);
       }
 
 
@@ -168,6 +179,11 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     */
    public String getDestinationClassName()
    {
+      if(DataChangesAllowedCheck.isSessionReadOnly(_session))
+      {
+         return _session.getProperties().getReadOnlySQLResultsOutputClassName();
+      }
+
       if (editModeForced)
       {
          if (_session.getProperties().getTableContentsOutputClassName().equals(

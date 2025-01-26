@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.db.modifyaliases;
 
-import java.util.Objects;
-
 import net.sourceforge.squirrel_sql.client.gui.db.AliasInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ConnectionPropertiesPanel;
@@ -9,6 +7,8 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverProperti
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.SchemaPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.util.Objects;
 
 public enum SQLAliasPropType
 {
@@ -18,6 +18,7 @@ public enum SQLAliasPropType
    userName("AliasInternalFrame.username", AliasInternalFrame.class),
    password("AliasInternalFrame.password", AliasInternalFrame.class),
    encryptPassword("AliasInternalFrame.password.encrypted", AliasInternalFrame.class),
+   readOnly("AliasInternalFrame.readOnly", AliasInternalFrame.class),
    autoLogon("AliasInternalFrame.autologon", AliasInternalFrame.class),
    connectAtStartup("AliasInternalFrame.connectatstartup", AliasInternalFrame.class),
    driverProp_useDriverProperties("DriverPropertiesPanel.useDriverProperties", DriverPropertiesPanel.class),

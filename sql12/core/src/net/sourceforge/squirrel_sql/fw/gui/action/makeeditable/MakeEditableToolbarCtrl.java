@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.DataSetViewerType;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -95,23 +96,33 @@ public class MakeEditableToolbarCtrl
 
          if(false == _resultTab.allowsEditing())
          {
-            List<ResultMetaDataTable> tables = new ArrayList<>();
-
-            if (_resultTab.getSQLResultDataSetViewer().getComponent() instanceof JTable)
+            try
             {
-               tables = ShowReferencesUtil.findTables((JTable) _resultTab.getSQLResultDataSetViewer().getComponent(), _session, true);
-            }
+               if(false == DataChangesAllowedCheck.checkMakeEditableToolbarButton(_session))
+               {
+                  return;
+               }
 
-            if (false == tables.isEmpty())
-            {
-               JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.uneditable.use.show.refs"));
-            }
-            else
-            {
-               JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.uneditable"));
-            }
+               List<ResultMetaDataTable> tables = new ArrayList<>();
 
-            _button.setSelected(false);
+               if (_resultTab.getSQLResultDataSetViewer().getComponent() instanceof JTable)
+               {
+                  tables = ShowReferencesUtil.findTables((JTable) _resultTab.getSQLResultDataSetViewer().getComponent(), _session, true);
+               }
+
+               if (false == tables.isEmpty())
+               {
+                  JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.uneditable.use.show.refs"));
+               }
+               else
+               {
+                  JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_button), s_stringMgr.getString("MakeEditableToolbarCtrl.uneditable"));
+               }
+            }
+            finally
+            {
+               _button.setSelected(false);
+            }
          }
          else
          {

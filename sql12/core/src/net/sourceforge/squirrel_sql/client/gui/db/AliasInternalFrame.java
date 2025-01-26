@@ -45,13 +45,31 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
 /**
@@ -108,6 +126,8 @@ public class AliasInternalFrame extends DialogWidget
 	private final JCheckBox _chkConnectAtStartup = new JCheckBox(SQLAliasPropType.connectAtStartup.getI18nString());
 
 	private JCheckBox _chkSavePasswordEncrypted = new JCheckBox(SQLAliasPropType.encryptPassword.getI18nString());
+
+	private JCheckBox _chkReadOnly = new JCheckBox(SQLAliasPropType.readOnly.getI18nString());
 
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _btnAliasProps = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
@@ -194,6 +214,7 @@ public class AliasInternalFrame extends DialogWidget
 		_chkAutoLogon.setSelected(_sqlAlias.isAutoLogon());
 		_chkConnectAtStartup.setSelected(_sqlAlias.isConnectAtStartup());
 		_chkSavePasswordEncrypted.setSelected(_sqlAlias.isEncryptPassword());
+		_chkReadOnly.setSelected(_sqlAlias.isReadOnly());
 		//_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
 		if (_maintType != AliasMaintenanceType.NEW)
@@ -263,6 +284,8 @@ public class AliasInternalFrame extends DialogWidget
 
 		String unencryptedPassword = buf.toString();
 		AliasPasswordHandler.setPassword(alias, unencryptedPassword);
+
+		alias.setReadOnly(_chkReadOnly.isSelected());
 
 		alias.setAutoLogon(_chkAutoLogon.isSelected());
 		alias.setConnectAtStartup(_chkConnectAtStartup.isSelected());
@@ -421,17 +444,33 @@ public class AliasInternalFrame extends DialogWidget
 		gbc = new GridBagConstraints(0,6,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_chkSavePasswordEncrypted, gbc);
 
-      gbc = new GridBagConstraints(1,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,7, GridBagConstraints.REMAINDER, 1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       _btnAliasProps.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
       pnl.add(_btnAliasProps, gbc);
 
+		gbc = new GridBagConstraints(0,8,GridBagConstraints.REMAINDER,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+		pnl.add(getReadOnlyPanel(), gbc);
 
 
       // make it grow when added
-      gbc = new GridBagConstraints(0,8,2,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,9,2,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
 		pnl.add(new JPanel(), gbc);
 
 		return pnl;
+	}
+
+	private JPanel getReadOnlyPanel()
+	{
+		JPanel ret = new JPanel(new GridBagLayout());
+
+		GridBagConstraints gbc;
+
+		gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+		ret.add(_chkReadOnly, gbc);
+
+		gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,0,0,0), 0,0);
+		ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("AliasInternalFrame.readOnly.info")).getButton(), gbc);
+		return ret;
 	}
 
 	private JPanel createAutoLogonPanel()

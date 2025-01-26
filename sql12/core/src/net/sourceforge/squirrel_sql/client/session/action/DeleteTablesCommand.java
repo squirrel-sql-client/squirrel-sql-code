@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -49,25 +50,10 @@ import java.util.List;
  */
 public class DeleteTablesCommand implements ICommand
 {
-	/** Logger for this class. */
 	private final ILogger s_log = LoggerController.createLogger(DeleteTablesCommand.class);
 
-	/** Internationalized strings for this class */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DeleteTablesCommand.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DeleteTablesCommand.class);
 
-	static interface i18n
-	{
-
-		// i18n[DeleteTablesCommand.progressDialogTitle=Analyzing tables to delete]
-		String PROGRESS_DIALOG_TITLE = s_stringMgr.getString("DeleteTablesCommand.progressDialogTitle");
-
-		// i18n[DeleteTablesCommand.loadingPrefix=Analyzing table:]
-		String LOADING_PREFIX = s_stringMgr.getString("DeleteTablesCommand.loadingPrefix");
-
-	}
-
-	/** Current session. */
 	private final ISession _session;
 
 	/** Tables that have records to be deleted. */
@@ -78,7 +64,6 @@ public class DeleteTablesCommand implements ICommand
 	 */
 	private HashSet<String> matViewLookup = null;
 
-	/** API for the current tree. */
 	private IObjectTreeAPI _tree;
 
 	private IProgressCallBackFactory progressCallBackFactory = new ProgressCallBackFactory();
@@ -95,9 +80,14 @@ public class DeleteTablesCommand implements ICommand
 	 */
 	public DeleteTablesCommand(IObjectTreeAPI tree, List<ITableInfo> tables)
 	{
-		super();
-		if (tree == null) { throw new IllegalArgumentException("ISession == null"); }
-		if (tables == null) { throw new IllegalArgumentException("IDatabaseObjectInfo[] == null"); }
+		if(tree == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+		if(tables == null)
+		{
+			throw new IllegalArgumentException("IDatabaseObjectInfo[] == null");
+		}
 
 		_session = tree.getSession();
 		_tree = tree;
@@ -108,12 +98,17 @@ public class DeleteTablesCommand implements ICommand
 	 * Delete records from the selected tables in the object tree.
     */
 	public void execute()
-	{		
+	{
+		if(false == DataChangesAllowedCheck.checkDeleteRows(_session))
+		{
+			return;
+		}
+
 		ProgressCallBack cb =
-			progressCallBackFactory.create(_session.getApplication().getMainFrame(), 
-				i18n.PROGRESS_DIALOG_TITLE, _tables.size());
+			progressCallBackFactory.create(_session.getApplication().getMainFrame(),
+													 s_stringMgr.getString("DeleteTablesCommand.progressDialogTitle"), _tables.size());
 			
-		cb.setLoadingPrefix(i18n.LOADING_PREFIX);
+		cb.setLoadingPrefix(s_stringMgr.getString("DeleteTablesCommand.loadingPrefix"));
 		DeleteExecuter executer = new DeleteExecuter(cb);
 		_session.getApplication().getThreadPool().addTask(executer);
 	}

@@ -42,13 +42,6 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLAlias.class);
 
-   private interface IStrings
-   {
-      String ERR_BLANK_NAME = s_stringMgr.getString("SQLAlias.error.blankname");
-      String ERR_BLANK_DRIVER = s_stringMgr.getString("SQLAlias.error.blankdriver");
-      String ERR_BLANK_URL = s_stringMgr.getString("SQLAlias.error.blankurl");
-   }
-
    /** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
    private IIdentifier _id;
 
@@ -93,6 +86,8 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
    private SQLAliasVersioner _versioner = new SQLAliasVersioner(this);
 
    private long _aliasVersionTimeMills = 0;
+
+   private boolean _readOnly;
 
    public SQLAlias()
    {
@@ -161,6 +156,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
          setUrl(sqlAlias.getUrl());
          setUserName(sqlAlias.getUserName());
          setEncryptPassword(sqlAlias.isEncryptPassword());
+         setReadOnly(sqlAlias.isReadOnly());
          setPassword(sqlAlias.getPassword()); // Copying of SQL Alias, no need for AliasPasswordHandler.setPassword(...) here.
          setAutoLogon(sqlAlias.isAutoLogon());
          setUseDriverProperties(sqlAlias.getUseDriverProperties());
@@ -290,6 +286,19 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       _encryptPassword = b;
    }
 
+   @SQLAliasProp(sqlAliasPropType = SQLAliasPropType.readOnly)
+   public boolean isReadOnly()
+   {
+      return _readOnly;
+   }
+
+   public void setReadOnly(boolean b)
+   {
+      _versioner.trigger(_readOnly, b);
+      _readOnly = b;
+   }
+
+
 
    public long getAliasVersionTimeMills()
    {
@@ -372,7 +381,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       String data = getString(name);
       if (data.length() == 0)
       {
-         throw new ValidationException(IStrings.ERR_BLANK_NAME);
+         throw new ValidationException(s_stringMgr.getString("SQLAlias.error.blankname"));
       }
       _versioner.trigger(_name, data);
       _name = data;
@@ -383,7 +392,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
    {
       if (data == null)
       {
-         throw new ValidationException(IStrings.ERR_BLANK_DRIVER);
+         throw new ValidationException(s_stringMgr.getString("SQLAlias.error.blankdriver"));
       }
       _versioner.trigger(_driverId, data);
       _driverId = data;
@@ -394,7 +403,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
       String data = getString(url);
       if (data.length() == 0)
       {
-         throw new ValidationException(IStrings.ERR_BLANK_URL);
+         throw new ValidationException(s_stringMgr.getString("SQLAlias.error.blankurl"));
       }
       _versioner.trigger(_url, data);
       _url = data;

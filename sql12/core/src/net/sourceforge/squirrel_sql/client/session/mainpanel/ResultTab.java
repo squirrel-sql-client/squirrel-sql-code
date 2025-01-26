@@ -478,8 +478,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             {
                TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
 
-               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _dataSetUpdateableTableModel, new DataModelImplementationDetails(_session, _exInfo), _session);
-               // _resultDataSetViewerFindHandler = new DataSetViewerFindHandler(dataSetViewer);
+               IDataSetViewer dataSetViewer =
+                     BaseDataSetViewerDestination.createInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE,
+                                                                 _dataSetUpdateableTableModel,
+                                                                 new DataModelImplementationDetails(_session, _exInfo),
+                                                                 _session);
+
                _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
                _rowColAndSumController.setDataSetViewer(_resultDataSetViewerFindHandler.getDataSetViewer());
 

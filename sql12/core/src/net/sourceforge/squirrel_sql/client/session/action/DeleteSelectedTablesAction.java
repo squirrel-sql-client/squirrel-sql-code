@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -27,26 +25,17 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.awt.event.ActionEvent;
+import java.util.List;
 /**
  * @version 	$Id: DeleteSelectedTablesAction.java,v 1.3 2007-03-11 03:01:29 manningr Exp $
  * @author		Rob Manning
  */
-public class DeleteSelectedTablesAction extends SquirrelAction
-										implements IObjectTreeAction
+public class DeleteSelectedTablesAction extends SquirrelAction implements IObjectTreeAction
 {
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(DeleteSelectedTablesAction.class);   
-    
-	/** Title for confirmation dialog. */
-	private static  String TITLE = 
-        s_stringMgr.getString("DeleteSelectedTablesAction.title");
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DeleteSelectedTablesAction.class);
 
-	/** Message for confirmation dialog. */
-	private static String MSG = 
-        s_stringMgr.getString("DeleteSelectedTablesAction.message");
-
-    /** API for the current tree. */
 	private IObjectTreeAPI _tree;
 
 	/**
@@ -73,16 +62,15 @@ public class DeleteSelectedTablesAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent e)
 	{
-		if (_tree != null)
+		if(_tree != null)
 		{
 			List<ITableInfo> tables = _tree.getSelectedTables();
-			if (tables.size() > 0)
+			if(tables.size() > 0)
 			{
-				if (Dialogs.showYesNo(getApplication().getMainFrame(), MSG, TITLE))
+				if(Dialogs.showYesNo(getApplication().getMainFrame(), s_stringMgr.getString("DeleteSelectedTablesAction.message"), s_stringMgr.getString("DeleteSelectedTablesAction.title")))
 				{
-                    DeleteTablesCommand command = 
-                        new DeleteTablesCommand(_tree, tables);
-                    command.execute();
+					DeleteTablesCommand command = new DeleteTablesCommand(_tree, tables);
+					command.execute();
 				}
 			}
 		}

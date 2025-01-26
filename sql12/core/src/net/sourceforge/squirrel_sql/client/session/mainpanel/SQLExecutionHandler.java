@@ -1,10 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import java.sql.SQLWarning;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -12,6 +7,8 @@ import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.FinishedNotificationSoundHandler;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.SQLType;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.SQLTypeCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
@@ -28,6 +25,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.sql.SQLWarning;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * This class is the handler for the execution of sql against the SQLExecuterPanel
  */
@@ -42,12 +44,6 @@ class SQLExecutionHandler implements ISQLExecuterHandler
    private SQLExecuterTask _executer;
    private ISession _session;
    private ISQLExecutionHandlerListener _executionHandlerListener;
-
-   private static enum SQLType
-   {
-      INSERT, SELECT, UPDATE, DELETE, UNKNOWN
-   }
-
 
 
    /**
@@ -182,34 +178,12 @@ class SQLExecutionHandler implements ISQLExecuterHandler
       {
          return;
       }
-      sqlType = getSQLType(queryHolder.getCleanQuery());
+      sqlType = SQLTypeCheck.getSQLType(queryHolder.getCleanQuery());
 
       _cancelPanelCtrl.setSQL(queryHolder);
 
       String status = s_stringMgr.getString("SQLResultExecuterPanel.execStatus");
       _cancelPanelCtrl.setStatusLabel(status);
-   }
-
-   private SQLType getSQLType(String sql)
-   {
-      SQLType result = SQLType.UNKNOWN;
-      if (sql.toLowerCase().startsWith("insert"))
-      {
-         result = SQLType.INSERT;
-      }
-      if (sql.toLowerCase().startsWith("update"))
-      {
-         result = SQLType.UPDATE;
-      }
-      if (sql.toLowerCase().startsWith("select"))
-      {
-         result = SQLType.SELECT;
-      }
-      if (sql.toLowerCase().startsWith("delete"))
-      {
-         result = SQLType.DELETE;
-      }
-      return result;
    }
 
 

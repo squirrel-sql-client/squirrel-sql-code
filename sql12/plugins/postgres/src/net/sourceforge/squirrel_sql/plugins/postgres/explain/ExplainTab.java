@@ -176,8 +176,14 @@ public class ExplainTab extends JPanel
 			return;
 		}
 
-		if (editable) setResultSetMode(SessionProperties.IDataSetDestinations.EDITABLE_TABLE);
-		else setResultSetMode(_session.getProperties().getReadOnlySQLResultsOutputClassName());
+		if(editable)
+		{
+			setResultSetMode(SessionProperties.IDataSetDestinations.READ_ONLY_TABLE);
+		}
+		else
+		{
+			setResultSetMode(_session.getProperties().getReadOnlySQLResultsOutputClassName());
+		}
 	}
 
 	private void setResultSetMode(final String outputClassName)

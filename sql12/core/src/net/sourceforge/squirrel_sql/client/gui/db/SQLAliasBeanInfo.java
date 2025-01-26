@@ -41,6 +41,7 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 		String NAME = "name";
 		String PASSWORD = "password";
 		String ENCRYPT_PASSWORD = "encryptPassword"; // Renamed from PasswordEncrypted because of bug #1409
+		String READ_ONLY = "readOnly";
 		String URL = "url";
 		String USE_DRIVER_PROPERTIES = "useDriverProperties";
 		String ALIAS_VERSION_TIME_MILLIS = "aliasVersionTimeMills";
@@ -73,6 +74,7 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 					new PropertyDescriptor(IPropertyNames.PASSWORD, SQLAlias.class, "getPassword", "setPassword"),
 					new PropertyDescriptor(IPropertyNames.ENCRYPT_PASSWORD, SQLAlias.class, "isEncryptPassword", "setEncryptPassword"), // Renamed from PasswordEncrypted because of bug #1409
 					new PropertyDescriptor(IPropertyNames.AUTO_LOGON, SQLAlias.class, "isAutoLogon", "setAutoLogon"),
+					new PropertyDescriptor(IPropertyNames.READ_ONLY, SQLAlias.class, "isReadOnly", "setReadOnly"),
 					new PropertyDescriptor(IPropertyNames.CONNECT_AT_STARTUP, SQLAlias.class, "isConnectAtStartup", "setConnectAtStartup"),
 					new PropertyDescriptor(IPropertyNames.ALIAS_VERSION_TIME_MILLIS, SQLAlias.class, "getAliasVersionTimeMills", "setAliasVersionTimeMills"),
 					new PropertyDescriptor(IPropertyNames.SCHEMA_PROPERTIES, SQLAlias.class, "getSchemaProperties","setSchemaProperties"),

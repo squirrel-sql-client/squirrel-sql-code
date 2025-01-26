@@ -91,7 +91,6 @@ public class AliasListHolder implements ListHolder
       }
       catch (Exception e)
       {
-         e.printStackTrace();
          s_log.error(e);
          throw Utilities.wrapRuntime(e);
       }
@@ -108,7 +107,6 @@ public class AliasListHolder implements ListHolder
       }
       catch (Exception e)
       {
-         e.printStackTrace();
          s_log.error(e);
          throw Utilities.wrapRuntime(e);
       }

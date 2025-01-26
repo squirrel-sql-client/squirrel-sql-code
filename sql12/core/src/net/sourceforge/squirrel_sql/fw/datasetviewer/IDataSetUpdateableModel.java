@@ -58,7 +58,7 @@ public interface IDataSetUpdateableModel
 	 * into editing mode, and this function is how the framework tells the application
 	 * to go into editing mode.
 	 */
-	public void forceEditMode(boolean mode);
+   void forceEditMode(boolean mode);
 
 	void addListener(DataSetUpdateableTableModelListener l);
 	void removeListener(DataSetUpdateableTableModelListener l);

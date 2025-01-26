@@ -322,17 +322,6 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       }
    }
 
-   /**
-    * Normally we display data using the class selected by the user in the
-    * Session Preferences, but there are occasions in which the application
-    * needs to override the user selection and explicitly use either a read-only
-    * or an editable table. These functions provide access to those class names.
-    */
-   public String getReadOnlyTableOutputClassName()
-   {
-      return IDataSetDestinations.READ_ONLY_TABLE;
-   }
-
    public String getEditableTableOutputClassName()
    {
       return IDataSetDestinations.EDITABLE_TABLE;
@@ -347,8 +336,10 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     */
    public String getReadOnlySQLResultsOutputClassName()
    {
-      if (_sqlResultsOutputClassName.equals(IDataSetDestinations.EDITABLE_TABLE))
+      if(_sqlResultsOutputClassName.equals(IDataSetDestinations.EDITABLE_TABLE))
+      {
          return IDataSetDestinations.READ_ONLY_TABLE;
+      }
       return _sqlResultsOutputClassName;
    }
 
@@ -373,13 +364,11 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       {
          value = "";
       }
-      if (!_metaDataOutputClassName.equals(value))
+      if(!_metaDataOutputClassName.equals(value))
       {
          final String oldValue = _metaDataOutputClassName;
          _metaDataOutputClassName = value;
-         getPropertyChangeReporter().firePropertyChange(
-            IPropertyNames.META_DATA_OUTPUT_CLASS_NAME,
-            oldValue, _metaDataOutputClassName);
+         getPropertyChangeReporter().firePropertyChange( IPropertyNames.META_DATA_OUTPUT_CLASS_NAME,oldValue, _metaDataOutputClassName);
       }
    }
 
@@ -397,10 +386,10 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       if (!_tableContentsClassName.equals(value))
       {
          final String oldValue = _tableContentsClassName;
-         _tableContentsClassName= value;
+         _tableContentsClassName = value;
          getPropertyChangeReporter().firePropertyChange(
-            IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
-            oldValue, _tableContentsClassName);
+               IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
+               oldValue, _tableContentsClassName);
       }
    }
 

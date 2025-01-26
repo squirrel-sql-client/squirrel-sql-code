@@ -6,6 +6,14 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/56
+  Aliases can be switched to read-only. If an Alias is switched to read-only its Sessions are
+  - only allowed to execute SQLs that start with the SELECT keyword,
+  - all functions that change data, e.g. making tables editable, will not be executed.
+  When read-only is active and non-SELECT SQLs are executed or data changing functions are called
+  warnings are displayed in SQuirreL's message panel.
+  See the new check box at the lower left of the Alias dialog.
+
 Upgraded JSQL-Parser (https://github.com/JSQLParser/JSqlParser) to version 5.1.
 
 Look and Feel Plugin: The Look and Feel preferences now allows to adjust several controls,

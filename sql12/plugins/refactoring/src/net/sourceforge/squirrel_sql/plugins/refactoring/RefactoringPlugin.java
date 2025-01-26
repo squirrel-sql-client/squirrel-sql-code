@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.refactoring;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import javax.swing.JMenu;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
@@ -33,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -64,6 +63,9 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPrefere
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.refactoring.tab.SupportedRefactoringsTab;
 
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
 /**
  * The Refactoring plugin class.
  */
@@ -73,7 +75,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RefactoringPlugin.class);
 
-   private static interface IMenuResourceKeys
+   private interface IMenuResourceKeys
    {
       String REFACTORING = "refactoring";
       String TABLE = s_stringMgr.getString("RefactoringPlugin.tableMenuItemLabel");
@@ -353,16 +355,27 @@ public class RefactoringPlugin extends DefaultSessionPlugin
         _resources.addToMenu(col.get(AddSequenceAction.class), sessionNodeMenu);
         //}
 
-        treeAPI.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, tableNodeMenu);
-        treeAPI.addToPopup(DatabaseObjectType.TABLE, tableObjectMenu);
-        treeAPI.addToPopup(DatabaseObjectType.INDEX, indexObjectMenu);
-        treeAPI.addToPopup(DatabaseObjectType.VIEW, viewObjectMenu);
-        treeAPI.addToPopup(DatabaseObjectType.SEQUENCE_TYPE_DBO, sequenceNodeMenu);
-        treeAPI.addToPopup(DatabaseObjectType.SEQUENCE, sequenceObjectMenu);
-        if (sessionNodeMenu != null)
-        {
-            treeAPI.addToPopup(DatabaseObjectType.SESSION, sessionNodeMenu);
-        }
+       addToTreeApiPopup(treeAPI, DatabaseObjectType.TABLE_TYPE_DBO, tableNodeMenu);
+       addToTreeApiPopup(treeAPI, DatabaseObjectType.TABLE, tableObjectMenu);
+       addToTreeApiPopup(treeAPI, DatabaseObjectType.INDEX, indexObjectMenu);
+       addToTreeApiPopup(treeAPI, DatabaseObjectType.VIEW, viewObjectMenu);
+       addToTreeApiPopup(treeAPI, DatabaseObjectType.SEQUENCE_TYPE_DBO, sequenceNodeMenu);
+       addToTreeApiPopup(treeAPI, DatabaseObjectType.SEQUENCE, sequenceObjectMenu);
+       addToTreeApiPopup(treeAPI, DatabaseObjectType.SESSION, sessionNodeMenu);
     }
+
+   private static void addToTreeApiPopup(IObjectTreeAPI treeAPI, DatabaseObjectType tableTypeDbo, JMenu tableNodeMenu)
+   {
+      if(false == DataChangesAllowedCheck.checkRefactoringAllowed(treeAPI.getSession()))
+      {
+         tableNodeMenu.removeAll();
+         JMenuItem mnuNotSupported = new JMenuItem(s_stringMgr.getString("RefactoringPlugin.menu.item.not.supported"));
+         mnuNotSupported.addActionListener(e -> DataChangesAllowedCheck.issueRefactoringAllowedMessage());
+         tableNodeMenu.add(mnuNotSupported);
+      }
+
+      treeAPI.addToPopup(tableTypeDbo, tableNodeMenu);
+
+   }
 
 }

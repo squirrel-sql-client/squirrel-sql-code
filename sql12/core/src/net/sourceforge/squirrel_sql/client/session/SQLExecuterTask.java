@@ -27,15 +27,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.SQLTypeCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.DatabaseUpdateInfosListener;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCheck;
@@ -50,6 +44,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.SwingUtilities;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class can be used to execute SQL.
@@ -178,6 +180,11 @@ public class SQLExecuterTask implements Runnable
                continue;
             }
 
+            if(false == DataChangesAllowedCheck.checkSqlExecutionAllowed(_session, querySql))
+            {
+               continue;
+            }
+
             ++processedStatementCount;
             if (_handler != null)
             {
@@ -196,7 +203,7 @@ public class SQLExecuterTask implements Runnable
             // SELECT.
             if (false == correctlySupportsMaxRows)
             {
-               if (isSelectStatement(querySql.getQuery()))
+               if (SQLTypeCheck.isSelectStatement(querySql.getQuery()))
                {
                   _currentStatementWrapper.setMaxRows();
                }
@@ -327,22 +334,6 @@ public class SQLExecuterTask implements Runnable
          SwingUtilities.invokeLater(runnable);
       }
    }
-
-	/**
-	 * Returns a boolean indicating whether or not the specified querySql appears to be a SELECT statement.
-	 *
-	 * @param querySql
-	 *           the SQL statement to check
-	 * @return true if it is a SELECT statement; false otherwise.
-	 */
-	private boolean isSelectStatement(String querySql)
-	{
-		return "SELECT".length() < querySql.trim()
-		      .length()
-		      && "SELECT".equalsIgnoreCase(querySql
-		            .trim().substring(0,
-		                  "SELECT".length()));
-	}
 
    public void cancel()
    {
