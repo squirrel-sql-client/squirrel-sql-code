@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Pull request: https://github.com/squirrel-sql-client/squirrel-sql-code/pull/57
+  MSSQL: Added support for MSSQL Server datetimeoffset datatype.
+  Thanks to fvalenduc for the pull request
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/56
   Aliases can be switched to read-only. If an Alias is switched to read-only its Sessions are
   - only allowed to execute SQLs that start with the SELECT keyword,

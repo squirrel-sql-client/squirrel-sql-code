@@ -859,6 +859,7 @@ public class CellComponentFactory
             case Types.TIMESTAMP:
             case -101: // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101
             case -102: // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' == -102
+            case -155: // MSSQL Server's 'TIMESTAMP WITH LOCAL TIME ZONE' == -155
                dataTypeComponent = new DataTypeTimestamp(table, colDef);
                break;
 
