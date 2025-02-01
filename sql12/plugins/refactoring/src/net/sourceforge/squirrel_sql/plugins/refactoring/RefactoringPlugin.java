@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -366,11 +366,11 @@ public class RefactoringPlugin extends DefaultSessionPlugin
 
    private static void addToTreeApiPopup(IObjectTreeAPI treeAPI, DatabaseObjectType tableTypeDbo, JMenu tableNodeMenu)
    {
-      if(false == DataChangesAllowedCheck.checkRefactoringAllowed(treeAPI.getSession()))
+      if(false == ReadOnlySessionCheck.checkRefactoringAllowed(treeAPI.getSession()))
       {
          tableNodeMenu.removeAll();
          JMenuItem mnuNotSupported = new JMenuItem(s_stringMgr.getString("RefactoringPlugin.menu.item.not.supported"));
-         mnuNotSupported.addActionListener(e -> DataChangesAllowedCheck.issueRefactoringAllowedMessage());
+         mnuNotSupported.addActionListener(e -> ReadOnlySessionCheck.issueRefactoringAllowedMessage());
          tableNodeMenu.add(mnuNotSupported);
       }
 

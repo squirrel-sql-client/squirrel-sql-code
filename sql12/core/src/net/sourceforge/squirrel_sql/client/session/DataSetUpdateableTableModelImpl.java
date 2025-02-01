@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
@@ -135,7 +135,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    {
       if(mode == true)
       {
-         if(false == DataChangesAllowedCheck.checkMakeEditableAllowed(_session))
+         if(false == ReadOnlySessionCheck.checkMakeEditableAllowed(_session))
          {
             return;
          }
@@ -179,7 +179,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     */
    public String getDestinationClassName()
    {
-      if(DataChangesAllowedCheck.isSessionReadOnly(_session))
+      if(ReadOnlySessionCheck.isSessionReadOnly(_session))
       {
          return _session.getProperties().getReadOnlySQLResultsOutputClassName();
       }

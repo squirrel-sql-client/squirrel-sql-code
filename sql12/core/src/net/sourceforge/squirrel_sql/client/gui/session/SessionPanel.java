@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
@@ -43,10 +44,12 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -259,6 +262,12 @@ public class SessionPanel extends JPanel
       _sessionStatusBar.addJComponent(new SessionConnectionPoolStatusBarCtrl(session, _sessionStatusBar).getStatusBarPanel());
       _sessionStatusBar.addJComponent(new SchemaPanel(session));
       _sessionStatusBar.addJComponent(new RowColumnLabel(_mainPanel));
+
+      if(ReadOnlySessionCheck.isSessionReadOnly(session))
+      {
+         _sessionStatusBar.addJComponent(ReadOnlySessionCheck.createReadStatusBarLabel());
+      }
+
 
       validate();
    }

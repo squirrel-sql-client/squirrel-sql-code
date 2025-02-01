@@ -28,7 +28,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.SQLTypeCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.DatabaseUpdateInfosListener;
@@ -180,7 +180,7 @@ public class SQLExecuterTask implements Runnable
                continue;
             }
 
-            if(false == DataChangesAllowedCheck.checkSqlExecutionAllowed(_session, querySql))
+            if(false == ReadOnlySessionCheck.checkSqlExecutionAllowed(_session, querySql))
             {
                continue;
             }

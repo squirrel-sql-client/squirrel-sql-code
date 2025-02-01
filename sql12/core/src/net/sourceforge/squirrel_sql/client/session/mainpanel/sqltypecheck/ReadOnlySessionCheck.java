@@ -8,9 +8,11 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class DataChangesAllowedCheck
+import javax.swing.JLabel;
+
+public class ReadOnlySessionCheck
 {
-   public static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataChangesAllowedCheck.class);
+   public static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ReadOnlySessionCheck.class);
 
    public static boolean checkSqlExecutionAllowed(ISession session, QueryHolder querySql)
    {
@@ -93,4 +95,10 @@ public class DataChangesAllowedCheck
       return session.getAlias().isReadOnly();
    }
 
+   public static JLabel createReadStatusBarLabel()
+   {
+      JLabel lblReadOnly = new JLabel(s_stringMgr.getString("ReadOnlySessionCheck.read.only.label"));
+      lblReadOnly.setToolTipText(s_stringMgr.getString("ReadOnlySessionCheck.read.only.label.tooltip"));
+      return lblReadOnly;
+   }
 }

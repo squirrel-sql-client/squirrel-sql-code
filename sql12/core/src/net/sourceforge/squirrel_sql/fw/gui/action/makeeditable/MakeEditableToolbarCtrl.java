@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.DataSetViewerType;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -98,7 +98,7 @@ public class MakeEditableToolbarCtrl
          {
             try
             {
-               if(false == DataChangesAllowedCheck.checkMakeEditableToolbarButton(_session))
+               if(false == ReadOnlySessionCheck.checkMakeEditableToolbarButton(_session))
                {
                   return;
                }

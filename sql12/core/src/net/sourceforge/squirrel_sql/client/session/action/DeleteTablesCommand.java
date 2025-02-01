@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -99,7 +99,7 @@ public class DeleteTablesCommand implements ICommand
     */
 	public void execute()
 	{
-		if(false == DataChangesAllowedCheck.checkDeleteRows(_session))
+		if(false == ReadOnlySessionCheck.checkDeleteRows(_session))
 		{
 			return;
 		}

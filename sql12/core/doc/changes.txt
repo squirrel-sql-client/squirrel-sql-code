@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+When an Alias is read only, see https://github.com/squirrel-sql-client/squirrel-sql-code/issues/56,
+  the status bars of its Session tabs now show a "RO" label on the right.
+
 Pull request: https://github.com/squirrel-sql-client/squirrel-sql-code/pull/57
   MSSQL: Added support for MSSQL Server datetimeoffset datatype.
   Thanks to fvalenduc for the pull request

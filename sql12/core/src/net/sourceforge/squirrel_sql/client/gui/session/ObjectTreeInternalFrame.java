@@ -33,13 +33,18 @@ import net.sourceforge.squirrel_sql.client.session.ObjectTreePosition;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.FocusEvent;
 
 /* Object Tree frame class*/
@@ -130,7 +135,12 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
 
 		_sessionStatusBar.addJComponent(new SchemaPanel(session));
 
-		SessionColoringUtil.colorStatusbar(session, _sessionStatusBar);
+      if(ReadOnlySessionCheck.isSessionReadOnly(session))
+      {
+         _sessionStatusBar.addJComponent(ReadOnlySessionCheck.createReadStatusBarLabel());
+      }
+
+      SessionColoringUtil.colorStatusbar(session, _sessionStatusBar);
 
 		validate();
 	}

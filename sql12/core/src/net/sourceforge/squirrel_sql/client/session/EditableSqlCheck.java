@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.DataChangesAllowedCheck;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.fw.sql.tablenamefind.TableNameFindService;
 
 
@@ -11,7 +11,7 @@ public class EditableSqlCheck
    public EditableSqlCheck(SQLExecutionInfo exInfo, ISession session)
    {
 
-      if(DataChangesAllowedCheck.isSessionReadOnly(session))
+      if(ReadOnlySessionCheck.isSessionReadOnly(session))
       {
          // See also caller of DataChangesAllowedCheck.checkMakeEditableToolbarButton
          return;

@@ -32,13 +32,21 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
 
 public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFrame
 {
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLInternalFrame.class);
+
 
 	private SQLPanel _sqlPanel;
 
@@ -125,8 +133,12 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 		_sessionStatusBar.addJComponent(new SchemaPanel(session));
 		_sessionStatusBar.addJComponent(new RowColumnLabel(_sqlPanel.getSQLEntryPanel()));
 
+      if(ReadOnlySessionCheck.isSessionReadOnly(session))
+      {
+			_sessionStatusBar.addJComponent(ReadOnlySessionCheck.createReadStatusBarLabel());
+      }
 
-		SessionColoringUtil.colorStatusbar(session, _sessionStatusBar);
+      SessionColoringUtil.colorStatusbar(session, _sessionStatusBar);
 
 		setContentPane(contentPanel);
 		validate();
