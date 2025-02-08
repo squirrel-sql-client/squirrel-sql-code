@@ -18,7 +18,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 
 /**
  * Handler used for connection internal frame actions.
@@ -252,7 +252,7 @@ class ConnectionInternalFrameHandler
          _connectionInternalFrame.finishedCreatingConnection(true);
 
          _callback.sessionInternalFrameCreated(sessionInternalFrame);
-
+         Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
       }
       catch(Throwable th)
       {

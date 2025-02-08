@@ -118,6 +118,9 @@ public class SessionManager
       finally
       {
          _inCreateSession.remove(sessionId);
+
+         // Needed instead to be in ConnectionInternalFrameHandler.createSessionFrame
+         // Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
       }
    }
 
@@ -134,6 +137,7 @@ public class SessionManager
       {
          _activeSession = session;
          fireSessionActivated(session);
+         Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
       }
    }
 

@@ -89,14 +89,27 @@ public class Version
 	
 	public static String getVersion()
 	{
-		StringBuffer buf = new StringBuffer();
-		buf.append(APP_NAME);
+		StringBuilder buf = new StringBuilder();
+		buf.append(getAppName());
 		buf.append(" ");
-		if (!isSnapshotVersion()) {
+		buf.append(getVersionExclAppName());
+		return buf.toString();
+	}
+
+	public static String getVersionExclAppName()
+	{
+		StringBuilder buf = new StringBuilder();
+		if(!isSnapshotVersion())
+		{
 			buf.append("Version ");
 		}
 		buf.append(getShortVersion());
 		return buf.toString();
+	}
+
+	public static String getAppName()
+	{
+		return APP_NAME;
 	}
 
 	/**

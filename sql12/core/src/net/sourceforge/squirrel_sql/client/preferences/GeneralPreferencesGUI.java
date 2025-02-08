@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
+import net.sourceforge.squirrel_sql.client.gui.db.mainframetitle.MainFrameTitlePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.gui.db.passwordaccess.PasswordAccessPrefsCtrl;
 import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -71,6 +72,8 @@ final class GeneralPreferencesGUI extends JPanel
 
    private PasswordAccessPrefsCtrl _passwordAccessPrefsCtrl = new PasswordAccessPrefsCtrl();
 
+   private MainFrameTitlePrefsCtrl _mainFrameTitlePrefsCtrl = new MainFrameTitlePrefsCtrl();
+
    GeneralPreferencesGUI()
    {
       super(new GridBagLayout());
@@ -125,6 +128,7 @@ final class GeneralPreferencesGUI extends JPanel
       _messagePrefsCtrl.loadData(prefs);
 
       _passwordAccessPrefsCtrl.loadData(prefs);
+      _mainFrameTitlePrefsCtrl.loadData(prefs);
 
    }
 
@@ -172,6 +176,7 @@ final class GeneralPreferencesGUI extends JPanel
       _messagePrefsCtrl.applyChanges(prefs);
 
       _passwordAccessPrefsCtrl.applyChanges(prefs);
+      _mainFrameTitlePrefsCtrl.applyChanges(prefs);
    }
 
    private void createUserInterface()
@@ -346,6 +351,9 @@ final class GeneralPreferencesGUI extends JPanel
       gbc.gridy = 10;
       pnl.add(_passwordAccessPrefsCtrl.getPanel(), gbc);
 
+      gbc.gridx = 0;
+      gbc.gridy = 11;
+      pnl.add(_mainFrameTitlePrefsCtrl.getPanel(), gbc);
 
       return pnl;
    }

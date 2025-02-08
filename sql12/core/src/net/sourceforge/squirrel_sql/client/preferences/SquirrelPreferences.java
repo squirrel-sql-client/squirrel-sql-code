@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  */
 
 import net.sourceforge.squirrel_sql.client.action.ActionKeys;
+import net.sourceforge.squirrel_sql.client.gui.db.mainframetitle.PositionInMainFrameTitle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
@@ -151,6 +152,13 @@ public class SquirrelPreferences implements Serializable
 		String SHOW_ALIAS_PASSWORD_SHOW_BUTTON = "showAliasPasswordShowButton";
 		String QUERY_TIMEOUT = "queryTimeout";
 
+
+		String MAIN_FRAME_TITLE_POS_APPLICATION_NAME = "mainFrameTitlePosApplicationName";
+		String MAIN_FRAME_TITLE_POS_VERSION = "mainFrameTitlePosVersion";
+		String MAIN_FRAME_TITLE_POS_USER_DIR = "mainFrameTitlePosUserDir";
+		String MAIN_FRAME_TITLE_POS_HOME_DIR = "mainFrameTitlePosHomeDir";
+		String MAIN_FRAME_TITLE_POS_SESSION_NAME = "mainFrameTitlePosSessionName";
+		String MAIN_FRAME_TITLE_POS_SAVED_SESSION_OR_GROUP_NAME = "mainFrameTitlePosSavedSessionOrGroupName";
 
 	}
 
@@ -359,6 +367,13 @@ public class SquirrelPreferences implements Serializable
 	private boolean _resultTabHeaderCompareSqlsNormalized;
 	private boolean _resultTabHeaderMarkLastOnly;
 	private int _resultTabHeaderMarkMaxSqlLengthToCheck = 8000;
+
+	private String _mainFrameTitlePosApplicationName = PositionInMainFrameTitle.POS_1.name();
+	private String _mainFrameTitlePosVersion = PositionInMainFrameTitle.POS_2.name();
+	private String _mainFrameTitlePosUserDir = PositionInMainFrameTitle.POS_3.name();
+	private String _mainFrameTitlePosHomeDir = PositionInMainFrameTitle.POS_NONE.name();
+	private String _mainFrameTitlePosSessionName = PositionInMainFrameTitle.POS_NONE.name();
+	private String _mainFrameTitlePosSavedSessionOrGroupName = PositionInMainFrameTitle.POS_4.name();
 
 	public SquirrelPreferences()
 	{
@@ -1738,5 +1753,66 @@ public class SquirrelPreferences implements Serializable
 	{
 		_resultTabHeaderMarkMaxSqlLengthToCheck = resultTabHeaderMarkMaxSqlLengthToCheck;
 	}
+
+	public String getMainFrameTitlePosApplicationName()
+	{
+		return _mainFrameTitlePosApplicationName;
+	}
+
+	public void setMainFrameTitlePosApplicationName(String mainFrameTitlePosApplicationName)
+	{
+		_mainFrameTitlePosApplicationName = mainFrameTitlePosApplicationName;
+	}
+
+	public String getMainFrameTitlePosVersion()
+	{
+		return _mainFrameTitlePosVersion;
+	}
+
+	public void setMainFrameTitlePosVersion(String mainFrameTitlePosVersion)
+	{
+		_mainFrameTitlePosVersion = mainFrameTitlePosVersion;
+	}
+
+	public String getMainFrameTitlePosUserDir()
+	{
+		return _mainFrameTitlePosUserDir;
+	}
+
+	public void setMainFrameTitlePosUserDir(String mainFrameTitlePosUserDir)
+	{
+		_mainFrameTitlePosUserDir = mainFrameTitlePosUserDir;
+	}
+
+	public String getMainFrameTitlePosHomeDir()
+	{
+		return _mainFrameTitlePosHomeDir;
+	}
+
+	public void setMainFrameTitlePosHomeDir(String mainFrameTitlePosHomeDir)
+	{
+		_mainFrameTitlePosHomeDir = mainFrameTitlePosHomeDir;
+	}
+
+	public String getMainFrameTitlePosSessionName()
+	{
+		return _mainFrameTitlePosSessionName;
+	}
+
+	public void setMainFrameTitlePosSessionName(String mainFrameTitlePosSessionName)
+	{
+		_mainFrameTitlePosSessionName = mainFrameTitlePosSessionName;
+	}
+
+	public String getMainFrameTitlePosSavedSessionOrGroupName()
+	{
+		return _mainFrameTitlePosSavedSessionOrGroupName;
+	}
+
+	public void setMainFrameTitlePosSavedSessionOrGroupName(String mainFrameTitlePosSavedSessionOrGroupName)
+	{
+		_mainFrameTitlePosSavedSessionOrGroupName = mainFrameTitlePosSavedSessionOrGroupName;
+	}
+
 
 }

@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.mainframetitle.MainFrameTitleHandler;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;

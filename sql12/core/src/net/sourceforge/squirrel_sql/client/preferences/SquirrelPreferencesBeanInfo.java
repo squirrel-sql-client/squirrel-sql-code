@@ -148,7 +148,14 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(SHOW_ALIAS_PASSWORD_COPY_BUTTON, SquirrelPreferences.class, "getShowAliasPasswordCopyButton", "setShowAliasPasswordCopyButton"),
             prop(SHOW_ALIAS_PASSWORD_SHOW_BUTTON, SquirrelPreferences.class, "getShowAliasPasswordShowButton", "setShowAliasPasswordShowButton"),
 
-            prop(QUERY_TIMEOUT, SquirrelPreferences.class, "getQueryTimeout", "setQueryTimeout")
+            prop(QUERY_TIMEOUT, SquirrelPreferences.class, "getQueryTimeout", "setQueryTimeout"),
+
+            prop(MAIN_FRAME_TITLE_POS_APPLICATION_NAME, SquirrelPreferences.class, "getMainFrameTitlePosApplicationName", "setMainFrameTitlePosApplicationName"),
+            prop(MAIN_FRAME_TITLE_POS_VERSION, SquirrelPreferences.class, "getMainFrameTitlePosVersion", "setMainFrameTitlePosVersion"),
+            prop(MAIN_FRAME_TITLE_POS_USER_DIR, SquirrelPreferences.class, "getMainFrameTitlePosUserDir", "setMainFrameTitlePosUserDir"),
+            prop(MAIN_FRAME_TITLE_POS_HOME_DIR, SquirrelPreferences.class, "getMainFrameTitlePosHomeDir", "setMainFrameTitlePosHomeDir"),
+            prop(MAIN_FRAME_TITLE_POS_SESSION_NAME, SquirrelPreferences.class, "getMainFrameTitlePosSessionName", "setMainFrameTitlePosSessionName"),
+            prop(MAIN_FRAME_TITLE_POS_SAVED_SESSION_OR_GROUP_NAME, SquirrelPreferences.class, "getMainFrameTitlePosSavedSessionOrGroupName", "setMainFrameTitlePosSavedSessionOrGroupName")
       };
    }
 

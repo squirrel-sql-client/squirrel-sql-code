@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -58,14 +59,6 @@ public class RenameSessionAction  extends SquirrelAction implements ISessionActi
 																									oldTitle,
 																									null);
 
-        //String newTitle = (String) JOptionPane.showInputDialog(_app.getMainFrame(),
-        //    s_stringMgr.getString("RenameSessionAction.label"),
-        //    s_stringMgr.getString("RenameSessionAction.title"),
-        //        JOptionPane.QUESTION_MESSAGE,
-        //        null,
-        //        null,
-        //        oldTitle);
-      
       if(false == textEditDialog.isOk())
       {
          return;
@@ -81,6 +74,8 @@ public class RenameSessionAction  extends SquirrelAction implements ISessionActi
 			_session.setUserChangedTitle(textEditDialog.getEditedText());
 			updateGui();
 		}
+
+		Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
 	}
 	
 	/**

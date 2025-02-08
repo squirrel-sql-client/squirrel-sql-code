@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://sourceforge.net/p/squirrel-sql/feature-requests/619/
+  SQuirreL's main frame title is configurable,
+  see menu File --> Global Preferences --> tab General on the lower right.
+
 When an Alias is read only, see https://github.com/squirrel-sql-client/squirrel-sql-code/issues/56,
   the status bars of its Session tabs now show a "RO" label on the right.
 
