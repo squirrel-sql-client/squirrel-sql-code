@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://sourceforge.net/p/squirrel-sql/feature-requests/620/
+  MS-Excel export: Options to choose fonts for header- and other rows
+  See right mouse menu of UI tables --> "Export CSV / MS Excel / XML / JSON ..."
+
 https://sourceforge.net/p/squirrel-sql/feature-requests/619/
   SQuirreL's main frame title is configurable,
   see menu File --> Global Preferences --> tab General on the lower right.

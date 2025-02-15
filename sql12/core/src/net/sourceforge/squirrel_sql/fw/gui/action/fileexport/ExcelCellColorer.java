@@ -16,7 +16,7 @@ import java.awt.Color;
  */
 public class ExcelCellColorer
 {
-   public static void color(Cell excelCell, Color color)
+   public static void color(Cell excelCell, Color color, ExcelGlobalCellStyleHandler cellStyleHandler)
    {
       if(null == color)
       {
@@ -25,7 +25,7 @@ public class ExcelCellColorer
 
       if(excelCell instanceof XSSFCell)
       {
-         colorXSSFCell((XSSFCell)excelCell, color);
+         colorXSSFCell((XSSFCell)excelCell, color, cellStyleHandler);
       }
       else if (excelCell instanceof SXSSFCell)
       {
@@ -40,7 +40,7 @@ public class ExcelCellColorer
       }
    }
 
-   private static void colorXSSFCell(XSSFCell excelCell, Color color)
+   private static void colorXSSFCell(XSSFCell excelCell, Color color, ExcelGlobalCellStyleHandler cellStyleHandler)
    {
       // This will result in just one color
       // XSSFCellStyle cellStyle = excelCell.getCellStyle();
@@ -49,8 +49,7 @@ public class ExcelCellColorer
       //    cellStyle = excelCell.getSheet().getWorkbook().createCellStyle();
       // }
 
-      XSSFCellStyle cellStyle = excelCell.getSheet().getWorkbook().createCellStyle();
-
+      XSSFCellStyle cellStyle = cellStyleHandler.createXSSFCellStyle();
 
       final XSSFColor xssfColor = new XSSFColor(color, new DefaultIndexedColorMap());
       cellStyle.setFillForegroundColor(xssfColor);

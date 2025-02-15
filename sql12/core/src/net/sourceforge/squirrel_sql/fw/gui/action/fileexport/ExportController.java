@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
+import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -12,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
@@ -31,6 +33,7 @@ public class ExportController
    private Window _owner;
    private ExportDialogType _exportDialogType;
    private TableExportSelectionPanelController _exportSelectionPanelController;
+   private ExcelFontCtrl _excelFontCtrl = new ExcelFontCtrl();
 
 
    /**
@@ -130,6 +133,9 @@ public class ExportController
 
       _dlg.radFormatJSON.addActionListener(e -> onFormat(true));
 
+      _dlg.btnChooseExcelFont.addActionListener(e -> onChooseExcelFont());
+
+      _dlg.btnChooseExcelHeaderFont.addActionListener(e -> onChooseExcelHeaderFont());
 
       _dlg.chkSeparatorTab.addActionListener(e -> onFormat(false));
 
@@ -141,6 +147,20 @@ public class ExportController
       _dlg.btnFile.addActionListener(e -> onFile());
 
       _dlg.btnCommandFile.addActionListener(e -> onCommandFile());
+   }
+
+   private void onChooseExcelFont()
+   {
+      FontChooser fontChooser = new FontChooser(_dlg, true, true);
+      Font font = fontChooser.showDialog(_excelFontCtrl.getFont());
+      _excelFontCtrl.initFontLabel(_dlg.lblExcelFontName, font, fontChooser.isNoSelection());
+   }
+
+   private void onChooseExcelHeaderFont()
+   {
+      FontChooser fontChooser = new FontChooser(_dlg, true, true);
+      Font font = fontChooser.showDialog(_excelFontCtrl.getHeaderFont());
+      _excelFontCtrl.initHeaderFontLabel(_dlg.lblExcelHeaderFontName, font, fontChooser.isNoSelection());
    }
 
    private void onAdjustEnableRenderGroupingSeparator()
@@ -167,8 +187,10 @@ public class ExportController
          _dlg.chkExcelFirstRowFrozen.setEnabled(false);
          _dlg.chkExcelFirstRowCentered.setEnabled(false);
          _dlg.chkExcelFirstRowBold.setEnabled(false);
-
-
+         _dlg.btnChooseExcelFont.setEnabled(false);
+         _dlg.btnChooseExcelHeaderFont.setEnabled(false);
+         _dlg.lblExcelFontName.setEnabled(false);
+         _dlg.lblExcelHeaderFontName.setEnabled(false);
 
          if(_dlg.chkSeparatorTab.isSelected())
          {
@@ -203,7 +225,10 @@ public class ExportController
          _dlg.chkExcelFirstRowFrozen.setEnabled(true);
          _dlg.chkExcelFirstRowCentered.setEnabled(true);
          _dlg.chkExcelFirstRowBold.setEnabled(true);
-
+         _dlg.btnChooseExcelFont.setEnabled(true);
+         _dlg.btnChooseExcelHeaderFont.setEnabled(true);
+         _dlg.lblExcelFontName.setEnabled(true);
+         _dlg.lblExcelHeaderFontName.setEnabled(true);
 
          if(replaceEnding)
          {
@@ -226,6 +251,11 @@ public class ExportController
          _dlg.chkExcelFirstRowFrozen.setEnabled(false);
          _dlg.chkExcelFirstRowCentered.setEnabled(false);
          _dlg.chkExcelFirstRowBold.setEnabled(false);
+         _dlg.btnChooseExcelFont.setEnabled(false);
+         _dlg.btnChooseExcelHeaderFont.setEnabled(false);
+         _dlg.lblExcelFontName.setEnabled(false);
+         _dlg.lblExcelHeaderFontName.setEnabled(false);
+
 
          if(replaceEnding)
          {
@@ -469,6 +499,7 @@ public class ExportController
       prefs.setExcelFirstRowFrozen(_dlg.chkExcelFirstRowFrozen.isSelected());
       prefs.setExcelFirstRowCentered(_dlg.chkExcelFirstRowCentered.isSelected());
       prefs.setExcelFirstRowBold(_dlg.chkExcelFirstRowBold.isSelected());
+      _excelFontCtrl.writeToPrefs(prefs);
 
 
       prefs.setFormatXML(_dlg.radFormatXML.isSelected());
@@ -513,6 +544,7 @@ public class ExportController
       _dlg.cboCharsets.setSelectedItem(prefs.getEncoding());
       _dlg.chkWithHeaders.setSelected(prefs.isWithHeaders());
 
+      _excelFontCtrl.initDataAndLabels(prefs, _dlg.lblExcelFontName, _dlg.lblExcelHeaderFontName);
 
       _dlg.chkSeparatorTab.setSelected(prefs.isSeperatorTab());
 

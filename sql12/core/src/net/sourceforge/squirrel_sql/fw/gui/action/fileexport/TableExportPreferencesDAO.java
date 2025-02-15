@@ -26,6 +26,17 @@ public class TableExportPreferencesDAO
    private static final String PREF_KEY_EXCEL_FIRST_ROW_BOLD = "SquirrelSQL.csvexport.excelFirstRowBold";
    private static final String PREF_KEY_EXCEL_FIRST_ROW_CENTERED = "SquirrelSQL.csvexport.excelFirstRowCentered";
 
+   private static final String PREF_KEY_EXCEL_FONT_NO_SELECTION = "SQuirrelSQL.csvexport.excelFontNoSelection";
+   private static final String PREF_KEY_EXCEL_FONT_FAMILY = "SQuirrelSQL.csvexport.excelFontFamily";
+   private static final String PREF_KEY_EXCEL_FONT_SIZE = "SQuirrelSQL.csvexport.excelFontSize";
+   private static final String PREF_KEY_EXCEL_FONT_BOLD = "SQuirrelSQL.csvexport.excelFontBold";
+   private static final String PREF_KEY_EXCEL_FONT_ITALIC = "SQuirrelSQL.csvexport.excelFontItalic";
+   private static final String PREF_KEY_EXCEL_HEADER_FONT_NO_SELECTION = "SQuirrelSQL.csvexport.excelHeaderFontNoSelection";
+   private static final String PREF_KEY_EXCEL_HEADER_FONT_FAMILY = "SQuirrelSQL.csvexport.excelHeaderFontFamily";
+   private static final String PREF_KEY_EXCEL_HEADER_FONT_SIZE = "SQuirrelSQL.csvexport.excelHeaderFontSize";
+   private static final String PREF_KEY_EXCEL_HEADER_FONT_BOLD = "SQuirrelSQL.csvexport.excelHeaderFontBold";
+   private static final String PREF_KEY_EXCEL_HEADER_FONT_ITALIC = "SQuirrelSQL.csvexport.excelHeaderFontItalic";
+
    private static final String PREF_KEY_FORMAT_XML = "SquirrelSQL.csvexport.formatXML";
    private static final String PREF_KEY_FORMAT_JSON = "SquirrelSQL.csvexport.formatJSON";
 
@@ -59,6 +70,17 @@ public class TableExportPreferencesDAO
       ret.setExcelFirstRowBold(Props.getBoolean(PREF_KEY_EXCEL_FIRST_ROW_BOLD, ret.isExcelFirstRowBold()));
       ret.setExcelFirstRowCentered(Props.getBoolean(PREF_KEY_EXCEL_FIRST_ROW_CENTERED, ret.isExcelFirstRowCentered()));
 
+      ret.setExcelFontNoSelection(Props.getBoolean(PREF_KEY_EXCEL_FONT_NO_SELECTION, ret.isExcelFontNoSelection()));
+      ret.setExcelFontFamily(Props.getString(PREF_KEY_EXCEL_FONT_FAMILY, ret.getExcelFontFamily()));
+      ret.setExcelFontSize(Props.getInt(PREF_KEY_EXCEL_FONT_SIZE, ret.getExcelFontSize()));
+      ret.setExcelFontBold(Props.getBoolean(PREF_KEY_EXCEL_FONT_BOLD, ret.isExcelFontBold()));
+      ret.setExcelFontItalic(Props.getBoolean(PREF_KEY_EXCEL_FONT_ITALIC, ret.isExcelFontItalic()));
+      ret.setExcelHeaderFontNoSelection(Props.getBoolean(PREF_KEY_EXCEL_HEADER_FONT_NO_SELECTION, ret.isExcelHeaderFontNoSelection()));
+      ret.setExcelHeaderFontFamily(Props.getString(PREF_KEY_EXCEL_HEADER_FONT_FAMILY, ret.getExcelHeaderFontFamily()));
+      ret.setExcelHeaderFontSize(Props.getInt(PREF_KEY_EXCEL_HEADER_FONT_SIZE, ret.getExcelHeaderFontSize()));
+      ret.setExcelHeaderFontBold(Props.getBoolean(PREF_KEY_EXCEL_HEADER_FONT_BOLD, ret.isExcelHeaderFontBold()));
+      ret.setExcelHeaderFontItalic(Props.getBoolean(PREF_KEY_EXCEL_HEADER_FONT_ITALIC, ret.isExcelHeaderFontItalic()));
+
       ret.setFormatXML(Props.getBoolean(PREF_KEY_FORMAT_XML, ret.isFormatXML()));
       ret.setFormatJSON(Props.getBoolean(PREF_KEY_FORMAT_JSON, ret.isFormatJSON()));
 
@@ -91,6 +113,17 @@ public class TableExportPreferencesDAO
       Props.putBoolean(PREF_KEY_EXCEL_FIRST_ROW_FROZEN, prefs.isExcelFirstRowFrozen());
       Props.putBoolean(PREF_KEY_EXCEL_FIRST_ROW_BOLD, prefs.isExcelFirstRowBold());
       Props.putBoolean(PREF_KEY_EXCEL_FIRST_ROW_CENTERED, prefs.isExcelFirstRowCentered());
+
+      Props.putBoolean(PREF_KEY_EXCEL_FONT_NO_SELECTION, prefs.isExcelFontNoSelection());
+      Props.putString(PREF_KEY_EXCEL_FONT_FAMILY, prefs.getExcelFontFamily());
+      Props.putInt(PREF_KEY_EXCEL_FONT_SIZE, prefs.getExcelFontSize());
+      Props.putBoolean(PREF_KEY_EXCEL_FONT_BOLD, prefs.isExcelFontBold());
+      Props.putBoolean(PREF_KEY_EXCEL_FONT_ITALIC, prefs.isExcelFontItalic());
+      Props.putBoolean(PREF_KEY_EXCEL_HEADER_FONT_NO_SELECTION, prefs.isExcelHeaderFontNoSelection());
+      Props.putString(PREF_KEY_EXCEL_HEADER_FONT_FAMILY, prefs.getExcelHeaderFontFamily());
+      Props.putInt(PREF_KEY_EXCEL_HEADER_FONT_SIZE, prefs.getExcelHeaderFontSize());
+      Props.putBoolean(PREF_KEY_EXCEL_HEADER_FONT_BOLD, prefs.isExcelHeaderFontBold());
+      Props.putBoolean(PREF_KEY_EXCEL_HEADER_FONT_ITALIC, prefs.isExcelHeaderFontItalic());
 
       Props.putBoolean(PREF_KEY_FORMAT_XML, prefs.isFormatXML());
       Props.putBoolean(PREF_KEY_FORMAT_JSON, prefs.isFormatJSON());

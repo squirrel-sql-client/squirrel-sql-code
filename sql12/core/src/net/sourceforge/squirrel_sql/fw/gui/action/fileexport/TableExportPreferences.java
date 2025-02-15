@@ -66,6 +66,17 @@ public class TableExportPreferences
    private boolean _excelFirstRowBold;
    private boolean _excelFirstRowCentered;
 
+   private boolean _excelFontNoSelection = true;
+   private String _excelFontFamily;
+   private int _excelFontSize;
+   private boolean _excelFontBold;
+   private boolean _excelFontItalic;
+   private boolean _excelHeaderFontNoSelection = true;
+   private String _excelHeaderFontFamily;
+   private int _excelHeaderFontSize;
+   private boolean _excelHeaderFontBold;
+   private boolean _excelHeaderFontItalic;
+
    public boolean isFormatXLS()
    {
       return _formatXLS;
@@ -304,5 +315,105 @@ public class TableExportPreferences
    public void setRenderGroupingSeparator(boolean renderGroupingSeparator)
    {
       _renderGroupingSeparator = renderGroupingSeparator;
+   }
+
+   public boolean isExcelFontNoSelection()
+   {
+      return _excelFontNoSelection;
+   }
+
+   public void setExcelFontNoSelection(boolean excelFontNoSelection)
+   {
+      _excelFontNoSelection = excelFontNoSelection;
+   }
+
+   public boolean isExcelHeaderFontNoSelection()
+   {
+      return _excelHeaderFontNoSelection;
+   }
+
+   public void setExcelHeaderFontNoSelection(boolean excelHeaderFontNoSelection)
+   {
+      _excelHeaderFontNoSelection = excelHeaderFontNoSelection;
+   }
+
+   public String getExcelFontFamily()
+   {
+      return _excelFontFamily;
+   }
+
+   public void setExcelFontFamily(String excelFontFamily)
+   {
+      _excelFontFamily = excelFontFamily;
+   }
+
+   public int getExcelFontSize()
+   {
+      return _excelFontSize;
+   }
+
+   public void setExcelFontSize(int excelFontSize)
+   {
+      _excelFontSize = excelFontSize;
+   }
+
+   public boolean isExcelFontBold()
+   {
+      return _excelFontBold;
+   }
+
+   public void setExcelFontBold(boolean excelFontBold)
+   {
+      _excelFontBold = excelFontBold;
+   }
+
+   public boolean isExcelFontItalic()
+   {
+      return _excelFontItalic;
+   }
+
+   public void setExcelFontItalic(boolean excelFontItalic)
+   {
+      _excelFontItalic = excelFontItalic;
+   }
+
+   public String getExcelHeaderFontFamily()
+   {
+      return _excelHeaderFontFamily;
+   }
+
+   public void setExcelHeaderFontFamily(String excelHeaderFontFamily)
+   {
+      _excelHeaderFontFamily = excelHeaderFontFamily;
+   }
+
+   public int getExcelHeaderFontSize()
+   {
+      return _excelHeaderFontSize;
+   }
+
+   public void setExcelHeaderFontSize(int excelHeaderFontSize)
+   {
+      _excelHeaderFontSize = excelHeaderFontSize;
+   }
+
+   public boolean isExcelHeaderFontBold()
+   {
+      return _excelHeaderFontBold;
+   }
+
+   public void setExcelHeaderFontBold(boolean excelHeaderFontBold)
+   {
+      _excelHeaderFontBold = excelHeaderFontBold;
+   }
+
+   public boolean isExcelHeaderFontItalic()
+   {
+      return _excelHeaderFontItalic;
+   }
+
+   public void setExcelHeaderFontItalic(boolean excelHeaderFontItalic)
+   {
+      _excelHeaderFontItalic = excelHeaderFontItalic;
    }
 }

@@ -43,7 +43,6 @@ public class FontInfo implements Cloneable, Serializable
 
 	public FontInfo()
 	{
-		super();
 		setFamily(DEFAULT_FAMILY);
 		setSize(12);
 	}

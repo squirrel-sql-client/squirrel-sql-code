@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -44,6 +45,12 @@ public class ExportDlg extends JDialog
    JCheckBox chkExcelFirstRowFrozen;
    JCheckBox chkExcelFirstRowBold;
    JCheckBox chkExcelFirstRowCentered;
+
+   JButton btnChooseExcelFont;
+   MultipleLineLabel lblExcelFontName;
+
+   JButton btnChooseExcelHeaderFont;
+   MultipleLineLabel lblExcelHeaderFontName;
 
    JRadioButton radFormatXML;
    JRadioButton radFormatJSON;
@@ -234,6 +241,37 @@ public class ExportDlg extends JDialog
       gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 3, 0, 0), 0, 0);
       chkExcelFirstRowBold = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.excel.option.first.row.bold"));
       ret.add(chkExcelFirstRowBold, gbc);
+
+
+      gbc = new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 3, 3, 0), 0, 0);
+      ret.add(createFontPanel(), gbc);
+
+      return ret;
+   }
+
+   private JPanel createFontPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      btnChooseExcelFont = new JButton(s_stringMgr.getString("TableExportCsvDlg.excel.option.font"));
+      ret.add(btnChooseExcelFont, gbc);
+
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 3, 0, 0), 0, 0);
+      lblExcelFontName = new MultipleLineLabel();
+      lblExcelFontName.setColumns(30);
+      ret.add(lblExcelFontName, gbc);
+
+      gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0);
+      btnChooseExcelHeaderFont = new JButton(s_stringMgr.getString("TableExportCsvDlg.excel.option.header.font"));
+      ret.add(btnChooseExcelHeaderFont, gbc);
+
+      gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 3, 0, 0), 0, 0);
+      lblExcelHeaderFontName = new MultipleLineLabel();
+      lblExcelHeaderFontName.setColumns(30);
+      ret.add(lblExcelHeaderFontName, gbc);
 
       return ret;
    }

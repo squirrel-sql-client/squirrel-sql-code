@@ -45,9 +45,7 @@ import java.awt.event.ActionListener;
  */
 public class FontChooser extends JDialog
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(FontChooser.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FontChooser.class);
 
 	private final boolean _selectStyles;
 
@@ -60,6 +58,7 @@ public class FontChooser extends JDialog
 	private Font _font;
 
 	private ActionListener _previewUpdater;
+	private boolean _noSelection = false;
 
 	/**
 	 * Default ctor.
@@ -98,10 +97,17 @@ public class FontChooser extends JDialog
 	 */
 	public FontChooser(Window owner, boolean selectStyles)
 	{
+		this(owner,selectStyles, false);
+	}
+
+	public FontChooser(Window owner, boolean selectStyles, boolean allowNoSelection)
+	{
 		super(owner, s_stringMgr.getString("FontChooser.title"));
 		setModal(true);
 		_selectStyles = selectStyles;
-		createUserInterface();
+		createUserInterface(allowNoSelection);
+
+		GUIUtils.enableCloseByEscape(this);
 	}
 
 	/**
@@ -167,12 +173,12 @@ public class FontChooser extends JDialog
 		return _font;
 	}
 
-	public Font getSelectedFont()
+	public boolean isNoSelection()
 	{
-		return _font;
+		return _noSelection;
 	}
 
-	protected void setupFontFromDialog()
+	private void setupFontFromDialog()
 	{
 		int size = 12;
 		try
@@ -191,7 +197,7 @@ public class FontChooser extends JDialog
 		_font = fi.createFont();
 	}
 
-	private void createUserInterface()
+	private void createUserInterface(boolean allowNoSelection)
 	{
 		final JPanel content = new JPanel(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
@@ -241,7 +247,7 @@ public class FontChooser extends JDialog
 
 		++gbc.gridy;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		content.add(createButtonsPanel(), gbc);
+		content.add(createButtonsPanel(allowNoSelection), gbc);
 
 		pack();
 		GUIUtils.centerWithinParent(this);
@@ -261,34 +267,33 @@ public class FontChooser extends JDialog
 		return pnl;
 	}
 
-	private JPanel createButtonsPanel()
+	private JPanel createButtonsPanel(boolean allowNoSelection)
 	{
+
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton(s_stringMgr.getString("FontChooser.ok"));
-		okBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				setupFontFromDialog();
-				dispose();
-			}
-		});
-		JButton cancelBtn = new JButton(s_stringMgr.getString("FontChooser.cancel"));
-		cancelBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				FontChooser.this._font = null;
-				dispose();
-			}
-		});
+		JButton btnOk = new JButton(s_stringMgr.getString("FontChooser.ok"));
+		btnOk.addActionListener(evt -> {setupFontFromDialog(); dispose();});
 
-		pnl.add(okBtn);
-		pnl.add(cancelBtn);
+		JButton btnNoSelection = null;
+		if(allowNoSelection)
+		{
+         btnNoSelection = new JButton(s_stringMgr.getString("FontChooser.no.selection"));
+         btnNoSelection.addActionListener(evt -> {_noSelection = true; dispose();});
+		}
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, cancelBtn });
-		getRootPane().setDefaultButton(okBtn);
+		JButton btnCancel = new JButton(s_stringMgr.getString("FontChooser.cancel"));
+		btnCancel.addActionListener(evt -> { FontChooser.this._font = null; dispose();});
+
+		pnl.add(btnOk);
+      if(allowNoSelection)
+      {
+         pnl.add(btnNoSelection);
+      }
+      pnl.add(btnCancel);
+
+		GUIUtils.setJButtonSizesTheSame(new JButton[] { btnOk, btnCancel });
+		getRootPane().setDefaultButton(btnOk);
 
 		return pnl;
 	}
