@@ -2377,7 +2377,7 @@ Reworked corrections/abbreviations dialog. See Session toolbar button 'Configure
 
 Allowed Java version 10 in starter scripts.
 
-New right mouse menu entry '.cted rows to new window' available in all tables.
+New right mouse menu entry 'Copy selected rows to new window' available in all tables.
   If windows with with matching column names and column types already exist another pop up menu allows to append
   the selected rows to one of these windows.
 
