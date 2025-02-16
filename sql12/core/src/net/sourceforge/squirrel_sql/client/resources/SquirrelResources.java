@@ -215,6 +215,10 @@ public class SquirrelResources extends Resources
 		String FOLDER_CLOSED = "folderClosed";
 		String START_ALIAS = "startAlias";
 
+		String COPY_2_BOTTOM = "copy2bottom";
+		String COPY_2_CARET = "copy2caret";
+
+
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

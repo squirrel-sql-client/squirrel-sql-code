@@ -114,7 +114,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	private String _sql;
 
 	/** Panel showing the query information. */
-	private QueryInfoPanel _queryInfoPanel = new QueryInfoPanel();
+	private QueryInfoPanel _queryInfoPanel;
 
 	/** Listener to the sessions properties. */
 	private PropertyChangeListener _propsListener;
@@ -156,20 +156,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       throws IllegalArgumentException
    {
       _resultTabListener = resultTabListener;
-      if (session == null)
-      {
-         throw new IllegalArgumentException("Null ISession passed");
-      }
-      if (sqlResultExecuterPanelFacade == null)
-      {
-         throw new IllegalArgumentException("Null SQLPanel passed");
-      }
-      if (id == null)
-      {
-         throw new IllegalArgumentException("Null IIdentifier passed");
-      }
-
       _session = session;
+
+      _queryInfoPanel = new QueryInfoPanel(_session);
       _sqlResultExecuterPanelFacade = sqlResultExecuterPanelFacade;
       _id = id;
       _exInfo = exInfo;

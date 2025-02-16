@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/60
+  The SQL-result's "Info"-tab now has buttons to copy the executed SQL
+  - to the clipboard
+  - to the caret position of the active SQL editor
+  - to the end of the active SQL editor
+
 https://sourceforge.net/p/squirrel-sql/feature-requests/620/
   MS-Excel export: Options to choose fonts for header- and other rows
   See right mouse menu of UI tables --> "Export CSV / MS Excel / XML / JSON ..."
@@ -2154,7 +2160,7 @@ Error in SQL Parametrisation Plugin:
 
 Installer dialog: On first page of installer wizard the Data Import plugin was not mentioned to be a standard Plugin.
 
-SQL Result: When row number where displayed, the functions "Mark duplicates values" and "Find column" raised exceptions.
+SQL Result: When row number where displayed, the functions "Mark duplicate values" and "Find column" raised exceptions.
 
 #1383 Create data script from SQL fails with column alias
   The problem occurred for SQLs like

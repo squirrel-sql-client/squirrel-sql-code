@@ -1,10 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.text.NumberFormat;
 
@@ -25,11 +32,83 @@ public class QueryInfoPanel extends JPanel
    private JTextField _executedLbl = GUIUtils.styleTextFieldToCopyableLabel(new JTextField());
    private JTextField _elapsedLbl = GUIUtils.styleTextFieldToCopyableLabel(new JTextField());
    private JScrollPane _queryScrollPane;
+   private JButton _btnCopySql;
+   private JButton _btnCopySqlToCaret;
+   private JButton _btnCopySqlToBottom;
 
-   QueryInfoPanel()
+   public QueryInfoPanel(ISession session)
    {
-      createGUI();
+      createUI();
+
+      _btnCopySql.addActionListener(e -> ClipboardUtil.copyToClip(_queryTxt.getText()));
+      _btnCopySqlToCaret.addActionListener(e -> onCopySqlToCaret(session));
+      _btnCopySqlToBottom.addActionListener(e -> onCopySqlToBottom(session));
    }
+
+   private void onCopySqlToBottom(ISession session)
+   {
+      ISQLPanelAPI panelAPI = session.getSQLPanelAPIOfActiveSessionWindow(true);
+      if(null == panelAPI)
+      {
+         return;
+      }
+      panelAPI.getSQLEntryPanel().appendText("\n" + _queryTxt.getText());
+   }
+
+   private void onCopySqlToCaret(ISession session)
+   {
+      ISQLPanelAPI panelAPI = session.getSQLPanelAPIOfActiveSessionWindow(true);
+      if(null == panelAPI)
+      {
+         return;
+      }
+
+      int caretPosition = panelAPI.getSQLEntryPanel().getCaretPosition();
+      panelAPI.getSQLEntryPanel().setSelectionStart(caretPosition);
+      panelAPI.getSQLEntryPanel().setSelectionEnd(caretPosition);
+      panelAPI.getSQLEntryPanel().replaceSelection(_queryTxt.getText());
+   }
+
+
+   private void createUI()
+   {
+      setLayout(new GridBagLayout());
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(15, 10, 0, 10), 0, 0);
+      add(new JLabel(s_stringMgr.getString("ResultTab.executedLabel"), SwingConstants.RIGHT), gbc);
+
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 0, 0, 10), 0, 0);
+      add(_executedLbl, gbc);
+
+
+      //++gbc.gridy;
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10), 0, 0);
+      add(new JLabel(s_stringMgr.getString("ResultTab.rowCountLabel"), SwingConstants.RIGHT), gbc);
+
+      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 10), 0, 0);
+      add(_rowCountLbl, gbc);
+
+
+      //++gbc.gridy;
+      gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10), 0, 0);
+      add(new JLabel(s_stringMgr.getString("ResultTab.statementLabel"), SwingConstants.RIGHT), gbc);
+
+      gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 0, 0, 10), 0, 0);
+      add(createCopyButtonsPanel(), gbc);
+
+      gbc = new GridBagConstraints(1, 2, 1, 2, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10, 0, 0, 10), 0, 0);
+      _queryScrollPane = new JScrollPane(_queryTxt);
+      add(_queryScrollPane, gbc);
+
+
+      gbc = new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 30, 10), 0, 0);
+      add(new JLabel(s_stringMgr.getString("ResultTab.elapsedTimeLabel"), SwingConstants.RIGHT), gbc);
+
+      gbc = new GridBagConstraints(1, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 30, 10), 0, 0);
+      add(_elapsedLbl, gbc);
+   }
+
 
    void load(int rowCount, SQLExecutionInfo exInfo)
    {
@@ -62,40 +141,21 @@ public class QueryInfoPanel extends JPanel
       return elapsedTime;
    }
 
-   private void createGUI()
+   private JPanel createCopyButtonsPanel()
    {
-      setLayout(new GridBagLayout());
-      GridBagConstraints gbc;
+      JPanel pnl = new JPanel(new GridLayout(3,1, 0,3));
+      _btnCopySql = GUIUtils.styleAsToolbarButton(new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.COPY)));
+      _btnCopySql.setToolTipText(s_stringMgr.getString("ResultTab.copy.sql.tooltip"));
+      pnl.add(_btnCopySql);
 
-      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(15, 10, 0, 10), 0, 0);
-      add(new JLabel(s_stringMgr.getString("ResultTab.executedLabel"), SwingConstants.RIGHT), gbc);
+      _btnCopySqlToCaret = GUIUtils.styleAsToolbarButton(new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.COPY_2_CARET)));
+      _btnCopySqlToCaret.setToolTipText(s_stringMgr.getString("ResultTab.copy.to.caret.tooltip"));
+      pnl.add(_btnCopySqlToCaret);
 
-      // If GridBagConstraints.HORIZONTAL is changes to GridBagConstraints.NONE the controls won't be displayed when SQL are long.
-      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 0, 0, 10), 0, 0);
-      add(_executedLbl, gbc);
+      _btnCopySqlToBottom = GUIUtils.styleAsToolbarButton(new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.COPY_2_BOTTOM)));
+      _btnCopySqlToBottom.setToolTipText(s_stringMgr.getString("ResultTab.copy.to.bottom.tooltip"));
+      pnl.add(_btnCopySqlToBottom);
 
-
-      //++gbc.gridy;
-      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10), 0, 0);
-      add(new JLabel(s_stringMgr.getString("ResultTab.rowCountLabel"), SwingConstants.RIGHT), gbc);
-
-      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 10), 0, 0);
-      add(_rowCountLbl, gbc);
-
-
-      //++gbc.gridy;
-      gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10), 0, 0);
-      add(new JLabel(s_stringMgr.getString("ResultTab.statementLabel"), SwingConstants.RIGHT), gbc);
-
-      gbc = new GridBagConstraints(1, 2, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10, 0, 0, 10), 0, 0);
-      _queryScrollPane = new JScrollPane(_queryTxt);
-      add(_queryScrollPane, gbc);
-
-
-      gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 30, 10), 0, 0);
-      add(new JLabel(s_stringMgr.getString("ResultTab.elapsedTimeLabel"), SwingConstants.RIGHT), gbc);
-
-      gbc = new GridBagConstraints(1, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 30, 10), 0, 0);
-      add(_elapsedLbl, gbc);
+      return pnl;
    }
 }
