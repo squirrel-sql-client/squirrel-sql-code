@@ -11,6 +11,7 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/60
   - to the clipboard
   - to the caret position of the active SQL editor
   - to the end of the active SQL editor
+  Copying to the active SQL editor surrounds the SQL by empty lines to allow immediate execution.
 
 https://sourceforge.net/p/squirrel-sql/feature-requests/620/
   MS-Excel export: Options to choose fonts for header- and other rows

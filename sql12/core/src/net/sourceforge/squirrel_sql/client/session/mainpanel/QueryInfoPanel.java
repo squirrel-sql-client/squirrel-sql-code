@@ -52,7 +52,17 @@ public class QueryInfoPanel extends JPanel
       {
          return;
       }
-      panelAPI.getSQLEntryPanel().appendText("\n" + _queryTxt.getText());
+
+      int beginLen = panelAPI.getSQLEntryPanel().getText().length();
+      if(0 == beginLen)
+      {
+         panelAPI.getSQLEntryPanel().appendText(_queryTxt.getText());
+      }
+      else
+      {
+         panelAPI.getSQLEntryPanel().appendText("\n\n" + _queryTxt.getText());
+         panelAPI.setCaretPosition(beginLen + 2);
+      }
    }
 
    private void onCopySqlToCaret(ISession session)
@@ -66,7 +76,16 @@ public class QueryInfoPanel extends JPanel
       int caretPosition = panelAPI.getSQLEntryPanel().getCaretPosition();
       panelAPI.getSQLEntryPanel().setSelectionStart(caretPosition);
       panelAPI.getSQLEntryPanel().setSelectionEnd(caretPosition);
-      panelAPI.getSQLEntryPanel().replaceSelection(_queryTxt.getText());
+      if(0 == caretPosition)
+      {
+         panelAPI.getSQLEntryPanel().replaceSelection(_queryTxt.getText() + "\n\n");
+      }
+      else
+      {
+         panelAPI.getSQLEntryPanel().replaceSelection("\n\n" +_queryTxt.getText() + "\n\n");
+      }
+      panelAPI.setCaretPosition(panelAPI.getCaretPosition() - 2);
+
    }
 
 
