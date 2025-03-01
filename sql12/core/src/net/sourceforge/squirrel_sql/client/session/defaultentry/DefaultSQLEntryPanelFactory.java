@@ -49,4 +49,9 @@ public class DefaultSQLEntryPanelFactory implements ISQLEntryPanelFactory
 
 		return new DefaultSQLEntryPanel(session);
 	}
+
+	@Override
+	public void sessionEnding(ISession session)
+	{
+	}
 }

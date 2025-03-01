@@ -8,12 +8,14 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
 import net.sourceforge.squirrel_sql.client.session.ModificationAwareSessionTitle;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -93,6 +95,12 @@ public class CliSessionAdapter implements ISession
    }
 
    @Override
+   public SyntaxPreferences getSyntaxPreferences()
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
    public void commit()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
@@ -130,6 +138,18 @@ public class CliSessionAdapter implements ISession
 
    @Override
    public Object putPluginObject(IPlugin plugin, String key, Object obj)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public void setSqlEntryPanel(ISQLEntryPanel sqlEntryPanel)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public ISQLEntryPanel getSqlEntryPanel()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }

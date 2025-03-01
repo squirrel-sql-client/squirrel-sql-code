@@ -17,6 +17,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
@@ -26,8 +27,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
-import javax.swing.*;
-import java.util.*;
+import javax.swing.JOptionPane;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public class CodeCompletionInfoCollection
 {
@@ -182,24 +187,14 @@ public class CodeCompletionInfoCollection
                _schemas.add(new CodeCompletionSchemaInfo(schemas[i], _prefs));
             }
 
-            SyntaxExternalService syntaxExternalService =
-               (SyntaxExternalService) _session.getApplication().getPluginManager().bindExternalPluginService("syntax", SyntaxExternalService.class);
+            Hashtable<String, String> autoCorrections = Main.getApplication().getSyntaxManager().getAutoCorrectData().getAutoCorrectsHash();
 
-            if(null == syntaxExternalService)
+            for(Enumeration<String> e=autoCorrections.keys(); e.hasMoreElements();)
             {
-					_session.showMessage(s_stringMgr.getString("codecompletion.useSyntaxPlugin"));
-            }
-            else
-            {
-               Hashtable<String, String> autoCorrections = syntaxExternalService.getAutoCorrects();
+               String toCorrect = e.nextElement();
+               String correction = autoCorrections.get(toCorrect);
 
-               for(Enumeration<String> e=autoCorrections.keys(); e.hasMoreElements();)
-               {
-                  String toCorrect = e.nextElement();
-                  String correction = autoCorrections.get(toCorrect);
-
-                  completionInfos.add(new CodeCompletionAutoCorrectInfo(toCorrect, correction));
-               }
+               completionInfos.add(new CodeCompletionAutoCorrectInfo(toCorrect, correction));
             }
 
          }

@@ -40,6 +40,8 @@ import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffState;
 import net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection.ObjectTreeSelectionStoreManager;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.prefs.SQLScriptPreferencesManager;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxManager;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxSQLEntryPanelFactoryProxy;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
@@ -189,7 +191,7 @@ public interface IApplication
 	 *
 	 * @return	the factory object used to create the SQL entry panel.
 	 */
-	ISQLEntryPanelFactory getSQLEntryPanelFactory();
+	SyntaxSQLEntryPanelFactoryProxy getSyntaxSQLEntryPanelFactoryProxy();
 
 	/**
 	 * Set the factory object used to create the SQL entry panel.
@@ -318,4 +320,6 @@ public interface IApplication
 	CellDetailDisplayModeManager getCellDetailDisplayModeManager();
 
 	PinnedCellDataDialogHandler getPinnedCellDataDialogHandler();
+
+	SyntaxManager getSyntaxManager();
 }

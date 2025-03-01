@@ -154,6 +154,7 @@ public class SQLPanel extends JPanel
 
 		addExecutor(_sqlExecPanel);
 		_panelAPI = new SQLPanelAPI(this, titleFileHandler);
+		_panelAPI.doPostConstructorInitializations();
 		_changeTracker.initChangeTracking(_panelAPI);
 
 		_resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
@@ -652,7 +653,7 @@ public class SQLPanel extends JPanel
 	  
 		_splitPane.setOneTouchExpandable(true);
 
-		installSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session,new HashMap<>()));
+		installSQLEntryPanel(app.getSyntaxSQLEntryPanelFactoryProxy().createSQLEntryPanel(_session, new HashMap<>()));
 
       _executerPanleHolder = new JPanel(new GridLayout(1,1));
       _executerPanleHolder.setMinimumSize(new Dimension(50,50));

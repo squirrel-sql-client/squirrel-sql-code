@@ -5,9 +5,9 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 
@@ -34,7 +34,7 @@ abstract public class BaseSourcePanel extends JPanel
       HashMap<String, Object> props = new HashMap<String, Object>();
       props.put(IParserEventsProcessorFactory.class.getName(), null);
 
-      ISQLEntryPanel sqlPanel = getSession().getApplication().getSQLEntryPanelFactory().createSQLEntryPanel(getSession(), props);
+      ISQLEntryPanel sqlPanel = getSession().getApplication().getSyntaxSQLEntryPanelFactoryProxy().createSQLEntryPanel(getSession(), props);
       _textComponent = sqlPanel.getTextComponent();
       _textComponent.setEditable(false);
 

@@ -2,8 +2,8 @@ package net.sourceforge.squirrel_sql.plugins.laf;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.preferences.themes.SyntaxPluginAccessor;
 import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesEnum;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.theme.SyntaxThemeFactory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 import javax.swing.JPanel;
@@ -29,7 +29,7 @@ public class LightDarkSwitchCtrl
       {
          ThemesEnum.saveCurrentTheme(ThemesEnum.LIGH);
 
-         SyntaxPluginAccessor.applyDefaultTheme();
+         Main.getApplication().getSyntaxManager().getSyntaxPreferences().initSyntaxTheme(SyntaxThemeFactory.createDefaultLightTheme());
          SquirrelPreferences prefsToUpdate = Main.getApplication().getSquirrelPreferences();
 
          SquirrelPreferences defaultPrefs = new SquirrelPreferences();
@@ -50,7 +50,7 @@ public class LightDarkSwitchCtrl
       else if(_panel.radDark.isSelected() && ThemesEnum.DARK != ThemesEnum.getCurrentTheme())
       {
          ThemesEnum.saveCurrentTheme(ThemesEnum.DARK);
-         SyntaxPluginAccessor.applyDarkTheme();
+         Main.getApplication().getSyntaxManager().getSyntaxPreferences().initSyntaxTheme(SyntaxThemeFactory.createDarkTheme());
 
          SquirrelPreferences prefsToUpdate = Main.getApplication().getSquirrelPreferences();
          prefsToUpdate.getSessionProperties().setNullValueColorRGB(new Color(90, 100, 90).getRGB());

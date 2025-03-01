@@ -36,7 +36,7 @@ public class EntryPanelManager
       }
 
 
-      _entry = _session.getApplication().getSQLEntryPanelFactory().createSQLEntryPanel(_session, props);
+      _entry = _session.getApplication().getSyntaxSQLEntryPanelFactoryProxy().createSQLEntryPanel(_session, props);
 
 
       _component = _entry.getTextComponent();

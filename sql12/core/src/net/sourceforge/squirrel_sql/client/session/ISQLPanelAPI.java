@@ -43,6 +43,8 @@ import java.util.ArrayList;
  */
 public interface ISQLPanelAPI extends IFileEditorAPI
 {
+	void doPostConstructorInitializations();
+
 	void addExecutor(ISQLResultExecutor exec);
 
 	void removeExecutor(ISQLResultExecutor exec);

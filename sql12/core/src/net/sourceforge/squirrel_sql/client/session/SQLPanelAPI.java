@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.session.action.UndoRedoActionContext;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.actions.CompareToClipboardAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
@@ -88,12 +89,15 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_panel = panel;
 		_fileHandler = new FileHandler(this, titleFileHandler);
 		_panel.getSQLEntryPanel().addUndoableEditListener(_fileHandler.createEditListener());
-      initToolsPopUp();
-
-      createStandardEntryAreaMenuItems();
 	}
 
-   private void initToolsPopUp()
+	public void doPostConstructorInitializations()
+	{
+		initToolsPopUp();
+		createStandardEntryAreaMenuItems();
+	}
+
+	private void initToolsPopUp()
    {
       _toolsPopupController = new ToolsPopupController(getSession(), _panel.getSQLEntryPanel());
 
@@ -190,6 +194,10 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
 		SQLScriptMenuFactory.addMenuItemsToSQLPanelApi(this);
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
+
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
+		SyntaxMenuFactory.addMenuItemsToSQLPanelApi(this);
 		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
    }
 

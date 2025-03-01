@@ -24,6 +24,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
@@ -37,6 +38,8 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenC
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SessionPreferencesListener;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -64,6 +67,7 @@ import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -129,11 +133,18 @@ class Session implements ISession
    private SessionProperties _props;
 
    /**
+    * Properties for this session.
+    */
+   private SyntaxPreferences _syntaxPreferences;
+
+   /**
     * Objects stored in session. Each entry is a <TT>Map</TT>
     * keyed by <TT>IPlugin.getInternalName()</TT>. Each <TT>Map</TT>
     * contains the objects saved for the plugin.
     */
    private final Map<String, Map<String, Object>> _pluginObjects = new HashMap<>();
+
+   private ISQLEntryPanel _sqlEntryPanel;
 
    private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
@@ -233,6 +244,8 @@ class Session implements ISession
       _alias.assignFrom(alias, true);
 
       _props = (SessionProperties) _app.getSquirrelPreferences().getSessionProperties().clone();
+      _syntaxPreferences = Utilities.cloneObject(Main.getApplication().getSyntaxManager().getSyntaxPreferences(), Session.class.getClassLoader());
+      _syntaxPreferences.addPropertyChangeListener(new SessionPreferencesListener(this));
 
       _user = user;
       _password = password;
@@ -310,67 +323,69 @@ class Session implements ISession
     */
    public void close() throws SQLException
    {
-      if (!_closed)
+      if(_closed)
       {
-         stopKeepAliveTaskIfNecessary();
-         if (null != _sessionConnectionPool)
-         {
-            // _conn is null when session is closed after reconnect (ctrl t) failure.
-            _sessionConnectionPool.getMasterSQLConnection().removePropertyChangeListener(_connLis);
-         }
-         _connLis = null;
+         return;
+      }
+
+      Main.getApplication().getSyntaxSQLEntryPanelFactoryProxy().sessionEnding(this);
+
+      stopKeepAliveTaskIfNecessary();
+      if (null != _sessionConnectionPool)
+      {
+         // _conn is null when session is closed after reconnect (ctrl t) failure.
+         _sessionConnectionPool.getMasterSQLConnection().removePropertyChangeListener(_connLis);
+      }
+      _connLis = null;
 
 
-         IParserEventsProcessor[] procs = _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new IParserEventsProcessor[0]);
+      IParserEventsProcessor[] procs = _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new IParserEventsProcessor[0]);
 
 
-         for (int i = 0; i < procs.length; i++)
-         {
-            try
-            {
-               if (procs[i] instanceof ParserEventsProcessor)
-               {
-                  ((ParserEventsProcessor) procs[i]).endProcessing();
-               }
-            }
-            catch (Exception e)
-            {
-            }
-         }
-
-         _schemaInfo.dispose();
-
-
+      for (int i = 0; i < procs.length; i++)
+      {
          try
          {
-            closeConnectionPool();
+            if (procs[i] instanceof ParserEventsProcessor)
+            {
+               ((ParserEventsProcessor) procs[i]).endProcessing();
+            }
          }
-         finally
+         catch (Exception e)
          {
-            // This is set here as SessionPanel.dispose() will attempt
-            // to close the session.
-            _closed = true;
+         }
+      }
 
-            if (_sessionSheet != null)
-            {
-               _sessionSheet.sessionHasClosed();
-               _sessionSheet = null;
-            }
-
-            /*
-             *  If the session is closed, we can remove all SQLResultTabs.
-             *  This would be not be necessary, if all closed Sessions will be ready for garbage collecting.
-             *  Often, some code keeps a reference to this session and the Session is not ready for garbage collecting.
-             *  E.g. when dialogs are only set to visible = false and not disposed correctly.
-             *  To reduce the used memory by such not reachable sessions, we remove all SQLResultTabs, when the session is closed.
-             *  This helps users, they often open and close sessions without restarting SQuirrel.
-             */
-            if (_sessionInternalFrame != null)
-            {
-               _sessionInternalFrame.getMainSQLPanelAPI().closeAllSQLResultTabs(true);
-            }
+      _schemaInfo.dispose();
 
 
+      try
+      {
+         closeConnectionPool();
+      }
+      finally
+      {
+         // This is set here as SessionPanel.dispose() will attempt
+         // to close the session.
+         _closed = true;
+
+         if (_sessionSheet != null)
+         {
+            _sessionSheet.sessionHasClosed();
+            _sessionSheet = null;
+         }
+
+         /*
+          *  If the session is closed, we can remove all SQLResultTabs.
+          *  This would be not be necessary, if all closed Sessions will be ready for garbage collecting.
+          *  Often, some code keeps a reference to this session and the Session is not ready for garbage collecting.
+          *  E.g. when dialogs are only set to visible = false and not disposed correctly.
+          *  To reduce the used memory by such not reachable sessions, we remove all SQLResultTabs, when the session is closed.
+          *  This helps users, they often open and close sessions without restarting SQuirrel.
+          */
+         if (_sessionInternalFrame != null)
+         {
+            _sessionInternalFrame.getMainSQLPanelAPI().closeAllSQLResultTabs(true);
          }
       }
    }
@@ -486,6 +501,11 @@ class Session implements ISession
       return _props;
    }
 
+   public SyntaxPreferences getSyntaxPreferences()
+   {
+      return _syntaxPreferences;
+   }
+
    /**
     * Retrieve the schema information object for this session.
     */
@@ -507,7 +527,7 @@ class Session implements ISession
       Map<String, Object> map = _pluginObjects.get(plugin.getInternalName());
       if (map == null)
       {
-         map = new HashMap<String, Object>();
+         map = new HashMap<>();
          _pluginObjects.put(plugin.getInternalName(), map);
       }
       return map.get(key);
@@ -529,8 +549,7 @@ class Session implements ISession
    }
 
 
-   public synchronized Object putPluginObject(IPlugin plugin, String key,
-                                              Object value)
+   public synchronized Object putPluginObject(IPlugin plugin, String key, Object value)
    {
       if (plugin == null)
       {
@@ -564,6 +583,16 @@ class Session implements ISession
       {
          map.remove(key);
       }
+   }
+
+   public void setSqlEntryPanel(ISQLEntryPanel sqlEntryPanel)
+   {
+      _sqlEntryPanel = sqlEntryPanel;
+   }
+
+   public ISQLEntryPanel getSqlEntryPanel()
+   {
+      return _sqlEntryPanel;
    }
 
    private synchronized void closeConnectionPool() throws SQLException

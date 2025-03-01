@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Refactoring: The Syntax-Plugin's functionality was moved to SQuirreL's core.
+  The Syntax-Plugin won't be shipped anymore
+  and in case it is still found it is programmatically kept from being loaded.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/60
   The SQL-result's "Info"-tab now has buttons to copy the executed SQL
   - to the clipboard

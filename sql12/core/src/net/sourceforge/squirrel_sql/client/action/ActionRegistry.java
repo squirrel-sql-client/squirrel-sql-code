@@ -127,6 +127,23 @@ import net.sourceforge.squirrel_sql.client.session.action.sqlscript.table_script
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.table_script.CreateTableScriptAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.table_script.CreateTemplateDataScriptAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.table_script.DropTableScriptAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.CommentAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.CommentActionAltAccelerator;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.ConfigureAutoCorrectAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.DuplicateLineAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.FindAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.FindSelectedAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.GoToLineAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.MarkSelectedAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.RepeatLastFindAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.ReplaceAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.ToolsPopupHandler_I18n;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.UncommentAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.UncommentActionAltAccelerator;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.UnmarkAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.SquirreLRSyntaxTextAreaUI;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.SquirrelRSyntaxTextArea;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.QuitSoundAction;
@@ -137,6 +154,11 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Ma
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.MarkResultTabHeaderMatchingCurSqlAction;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import org.fife.ui.rtextarea.RTextAreaEditorKit;
+
+import javax.swing.Action;
 
 /**
  * Supposed to be the place where actions are
@@ -237,6 +259,34 @@ public class ActionRegistry
       toolsPopupController.addAction("sql2file", ac.get(CreateFileOfCurrentSQLAction.class));
 
       toolsPopupController.addAction("import", ac.get(ImportTableDataAction.class));
+
+
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.FIND, ac.get(FindAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.FIND_SELECTED , ac.get(FindSelectedAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.REPEAT_LAST_FIND , ac.get(RepeatLastFindAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.MARK_SELECTED , ac.get(MarkSelectedAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.REPLACE, ac.get(ReplaceAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.UNMARK, ac.get(UnmarkAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.GO_TO_LINE, ac.get(GoToLineAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.AUTO_CORR, ac.get(ConfigureAutoCorrectAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.DUP_LINE, ac.get(DuplicateLineAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.COMMENT, ac.get(CommentAction.class));
+      toolsPopupController.addAction(ToolsPopupHandler_I18n.UNCOMMENT, ac.get(UncommentAction.class));
+
+      if (Main.getApplication().getSyntaxSQLEntryPanelFactoryProxy().isUseRSyntaxTextArea())
+      {
+         SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) sqlPanel.getSQLPanelAPI().getSQLEntryPanel().getTextComponent();
+
+         Action toUpperAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
+         toUpperAction.putValue(Resources.ACCELERATOR_STRING, ShortcutUtil.getKeystrokeString(SquirreLRSyntaxTextAreaUI.getToUpperCaseKeyStroke()));
+         sqlPanel.getSQLPanelAPI().addToToolsPopUp(ToolsPopupHandler_I18n.TO_UPPER_CASE, toUpperAction);
+
+         Action toLowerAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
+         toLowerAction.putValue(Resources.ACCELERATOR_STRING, ShortcutUtil.getKeystrokeString(SquirreLRSyntaxTextAreaUI.getToLowerCaseKeyStroke()));
+         sqlPanel.getSQLPanelAPI().addToToolsPopUp(ToolsPopupHandler_I18n.TO_LOWER_CASE, toLowerAction);
+
+         sqlPanel.getSQLPanelAPI().addToToolsPopUp(ToolsPopupHandler_I18n.COPY_AS_RTF, Main.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
+      }
 
    }
 
@@ -392,6 +442,24 @@ public class ActionRegistry
       actionCollection.add(new ApplyStoredObjectTreeSelectionAction());
 
       actionCollection.add(new ImportTableDataAction());
+
+      // Former Syntax-Plugin entries, BEGIN
+      actionCollection.add(new SquirrelCopyAsRtfAction());
+      actionCollection.add(new ConfigureAutoCorrectAction());
+      actionCollection.add(new FindAction());
+      actionCollection.add(new FindSelectedAction());
+      actionCollection.add(new RepeatLastFindAction());
+      actionCollection.add(new MarkSelectedAction());
+      actionCollection.add(new ReplaceAction());
+      actionCollection.add(new UnmarkAction());
+      actionCollection.add(new GoToLineAction());
+      actionCollection.add(new DuplicateLineAction());
+      actionCollection.add(new CommentAction());
+      actionCollection.add(new CommentActionAltAccelerator());
+      actionCollection.add(new UncommentAction());
+      actionCollection.add(new UncommentActionAltAccelerator());
+      actionCollection.add(new SquirrelCopyAsRtfAction());
+      // Former Syntax-Plugin entries, END
    }
 
    public ActionCollection getActionCollection()

@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesFindSupport;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.SessionPropertiesDialogFindInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionObjectTreePropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
@@ -34,8 +35,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -238,6 +246,7 @@ public class NewSessionPropertiesSheet extends DialogWidget
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionObjectTreePropertiesPanel(Main.getApplication()));
 		_panels.add(new SessionSQLPropertiesPanel(null));
+		_panels.add(new SyntaxPreferencesPanel(Main.getApplication().getSyntaxManager().getSyntaxPreferences()));
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = Main.getApplication().getPluginManager().getPluginInformation();

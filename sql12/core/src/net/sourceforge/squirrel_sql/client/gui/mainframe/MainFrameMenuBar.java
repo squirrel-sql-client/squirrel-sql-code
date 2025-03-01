@@ -150,6 +150,19 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOp
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.savedsessionsgroup.SaveAndManageGroupOfSavedSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.CommentAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.CommentActionAltAccelerator;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.ConfigureAutoCorrectAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.DuplicateLineAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.FindAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.FindSelectedAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.GoToLineAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.MarkSelectedAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.RepeatLastFindAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.ReplaceAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.UncommentAction;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.UncommentActionAltAccelerator;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.UnmarkAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
@@ -438,6 +451,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, NextSqlAction.class, menu);
 		addToMenu(rsrc, SelectSqlAction.class, menu);
 		addToMenu(rsrc, GoToLastEditLocationAction.class, menu);
+		menu.add(createSyntaxMenu(rsrc));
 
       if(Main.getApplication().getSquirrelPreferences().isResultTabHeaderMarkCurrentSQLsHeader())
       {
@@ -646,12 +660,31 @@ final class MainFrameMenuBar extends JMenuBar
 	}
 
 
-	private Component createTransactionMenu(Resources rsrc)
+	private JMenu createTransactionMenu(Resources rsrc)
    {
       JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.TRANSACTION);
       addToMenuAsCheckBoxMenuItem(rsrc, ToggleAutoCommitAction.class, menu);
       addToMenu(rsrc, CommitAction.class, menu);
       addToMenu(rsrc, RollbackAction.class, menu);
+      return menu;
+   }
+
+	private JMenu createSyntaxMenu(Resources rsrc)
+   {
+      JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.SYNTAX);
+		addToMenu(rsrc, ConfigureAutoCorrectAction.class, menu);
+		addToMenu(rsrc, FindAction.class, menu);
+		addToMenu(rsrc, FindSelectedAction.class, menu);
+		addToMenu(rsrc, RepeatLastFindAction.class, menu);
+		addToMenu(rsrc, MarkSelectedAction.class, menu);
+		addToMenu(rsrc, ReplaceAction.class, menu);
+		addToMenu(rsrc, UnmarkAction.class, menu);
+		addToMenu(rsrc, GoToLineAction.class, menu);
+		addToMenu(rsrc, DuplicateLineAction.class, menu);
+		addToMenu(rsrc, CommentAction.class, menu);
+		addToMenu(rsrc, CommentActionAltAccelerator.class, menu);
+		addToMenu(rsrc, UncommentAction.class, menu);
+		addToMenu(rsrc, UncommentActionAltAccelerator.class, menu);
       return menu;
    }
 

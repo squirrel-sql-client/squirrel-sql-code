@@ -23,17 +23,57 @@ package net.sourceforge.squirrel_sql.client.gui;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.*;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowManager;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.recentalias.RecentAliasesListCtrl;
 import net.sourceforge.squirrel_sql.client.gui.db.recentalias.ViewInAliasesAction;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.*;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetAction;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetListener;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.WidgetUtils;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseSelectedAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ColorAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyToPasteAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CutAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandSelectedAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyMultipleAliasesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.NewAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.PasteAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ShowDriverWebsiteAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.SortAliasesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ToggleTreeViewAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.TransferAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAltAcceleratorAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -56,9 +96,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
-import java.awt.*;
+import java.awt.Window;
 import java.beans.PropertyVetoException;
 /**
  * This class manages the windows for the application.
@@ -279,7 +323,7 @@ public class WindowManager
 	 * @throws	IllegalArgumentException
 	 *			Thrown if ISession is passed as null.
 	 */
-	public synchronized SessionInternalFrame createInternalFrame(ISession session)
+	public synchronized SessionInternalFrame createSessionInternalFrame(ISession session)
 	{
 		if (session == null)
 		{

@@ -246,7 +246,7 @@ class ConnectionInternalFrameHandler
       try
       {
          Main.getApplication().getPluginManager().sessionCreated(session);
-         SessionInternalFrame sessionInternalFrame = Main.getApplication().getWindowManager().createInternalFrame(session);
+         SessionInternalFrame sessionInternalFrame = Main.getApplication().getWindowManager().createSessionInternalFrame(session);
 
          // Close the connecting dialog. Before bug #1529 was called after calling the callback
          _connectionInternalFrame.finishedCreatingConnection(true);

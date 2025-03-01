@@ -37,7 +37,11 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -47,7 +51,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Manages plugins for the application.
@@ -857,7 +868,8 @@ public class PluginManager implements IPluginManager
 		return    plugin.getPluginJarFilePath().toLowerCase().endsWith("editextras.jar")
 		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("dbdiff.jar")
 		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("sqlscript.jar")
-		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("dataimport.jar");
+		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("dataimport.jar")
+		       || plugin.getPluginJarFilePath().toLowerCase().endsWith("syntax.jar");
 	}
 
 

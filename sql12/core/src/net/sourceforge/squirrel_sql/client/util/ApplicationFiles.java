@@ -520,4 +520,14 @@ public class ApplicationFiles
    {
       return new File(_userSettingsDir + File.separator + "objectTreeSelectionStore.json");
    }
+
+   public File getSyntaxPreferencesFile()
+   {
+      return new File(new ApplicationFiles().getUserSettingsDirectory(), "syntaxPrefs.xml");
+   }
+
+   public File getAutocorrectDataFile()
+   {
+      return new File(new ApplicationFiles().getUserSettingsDirectory(), "autocorrectdata.xml");
+   }
 }

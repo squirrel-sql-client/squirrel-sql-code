@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -114,7 +115,9 @@ public interface ISession extends IHasIdentifier
     */
    SessionProperties getProperties();
 
-    /**
+   SyntaxPreferences getSyntaxPreferences();
+
+   /**
     * Commit the current SQL session.
     */
    void commit();
@@ -144,6 +147,10 @@ public interface ISession extends IHasIdentifier
    Object getPluginObject(IPlugin plugin, String key);
    Object putPluginObject(IPlugin plugin, String key, Object obj);
    void removePluginObject(IPlugin plugin, String key);
+
+   void setSqlEntryPanel(ISQLEntryPanel sqlEntryPanel);
+   ISQLEntryPanel getSqlEntryPanel();
+
 
    void setMessageHandler(IMessageHandler handler);
 

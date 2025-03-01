@@ -88,7 +88,7 @@
 		</pack>
 
 		<pack name="Standard" required="no" installGroups="StandardPlugins">
-			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, Syntax, DB Copy, Refactoring</description>
+			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, DB Copy, Refactoring</description>
 
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/codecompletion" />
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/codecompletion.jar" />
@@ -101,9 +101,6 @@
 
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/sqlbookmark" />
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/sqlbookmark.jar" />
-
-			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/syntax" />
-			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/syntax.jar" />
 
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/dbcopy" />
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/dbcopy.jar" />

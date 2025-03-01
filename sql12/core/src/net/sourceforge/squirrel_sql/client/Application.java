@@ -52,7 +52,8 @@ import net.sourceforge.squirrel_sql.client.session.action.dbdiff.DBDiffState;
 import net.sourceforge.squirrel_sql.client.session.action.objecttreecopyrestoreselection.ObjectTreeSelectionStoreManager;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionsManager;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.prefs.SQLScriptPreferencesManager;
-import net.sourceforge.squirrel_sql.client.session.defaultentry.DefaultSQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxManager;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxSQLEntryPanelFactoryProxy;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
@@ -130,7 +131,7 @@ public class Application implements IApplication
 	 * + 1 to prevent
 	 * IllegalStateException: Programmer: Please increase _maxNumberOffCallsToWriteUpperLine to make the Progressbar work right
 	 */
-	public static final int NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 18 + 1;
+	public static final int NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 19 + 1;
 
 	private static ILogger s_log = LoggerController.createLogger(Application.class);
 
@@ -169,7 +170,7 @@ public class Application implements IApplication
 	private WindowManager _windowManager;
 
 	/** Factory used to create SQL entry panels. */
-	private ISQLEntryPanelFactory _sqlEntryFactory = new DefaultSQLEntryPanelFactory();
+	private SyntaxSQLEntryPanelFactoryProxy _syntaxSQLEntryPanelFactoryProxy;
 
 	/** Output stream for JDBC debug logging. */
 	private PrintStream _jdbcDebugOutputStream;
@@ -241,6 +242,8 @@ public class Application implements IApplication
 	private CellDetailDisplayModeManager _cellDetailDisplayModeManager = new CellDetailDisplayModeManager();
 	private PinnedCellDataDialogHandler _pinnedCellDataDialogHandler = new PinnedCellDataDialogHandler();
 
+	private SyntaxManager _syntaxManager = new SyntaxManager();
+
 	public Application()
 	{
 	}
@@ -251,6 +254,8 @@ public class Application implements IApplication
    @Override
 	public void startup()
 	{
+		_syntaxSQLEntryPanelFactoryProxy = new SyntaxSQLEntryPanelFactoryProxy();
+
 		initResourcesAndPrefs();
 
 		final ApplicationArguments args = ApplicationArguments.getInstance();
@@ -329,8 +334,10 @@ public class Application implements IApplication
 			_saveApplicationState_afterWidgetClosing(begin);
 		}
 
+		_syntaxManager.savePreferences();
+		s_log.info("Application.shutdown: _syntaxManager.savePreferences() ELAPSED: " + (System.currentTimeMillis() - begin));
 
-      _pluginManager.unloadPlugins();
+		_pluginManager.unloadPlugins();
       s_log.info("Application.shutdown: _pluginManager.unloadPlugins() ELAPSED: " + (System.currentTimeMillis() - begin));
 
 		closeAllViewers();
@@ -779,9 +786,9 @@ public class Application implements IApplication
 	 * 
 	 * @return the factory object used to create the SQL entry panel.
 	 */
-	public ISQLEntryPanelFactory getSQLEntryPanelFactory()
+	public SyntaxSQLEntryPanelFactoryProxy getSyntaxSQLEntryPanelFactoryProxy()
 	{
-		return _sqlEntryFactory;
+		return _syntaxSQLEntryPanelFactoryProxy;
 	}
 
 	/**
@@ -792,7 +799,8 @@ public class Application implements IApplication
 	 */
 	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory)
 	{
-		_sqlEntryFactory = factory != null ? factory : new DefaultSQLEntryPanelFactory();
+		throw new UnsupportedOperationException("Throw away");
+		//_sqlEntryFactory = factory != null ? factory : new DefaultSQLEntryPanelFactory();
 	}
 
 	/**
@@ -1020,6 +1028,10 @@ public class Application implements IApplication
 		_catalogLoadModelManager.load();
 
 		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 18
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.load.syntax.and.autocorrect"));
+		_syntaxManager.loadPreferences();
+
+		// NUMBER_OFF_CALLS_TO_INDICATE_NEW_TASK = 19
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.showmainwindow"));
 
 		_windowManager.moveToFront(_windowManager.getMainFrame());
@@ -1566,4 +1578,9 @@ public class Application implements IApplication
    {
       return _pinnedCellDataDialogHandler;
    }
+
+	public SyntaxManager getSyntaxManager()
+	{
+		return _syntaxManager;
+	}
 }

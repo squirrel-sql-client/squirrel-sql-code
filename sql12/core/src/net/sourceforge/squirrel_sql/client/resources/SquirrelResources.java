@@ -47,6 +47,7 @@ public class SquirrelResources extends Resources
       String FILE = "file";
       String SAVED_SESSION = "savedSession";
       String TRANSACTION = "transaction";
+      String SYNTAX = "syntax";
    }
 
 	public interface IImageNames
@@ -218,6 +219,11 @@ public class SquirrelResources extends Resources
 		String COPY_2_BOTTOM = "copy2bottom";
 		String COPY_2_CARET = "copy2caret";
 
+		String BACKGROUND_IMAGE = "Background";
+		String BOLD_IMAGE = "Bold";
+		String COLOR_SELECTOR_IMAGE = "ColorSelector";
+		String FOREGROUND_IMAGE = "Foreground";
+		String ITALIC_IMAGE = "Italic";
 
 	}
 
