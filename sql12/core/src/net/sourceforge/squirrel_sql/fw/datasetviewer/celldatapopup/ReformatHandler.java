@@ -3,25 +3,26 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DisplayAsciiMode;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
-import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 
 public class ReformatHandler
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ReformatHandler.class);
 
-   private final JTextArea _textArea;
+   private final RestorableRSyntaxTextArea _textArea;
    private final ReformatHandlerListener _reformatHandlerListener;
    private final boolean _originalUnformattedTextIsBinaryBase16BinaryData;
    private final JToggleButton _btnReformat;
    private String _originalUnformattedText;
    private boolean _reformatSilently = false;
 
-   public ReformatHandler(JTextArea textAreaWithOriginalUnformattedText,
+   public ReformatHandler(RestorableRSyntaxTextArea textAreaWithOriginalUnformattedText,
                           boolean originalUnformattedTextIsBinaryBase16BinaryData,
                           ReformatHandlerListener reformatHandlerListener)
    {
@@ -96,6 +97,16 @@ public class ReformatHandler
          if(formattingResult.isSuccess())
          {
             _textArea.setText(formattingResult.getResult());
+
+            _textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
+            if(FormattingResultType.JSON == formattingResult.getFormattingResultType())
+            {
+               _textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
+            }
+            else if(FormattingResultType.XML == formattingResult.getFormattingResultType())
+            {
+               _textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+            }
          }
          else
          {

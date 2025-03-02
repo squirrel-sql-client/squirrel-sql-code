@@ -32,7 +32,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import java.awt.event.KeyEvent;
@@ -62,7 +61,7 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 	protected RestorableJTextField _textField;
 
 	/** The JTextComponent that is being used for editing */
-	protected RestorableJTextArea _textArea;
+	protected RestorableRSyntaxTextArea _textArea;
 
 	/** Service for subclasses to use to notify the user audibly of a mistake */
 	protected IToolkitBeepHelper _beepHelper = new ToolkitBeepHelper();
@@ -90,8 +89,8 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
     * @param value  the value to set as text in the JTextArea.
     * @param colDef
     */
-	public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
-		_textArea = new RestorableJTextArea();
+	public RestorableRSyntaxTextArea getRestorableRSyntaxTextArea(Object value, ColumnDisplayDefinition colDef) {
+		_textArea = new RestorableRSyntaxTextArea();
 		_textArea.setText((String) DefaultColumnRenderer.renderObject(value));
 
 		// special handling of operations while editing this data type

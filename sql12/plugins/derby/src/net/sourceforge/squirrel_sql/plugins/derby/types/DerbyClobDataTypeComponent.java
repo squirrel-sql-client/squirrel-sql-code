@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeRende
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DefaultColumnRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IRestorableTextComponent;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
@@ -38,7 +38,6 @@ import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
@@ -340,20 +339,20 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
 	 * Return a JTextArea usable in the CellPopupDialog
 	 * and fill in the value.
 	 */
-	 public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
-		_textComponent = new RestorableJTextArea();
+	 public RestorableRSyntaxTextArea getRestorableRSyntaxTextArea(Object value, ColumnDisplayDefinition colDef) {
+		_textComponent = new RestorableRSyntaxTextArea();
 
 		// value is a simple string representation of the data,
 		// but NOT the same one used in the Text and in-cell operations.
 		// The in-cell version may replace newline chars with "\n" while this version
 		// does not.  In other respects it is the same as the in-cell version because both
 		// use the _renderer object to do the rendering.
-		((RestorableJTextArea)_textComponent).setText((String)DefaultColumnRenderer.renderObject(value));
+		((RestorableRSyntaxTextArea)_textComponent).setText((String)DefaultColumnRenderer.renderObject(value));
 
 		// special handling of operations while editing this data type
-		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
+		((RestorableRSyntaxTextArea)_textComponent).addKeyListener(new KeyTextHandler());
 
-		return (RestorableJTextArea)_textComponent;
+		return (RestorableRSyntaxTextArea)_textComponent;
 	 }
 	
    

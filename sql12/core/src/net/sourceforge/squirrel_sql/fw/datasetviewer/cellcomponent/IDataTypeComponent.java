@@ -25,7 +25,6 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -137,7 +136,7 @@ public interface IDataTypeComponent {
      * or it may be different (e.g. a BLOB may have renderObject=>"<BLOB>" but
      * fill in the actual value in the Popup TextArea).
      */
-    JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef);
+    RestorableRSyntaxTextArea getRestorableRSyntaxTextArea(Object value, ColumnDisplayDefinition colDef);
 
     /**
      * Validate that the contents of a cell is in the right form for this data

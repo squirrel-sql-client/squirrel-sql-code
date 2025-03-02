@@ -14,7 +14,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import java.io.FileInputStream;
@@ -361,7 +360,7 @@ public class CellComponentFactory
     * Return a JTextArea with appropriate handlers for editing
     * the type of data in the cell.
     */
-   public static JTextArea getJTextArea(ColumnDisplayDefinition colDef, Object value)
+   public static RestorableRSyntaxTextArea getRestorableRSyntaxTextArea(ColumnDisplayDefinition colDef, Object value)
    {
 
       // The first argument is a JTable, which is only used by instances
@@ -372,7 +371,7 @@ public class CellComponentFactory
 
       if (dataTypeObject != null)
       {
-         return dataTypeObject.getJTextArea(value, colDef);
+         return dataTypeObject.getRestorableRSyntaxTextArea(value, colDef);
       }
 
       // default behavior if no appropriate data type found is to create
@@ -383,7 +382,7 @@ public class CellComponentFactory
       // we should not get here.  If there IS a data type object, and isEditableInPopup
       // returns true, then we would have executed the return statement above.
       // Assume that the value can be represented as a string.
-      RestorableJTextArea textArea = new RestorableJTextArea();
+      RestorableRSyntaxTextArea textArea = new RestorableRSyntaxTextArea();
       if (value != null)
       {
          textArea.setText(value.toString());

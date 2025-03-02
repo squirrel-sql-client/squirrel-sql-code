@@ -387,20 +387,20 @@ public class DataTypeString extends BaseDataTypeComponent
 		 * Return a JTextArea usable in the CellPopupDialog.
 		 */
 	 @Override
-	 public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef) {
-		_textComponent = new RestorableJTextArea();
+	 public RestorableRSyntaxTextArea getRestorableRSyntaxTextArea(Object value, ColumnDisplayDefinition colDef) {
+		_textComponent = new RestorableRSyntaxTextArea();
 
 		// value is a simple string representation of the data,
 		// but NOT the same one used in the Text and in-cell operations.
 		// The in-cell version may replace newline chars with "\n" while this version
 		// does not.  In other respects it is the same as the in-cell version because both
 		// use the _renderer object to do the rendering.
-		((RestorableJTextArea)_textComponent).setText((String)DefaultColumnRenderer.renderObject(value));
+		((RestorableRSyntaxTextArea)_textComponent).setText((String)DefaultColumnRenderer.renderObject(value));
 
 		// special handling of operations while editing this data type
-		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
+		((RestorableRSyntaxTextArea)_textComponent).addKeyListener(new KeyTextHandler());
 
-		return (RestorableJTextArea)_textComponent;
+		return (RestorableRSyntaxTextArea)_textComponent;
 	 }
 
 	/**

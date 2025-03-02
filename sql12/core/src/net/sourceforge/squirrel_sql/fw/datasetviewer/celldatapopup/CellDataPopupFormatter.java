@@ -36,13 +36,13 @@ public class CellDataPopupFormatter
       jsonFormatException = formatResult.error;
       if (null == jsonFormatException)
       {
-         return new FormattingResult(formatResult.result, true);
+         return new FormattingResult(formatResult.result, true, FormattingResultType.JSON);
       }
 
       formatResult = tryXml(toFormat);
       if (null == formatResult.error)
       {
-         return new FormattingResult(formatResult.result, true);
+         return new FormattingResult(formatResult.result, true, FormattingResultType.XML);
       }
 
       if(false == silent)
@@ -60,7 +60,7 @@ public class CellDataPopupFormatter
       }
 
 
-      return new FormattingResult(toFormat, false);
+      return new FormattingResult(toFormat, false, FormattingResultType.NONE);
    }
 
    private static FormatResult tryXml(String toFormat)

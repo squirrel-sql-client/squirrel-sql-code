@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.Past
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -52,7 +52,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -96,7 +95,7 @@ public class PopupEditableIOPanel extends JPanel
 	public static final String RADIX_BINARY = "Binary";
 
 	// The text area displaying the object contents
-	private final JTextArea _textArea;
+	private final RestorableRSyntaxTextArea _textArea;
 
 	// the scroll pane that holds the text area
 	private final JScrollPane _scrollPane;
@@ -156,7 +155,7 @@ public class PopupEditableIOPanel extends JPanel
 		_popupMenu = new TextPopupMenu();
 
 		_colDef = colDef;
-		_textArea = CellComponentFactory.getJTextArea(colDef, value);
+		_textArea = CellComponentFactory.getRestorableRSyntaxTextArea(colDef, value);
 
 		_reformatHandler = new ReformatHandler(_textArea, CellComponentFactory.useBinaryEditingPanel(_colDef), () -> onOriginalTextWasRestored());
 
@@ -272,7 +271,7 @@ public class PopupEditableIOPanel extends JPanel
 		else if (Objects.equals(radixList.getSelectedItem(), RADIX_OCTAL)) base = 8;
 		else if (Objects.equals(radixList.getSelectedItem(), RADIX_BINARY)) base = 2;
 
-		((RestorableJTextArea) _textArea).updateText(
+		((RestorableRSyntaxTextArea) _textArea).updateText(
 				BinaryDisplayConverter.convertToString(bytes, base, showAscii.isSelected()));
 
 		previousRadixListItem = (String)radixList.getSelectedItem();
@@ -1045,7 +1044,7 @@ public class PopupEditableIOPanel extends JPanel
 					base, showAscii.isSelected());
 			}
 
-			((RestorableJTextArea) _textArea).updateText(replacementText);
+			((RestorableRSyntaxTextArea) _textArea).updateText(replacementText);
 		}
 		catch (Exception ex)
 		{

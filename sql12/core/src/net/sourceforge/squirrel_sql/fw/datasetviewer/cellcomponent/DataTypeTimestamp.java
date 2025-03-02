@@ -35,7 +35,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
@@ -361,18 +360,18 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
     * Return a JTextArea usable in the CellPopupDialog
     * and fill in the value.
     */
-   public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef)
+   public RestorableRSyntaxTextArea getRestorableRSyntaxTextArea(Object value, ColumnDisplayDefinition colDef)
    {
-      _textComponent = new RestorableJTextArea();
+      _textComponent = new RestorableRSyntaxTextArea();
 
       // value is a simple string representation of the data,
       // the same one used in Text and in-cell operations.
-      ((RestorableJTextArea) _textComponent).setText(renderObject(value));
+      ((RestorableRSyntaxTextArea) _textComponent).setText(renderObject(value));
 
       // special handling of operations while editing this data type
-      ((RestorableJTextArea) _textComponent).addKeyListener(new KeyTextHandler());
+      ((RestorableRSyntaxTextArea) _textComponent).addKeyListener(new KeyTextHandler());
 
-      return (RestorableJTextArea) _textComponent;
+      return (RestorableRSyntaxTextArea) _textComponent;
    }
 
    /**

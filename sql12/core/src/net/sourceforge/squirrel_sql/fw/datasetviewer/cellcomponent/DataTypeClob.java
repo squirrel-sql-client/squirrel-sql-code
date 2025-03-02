@@ -31,7 +31,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
@@ -334,9 +333,9 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 	 * Return a JTextArea usable in the CellPopupDialog
 	 * and fill in the value.
 	 */
-	public JTextArea getJTextArea(Object value, ColumnDisplayDefinition colDef)
+	public RestorableRSyntaxTextArea getRestorableRSyntaxTextArea(Object value, ColumnDisplayDefinition colDef)
 	{
-		_textComponent = new RestorableJTextArea();
+		_textComponent = new RestorableRSyntaxTextArea();
 
 		// value is a simple string representation of the data,
 		// but NOT the same one used in the Text and in-cell operations.
@@ -351,12 +350,12 @@ public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComp
 			BigDataRenderResult.showStringLenReachedMessage(colDef);
 		}
 
-		((RestorableJTextArea) _textComponent).setText(renderedValue);
+		((RestorableRSyntaxTextArea) _textComponent).setText(renderedValue);
 
 		// special handling of operations while editing this data type
-		((RestorableJTextArea) _textComponent).addKeyListener(new KeyTextHandler());
+		((RestorableRSyntaxTextArea) _textComponent).addKeyListener(new KeyTextHandler());
 
-		return (RestorableJTextArea) _textComponent;
+		return (RestorableRSyntaxTextArea) _textComponent;
 	 }
 
 	/**

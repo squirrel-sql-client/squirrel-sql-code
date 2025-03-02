@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/59
+  Cell data popup and cell detail display now highlight JSON and XML content after it was reformatted.
+  - For automatic highlighting go to menu File --> Global Preferences --> tab "Data Type Controls"
+    --> section "General" and check "Format Xml/Json when table data is displayed in detail panel or cell data popup".
+  - To view un-reformatted JSON and XML content unselect the "Reformat Xml/Json" toggle button.
+
 Refactoring: The Syntax-Plugin's functionality was moved to SQuirreL's core.
   The Syntax-Plugin won't be shipped anymore
   and in case it is still found it is programmatically kept from being loaded.
