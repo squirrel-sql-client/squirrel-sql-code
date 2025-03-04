@@ -170,6 +170,13 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Loading Syntax- and Auto-Correct-properties raised ClassNotFoundException.
+  The problem concerns
+  - Menu File --> New Session Properties --> tab Syntax
+  - Menu Session --> sub menu Syntax --> "Configure auto correct / abbreviations"
+  The problem resulted from moving the Syntax-Plugin into SQuirreL's core
+  and occurs in snapshot snapshot-20250302_2058 only.
+
 SQL editor: UNION keyword was marked red as error.
 
 Look and Feel Plugin: Cleaned up L&F Preferences UI.

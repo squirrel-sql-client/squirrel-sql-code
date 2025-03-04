@@ -1,19 +1,23 @@
 package net.sourceforge.squirrel_sql.client.session.action.syntax;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Hashtable;
+import java.util.Iterator;
+
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.util.Hashtable;
-import java.util.Iterator;
+import org.apache.commons.lang3.StringUtils;
 
 public class SyntaxManager
 {
    private static final ILogger s_log = LoggerController.createLogger(SyntaxManager.class);
+   private static final String OLD_SYNTAX_PLUGIN_PACKAGE = "net.sourceforge.squirrel_sql.plugins.syntax.";
+   private static final String NEW_SYNTAX_PACKAGE = "net.sourceforge.squirrel_sql.client.session.action.syntax.";
 
    private SyntaxPreferences _syntaxPreferences;
    private AutoCorrectData _autoCorrectData;
@@ -41,7 +45,13 @@ public class SyntaxManager
                   File olfPrefsFile = new File(oldPrefsDir, "prefs.xml");
                   if(olfPrefsFile.exists())
                   {
-                     Files.move(olfPrefsFile.toPath(), prefsFile.toPath());
+                     String oldPrefsString = Files.readString(olfPrefsFile.toPath(), StandardCharsets.UTF_8);
+
+                     String newPrefsString = StringUtils.replace(oldPrefsString,
+                                                                 OLD_SYNTAX_PLUGIN_PACKAGE,
+                                                                 NEW_SYNTAX_PACKAGE);
+                     Files.write(prefsFile.toPath(), newPrefsString.getBytes(StandardCharsets.UTF_8));
+                     Files.delete(olfPrefsFile.toPath());
                   }
                }
             }
@@ -82,10 +92,16 @@ public class SyntaxManager
                File oldAutoCorrectDir = new File(new ApplicationFiles().getPluginsUserSettingsDirectory(), "syntax");
                if(oldAutoCorrectDir.exists())
                {
-                  File olfAutoCorrectFile = new File(oldAutoCorrectDir, "autocorrectdata.xml");
-                  if(olfAutoCorrectFile.exists())
+                  File oldfAutoCorrectFile = new File(oldAutoCorrectDir, "autocorrectdata.xml");
+                  if(oldfAutoCorrectFile.exists())
                   {
-                     Files.move(olfAutoCorrectFile.toPath(), autoCorrectdDataFile.toPath());
+                     String oldPrefsString = Files.readString(oldfAutoCorrectFile.toPath(), StandardCharsets.UTF_8);
+
+                     String newPrefsString = StringUtils.replace(oldPrefsString,
+                                                                 OLD_SYNTAX_PLUGIN_PACKAGE,
+                                                                 NEW_SYNTAX_PACKAGE);
+                     Files.write(autoCorrectdDataFile.toPath(), newPrefsString.getBytes(StandardCharsets.UTF_8));
+                     Files.delete(oldfAutoCorrectFile.toPath());
                   }
                }
             }
