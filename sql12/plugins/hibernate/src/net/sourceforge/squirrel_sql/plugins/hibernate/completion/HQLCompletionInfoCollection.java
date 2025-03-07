@@ -1,13 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.completion;
 
-import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
-import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
+import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
+import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
+import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
-import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
-import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -155,7 +155,7 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
          // ... while attributes used in qualified expressions will not be completed qualified.
          // That means for pack.Foo. the completion popup will be placed behind the last dot.
          ret.addAll(ciAttrs);
-         replacementStart = parser.getTextTillCarret().length() - parser.getLastToken().length();
+         replacementStart = parser.getTextTillCaret().length() - parser.getLastToken().length();
          stringToReplace = parser.getLastToken();
       }
 

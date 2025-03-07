@@ -36,6 +36,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 {
@@ -49,7 +51,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    private IUndoHandler _undoHandler;
    private SquirrelSyntaxScheme _squirrelSyntaxScheme;
 
-   private ErrorInfo[] _currentErrorInfos = new ErrorInfo[0];
+   private List<ErrorInfo> _currentErrorInfos = new ArrayList<>();
    private boolean _parsingInitialized;
    private SquirrelRSyntaxSearchEngine _squirrelRSyntaxSearchEngine;
    private TextAreaPaintHandler _textAreaPaintHandler;
@@ -205,12 +207,12 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       repaint();
    }
 
-   public void addSQLTokenListeners(ISession session, SQLTokenListener tl)
+   public void addSQLTokenListeners(SQLTokenListener tl)
    {
       _rSyntaxHighlightTokenMatcherProxy.addSQLTokenListener(tl);
    }
 
-   public void removeSQLTokenListeners(ISession session, SQLTokenListener tl)
+   public void removeSQLTokenListeners(SQLTokenListener tl)
    {
       _rSyntaxHighlightTokenMatcherProxy.removeSQLTokenListener(tl);
    }
@@ -221,11 +223,11 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 
       initParsing();
 
-      for (int i = 0; i < _currentErrorInfos.length; i++)
+      for (int i = 0; i < _currentErrorInfos.size(); i++)
       {
-         if(_currentErrorInfos[i].beginPos-1 <= pos && pos <= _currentErrorInfos[i].endPos)
+         if(_currentErrorInfos.get(i).beginPos-1 <= pos && pos <= _currentErrorInfos.get(i).endPos)
          {
-            return _currentErrorInfos[i].message;
+            return _currentErrorInfos.get(i).message;
          }
       }
 
@@ -241,7 +243,8 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
          _parsingInitialized = true;
          parserEventsProcessor.addParserEventsListener(new ParserEventsAdapter()
          {
-            public void errorsFound(ErrorInfo[] errorInfos)
+            @Override
+            public void errorsFound(List<ErrorInfo> errorInfos)
             {
                onErrorsFound(errorInfos);
             }
@@ -249,7 +252,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       }
    }
 
-   private void onErrorsFound(ErrorInfo[] errorInfos)
+   private void onErrorsFound(List<ErrorInfo> errorInfos)
    {
       _currentErrorInfos = errorInfos;
    }

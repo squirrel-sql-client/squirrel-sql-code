@@ -3,11 +3,9 @@ package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
 
-public class TableAliasInfo
+public class TableAliasParseInfo
 {
 	public static final int POSITION_NON = -1;
-
-
 
 	private String _aliasName;
 	private TableQualifier _tableQualifier;
@@ -15,7 +13,7 @@ public class TableAliasInfo
 	private int _statBegin;
 	private int _statEnd;
 
-	public TableAliasInfo(String aliasName, String tableName, int statBegin, int statEnd)
+	public TableAliasParseInfo(String aliasName, String tableName, int statBegin, int statEnd)
 	{
 		_aliasName = aliasName;
 		_tableQualifier = new TableQualifier(tableName);

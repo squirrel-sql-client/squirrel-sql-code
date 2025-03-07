@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.SwingUtilities;
@@ -13,6 +13,7 @@ import javax.swing.Timer;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ParserEventsProcessor implements IParserEventsProcessor
 {
@@ -114,17 +115,14 @@ public class ParserEventsProcessor implements IParserEventsProcessor
          return;
       }
 
-      ParserEventsListener[] clone = _listeners.toArray(new ParserEventsListener[_listeners.size()]);
+		TableAndAliasParseResult tableAndAliasParseResult = _parserThread.getTableAndAliasParseResult();
+		List<ErrorInfo> errorInfos = _parserThread.getErrorInfos();
 
-		TableAliasInfo[] aliasInfos = _parserThread.getTableAliasInfos();
-		ErrorInfo[] errorInfos = _parserThread.getErrorInfos();
-
-		for (int i = 0; i < clone.length; i++)
+		for(ParserEventsListener parserEventsListener : _listeners.toArray(new ParserEventsListener[0]))
 		{
-			clone[i].aliasesFound( aliasInfos);
-			clone[i].errorsFound(errorInfos);
+			parserEventsListener.tableAndAliasParseResultFound(tableAndAliasParseResult);
+			parserEventsListener.errorsFound(errorInfos);
 		}
-
 	}
 
 

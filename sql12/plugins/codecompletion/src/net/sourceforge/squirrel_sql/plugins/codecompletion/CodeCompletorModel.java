@@ -19,9 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 
 public class CodeCompletorModel implements ICompletorModel
@@ -34,10 +34,9 @@ public class CodeCompletorModel implements ICompletorModel
    {
       _completionFunctionsModel = new CompletionFunctionsModel(session);
       _standardCompletorModel = new StandardCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanelIdentifier);
-
    }
 
-   public CompletionCandidates getCompletionCandidates(String textTillCarret)
+   public CompletionCandidates getCompletionCandidates(String textTillCaret)
    {
       if(false == _functionsAdded)
       {
@@ -46,11 +45,11 @@ public class CodeCompletorModel implements ICompletorModel
          _functionsAdded = _standardCompletorModel.getCodeCompletionInfoCollection().addCompletionsAtListBegin(null, null, _completionFunctionsModel.getCompletions());
       }
 
-      CompletionCandidates functionResult = _completionFunctionsModel.getCompletionCandidates(textTillCarret);
+      CompletionCandidates functionResult = _completionFunctionsModel.getCompletionCandidates(textTillCaret);
 
       if(null == functionResult)
       {
-         return _standardCompletorModel.getCompletionCandidates(textTillCarret);
+         return _standardCompletorModel.getCompletionCandidates(textTillCaret);
       }
       else
       {

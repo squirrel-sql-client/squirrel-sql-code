@@ -23,8 +23,8 @@ public class ParserThread
    private ISession _session;
    private ParsingFinishedListener _parsingFinishedListener;
    private Future<?> _currentFuture;
-   private ErrorInfo[] _errorInfos = new ErrorInfo[0];
-   private TableAliasInfo[] _tableAliasInfos = new TableAliasInfo[0];
+   private List<ErrorInfo> _errorInfos = new ArrayList<>();
+   private TableAndAliasParseResult _tableAndAliasParseResult = new TableAndAliasParseResult();
 
    private ParseTerminateRequestCheck _parseTerminateRequestCheck = () -> onCheckExitThreadRequested();
    private volatile boolean _exitThreadRequested = false;
@@ -91,7 +91,7 @@ public class ParserThread
       _parseTerminateRequestCheck.check();
 
       ArrayList<ErrorInfo> errorInfosBuffer = new ArrayList<>();
-      ArrayList<TableAliasInfo> tableAliasInfosBuffer = new ArrayList<>();
+      TableAndAliasParseResult tableAndAliasParseResultBuffer = new TableAndAliasParseResult();
 
       for (StatementBounds statementBounds : statementBoundsList)
       {
@@ -101,7 +101,6 @@ public class ParserThread
 
          _parseTerminateRequestCheck.check();
 
-         List<TableAliasInfo> tableAliasInfosForCurrentStatement = new ArrayList<>();
          for (Table table : parsingResult.getTables())
          {
             _parseTerminateRequestCheck.check();
@@ -122,23 +121,26 @@ public class ParserThread
             }
             else if(null != table.getAlias())
             {
-               tableAliasInfosForCurrentStatement.add(new TableAliasInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
+               tableAndAliasParseResultBuffer.addTableAliasInfo(new TableAliasParseInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
+            }
+            else
+            {
+               tableAndAliasParseResultBuffer.addTableParseInfo(new TableParseInfo(table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
             }
          }
 
-         if(aliasesMayGotLostByParserErrors(tableAliasInfosForCurrentStatement, parsingResult))
+         if(aliasesOrTablesMayGotLostByParserErrors(tableAndAliasParseResultBuffer, parsingResult))
          {
-            tableAliasInfosForCurrentStatement = new HeuristicSQLAliasParser().parse(statementBounds, _session.getSchemaInfo());
+            tableAndAliasParseResultBuffer = new HeuristicSQLTableAndAliasParser().parse(statementBounds, _session.getSchemaInfo());
 
 //            System.out.println("####################### " + new Date());
 //            System.out.println("##");
-//            for (TableAliasInfo tableAliasInfo : tableAliasInfosForCurrentStatement)
+//            for (TableAliasInfo tableAliasInfo : heuristicParseResult)
 //            {
 //               System.out.println(tableAliasInfo.getAliasName() + " -> " + tableAliasInfo.getTableName());
 //            }
          }
 
-         tableAliasInfosBuffer.addAll(tableAliasInfosForCurrentStatement);
 
          for (ParseException parseError : parsingResult.getParseErrors())
          {
@@ -150,22 +152,23 @@ public class ParserThread
          }
       }
 
-      _errorInfos = errorInfosBuffer.toArray(new ErrorInfo[0]);
-      _tableAliasInfos = tableAliasInfosBuffer.toArray(new TableAliasInfo[0]);
+      _errorInfos = errorInfosBuffer;
+      _tableAndAliasParseResult = tableAndAliasParseResultBuffer;
    }
 
-   private boolean aliasesMayGotLostByParserErrors(List<TableAliasInfo> tableAliasInfos, ParsingResult parsingResult)
+   private boolean aliasesOrTablesMayGotLostByParserErrors(TableAndAliasParseResult tableAndAliasParseResult, ParsingResult parsingResult)
    {
-      return 0 == tableAliasInfos.size() && 0 < parsingResult.getParseErrors().size();
+      return tableAndAliasParseResult.isEmpty() && 0 < parsingResult.getParseErrors().size();
    }
 
 
-   public TableAliasInfo[] getTableAliasInfos()
+   public TableAndAliasParseResult getTableAndAliasParseResult()
    {
-      return _tableAliasInfos;
+      return _tableAndAliasParseResult;
    }
 
-   public ErrorInfo[] getErrorInfos()
+
+   public List<ErrorInfo> getErrorInfos()
    {
       return _errorInfos;
    }

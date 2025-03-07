@@ -14,20 +14,20 @@ public class CompletionParser
    private String _stringToParse;
    private int _stringToParsePosition;
    private String _stringToReplace;
-   private String _textTillCarret;
+   private String _textTillCaret;
 
 
-   public CompletionParser(String textTillCarret)
+   public CompletionParser(String textTillCaret)
    {
-      this(textTillCarret, false);
+      this(textTillCaret, false);
    }
 
 
-   public CompletionParser(String textTillCarret, boolean completeQualified)
+   public CompletionParser(String textTillCaret, boolean completeQualified)
    {
-      _textTillCarret = textTillCarret;
-      _stringToParse = StringUtilities.stripDoubleQuotes(CompletionUtils.getStringToParse(textTillCarret));
-      _stringToParsePosition = CompletionUtils.getStringToParsePosition ( textTillCarret );
+      _textTillCaret = textTillCaret;
+      _stringToParse = StringUtilities.stripDoubleQuotes(CompletionUtils.getStringToParse(textTillCaret));
+      _stringToParsePosition = CompletionUtils.getStringToParsePosition ( textTillCaret );
 
       StringTokenizer st = new StringTokenizer(_stringToParse, DEREF_CHAR);
       _tokens = new ArrayList<>();
@@ -36,7 +36,7 @@ public class CompletionParser
          _tokens.add(StringUtilities.stripDoubleQuotes(st.nextToken()));
       }
 
-      if(   textTillCarret.endsWith(DEREF_CHAR) || textTillCarret.endsWith(DEREF_CHAR + DOUBLE_QUOTE_CHAR)
+      if(   textTillCaret.endsWith(DEREF_CHAR) || textTillCaret.endsWith(DEREF_CHAR + DOUBLE_QUOTE_CHAR)
          || 0 == _tokens.size())
       {
          _tokens.add("");
@@ -94,12 +94,12 @@ public class CompletionParser
 
    public int getReplacementStart()
    {
-      return _textTillCarret.length() - _stringToReplace.length();
+      return _textTillCaret.length() - _stringToReplace.length();
    }
 
-   public String getTextTillCarret()
+   public String getTextTillCaret()
    {
-      return _textTillCarret;
+      return _textTillCaret;
    }
 
    public String getLastToken()

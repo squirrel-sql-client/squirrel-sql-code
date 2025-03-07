@@ -19,7 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 public class CodeCompletionInfoCollection
@@ -248,7 +250,6 @@ public class CodeCompletionInfoCollection
          CodeCompletionTableAliasInfo buf = _aliasCompletionInfos.get(i);
          if (buf.isInStatementOfAlias(pos) && buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchTypeUtil.matchTypeOf(_useCompletionPrefs, _prefs)))
          {
-
             ret.add(buf);
          }
 		}
@@ -286,17 +287,16 @@ public class CodeCompletionInfoCollection
       return ret;
    }
 
-   public void replaceLastAliasInfos(TableAliasInfo[] aliasInfos)
+   public void replaceLastTableAndAliasParseResult(TableAndAliasParseResult tableAndAliasParseResult)
 	{
-		_aliasCompletionInfos = new Vector<>(aliasInfos.length);
+      List<TableAliasParseInfo> aliasInfos = tableAndAliasParseResult.getTableAliasParseInfosReadOnly();
 
-		for (int i = 0; i < aliasInfos.length; i++)
-		{
-         if(false == aliasInfos[i].getAliasName().startsWith("#"))
-         {
-			   _aliasCompletionInfos.add(new CodeCompletionTableAliasInfo(aliasInfos[i], _useCompletionPrefs, _prefs));
-         }
+      Vector<CodeCompletionTableAliasInfo> buf = new Vector<>(aliasInfos.size());
+      for(TableAliasParseInfo aliasInfo : aliasInfos)
+      {
+		   buf.add(new CodeCompletionTableAliasInfo(aliasInfo, _useCompletionPrefs, _prefs));
 		}
+      _aliasCompletionInfos = buf;
 	}
 
    public boolean isCatalog(String name)

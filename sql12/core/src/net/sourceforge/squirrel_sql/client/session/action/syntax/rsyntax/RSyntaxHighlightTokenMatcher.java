@@ -11,8 +11,8 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import javax.swing.SwingUtilities;
-import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatcher
@@ -53,7 +53,7 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
          parserEventsProcessor.addParserEventsListener(new ParserEventsAdapter()
          {
             @Override
-            public void errorsFound(ErrorInfo[] errorInfos)
+            public void errorsFound(List<ErrorInfo> errorInfos)
             {
                onErrorsFound(errorInfos);
             }
@@ -62,14 +62,14 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
    }
 
 
-   private void onErrorsFound(ErrorInfo[] errorInfos)
+   private void onErrorsFound(List<ErrorInfo> errorInfos)
    {
       boolean errorsChanged = false;
-      if(_currentErrorInfos.size() == errorInfos.length)
+      if(_currentErrorInfos.size() == errorInfos.size())
       {
-         for (int i = 0; i < errorInfos.length; i++)
+         for (int i = 0; i < errorInfos.size(); i++)
          {
-            if(false == errorInfos[i].matches(_currentErrorInfos.get(i)))
+            if(false == errorInfos.get(i).matches(_currentErrorInfos.get(i)))
             {
                errorsChanged = true;
                break;
@@ -86,7 +86,7 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
          Vector<ErrorInfo> oldErrorInfos = new Vector<>(_currentErrorInfos);
 
          _currentErrorInfos.clear();
-         _currentErrorInfos.addAll(Arrays.asList(errorInfos));
+         _currentErrorInfos.addAll(errorInfos);
 
          forceHighlightUpdateOnErrorPositions(oldErrorInfos);
       }

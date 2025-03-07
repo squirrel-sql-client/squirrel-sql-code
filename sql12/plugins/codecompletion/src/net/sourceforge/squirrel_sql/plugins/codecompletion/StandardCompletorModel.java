@@ -22,7 +22,8 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
@@ -59,10 +60,11 @@ public class StandardCompletorModel
 
 			_session.getParserEventsProcessor(sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
 			{
-				public void aliasesFound(TableAliasInfo[] aliasInfos)
-				{
-					onAliasesFound(aliasInfos);
-				}
+            @Override
+            public void tableAndAliasParseResultFound(TableAndAliasParseResult tableAndAliasParseResult)
+            {
+               onTableAndAliasParseResultFound(tableAndAliasParseResult);
+            }
 			});
       }
       catch(Exception e)
@@ -71,18 +73,17 @@ public class StandardCompletorModel
       }
    }
 
-	private void onAliasesFound(TableAliasInfo[] aliasInfos)
+	private void onTableAndAliasParseResultFound(TableAndAliasParseResult tableAndAliasParseResult)
 	{
-		_codeCompletionInfos.replaceLastAliasInfos(aliasInfos);
+		_codeCompletionInfos.replaceLastTableAndAliasParseResult(tableAndAliasParseResult);
 	}
 
 
-   CompletionCandidates getCompletionCandidates(String textTillCarret)
+   CompletionCandidates getCompletionCandidates(String textTillCaret)
    {
-      CompletionParser parser = new CompletionParser(textTillCarret);
+      CompletionParser parser = new CompletionParser(textTillCaret);
 
-
-      ArrayList<CodeCompletionInfo> ret = new ArrayList<CodeCompletionInfo>();
+      ArrayList<CodeCompletionInfo> ret = new ArrayList<>();
 
       if(false == parser.isQualified())
       {
@@ -154,7 +155,7 @@ public class StandardCompletorModel
 		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name, colPos);
       CodeCompletionInfo toReturn = null;
 
-      if (colPos != TableAliasInfo.POSITION_NON)
+      if (colPos != TableAliasParseInfo.POSITION_NON)
 		{
 			// First check aliases
 			for (int j = 0; j < infos.length; j++)
@@ -219,7 +220,7 @@ public class StandardCompletorModel
 
       for (String lastSelectedCompletionName : _lastSelectedCompletionNames)
       {
-         ret.addAll(getColumnsForName(null, null, lastSelectedCompletionName, colNamePat, TableAliasInfo.POSITION_NON));
+         ret.addAll(getColumnsForName(null, null, lastSelectedCompletionName, colNamePat, TableAliasParseInfo.POSITION_NON));
       }
 
 		return ret;
@@ -228,12 +229,7 @@ public class StandardCompletorModel
 
 	public SQLTokenListener getSQLTokenListener()
 	{
-		return
-			new SQLTokenListener()
-			{
-				public void tableOrViewFound(String name)
-				{performTableOrViewFound(name);}
-			};
+		return name -> performTableOrViewFound(name);
 	}
 
 	private void performTableOrViewFound(String name)

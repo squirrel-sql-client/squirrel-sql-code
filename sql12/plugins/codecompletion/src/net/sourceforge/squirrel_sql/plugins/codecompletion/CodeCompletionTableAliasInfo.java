@@ -17,16 +17,16 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 {
-   private TableAliasInfo _aliasInfo;
+   private TableAliasParseInfo _aliasInfo;
 
    private String _toString;
 
-   public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo, boolean useCompletionPrefs, CodeCompletionPreferences prefs)
+   public CodeCompletionTableAliasInfo(TableAliasParseInfo aliasInfo, boolean useCompletionPrefs, CodeCompletionPreferences prefs)
    {
       //SH add last parameter ISession. Used in the super class
       super(aliasInfo.getTableQualifier().getTableName(), "TABLE", aliasInfo.getTableQualifier().getCatalog(), aliasInfo.getTableQualifier().getSchema(), useCompletionPrefs, prefs, null);

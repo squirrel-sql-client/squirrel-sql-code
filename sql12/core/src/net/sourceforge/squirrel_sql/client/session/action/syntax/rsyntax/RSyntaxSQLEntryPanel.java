@@ -444,12 +444,12 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 
 	public void addSQLTokenListener(SQLTokenListener tl)
 	{
-		_textArea.addSQLTokenListeners(_session, tl);
+		_textArea.addSQLTokenListeners(tl);
 	}
 
 	public void removeSQLTokenListener(SQLTokenListener tl)
 	{
-		_textArea.removeSQLTokenListeners(_session, tl);
+		_textArea.removeSQLTokenListeners(tl);
 	}
 
 	public ISession getSession()

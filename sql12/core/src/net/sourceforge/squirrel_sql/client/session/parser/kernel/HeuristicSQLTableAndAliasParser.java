@@ -4,25 +4,22 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * JSQLParser stops providing table alias information as soon as it runs into an SQL error.
  * When JSQLParser runs into an SQL error, this class provides table alias information in a heuristic way.
  */
-public class HeuristicSQLAliasParser
+public class HeuristicSQLTableAndAliasParser
 {
    private StringBuilder _token = new StringBuilder();
 
    private SqlCommentHelper _sqlCommentHelper;
    private int literalDelimsCount = 0;
 
-   public List<TableAliasInfo> parse(StatementBounds statementBounds, SchemaInfo schemaInfo)
+   public TableAndAliasParseResult parse(StatementBounds statementBounds, SchemaInfo schemaInfo)
    {
       _sqlCommentHelper = new SqlCommentHelper(statementBounds.getStatement());
 
-      ArrayList<TableAliasInfo> ret = new ArrayList<>();
+      TableAndAliasParseResult ret = new TableAndAliasParseResult();
 
       int[] i = new int[]{0};
 
@@ -63,11 +60,14 @@ public class HeuristicSQLAliasParser
             if(0 < tableInfos.length)
             {
                currentAliasableTable = token;
+               ret.addTableParseInfo(new TableParseInfo(currentAliasableTable, statementBounds.getBeginPos(), statementBounds.getEndPos()));
             }
          }
          else if(null != currentAliasableTable && false == schemaInfo.isKeyword(token))
          {
-            ret.add(new TableAliasInfo(token, currentAliasableTable, statementBounds.getBeginPos(), statementBounds.getEndPos()));
+            TableAliasParseInfo tableAliasParseInfo = new TableAliasParseInfo(token, currentAliasableTable, statementBounds.getBeginPos(), statementBounds.getEndPos());
+            ret.addTableAliasInfo(tableAliasParseInfo);
+            ret.removeFromTableParseInfos(tableAliasParseInfo);
 
             lastTokenAllowedTableAliasDefinition = false;
             currentAliasableTable = null;

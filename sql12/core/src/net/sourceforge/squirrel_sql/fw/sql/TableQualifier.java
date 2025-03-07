@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,5 +53,12 @@ public class TableQualifier
    public String getTableName()
    {
       return _tableName;
+   }
+
+   public boolean matches(TableQualifier tableQualifier)
+   {
+      return    StringUtils.equalsIgnoreCase(_catalog, tableQualifier._catalog)
+             && StringUtils.equalsIgnoreCase(_schema, tableQualifier._schema)
+             && StringUtils.equalsIgnoreCase(_tableName, tableQualifier._tableName);
    }
 }
