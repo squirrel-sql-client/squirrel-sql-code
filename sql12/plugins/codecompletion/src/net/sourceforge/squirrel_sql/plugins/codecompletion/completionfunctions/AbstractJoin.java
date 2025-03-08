@@ -22,8 +22,7 @@ import java.util.Vector;
 public abstract class AbstractJoin extends CodeCompletionFunction
 {
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AbstractJoin.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractJoin.class);
 
    private ISession _session;
 
@@ -106,7 +105,7 @@ public abstract class AbstractJoin extends CodeCompletionFunction
             }
          }
 
-         Vector<CodeCompletionInfo> ret = new Vector<CodeCompletionInfo>();
+         Vector<CodeCompletionInfo> ret = new Vector<>();
 
          for (Iterator<String> i =schemas.keySet().iterator() ; i.hasNext();)
          {

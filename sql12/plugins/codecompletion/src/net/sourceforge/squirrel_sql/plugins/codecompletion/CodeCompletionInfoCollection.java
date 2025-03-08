@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
@@ -287,10 +286,8 @@ public class CodeCompletionInfoCollection
       return ret;
    }
 
-   public void replaceLastTableAndAliasParseResult(TableAndAliasParseResult tableAndAliasParseResult)
+   public void replaceLastAliasInfos(List<TableAliasParseInfo> aliasInfos)
 	{
-      List<TableAliasParseInfo> aliasInfos = tableAndAliasParseResult.getTableAliasParseInfosReadOnly();
-
       Vector<CodeCompletionTableAliasInfo> buf = new Vector<>(aliasInfos.size());
       for(TableAliasParseInfo aliasInfo : aliasInfos)
       {

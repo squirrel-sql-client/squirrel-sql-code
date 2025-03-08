@@ -48,6 +48,9 @@ public class StandardCompletorModel
 
    private SynonymHandler _synonymHandler;
 
+   private JoinOnCompletion _joinOnCompletion;
+
+
    StandardCompletorModel(ISession session, CodeCompletionPlugin plugin, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
    {
       _plugin = plugin;
@@ -58,7 +61,9 @@ public class StandardCompletorModel
 
          _synonymHandler = new SynonymHandler(_session.getMetaData());
 
-			_session.getParserEventsProcessor(sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
+         _joinOnCompletion = new JoinOnCompletion(_session);
+
+         _session.getParserEventsProcessor(sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
 			{
             @Override
             public void tableAndAliasParseResultFound(TableAndAliasParseResult tableAndAliasParseResult)
@@ -75,15 +80,18 @@ public class StandardCompletorModel
 
 	private void onTableAndAliasParseResultFound(TableAndAliasParseResult tableAndAliasParseResult)
 	{
-		_codeCompletionInfos.replaceLastTableAndAliasParseResult(tableAndAliasParseResult);
+		_codeCompletionInfos.replaceLastAliasInfos(tableAndAliasParseResult.getTableAliasParseInfosReadOnly());
+      _joinOnCompletion.replaceLastTableAndAliasParseResult(tableAndAliasParseResult);
 	}
 
 
    CompletionCandidates getCompletionCandidates(String textTillCaret)
    {
-      CompletionParser parser = new CompletionParser(textTillCaret);
-
       ArrayList<CodeCompletionInfo> ret = new ArrayList<>();
+
+      ret.addAll(_joinOnCompletion.getJoinOnClausesCompletionInfos(textTillCaret));
+
+      CompletionParser parser = new CompletionParser(textTillCaret);
 
       if(false == parser.isQualified())
       {
@@ -144,7 +152,7 @@ public class StandardCompletorModel
          }
       }
 
-      CodeCompletionInfo[] ccis = ret.toArray(new CodeCompletionInfo[ret.size()]);
+      CodeCompletionInfo[] ccis = ret.toArray(new CodeCompletionInfo[0]);
 
       return new CompletionCandidates(ccis, parser.getReplacementStart(), parser.getStringToReplace());
    }

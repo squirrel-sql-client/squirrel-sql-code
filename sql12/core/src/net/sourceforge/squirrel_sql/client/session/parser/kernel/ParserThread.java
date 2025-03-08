@@ -91,11 +91,13 @@ public class ParserThread
       _parseTerminateRequestCheck.check();
 
       ArrayList<ErrorInfo> errorInfosBuffer = new ArrayList<>();
-      TableAndAliasParseResult tableAndAliasParseResultBuffer = new TableAndAliasParseResult();
+      TableAndAliasParseResult allStatementsTableAndAliasParseResultBuffer = new TableAndAliasParseResult();
 
       for (StatementBounds statementBounds : statementBoundsList)
       {
          _parseTerminateRequestCheck.check();
+
+         TableAndAliasParseResult singleStatementTableAndAliasParseResultBuffer = new TableAndAliasParseResult();
 
          ParsingResult parsingResult = JSqlParserAdapter.executeParsing(statementBounds);
 
@@ -121,17 +123,17 @@ public class ParserThread
             }
             else if(null != table.getAlias())
             {
-               tableAndAliasParseResultBuffer.addTableAliasInfo(new TableAliasParseInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
+               singleStatementTableAndAliasParseResultBuffer.addTableAliasInfo(new TableAliasParseInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
             }
             else
             {
-               tableAndAliasParseResultBuffer.addTableParseInfo(new TableParseInfo(table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
+               singleStatementTableAndAliasParseResultBuffer.addTableParseInfo(new TableParseInfo(table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
             }
          }
 
-         if(aliasesOrTablesMayGotLostByParserErrors(tableAndAliasParseResultBuffer, parsingResult))
+         if(aliasesOrTablesMayGotLostByParserErrors(singleStatementTableAndAliasParseResultBuffer, parsingResult))
          {
-            tableAndAliasParseResultBuffer = new HeuristicSQLTableAndAliasParser().parse(statementBounds, _session.getSchemaInfo());
+            singleStatementTableAndAliasParseResultBuffer = new HeuristicSQLTableAndAliasParser().parse(statementBounds, _session.getSchemaInfo());
 
 //            System.out.println("####################### " + new Date());
 //            System.out.println("##");
@@ -140,6 +142,7 @@ public class ParserThread
 //               System.out.println(tableAliasInfo.getAliasName() + " -> " + tableAliasInfo.getTableName());
 //            }
          }
+         allStatementsTableAndAliasParseResultBuffer.addParseResult(singleStatementTableAndAliasParseResultBuffer);
 
 
          for (ParseException parseError : parsingResult.getParseErrors())
@@ -153,12 +156,12 @@ public class ParserThread
       }
 
       _errorInfos = errorInfosBuffer;
-      _tableAndAliasParseResult = tableAndAliasParseResultBuffer;
+      _tableAndAliasParseResult = allStatementsTableAndAliasParseResultBuffer;
    }
 
    private boolean aliasesOrTablesMayGotLostByParserErrors(TableAndAliasParseResult tableAndAliasParseResult, ParsingResult parsingResult)
    {
-      return tableAndAliasParseResult.isEmpty() && 0 < parsingResult.getParseErrors().size();
+      return tableAndAliasParseResult.isEmpty() && false == parsingResult.getParseErrors().isEmpty();
    }
 
 

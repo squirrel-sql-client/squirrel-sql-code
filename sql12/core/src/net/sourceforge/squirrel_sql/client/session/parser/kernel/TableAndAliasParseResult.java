@@ -1,12 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TableAndAliasParseResult
 {
    private List<TableAliasParseInfo> _tableAliasParseInfos = new ArrayList<>();
-   private List<TableParseInfo> _tableParseInfo = new ArrayList<>();
+   private List<TableParseInfo> _tableParseInfos = new ArrayList<>();
 
    public List<TableAliasParseInfo> getTableAliasParseInfosReadOnly()
    {
@@ -15,17 +17,17 @@ public class TableAndAliasParseResult
 
    public List<TableParseInfo> getTableParseInfosReadOnly()
    {
-      return List.copyOf(_tableParseInfo);
+      return List.copyOf(_tableParseInfos);
    }
 
    public void removeFromTableParseInfos(TableAliasParseInfo tableAliasParseInfo)
    {
-      _tableParseInfo.removeIf(tpi -> tpi.matches(tableAliasParseInfo.getTableQualifier(), tableAliasParseInfo.getStatBegin()));
+      _tableParseInfos.removeIf(tpi -> tpi.matches(tableAliasParseInfo.getTableQualifier(), tableAliasParseInfo.getStatBegin()));
    }
 
    public boolean isEmpty()
    {
-      return _tableAliasParseInfos.isEmpty() && _tableParseInfo.isEmpty();
+      return _tableAliasParseInfos.isEmpty() && _tableParseInfos.isEmpty();
    }
 
    public void addTableAliasInfo(TableAliasParseInfo tableAliasParseInfo)
@@ -40,6 +42,40 @@ public class TableAndAliasParseResult
 
    public void addTableParseInfo(TableParseInfo tableParseInfo)
    {
-      _tableParseInfo.add(tableParseInfo);
+      _tableParseInfos.add(tableParseInfo);
+   }
+
+   public void addParseResult(TableAndAliasParseResult toAdd)
+   {
+      _tableAliasParseInfos.addAll(toAdd._tableAliasParseInfos);
+      _tableParseInfos.addAll(toAdd._tableParseInfos);
+   }
+
+   public TableAliasParseInfo getAliasInStatementAt(String token, int pos)
+   {
+      if(StringUtils.isEmpty(token))
+      {
+         return null;
+      }
+
+      return
+            _tableAliasParseInfos.stream()
+                                 .filter(i -> StringUtils.endsWithIgnoreCase(token, i.getAliasName()) && i.getStatBegin() <= pos && pos <= i.getStatEnd())
+                                 .findFirst()
+                                 .orElse(null);
+   }
+
+   public TableParseInfo getTableInStatementAt(String token, int pos)
+   {
+      if(StringUtils.isEmpty(token))
+      {
+         return null;
+      }
+
+      return
+            _tableParseInfos.stream()
+                                 .filter(i -> StringUtils.endsWithIgnoreCase(token, i.getTableName()) && i.getStatBegin() <= pos && pos <= i.getStatEnd())
+                                 .findFirst()
+                                 .orElse(null);
    }
 }
