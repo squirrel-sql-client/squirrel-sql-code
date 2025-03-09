@@ -11,7 +11,7 @@ public abstract class CodeCompletionInfo extends CompletionInfo
    /**
     * Default implementation
     */
-   public ArrayList<? extends CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
+   public ArrayList<? extends CodeCompletionInfo> getColumns(SchemaInfo schemaInfo, String colNamePattern)
 	{
       return new ArrayList<>();
    }
@@ -21,7 +21,7 @@ public abstract class CodeCompletionInfo extends CompletionInfo
 	 * Will be called after getCompletionString()
 	 * @return Position to mo mve the Carret back counted from the end of the completion string.
 	 */
-	public int getMoveCarretBackCount()
+	public int getMoveCaretBackCount()
 	{
 		return 0;
 	}

@@ -203,7 +203,7 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 	 * Will be called after getCompletionString()
 	 * @return Position to move the carret back counted from the end of the completion string.
 	 */
-	public int getMoveCarretBackCount()
+	public int getMoveCaretBackCount()
 	{
 		return _moveCarretBackCount;
 	}

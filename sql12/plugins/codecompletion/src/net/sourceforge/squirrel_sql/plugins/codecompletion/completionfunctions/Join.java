@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
+
+import java.util.Hashtable;
+import java.util.Vector;
 
 
 public class Join extends AbstractJoin
@@ -34,10 +34,10 @@ public class Join extends AbstractJoin
       return getCompletionString() + " inner/left join";
    }
 
-   public CodeCompletionInfo[] getFunctionResults(String functionSting)
+   public CodeCompletionInfo[] getFunctionResults(String functionSting, int caretPos)
    {
       _returnedLeftJoinBefore = false;
-      return super.getFunctionResults(functionSting);
+      return super.getFunctionResults(functionSting, caretPos);
    }
 
    @Override

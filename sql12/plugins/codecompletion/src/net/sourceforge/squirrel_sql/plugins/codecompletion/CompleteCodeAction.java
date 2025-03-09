@@ -131,9 +131,9 @@ public class CompleteCodeAction extends SquirrelAction
 
    private void adjustCaret(CodeCompletionInfo completion)
    {
-      if(0 < completion.getMoveCarretBackCount())
+      if(0 < completion.getMoveCaretBackCount())
       {
-         _sqlEntryPanel.setCaretPosition(_sqlEntryPanel.getCaretPosition()  - completion.getMoveCarretBackCount());
+         _sqlEntryPanel.setCaretPosition(_sqlEntryPanel.getCaretPosition()  - completion.getMoveCaretBackCount());
       }
    }
 

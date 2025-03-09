@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -8,13 +10,15 @@ import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -26,13 +30,15 @@ public abstract class AbstractJoin extends CodeCompletionFunction
 
    private ISession _session;
 
+   private TableAndAliasParseResult _tableAndAliasParseResult = new TableAndAliasParseResult();
+
    public AbstractJoin(ISession session)
    {
       _session = session;
    }
 
 
-   public CodeCompletionInfo[] getFunctionResults(String functionSting)
+   public CodeCompletionInfo[] getFunctionResults(String functionSting, int caretPos)
    {
       try
       {
@@ -61,8 +67,9 @@ public abstract class AbstractJoin extends CodeCompletionFunction
 
          String catalog = _session.getSQLConnection().getCatalog();
          SQLDatabaseMetaData jdbcMetaData = _session.getSQLConnection().getSQLMetaData();
-         Vector<String> tables = new Vector<String>();
-         HashMap<String, String> schemas = new HashMap<String, String>();
+         Vector<String> tables = new Vector<>();
+         HashSet<String> schemas = new HashSet<>();
+         HashMap<String, TableAliasParseInfo> table_tableAliasParseInfo = new HashMap<>();
          while(st.hasMoreTokens())
          {
             String[] catSchemTab = st.nextToken().trim().split("\\.");
@@ -71,15 +78,32 @@ public abstract class AbstractJoin extends CodeCompletionFunction
             if(2 <= catSchemTab.length)
             {
                schema = catSchemTab[catSchemTab.length -2];
-               schemas.put(schema, schema);
+               schemas.add(schema);
             }
 
             table = _session.getSchemaInfo().getCaseSensitiveTableName(table);
             if(null == table)
             {
-					// i18n[codecompletion.unknowntable=unknown table {0}]
-					_session.showMessage(s_stringMgr.getString("codecompletion.unknowntable", table));
-               return null;
+               if(1 == catSchemTab.length) // A table alias cannot be schema scoped
+               {
+                  TableAliasParseInfo tableAliasParseInfo =
+                        _tableAndAliasParseResult.getAliasInStatementAt(catSchemTab[0], caretPos);
+
+                  if(null == tableAliasParseInfo)
+                  {
+                     _session.showMessage(s_stringMgr.getString("codecompletion.unknowntable", table));
+                     return null;
+                  }
+
+                  table = tableAliasParseInfo.getTableQualifier().getTableName();
+                  schema = tableAliasParseInfo.getTableQualifier().getSchema();
+                  if(false == StringUtils.isEmpty(schema))
+                  {
+                     schemas.add(schema);
+                  }
+                  table_tableAliasParseInfo.put(table, tableAliasParseInfo);
+
+               }
             }
             tables.add(table);
 
@@ -100,20 +124,20 @@ public abstract class AbstractJoin extends CodeCompletionFunction
                for (int i = 0; i < infos.length; i++)
                {
                    String schemBuf = infos[i].getSchemaName();
-                   schemas.put(schemBuf, schemBuf);
+                   schemas.add(schemBuf);
                }
             }
          }
 
-         Vector<CodeCompletionInfo> ret = new Vector<>();
+         ArrayList<CodeCompletionInfo> ret = new ArrayList<>();
 
-         for (Iterator<String> i =schemas.keySet().iterator() ; i.hasNext();)
+         for(String schema : schemas)
          {
-            CodeCompletionInfo[] buf = getResultsForSchema(tables, jdbcMetaData, catalog, i.next());
+            CodeCompletionInfo[] buf = getResultsForSchema(tables, jdbcMetaData, catalog, schema, table_tableAliasParseInfo);
             ret.addAll(Arrays.asList(buf));
          }
 
-         return ret.toArray(new CodeCompletionInfo[ret.size()]);
+         return ret.toArray(new CodeCompletionInfo[0]);
       }
       catch (SQLException e)
       {
@@ -121,33 +145,35 @@ public abstract class AbstractJoin extends CodeCompletionFunction
       }
    }
 
-   private CodeCompletionInfo[] getResultsForSchema(Vector<String> tables, SQLDatabaseMetaData jdbcMetaData, String catalog, String schema)
+   private CodeCompletionInfo[] getResultsForSchema(Vector<String> tables,
+                                                    SQLDatabaseMetaData jdbcMetaData,
+                                                    String catalog,
+                                                    String schema,
+                                                    HashMap<String, TableAliasParseInfo> table_tableAliasParseInfo)
       throws SQLException
    {
-      Vector<String> completions = new Vector<String>();
+      Vector<String> completions = new Vector<>();
       completions.add("");
 
       for (int i = 1; i < tables.size(); i++)
       {
-         Hashtable<String, Vector<String>> conditionByFkName = 
-             new Hashtable<String, Vector<String>>();
-         Hashtable<String, Vector<ColBuffer>> colBuffersByFkName = 
-             new Hashtable<String, Vector<ColBuffer>>();
+         Hashtable<String, Vector<String>> conditionByFkName = new Hashtable<>();
+         Hashtable<String, Vector<ColBuffer>> colBuffersByFkName = new Hashtable<>();
          ForeignKeyInfo[] infos = jdbcMetaData.getImportedKeysInfo(catalog, schema, tables.get(i-1));
-         fillConditionByFkName(infos, tables.get(i-1), tables.get(i), conditionByFkName, colBuffersByFkName);
+         fillConditionByFkName(infos, tables.get(i-1), tables.get(i), conditionByFkName, colBuffersByFkName, table_tableAliasParseInfo);
 
          infos = jdbcMetaData.getExportedKeysInfo(catalog, schema, tables.get(i-1));
-         fillConditionByFkName(infos, tables.get(i-1), tables.get(i), conditionByFkName, colBuffersByFkName);
+         fillConditionByFkName(infos, tables.get(i-1), tables.get(i), conditionByFkName, colBuffersByFkName, table_tableAliasParseInfo);
 
-         Vector<String> twoTableCompletions = new Vector<String>();
+         Vector<String> twoTableCompletions = new Vector<>();
          for(Enumeration<String> e=conditionByFkName.keys(); e.hasMoreElements();)
          {
             String fkName = e.nextElement();
 
             String joinClause = getJoinClause(fkName, tables.get(i-1), tables.get(i), colBuffersByFkName);
 
-            StringBuffer sb = new StringBuffer();
-            sb.append(joinClause).append(tables.get(i)).append(" ON ");
+            StringBuilder sb = new StringBuilder();
+            sb.append(joinClause).append(getTableOrAliasName(tables.get(i), table_tableAliasParseInfo)).append(" ON ");
 
             Vector<String> conditions = conditionByFkName.get(fkName);
             if(1 == conditions.size())
@@ -169,10 +195,13 @@ public abstract class AbstractJoin extends CodeCompletionFunction
             twoTableCompletions.add(sb.toString());
          }
 
-         if(0 == conditionByFkName.size())
+         if(conditionByFkName.isEmpty())
          {
             String joinClause = getJoinClause(null, tables.get(i-1), tables.get(i), colBuffersByFkName);
-            twoTableCompletions.add(joinClause + tables.get(i) + " ON " + tables.get(i-1) + ". = " + tables.get(i) + ".\n");
+
+            twoTableCompletions.add(joinClause + getTableOrAliasName(tables.get(i), table_tableAliasParseInfo)
+                                               + " ON " + getTableOrAliasName(tables.get(i - 1), table_tableAliasParseInfo)
+                                               + ". = " + getTableOrAliasName(tables.get(i), table_tableAliasParseInfo) + ".\n");
          }
 
 
@@ -200,19 +229,28 @@ public abstract class AbstractJoin extends CodeCompletionFunction
       return ret;
    }
 
+   private static String getTableOrAliasName(String tableName, HashMap<String, TableAliasParseInfo> table_tableAliasParseInfo)
+   {
+      TableAliasParseInfo tableAliasParseInfo = table_tableAliasParseInfo.get(tableName);
+      if(null == tableAliasParseInfo)
+      {
+         return tableName;
+      }
+
+      return tableAliasParseInfo.getAliasName();
+   }
+
    protected abstract String getJoinClause(String fkName, 
                                            String table1, 
                                            String table2, 
-                                           Hashtable<String, 
-                                           Vector<ColBuffer>> colBuffersByFkName);
+                                           Hashtable<String,Vector<ColBuffer>> colBuffersByFkName);
 
-   private void fillConditionByFkName(ForeignKeyInfo[] infos, 
-                                      String table1, 
-                                      String table2, 
-                                      Hashtable<String, 
-                                      Vector<String>> conditionByFkName, 
-                                      Hashtable<String, Vector<ColBuffer>> colBuffersByFkName)
-      throws SQLException
+   private void fillConditionByFkName(ForeignKeyInfo[] infos,
+                                      String table1,
+                                      String table2,
+                                      Hashtable<String,Vector<String>> conditionByFkName,
+                                      Hashtable<String,Vector<ColBuffer>> colBuffersByFkName,
+                                      HashMap<String, TableAliasParseInfo> table_tableAliasParseInfo)
    {
       for (int i = 0; i < infos.length; i++)
       {
@@ -231,24 +269,19 @@ public abstract class AbstractJoin extends CodeCompletionFunction
             Vector<String> conditions = conditionByFkName.get(fkName);
             if(null == conditions)
             {
-               conditions = new Vector<String>();
+               conditions = new Vector<>();
                conditionByFkName.put(fkName, conditions);
             }
 
-            StringBuilder tmp = new StringBuilder(pkTableName);
-            tmp.append(".");
-            tmp.append(pkColumnName);
-            tmp.append(" = ");
-            tmp.append(fkTableName);
-            tmp.append(".");
-            tmp.append(fkColumnName);
-            
-            conditions.add(tmp.toString());
+            String tmp = getTableOrAliasName(pkTableName, table_tableAliasParseInfo) + "." + pkColumnName +
+                  " = " + getTableOrAliasName(fkTableName, table_tableAliasParseInfo) + "." + fkColumnName;
+
+            conditions.add(tmp);
 
             Vector<ColBuffer> cols = colBuffersByFkName.get(fkName);
             if(null == cols)
             {
-               cols = new Vector<ColBuffer>();
+               cols = new Vector<>();
                colBuffersByFkName.put(fkName, cols);
             }
             cols.add(new ColBuffer(fkTableName, fkColumnName));
@@ -266,5 +299,10 @@ public abstract class AbstractJoin extends CodeCompletionFunction
          this.tableName = tableName;
          this.colName = colName;
       }
+   }
+
+   public void replaceLastTableAndAliasParseResult(TableAndAliasParseResult tableAndAliasParseResult)
+   {
+      _tableAndAliasParseResult = tableAndAliasParseResult;
    }
 }

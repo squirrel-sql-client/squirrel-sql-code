@@ -70,7 +70,7 @@ public class JoinOnClauseCompletion
          {
             if(tableParseInfo != joinLookupResult.getTableParseInfo() && isInfoInStatementOfCaretPos(tableParseInfo, textTillCaret.length()))
             {
-               CodeCompletionInfo[] functionResults = new InnerJoin(_session).getFunctionResults("#i," + tableParseInfo.getTableName() + "," + joinLookupResult.getTableParseInfo().getTableName() + ",");
+               CodeCompletionInfo[] functionResults = new InnerJoin(_session).getFunctionResults("#i," + tableParseInfo.getTableName() + "," + joinLookupResult.getTableParseInfo().getTableName() + ",", textTillCaret.length());
 
                if(null == functionResults)
                {

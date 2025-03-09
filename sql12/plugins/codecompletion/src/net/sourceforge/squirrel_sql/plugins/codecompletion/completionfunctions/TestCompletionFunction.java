@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
 
 
@@ -20,7 +21,12 @@ public class TestCompletionFunction extends CodeCompletionFunction
       return getCompletionString() + " test";
    }
 
-   public CodeCompletionInfo[] getFunctionResults(String functionSting)
+   @Override
+   public void replaceLastTableAndAliasParseResult(TableAndAliasParseResult tableAndAliasParseResult)
+   {
+   }
+
+   public CodeCompletionInfo[] getFunctionResults(String functionSting, int length)
    {
       if(false == functionMatches(functionSting))
       {

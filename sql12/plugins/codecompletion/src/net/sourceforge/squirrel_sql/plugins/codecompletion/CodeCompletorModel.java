@@ -32,7 +32,7 @@ public class CodeCompletorModel implements ICompletorModel
 
    CodeCompletorModel(ISession session, CodeCompletionPlugin plugin, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
    {
-      _completionFunctionsModel = new CompletionFunctionsModel(session);
+      _completionFunctionsModel = new CompletionFunctionsModel(session, sqlEntryPanelIdentifier);
       _standardCompletorModel = new StandardCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanelIdentifier);
    }
 
