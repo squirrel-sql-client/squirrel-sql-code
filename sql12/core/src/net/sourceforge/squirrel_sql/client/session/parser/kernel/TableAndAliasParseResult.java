@@ -25,6 +25,15 @@ public class TableAndAliasParseResult
       _tableParseInfos.removeIf(tpi -> tpi.matches(tableAliasParseInfo.getTableQualifier(), tableAliasParseInfo.getStatBegin()));
    }
 
+   public List<JoinOnClauseParseInfo> getAllJoinOnClauseParseInfosReadOnly()
+   {
+      ArrayList<JoinOnClauseParseInfo> ret = new ArrayList<>();
+      ret.addAll(_tableParseInfos);
+      ret.addAll(_tableAliasParseInfos);
+
+      return ret;
+   }
+
    public boolean isEmpty()
    {
       return _tableAliasParseInfos.isEmpty() && _tableParseInfos.isEmpty();

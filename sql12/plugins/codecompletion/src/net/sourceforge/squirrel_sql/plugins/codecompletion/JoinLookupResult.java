@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.JoinOnClauseParseInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableParseInfo;
 
@@ -26,6 +27,20 @@ public class JoinLookupResult
    public TableParseInfo getTableParseInfo()
    {
       return _tableParseInfo;
+   }
+
+   public JoinOnClauseParseInfo getJoinOnClauseParseInfo()
+   {
+      if(null != _tableAliasParseInfo)
+      {
+         return _tableAliasParseInfo;
+      }
+      else if(null != _tableParseInfo)
+      {
+         return _tableParseInfo;
+      }
+
+      return null;
    }
 
    public static JoinLookupResult ofEndsWithJoinKeyword()

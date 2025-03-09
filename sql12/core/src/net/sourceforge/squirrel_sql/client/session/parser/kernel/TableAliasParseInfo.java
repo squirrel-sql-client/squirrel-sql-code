@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
 
-public class TableAliasParseInfo
+public class TableAliasParseInfo implements JoinOnClauseParseInfo
 {
 	public static final int POSITION_NON = -1;
 
@@ -40,6 +40,12 @@ public class TableAliasParseInfo
 	public int getStatEnd()
 	{
 		return _statEnd;
+	}
+
+	@Override
+	public String getTableOrAliasName()
+	{
+		return getAliasName();
 	}
 
 	public TableQualifier getTableQualifier()

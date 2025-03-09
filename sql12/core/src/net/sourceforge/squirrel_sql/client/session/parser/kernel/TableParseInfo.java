@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
 
-public class TableParseInfo
+public class TableParseInfo implements JoinOnClauseParseInfo
 {
    private String _tableName;
    private TableQualifier _tableQualifier;
@@ -35,6 +35,12 @@ public class TableParseInfo
    public int getStatEnd()
    {
       return _statEnd;
+   }
+
+   @Override
+   public String getTableOrAliasName()
+   {
+      return getTableName();
    }
 
    public boolean matches(TableQualifier tableQualifier, int statBegin)

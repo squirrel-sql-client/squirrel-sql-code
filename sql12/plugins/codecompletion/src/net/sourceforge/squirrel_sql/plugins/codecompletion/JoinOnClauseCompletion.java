@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.JoinOnClauseParseInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableParseInfo;
@@ -35,42 +36,19 @@ public class JoinOnClauseCompletion
          // Appears to be of no real use because
          // - probably joins between existing tables are already there
          // - to display all foreign keys the tables in the statement have seems to unspecific
-         //
-         //for(TableParseInfo tableParseInfo1 : _tableAndAliasParseResult.getTableParseInfosReadOnly())
-         //{
-         //   for(TableParseInfo tableParseInfo2 : _tableAndAliasParseResult.getTableParseInfosReadOnly())
-         //   {
-         //      if(    tableParseInfo1 == tableParseInfo2
-         //          || false == isInfoInStatementOfCaretPos(tableParseInfo1, textTillCaret.length())
-         //          || false == isInfoInStatementOfCaretPos(tableParseInfo2, textTillCaret.length())
-         //      )
-         //      {
-         //         continue;
-         //      }
-         //
-         //      CodeCompletionInfo[] functionResults = new InnerJoin(_session).getFunctionResults("#i," + tableParseInfo1.getTableName() + "," + tableParseInfo2.getTableName() + ",");
-         //
-         //      for(CodeCompletionInfo functionResult : functionResults)
-         //      {
-         //         if(false == functionResult.getCompletionString().trim().endsWith(".")) // If it ends with . it's just a dummy result.
-         //         {
-         //            ret.add(new JoinOnCompletionInfo(functionResult.getCompletionString().substring("INNER JOIN ".length()).trim()));
-         //         }
-         //      }
-         //   }
-         //}
       }
-      else if(null != joinLookupResult.getTableAliasParseInfo())
+      else if(null != joinLookupResult.getJoinOnClauseParseInfo())
       {
-         // TODO later
-      }
-      else if(null != joinLookupResult.getTableParseInfo())
-      {
-         for(TableParseInfo tableParseInfo : _tableAndAliasParseResult.getTableParseInfosReadOnly())
+         for(JoinOnClauseParseInfo joinOnClauseParseInfo : _tableAndAliasParseResult.getAllJoinOnClauseParseInfosReadOnly())
          {
-            if(tableParseInfo != joinLookupResult.getTableParseInfo() && isInfoInStatementOfCaretPos(tableParseInfo, textTillCaret.length()))
+            if(joinOnClauseParseInfo != joinLookupResult.getJoinOnClauseParseInfo() && isInfoInStatementOfCaretPos(joinOnClauseParseInfo, textTillCaret.length()))
             {
-               CodeCompletionInfo[] functionResults = new InnerJoin(_session).getFunctionResults("#i," + tableParseInfo.getTableName() + "," + joinLookupResult.getTableParseInfo().getTableName() + ",", textTillCaret.length());
+               String completionFunctionCommand = "#i," + joinOnClauseParseInfo.getTableOrAliasName() + "," + joinLookupResult.getJoinOnClauseParseInfo().getTableOrAliasName() + ",";
+
+               InnerJoin innerJoinCompletionFunction = new InnerJoin(_session);
+               innerJoinCompletionFunction.replaceLastTableAndAliasParseResult(_tableAndAliasParseResult);
+
+               CodeCompletionInfo[] functionResults = innerJoinCompletionFunction.getFunctionResults(completionFunctionCommand, textTillCaret.length());
 
                if(null == functionResults)
                {
@@ -79,7 +57,7 @@ public class JoinOnClauseCompletion
 
                for(CodeCompletionInfo functionResult : functionResults)
                {
-                  if(false == functionResult.getCompletionString().trim().endsWith("."))
+                  if(false == functionResult.getCompletionString().trim().endsWith(".")) // Leave out dummy completions for now
                   {
                      ret.add(new JoinOnCauseCompletionInfo(functionResultToCompletionStringStartingAtOn(functionResult)));
                   }
@@ -97,7 +75,7 @@ public class JoinOnClauseCompletion
       return functionCompletionString.substring(StringUtils.indexOfIgnoreCase(functionCompletionString, " ON ")).trim();
    }
 
-   private boolean isInfoInStatementOfCaretPos(TableParseInfo tableParseInfo, int caretPos)
+   private boolean isInfoInStatementOfCaretPos(JoinOnClauseParseInfo tableParseInfo, int caretPos)
    {
       return tableParseInfo.getStatBegin() <= caretPos && caretPos <= tableParseInfo.getStatEnd();
    }
