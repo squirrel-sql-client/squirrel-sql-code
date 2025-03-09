@@ -692,7 +692,7 @@ public class CellComponentFactory
             new ArrayList<String>(Arrays.asList(initialClassNameList));
 
       // add to that the list of all names that have been registered by plugins
-//		Iterator<IDataTypeComponentFactory> pluginDataTypeFactories = 
+//		Iterator<IDataTypeComponentFactory> pluginDataTypeFactories =
 //		    _registeredDataTypes.values().iterator();
 //		while (pluginDataTypeFactories.hasNext()) {
 //		    TODO: add support for plugin-registered data-type preferences panels
