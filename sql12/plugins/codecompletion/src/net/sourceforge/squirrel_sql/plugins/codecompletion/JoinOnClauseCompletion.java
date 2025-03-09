@@ -59,7 +59,7 @@ public class JoinOnClauseCompletion
                {
                   if(false == functionResult.getCompletionString().trim().endsWith(".")) // Leave out dummy completions for now
                   {
-                     ret.add(new JoinOnCauseCompletionInfo(functionResultToCompletionStringStartingAtOn(functionResult)));
+                     ret.add(new JoinOnCauseCompletionInfo(functionResultToOnClause(functionResult, !joinLookupResult.isAfterOnKeyword())));
                   }
                }
             }
@@ -69,10 +69,17 @@ public class JoinOnClauseCompletion
       return ret;
    }
 
-   private static String functionResultToCompletionStringStartingAtOn(CodeCompletionInfo functionResult)
+   private static String functionResultToOnClause(CodeCompletionInfo functionResult, boolean includeOnKeyWord)
    {
       String functionCompletionString = functionResult.getCompletionString();
-      return functionCompletionString.substring(StringUtils.indexOfIgnoreCase(functionCompletionString, " ON ")).trim();
+      String ret = functionCompletionString.substring(StringUtils.indexOfIgnoreCase(functionCompletionString, " ON "));
+
+      if(false == includeOnKeyWord)
+      {
+         ret = ret.substring(" ON ".length());
+      }
+
+      return ret.trim();
    }
 
    private boolean isInfoInStatementOfCaretPos(JoinOnClauseParseInfo tableParseInfo, int caretPos)
@@ -86,9 +93,17 @@ public class JoinOnClauseCompletion
 
       // Completion for JOIN keyword
       String firstToken = getNextToken(textTillCaret, nextStartPosRef);
+
+      boolean afterOnKeyword = false;
+      if(StringUtils.equalsIgnoreCase("ON", firstToken) )
+      {
+         afterOnKeyword = true;
+         firstToken = getNextToken(textTillCaret, nextStartPosRef);
+      }
+
       if(StringUtils.equalsIgnoreCase("JOIN", firstToken))
       {
-         return JoinLookupResult.ofEndsWithJoinKeyword();
+         return JoinLookupResult.ofEndsWithJoinKeyword(afterOnKeyword);
       }
 
       // Completion for table alias
@@ -105,7 +120,7 @@ public class JoinOnClauseCompletion
                token = getNextToken(textTillCaret, nextStartPosRef);
                if(StringUtils.equalsIgnoreCase("JOIN", token))
                {
-                  return JoinLookupResult.ofTableAlias(tableAliasParseInfo);
+                  return JoinLookupResult.ofTableAlias(tableAliasParseInfo, afterOnKeyword);
                }
             }
             return JoinLookupResult.empty();
@@ -115,7 +130,7 @@ public class JoinOnClauseCompletion
             token = getNextToken(textTillCaret, nextStartPosRef);
             if(StringUtils.endsWithIgnoreCase("JOIN", token))
             {
-               return JoinLookupResult.ofTableAlias(tableAliasParseInfo);
+               return JoinLookupResult.ofTableAlias(tableAliasParseInfo, afterOnKeyword);
             }
             return JoinLookupResult.empty();
          }
@@ -129,7 +144,7 @@ public class JoinOnClauseCompletion
          String token = getNextToken(textTillCaret, nextStartPosRef);
          if(StringUtils.equalsIgnoreCase("JOIN", token))
          {
-            return JoinLookupResult.ofTable(tableParseInfo);
+            return JoinLookupResult.ofTable(tableParseInfo, afterOnKeyword);
          }
          return JoinLookupResult.empty();
       }

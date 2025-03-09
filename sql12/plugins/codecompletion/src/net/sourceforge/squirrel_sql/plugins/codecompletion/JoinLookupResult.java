@@ -9,6 +9,7 @@ public class JoinLookupResult
    private boolean _endsWithJoinKeyword;
    private TableAliasParseInfo _tableAliasParseInfo;
    private TableParseInfo _tableParseInfo;
+   private boolean _afterOnKeyword;
 
    private JoinLookupResult()
    {
@@ -43,24 +44,32 @@ public class JoinLookupResult
       return null;
    }
 
-   public static JoinLookupResult ofEndsWithJoinKeyword()
+   public boolean isAfterOnKeyword()
+   {
+      return _afterOnKeyword;
+   }
+
+   public static JoinLookupResult ofEndsWithJoinKeyword(boolean afterOnKeyword)
    {
       JoinLookupResult ret = new JoinLookupResult();
       ret._endsWithJoinKeyword = true;
+      ret._afterOnKeyword = afterOnKeyword;
       return ret;
    }
 
-   public static JoinLookupResult ofTableAlias(TableAliasParseInfo tableAliasParseInfo)
+   public static JoinLookupResult ofTableAlias(TableAliasParseInfo tableAliasParseInfo, boolean afterOnKeyword)
    {
       JoinLookupResult ret = new JoinLookupResult();
       ret._tableAliasParseInfo = tableAliasParseInfo;
+      ret._afterOnKeyword = afterOnKeyword;
       return ret;
    }
 
-   public static JoinLookupResult ofTable(TableParseInfo tableParseInfo)
+   public static JoinLookupResult ofTable(TableParseInfo tableParseInfo, boolean afterOnKeyword)
    {
       JoinLookupResult ret = new JoinLookupResult();
       ret._tableParseInfo = tableParseInfo;
+      ret._afterOnKeyword = afterOnKeyword;
       return ret;
    }
 
