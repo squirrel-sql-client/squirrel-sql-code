@@ -48,7 +48,7 @@ public class StandardCompletorModel
 
    private SynonymHandler _synonymHandler;
 
-   private JoinOnCompletion _joinOnCompletion;
+   private JoinOnClauseCompletion _joinOnClauseCompletion;
 
 
    StandardCompletorModel(ISession session, CodeCompletionPlugin plugin, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
@@ -61,7 +61,7 @@ public class StandardCompletorModel
 
          _synonymHandler = new SynonymHandler(_session.getMetaData());
 
-         _joinOnCompletion = new JoinOnCompletion(_session);
+         _joinOnClauseCompletion = new JoinOnClauseCompletion(_session);
 
          _session.getParserEventsProcessor(sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
 			{
@@ -81,7 +81,7 @@ public class StandardCompletorModel
 	private void onTableAndAliasParseResultFound(TableAndAliasParseResult tableAndAliasParseResult)
 	{
 		_codeCompletionInfos.replaceLastAliasInfos(tableAndAliasParseResult.getTableAliasParseInfosReadOnly());
-      _joinOnCompletion.replaceLastTableAndAliasParseResult(tableAndAliasParseResult);
+      _joinOnClauseCompletion.replaceLastTableAndAliasParseResult(tableAndAliasParseResult);
 	}
 
 
@@ -89,7 +89,7 @@ public class StandardCompletorModel
    {
       ArrayList<CodeCompletionInfo> ret = new ArrayList<>();
 
-      ret.addAll(_joinOnCompletion.getJoinOnClausesCompletionInfos(textTillCaret));
+      ret.addAll(_joinOnClauseCompletion.getJoinOnClausesCompletionInfos(textTillCaret));
 
       CompletionParser parser = new CompletionParser(textTillCaret);
 

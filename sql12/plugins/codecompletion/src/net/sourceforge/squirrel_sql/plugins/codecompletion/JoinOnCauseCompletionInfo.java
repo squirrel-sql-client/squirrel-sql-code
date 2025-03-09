@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-public class JoinOnCompletionInfo extends CodeCompletionInfo
+public class JoinOnCauseCompletionInfo extends CodeCompletionInfo
 {
    private final String _completionOnClause;
 
-   public JoinOnCompletionInfo(String completionOnClause)
+   public JoinOnCauseCompletionInfo(String completionOnClause)
    {
       _completionOnClause = completionOnClause;
    }

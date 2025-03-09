@@ -10,12 +10,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JoinOnCompletion
+public class JoinOnClauseCompletion
 {
    private final ISession _session;
    private TableAndAliasParseResult _tableAndAliasParseResult = new TableAndAliasParseResult();
 
-   public JoinOnCompletion(ISession session)
+   public JoinOnClauseCompletion(ISession session)
    {
       _session = session;
    }
@@ -25,36 +25,40 @@ public class JoinOnCompletion
       _tableAndAliasParseResult = tableAndAliasParseResult;
    }
 
-   public List<JoinOnCompletionInfo> getJoinOnClausesCompletionInfos(String textTillCaret)
+   public List<JoinOnCauseCompletionInfo> getJoinOnClausesCompletionInfos(String textTillCaret)
    {
-      List<JoinOnCompletionInfo> ret = new ArrayList<>();
+      List<JoinOnCauseCompletionInfo> ret = new ArrayList<>();
 
       JoinLookupResult joinLookupResult = getJoinLookupResult(textTillCaret);
       if(joinLookupResult.isEndsWithJoinKeyword())
       {
-         for(TableParseInfo tableParseInfo1 : _tableAndAliasParseResult.getTableParseInfosReadOnly())
-         {
-            for(TableParseInfo tableParseInfo2 : _tableAndAliasParseResult.getTableParseInfosReadOnly())
-            {
-               if(    tableParseInfo1 == tableParseInfo2
-                   || false == isInfoInStatementOfCaretPos(tableParseInfo1, textTillCaret.length())
-                   || false == isInfoInStatementOfCaretPos(tableParseInfo2, textTillCaret.length())
-               )
-               {
-                  continue;
-               }
-
-               CodeCompletionInfo[] functionResults = new InnerJoin(_session).getFunctionResults("#i," + tableParseInfo1.getTableName() + "," + tableParseInfo2.getTableName() + ",");
-
-               for(CodeCompletionInfo functionResult : functionResults)
-               {
-                  if(false == functionResult.getCompletionString().trim().endsWith(".")) // If it ends with . it's just a dummy result.
-                  {
-                     ret.add(new JoinOnCompletionInfo(functionResult.getCompletionString().substring("INNER JOIN ".length()).trim()));
-                  }
-               }
-            }
-         }
+         // Appears to be of no real use because
+         // - probably joins between existing tables are already there
+         // - to display all foreign keys the tables in the statement have seems to unspecific
+         //
+         //for(TableParseInfo tableParseInfo1 : _tableAndAliasParseResult.getTableParseInfosReadOnly())
+         //{
+         //   for(TableParseInfo tableParseInfo2 : _tableAndAliasParseResult.getTableParseInfosReadOnly())
+         //   {
+         //      if(    tableParseInfo1 == tableParseInfo2
+         //          || false == isInfoInStatementOfCaretPos(tableParseInfo1, textTillCaret.length())
+         //          || false == isInfoInStatementOfCaretPos(tableParseInfo2, textTillCaret.length())
+         //      )
+         //      {
+         //         continue;
+         //      }
+         //
+         //      CodeCompletionInfo[] functionResults = new InnerJoin(_session).getFunctionResults("#i," + tableParseInfo1.getTableName() + "," + tableParseInfo2.getTableName() + ",");
+         //
+         //      for(CodeCompletionInfo functionResult : functionResults)
+         //      {
+         //         if(false == functionResult.getCompletionString().trim().endsWith(".")) // If it ends with . it's just a dummy result.
+         //         {
+         //            ret.add(new JoinOnCompletionInfo(functionResult.getCompletionString().substring("INNER JOIN ".length()).trim()));
+         //         }
+         //      }
+         //   }
+         //}
       }
       else if(null != joinLookupResult.getTableAliasParseInfo())
       {
@@ -77,7 +81,7 @@ public class JoinOnCompletion
                {
                   if(false == functionResult.getCompletionString().trim().endsWith("."))
                   {
-                     ret.add(new JoinOnCompletionInfo(functionResultToCompletionStringStartingAtOn(functionResult)));
+                     ret.add(new JoinOnCauseCompletionInfo(functionResultToCompletionStringStartingAtOn(functionResult)));
                   }
                }
             }
