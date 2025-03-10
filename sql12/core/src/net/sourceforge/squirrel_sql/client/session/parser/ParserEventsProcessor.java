@@ -24,8 +24,9 @@ public class ParserEventsProcessor implements IParserEventsProcessor
    private ISQLPanelAPI _sqlPanelApi;
 	private KeyAdapter _triggerParserKeyListener;
    private boolean _processingEnded;
+	private long _timerLastRestarted = 0;
 
-   public ParserEventsProcessor(ISQLPanelAPI sqlPanelApi, ISession session)
+	public ParserEventsProcessor(ISQLPanelAPI sqlPanelApi, ISession session)
    {
       _session = session;
       _sqlPanelApi = sqlPanelApi;
@@ -40,7 +41,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
       };
 
 
-      _parserTimer = new Timer(500, e -> onTimerStart());
+      _parserTimer = new Timer(250, e -> onTimerStart());
 
 		// Repeats is set to true to make sure the parser gets correctly initialized.
 		// once all loading is done.
@@ -100,7 +101,13 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	public void triggerParser()
    {
-      _parserTimer.restart();
+		long currentTimeMillis = System.currentTimeMillis();
+		// Without this if and quick typing the _parserTimer only gets restarted but never fires.
+		if(currentTimeMillis - _timerLastRestarted > _parserTimer.getDelay() + 10)
+		{
+			_timerLastRestarted = currentTimeMillis;
+			_parserTimer.restart();
+		}
    }
 
 	private void onParsingFinished()
