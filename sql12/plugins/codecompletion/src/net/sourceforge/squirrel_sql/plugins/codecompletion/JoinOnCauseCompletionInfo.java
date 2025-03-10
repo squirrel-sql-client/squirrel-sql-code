@@ -12,7 +12,9 @@ public class JoinOnCauseCompletionInfo extends CodeCompletionInfo
    @Override
    public String getCompareString()
    {
-      // Blank or JOIN-Keyword depending on text till caret
+      // Will be added to the completion list whenever ON-clauses make sense,
+      // which is after the table join or table alias in a JOIN-clause.
+      // That's why there is no compare string.
       return "";
    }
 
@@ -20,5 +22,11 @@ public class JoinOnCauseCompletionInfo extends CodeCompletionInfo
    public String getCompletionString()
    {
       return _completionOnClause;
+   }
+
+   @Override
+   public String toString()
+   {
+      return _completionOnClause + " (ON clause of JOIN)";
    }
 }
