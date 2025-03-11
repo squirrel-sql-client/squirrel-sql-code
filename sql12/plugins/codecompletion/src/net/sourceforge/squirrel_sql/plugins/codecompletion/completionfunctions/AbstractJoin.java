@@ -1,5 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
@@ -11,16 +21,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
 import org.apache.commons.lang3.StringUtils;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 
 public abstract class AbstractJoin extends CodeCompletionFunction
@@ -101,7 +101,7 @@ public abstract class AbstractJoin extends CodeCompletionFunction
                   {
                      schemas.add(schema);
                   }
-                  table_tableAliasParseInfo.put(table, tableAliasParseInfo);
+                  table_tableAliasParseInfo.put(toUpperCase(table), tableAliasParseInfo);
 
                }
             }
@@ -231,13 +231,18 @@ public abstract class AbstractJoin extends CodeCompletionFunction
 
    private static String getTableOrAliasName(String tableName, HashMap<String, TableAliasParseInfo> table_tableAliasParseInfo)
    {
-      TableAliasParseInfo tableAliasParseInfo = table_tableAliasParseInfo.get(tableName);
+      TableAliasParseInfo tableAliasParseInfo = table_tableAliasParseInfo.get(toUpperCase(tableName));
       if(null == tableAliasParseInfo)
       {
          return tableName;
       }
 
       return tableAliasParseInfo.getAliasName();
+   }
+
+   private static String toUpperCase(String tableName)
+   {
+      return StringUtils.toRootUpperCase(tableName);
    }
 
    protected abstract String getJoinClause(String fkName, 
