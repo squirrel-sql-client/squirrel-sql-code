@@ -6,6 +6,20 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Code completion Plugin: The Plugin offers completion of JOIN ON clauses.
+  Example: When ctrl+space is hit after a space char behind
+  SELECT * FROM Books bk INNER JOIN Authors
+  the first entry of the completion list will be "ON bk.AuthorId = Authors.Id"
+  provided that there's a foreign key Books.AuthorId pointing to Authors.Id.
+
+Code completion Plugin: The completion functions (#i,..., #l,..., #r,..., #j,...,) now support table aliases.
+  Example: When ctrl+space is hit behind the last comma of
+  SELECT * FROM Books bk #i,bk,Authors,
+  it will be expanded to
+  SELECT * FROM Books bk INNER JOIN Authors ON bk.AuthorId = Authors.Id
+  provided that there's a foreign key Books.AuthorId pointing to Authors.Id.
+  For more information see the "SQL Entry Code Completion" help.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/59
   Cell data popup and cell detail display now highlight JSON and XML content after it was reformatted.
   - For automatic highlighting go to menu File --> Global Preferences --> tab "Data Type Controls"
