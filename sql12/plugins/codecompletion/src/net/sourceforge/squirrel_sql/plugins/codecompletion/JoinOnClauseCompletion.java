@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.JoinOnClauseParseInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
@@ -7,9 +10,6 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasPa
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableParseInfo;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions.InnerJoin;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class JoinOnClauseCompletion
 {
@@ -89,6 +89,12 @@ public class JoinOnClauseCompletion
 
    private JoinLookupResult getJoinLookupResult(String textTillCaret)
    {
+      // JOIN-ON-clause completion requires at least on white space after table or table alias or ON-Keyword.
+      if(0 < textTillCaret.length() && false == Character.isWhitespace(textTillCaret.charAt(textTillCaret.length() - 1)))
+      {
+         return JoinLookupResult.empty();
+      }
+
       int[] nextStartPosRef = new int[]{textTillCaret.length() - 1};
 
       // Completion for JOIN keyword
