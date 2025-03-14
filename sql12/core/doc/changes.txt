@@ -184,6 +184,10 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/59
+  Cell data popup and cell detail display: Improved readability JSON/XML highlighting
+  in light and dark mode.
+
 Loading Syntax- and Auto-Correct-properties raised ClassNotFoundException.
   The problem concerns
   - Menu File --> New Session Properties --> tab Syntax

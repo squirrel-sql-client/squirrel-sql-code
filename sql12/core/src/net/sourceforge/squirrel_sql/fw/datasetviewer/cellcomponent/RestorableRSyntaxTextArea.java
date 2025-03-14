@@ -1,7 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesEnum;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.theme.SyntaxThemeFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+
+import java.awt.Color;
 
 /**
  * @author gwg
@@ -23,6 +27,12 @@ public class RestorableRSyntaxTextArea extends RSyntaxTextArea implements IResto
    public RestorableRSyntaxTextArea()
    {
       setHighlightCurrentLine(false);
+
+      if( ThemesEnum.getCurrentTheme() == ThemesEnum.DARK )
+      {
+         setBackground(SyntaxThemeFactory.SYNTAX_DARK_THEME_BACKGROUND_COLOR);
+         setForeground(Color.white);
+      }
    }
 
    /*
