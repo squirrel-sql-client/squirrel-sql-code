@@ -184,6 +184,11 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+The query
+  "SELECT title--comment
+  FROM books"
+  failed because the comment started at the end of the first line without white spaces.
+
 Updated/corrected the driver dialog description of SQuirreL's help.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/59

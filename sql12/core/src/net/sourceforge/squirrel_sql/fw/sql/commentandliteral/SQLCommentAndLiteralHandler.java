@@ -69,13 +69,27 @@ public class SQLCommentAndLiteralHandler
             _isInLineComment = _script.startsWith(_lineCommentBegin, posInScript);
          }
 
-         if((_isInMultiLineComment && _removeMultiLineComment) || (_isInLineComment && _removeLineComment))
+         if(_isInMultiLineComment && _removeMultiLineComment)
          {
             // This is responsible that comments are not in curQuery
             // curOriginalQuery.append(c);
             // continue;
             return NextPositionAction.SKIP;
          }
+         else if (_isInLineComment && _removeLineComment)
+         {
+            if(c == '\n')
+            {
+               // Without this the query
+               // SELECT title--d
+               // FROM books
+               // will fail.
+               return NextPositionAction.APPEND;
+            }
+
+            return NextPositionAction.SKIP;
+         }
+
          //
          ////////////////////////////////////////////////////////////
       }
