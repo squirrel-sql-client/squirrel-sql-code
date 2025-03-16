@@ -333,22 +333,13 @@ is only an example URL, the actual URL is defined in the alias.</p>
 <p>The <em>Website URL</em> allows you to store a link to the
 database vendor's website for JDBC driver documentation.</p>
 
-<p>The entries in the <em>Java Class path</em> tab show the
-directories and jars in the current class path. Pressing the <em>List
-Drivers</em> button will place the class names of all the JDBC drivers found
-in the class path into the <em>Class Name</em> dropdown control.</p>
+<p>The <em>JDBC Driver Class Path</em> allows you to select a JDBC
+	driver that is in a jar file or a directory.</p>
 
 <p>The <em>Class Name</em> specifies the class name of the JDBC
 driver. Either select an existing entry in the dropdown or key in the
 class name of the JDBC driver (it can normally be found in the
 documentation that comes with the driver).</p>
-
-<p>The <em>Extra Class Path</em> tab allows you to select a JDBC
-driver that is in a jar file or a directory that is not in the current
-class path.</p>
-
-<p align="CENTER"><img src="images/chg_driver_2.png" border="0"
-	alt="Change Driver dialog (Extra Class Path tab)"></p>
 
 <p>The <em>Add</em> button will display a File Open dialog allowing
 you to select one or more jar files or directories. The <em>Delete</em>
@@ -360,6 +351,19 @@ all the JDBC drivers into the <em>Class Name</em> dropdown.</p>
 <p>Press the <em>OK</em> button to save the driver definition and
 close the window or the <em>Close</em> button to close the window
 without saving any changes.</p>
+
+<p>
+Pressing the <em>List Drivers</em> button will place the class names of all the JDBC drivers found
+in the class path into the <em>Class Name</em> dropdown control.
+</p>
+
+<p align="CENTER"><img src="images/chg_driver_2.png" border="0"
+					   alt="Change Driver dialog (Extra Class Path tab)"></p>
+
+<p>The entries in the <em>Java Class path</em> tab show the	directories and jars in SQuirreL's class path.
+Note that SQuirreL does not ship drivers and that driver libs (jars) should not be copied into SQuirreL's class path.
+but instead should be added to the <em>JDBC Driver Class Path</em> and should be kept outside your SQuirreL installation directory.
+</p>
 
 <a name="the_alias"></a>
 
