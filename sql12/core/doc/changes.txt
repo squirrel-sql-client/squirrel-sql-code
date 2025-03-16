@@ -184,6 +184,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Changed SQuirreL's main frame icon (arcon.png) from APNG (animated PNG) to a usual PNG file.
+  Thanks to Federico Bruni for the fix.
+
 The query
   "SELECT title--comment
   FROM books"
