@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -30,6 +31,7 @@ public class DataSetFindPanel extends JPanel
    JButton btnShowRowsFoundInTable;
    JButton btnColorMatchedCells;
    JButton btnNarrowColsToSearch;
+   JButton btnSearchGlobally;
 
    public DataSetFindPanel()
    {
@@ -98,7 +100,13 @@ public class DataSetFindPanel extends JPanel
       btnNarrowColsToSearch.setBorder(BorderFactory.createEtchedBorder());
       add(btnNarrowColsToSearch, gbc);
 
-      gbc = new GridBagConstraints(10,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(10,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
+      btnSearchGlobally = new JButton(rsrc.getIcon(LibraryResources.IImageNames.SEARCH_GLOBALLY));
+      btnSearchGlobally.setToolTipText(s_stringMgr.getString("DataSetFindPanel.search.globally"));
+      btnSearchGlobally.setBorder(BorderFactory.createEtchedBorder());
+      add(btnSearchGlobally, gbc);
+
+      gbc = new GridBagConstraints(11,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnHideFindPanel = new JButton(rsrc.getIcon(LibraryResources.IImageNames.HIDE));
       btnHideFindPanel.setPressedIcon(rsrc.getIcon(LibraryResources.IImageNames.HIDE_SELECTED));
       btnHideFindPanel.setToolTipText(s_stringMgr.getString("DataSetFindPanel.hideFind"));
@@ -107,21 +115,12 @@ public class DataSetFindPanel extends JPanel
 
    }
 
-   static enum MatchTypeCboItem
+   enum MatchTypeCboItem
    {
-      // i18n[DataSetFindPanel.filterCboContains=contains]
       CONTAINS (s_stringMgr.getString("DataSetFindPanel.filterCboContains")),
-
-      // i18n[DataSetFindPanel.filterCboContains=contains]
       EXACT (s_stringMgr.getString("DataSetFindPanel.exact")),
-
-      // i18n[DataSetFindPanel.filterCboStartsWith=starts with]
       STARTS_WITH (s_stringMgr.getString("DataSetFindPanel.filterCboStartsWith")),
-
-      // i18n[DataSetFindPanel.filterCboEndsWith=ends with]
       ENDS_WITH (s_stringMgr.getString("DataSetFindPanel.filterCboEndsWith")),
-
-      // i18n[DataSetFindPanel.filterCboRegEx=regular exp]
       REG_EX (s_stringMgr.getString("DataSetFindPanel.filterCboRegEx"));
       private String _name;
 
@@ -135,6 +134,19 @@ public class DataSetFindPanel extends JPanel
       public String toString()
       {
          return _name;
+      }
+
+      public GlobalSearchType getGlobalType()
+      {
+         switch(this)
+         {
+            case CONTAINS: return GlobalSearchType.CONTAINS_IGNORE_CASE;
+            case EXACT: return GlobalSearchType.EXACT;
+            case STARTS_WITH: return GlobalSearchType.STARTS_WITH;
+            case ENDS_WITH: return GlobalSearchType.ENDS_WITH;
+            case REG_EX: return GlobalSearchType.REG_EX;
+            default: throw new IllegalStateException("Unknown search type " + name());
+         }
       }
    }
 

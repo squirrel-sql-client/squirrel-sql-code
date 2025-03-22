@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
+import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearcher;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
@@ -322,4 +323,6 @@ public interface IApplication
 	PinnedCellDataDialogHandler getPinnedCellDataDialogHandler();
 
 	SyntaxManager getSyntaxManager();
+
+	GlobalSearcher getGlobalSearcher();
 }

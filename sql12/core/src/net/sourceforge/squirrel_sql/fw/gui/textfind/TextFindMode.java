@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.textfind;
 
+import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -16,6 +17,7 @@ public enum TextFindMode
       _displayName = displayName;
    }
 
+
    private interface I18nProvider
    {
       StringManager s_stringMgr = StringManagerFactory.getStringManager(TextFindMode.class);
@@ -26,4 +28,16 @@ public enum TextFindMode
    {
       return _displayName;
    }
+
+   public GlobalSearchType getGlobalType()
+   {
+      switch(this)
+      {
+         case CONTAINS: return GlobalSearchType.CONTAINS;
+         case CONTAINS_IGNORE_CASE: return GlobalSearchType.CONTAINS_IGNORE_CASE;
+         case CONTAINS_REG_EXP: return GlobalSearchType.REG_EX;
+         default: throw new IllegalStateException("Unknown search type: " + name());
+      }
+   }
+
 }
