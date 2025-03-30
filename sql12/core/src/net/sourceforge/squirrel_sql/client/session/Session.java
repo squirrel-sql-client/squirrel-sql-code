@@ -79,8 +79,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -943,6 +945,26 @@ class Session implements ISession
       }
 
       return sqlPanelAPI;
+   }
+
+   public List<SQLPanelApiInfo> getAllSQLPanelApiInfos()
+   {
+      List<SQLPanelApiInfo> ret = new ArrayList<>();
+
+      List<ISessionWidget> sessionWindows = Main.getApplication().getSessionManager().getSessionWindowsForSession(this);
+
+      for(ISessionWidget sessionWindow : sessionWindows)
+      {
+         if(sessionWindow instanceof SQLInternalFrame)
+         {
+            ret.add(SQLPanelApiInfo.ofSQLInternalFrame((SQLInternalFrame) _activeActiveSessionWindow));
+         }
+         else if(sessionWindow instanceof SessionInternalFrame)
+         {
+            ret.addAll(SQLPanelApiInfo.ofSessionMainWindow((SessionInternalFrame) sessionWindow));
+         }
+      }
+      return ret;
    }
 
    public boolean isSessionWidgetActive()

@@ -23,6 +23,7 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainDialog;
@@ -713,5 +714,10 @@ public class SessionManager
    {
       _allowedSchemasBySessionID.remove(session.getIdentifier());
       _allSchemasBySessionID.remove(session.getIdentifier());
+   }
+
+   public List<ISessionWidget> getSessionWindowsForSession(Session session)
+   {
+      return List.of(Main.getApplication().getWindowManager().getAllFramesOfSession(session.getIdentifier()));
    }
 }

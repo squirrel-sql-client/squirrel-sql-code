@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import javax.swing.Action;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * The current session.
@@ -275,6 +276,9 @@ public interface ISession extends IHasIdentifier
    ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow();
 
    ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow(boolean allowReturnNull);
+
+   List<SQLPanelApiInfo> getAllSQLPanelApiInfos();
+
 
    /**
     *

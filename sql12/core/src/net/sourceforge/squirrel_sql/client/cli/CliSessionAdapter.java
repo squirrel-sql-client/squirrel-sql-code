@@ -13,6 +13,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
 import net.sourceforge.squirrel_sql.client.session.ModificationAwareSessionTitle;
+import net.sourceforge.squirrel_sql.client.session.SQLPanelApiInfo;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxPreferences;
@@ -34,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import javax.swing.Action;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 
 public class CliSessionAdapter implements ISession
 {
@@ -437,6 +439,12 @@ public class CliSessionAdapter implements ISession
 
    @Override
    public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow(boolean allowReturnNull)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public List<SQLPanelApiInfo> getAllSQLPanelApiInfos()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }
