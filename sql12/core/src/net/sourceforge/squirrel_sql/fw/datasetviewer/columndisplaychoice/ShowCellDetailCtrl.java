@@ -24,6 +24,7 @@ public class ShowCellDetailCtrl
    public ShowCellDetailCtrl(ResultTab resultTab)
    {
       _resultTabProvider = new ResultTabProvider(resultTab);
+      Main.getApplication().getGlobalCellDataDisplayManager().registerCellDetailCtrl(this);
    }
 
    public JToggleButton getTabButton()
@@ -79,4 +80,19 @@ public class ShowCellDetailCtrl
       }
    }
 
+   public void resultTabDisposed()
+   {
+      Main.getApplication().getGlobalCellDataDisplayManager().unregisterCellDetailCtrl(this);
+   }
+
+   public boolean isOpen()
+   {
+      ResultDataSetAndCellDetailDisplayHandler selectedTabsDisplayHandler = _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler();
+      if(null != selectedTabsDisplayHandler)
+      {
+         return selectedTabsDisplayHandler.isOpen();
+      }
+
+      return false;
+   }
 }

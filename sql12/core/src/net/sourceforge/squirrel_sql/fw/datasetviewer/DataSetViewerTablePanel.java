@@ -100,7 +100,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
    {
 		if(false == e.getValueIsAdjusting())
 		{
-			Main.getApplication().getPinnedCellDataDialogHandler();
+			Main.getApplication().getGlobalCellDataDisplayManager();
 			CellDataDialogHandler.showSelectedValueInPinnedCellDataDialog(_table, isTableEditable());
 		}
 

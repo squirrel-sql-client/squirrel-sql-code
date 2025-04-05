@@ -16,7 +16,7 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import java.awt.GridLayout;
 
-class CellDataDialog extends JDialog
+public class CellDataDialog extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataDialog.class);
 
@@ -69,11 +69,11 @@ class CellDataDialog extends JDialog
    {
       if(sticky)
       {
-         Main.getApplication().getPinnedCellDataDialogHandler().setPinnedCellDataDialog(this);
+         Main.getApplication().getGlobalCellDataDisplayManager().setPinnedCellDataDialog(this);
       }
       else
       {
-         Main.getApplication().getPinnedCellDataDialogHandler().clearPinnedCellDataDialog();
+         Main.getApplication().getGlobalCellDataDisplayManager().clearPinnedCellDataDialog();
       }
    }
 

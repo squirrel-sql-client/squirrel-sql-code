@@ -50,7 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.menuattic.PopupMenuAtticModel
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeComponentFactoryRegistry;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypePropertiesManager;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.PinnedCellDataDialogHandler;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.GlobalCellDataDisplayManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDetailDisplayModeManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
@@ -320,7 +320,7 @@ public interface IApplication
 
 	CellDetailDisplayModeManager getCellDetailDisplayModeManager();
 
-	PinnedCellDataDialogHandler getPinnedCellDataDialogHandler();
+	GlobalCellDataDisplayManager getGlobalCellDataDisplayManager();
 
 	SyntaxManager getSyntaxManager();
 

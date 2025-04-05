@@ -3,8 +3,11 @@ package net.sourceforge.squirrel_sql.client.globalsearch;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelApiInfo;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialog;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ShowCellDetailCtrl;
 
 import java.util.List;
+import java.util.Set;
 
 public class GlobalSearcher
 {
@@ -21,8 +24,7 @@ public class GlobalSearcher
          List<SQLPanelApiInfo> sqlPanelApiInfos =  openSession.getAllSQLPanelApiInfos();
       }
 
-      // To access cell details popup
-      Main.getApplication().getPinnedCellDataDialogHandler();
-
+      Set<CellDataDialog> openCellDataDialogs = Main.getApplication().getGlobalCellDataDisplayManager().getOpenCellDataDialogs();
+      Set<ShowCellDetailCtrl> openCellDetailCtrls = Main.getApplication().getGlobalCellDataDisplayManager().getCellDetailCtrls();
    }
 }

@@ -264,6 +264,11 @@ public class ResultDataSetAndCellDetailDisplayHandler
       return _cellDetailSplitActive;
    }
 
+   public boolean isOpen()
+   {
+      return isCellDetailSplitActive();
+   }
+
 
    private void fireCellSelectionChangedForCurrentSelectedCell()
    {

@@ -63,7 +63,7 @@ public class CellDataDialogHandler
                                  MouseEvent evt,
                                  boolean isModelEditable)
    {
-      CellDataDialog pinnedCellDataDialog = Main.getApplication().getPinnedCellDataDialogHandler().getPinnedCellDataDialog();
+      CellDataDialog pinnedCellDataDialog = Main.getApplication().getGlobalCellDataDisplayManager().getPinnedCellDataDialog();
       if(null != pinnedCellDataDialog)
       {
          return;
@@ -92,7 +92,7 @@ public class CellDataDialogHandler
     */
    public static void showSelectedValueInPinnedCellDataDialog(JTable table, boolean isModelEditable)
    {
-      CellDataDialog pinnedCellDataDialog = Main.getApplication().getPinnedCellDataDialogHandler().getPinnedCellDataDialog();
+      CellDataDialog pinnedCellDataDialog = Main.getApplication().getGlobalCellDataDisplayManager().getPinnedCellDataDialog();
       if(null == pinnedCellDataDialog)
       {
          return;
@@ -184,5 +184,6 @@ public class CellDataDialogHandler
       });
 
       cellDataDialog.setVisible(true);
+      Main.getApplication().getGlobalCellDataDisplayManager().registerOpenCellDataDialog(cellDataDialog);
    }
 }

@@ -406,6 +406,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       }
 
       _rsds.closeStatementAndResultSet();
+
+      _showCellDetailCtrl.resultTabDisposed();
    }
 
 	/**
