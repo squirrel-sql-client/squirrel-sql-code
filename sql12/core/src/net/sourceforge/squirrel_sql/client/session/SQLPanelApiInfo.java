@@ -14,9 +14,10 @@ public class SQLPanelApiInfo
 {
    private SessionInternalFrame _parentSessionMainWindow;
 
+   private AdditionalSQLTab _parentAdditionalSQLTab;
+
    private SQLInternalFrame _parentSqlInternalFrame;
 
-   private AdditionalSQLTab _parentAdditionalSQLTab;
 
    private ISQLPanelAPI _sqlPanelApi;
 
@@ -75,7 +76,7 @@ public class SQLPanelApiInfo
       ISQLResultExecutor sqlResultExecuter = _sqlPanelApi.getSQLResultExecuter();
       if (sqlResultExecuter != null)
       {
-         sqlResultExecuter.getAllSqlResultTabs().stream().map(t -> new ResultTabProvider(t)).collect(Collectors.toList());
+         return sqlResultExecuter.getAllSqlResultTabs().stream().map(t -> new ResultTabProvider(t)).collect(Collectors.toList());
       }
 
       return List.of();
