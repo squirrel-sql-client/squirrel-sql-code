@@ -406,8 +406,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       }
 
       _rsds.closeStatementAndResultSet();
-
-      _showCellDetailCtrl.resultTabDisposed();
    }
 
 	/**
@@ -761,6 +759,11 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       return _allowEditing;
    }
 
+   /**
+    * An SQL-Result-Tab has several tabs itself: "Results", "Meta Data", "Info", "Overview / Charts", ...
+    * This method returns non-null only when the selected tab of the ones above has a {@link ResultDataSetAndCellDetailDisplayHandler}.
+    * E.g. the "Results"-tab always has one.
+    */
    @Override
    public ResultDataSetAndCellDetailDisplayHandler getSelectedResultTabsDisplayHandler()
    {
@@ -772,6 +775,15 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       }
 
       return findHandler.getResultDisplayHandler();
+   }
+
+   /**
+    * An SQL-Result-Tab has several tabs itself: "Results", "Meta Data", "Info", "Overview / Charts", ...
+    * This method returns the "Results"-tab's {@link ResultDataSetAndCellDetailDisplayHandler}
+    */
+   public ResultDataSetAndCellDetailDisplayHandler getResultsTabsDetailDisplayHandler()
+   {
+      return _resultDataSetViewerFindHandler.getResultDisplayHandler();
    }
 
    public void selectSQLResultTabSelected()

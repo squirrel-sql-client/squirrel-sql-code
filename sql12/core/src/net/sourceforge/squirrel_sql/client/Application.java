@@ -67,7 +67,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeComponentFactoryRegistry;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypePropertiesManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellImportExportInfoSaver;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.GlobalCellDataDisplayManager;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.GlobalCellDataDialogManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDetailDisplayModeManager;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
@@ -241,7 +241,7 @@ public class Application implements IApplication
 	private DataTypePropertiesManager _dataTypePropertiesManager = new DataTypePropertiesManager();
 
 	private CellDetailDisplayModeManager _cellDetailDisplayModeManager = new CellDetailDisplayModeManager();
-	private GlobalCellDataDisplayManager _globalCellDataDisplayManager = new GlobalCellDataDisplayManager();
+	private GlobalCellDataDialogManager _globalCellDataDialogManager = new GlobalCellDataDialogManager();
 
 	private SyntaxManager _syntaxManager = new SyntaxManager();
 	private GlobalSearcher _globalSearcher = new GlobalSearcher();
@@ -1576,9 +1576,9 @@ public class Application implements IApplication
    }
 
    @Override
-   public GlobalCellDataDisplayManager getGlobalCellDataDisplayManager()
+   public GlobalCellDataDialogManager getGlobalCellDataDialogManager()
    {
-      return _globalCellDataDisplayManager;
+      return _globalCellDataDialogManager;
    }
 
 	public SyntaxManager getSyntaxManager()

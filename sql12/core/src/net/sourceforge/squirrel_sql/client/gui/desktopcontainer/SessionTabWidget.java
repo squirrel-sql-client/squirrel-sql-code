@@ -122,4 +122,8 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       }
    }
 
+   public String getTitleWithoutFile()
+   {
+      return _titleWithoutFile.getTitle();
+   }
 }

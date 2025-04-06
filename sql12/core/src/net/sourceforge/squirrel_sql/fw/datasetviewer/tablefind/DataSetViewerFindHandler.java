@@ -1,16 +1,15 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Window;
-import javax.swing.JPanel;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Window;
 
 public class DataSetViewerFindHandler
 {
@@ -160,15 +159,4 @@ public class DataSetViewerFindHandler
    {
       return _resultDisplayHandler;
    }
-
-   private static class NullPanel extends JPanel
-   {
-      private NullPanel()
-      {
-         setPreferredSize(new Dimension(0,0));
-         setSize(new Dimension(0, 0));
-         setMaximumSize(new Dimension(0, 0));
-      }
-   }
-
 }

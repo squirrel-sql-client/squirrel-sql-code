@@ -86,7 +86,19 @@ public interface IResultTab
 
    void setParentWindow(Window parent);
 
+   /**
+    * An SQL-Result-Tab has several tabs itself: "Results", "Meta Data", "Info", "Overview / Charts", ...
+    * This method returns non-null only when the selected tab of the ones above has a {@link ResultDataSetAndCellDetailDisplayHandler}.
+    * E.g. the "Results"-tab always has one.
+    */
    ResultDataSetAndCellDetailDisplayHandler getSelectedResultTabsDisplayHandler();
+
+   /**
+    * An SQL-Result-Tab has several tabs itself: "Results", "Meta Data", "Info", "Overview / Charts", ...
+    * This method returns the "Results"-tab's {@link ResultDataSetAndCellDetailDisplayHandler}
+    */
+   ResultDataSetAndCellDetailDisplayHandler getResultsTabsDetailDisplayHandler();
+
 
    IntegerIdentifier getIdentifier();
 }

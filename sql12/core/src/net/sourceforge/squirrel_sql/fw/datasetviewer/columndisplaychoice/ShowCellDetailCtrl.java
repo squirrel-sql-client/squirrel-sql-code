@@ -7,16 +7,12 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Re
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JToggleButton;
 
 public class ShowCellDetailCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ShowCellDetailCtrl.class);
-   private static ILogger s_log = LoggerController.createLogger(ShowCellDetailCtrl.class);
-
 
    private final ResultTabProvider _resultTabProvider;
    private JToggleButton _button;
@@ -24,7 +20,6 @@ public class ShowCellDetailCtrl
    public ShowCellDetailCtrl(ResultTab resultTab)
    {
       _resultTabProvider = new ResultTabProvider(resultTab);
-      Main.getApplication().getGlobalCellDataDisplayManager().registerCellDetailCtrl(this);
    }
 
    public JToggleButton getTabButton()
@@ -78,11 +73,6 @@ public class ShowCellDetailCtrl
       {
          _button.doClick();
       }
-   }
-
-   public void resultTabDisposed()
-   {
-      Main.getApplication().getGlobalCellDataDisplayManager().unregisterCellDetailCtrl(this);
    }
 
    public boolean isOpen()
