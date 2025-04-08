@@ -98,7 +98,9 @@ public class SQLEntryPanelUtil
 
    }
 
-
+   /**
+    * See also {@link net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxKeyManager#STOP_AT}
+    */
    private static boolean isParseStop(char c, boolean treatDotAsStop)
    {
       return
@@ -110,6 +112,9 @@ public class SQLEntryPanelUtil
          '>' == c ||
          '<' == c ||
          '\'' == c ||
+         '/' == c ||
+         ':' == c ||
+         '"' == c ||
          Character.isWhitespace(c) ||
          (treatDotAsStop && '.' == c);
    }

@@ -1,13 +1,15 @@
 package net.sourceforge.squirrel_sql.client.session.action.syntax;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.KeyStroke;
-import javax.swing.text.JTextComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+import javax.swing.text.JTextComponent;
+
+import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
 
 
 /**
@@ -15,7 +17,10 @@ import java.awt.event.KeyEvent;
  */
 public class SyntaxKeyManager
 {
-   public static final char[] STOP_AT = new char[]{'.', '(', ')' , '\'', '\n', ',', '=', '<', '>'};
+   /**
+    * See also {@link SQLEntryPanelUtil#isParseStop(char, boolean)}
+    */
+   private static final char[] STOP_AT = new char[]{'.', '(', ')' , '\'', '\n', ',', '=', '<', '>', '"'};
 
    private JTextComponent _textPane;
 

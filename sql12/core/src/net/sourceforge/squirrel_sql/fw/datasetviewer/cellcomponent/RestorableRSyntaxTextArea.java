@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
 import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesEnum;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.theme.SyntaxThemeFactory;
+import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxKeyManager;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
@@ -27,6 +28,8 @@ public class RestorableRSyntaxTextArea extends RSyntaxTextArea implements IResto
    public RestorableRSyntaxTextArea()
    {
       setHighlightCurrentLine(false);
+
+      new SyntaxKeyManager(this);
 
       if( ThemesEnum.getCurrentTheme() == ThemesEnum.DARK )
       {
