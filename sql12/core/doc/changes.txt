@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Introduced Java 24 compatibility.
+
+Adjusted mouse double click selection behavior in SQL editor and cell details display to additionally
+  stop selection at the characters '/', ':' and '"'
+  Note: Before the adjustment double click selection already stopped at '(', ')', ',', ';', '=', '>', '<', '\'
+
 Code completion Plugin: The Plugin offers completion of JOIN ON clauses.
   Example: When ctrl+space is hit after a space char behind
   SELECT * FROM Books bk INNER JOIN Authors
