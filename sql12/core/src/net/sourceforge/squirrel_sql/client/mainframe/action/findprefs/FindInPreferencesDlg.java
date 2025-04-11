@@ -1,9 +1,11 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -12,12 +14,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.fw.gui.NoWrapJTextPane;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class FindInPreferencesDlg extends JDialog
 {

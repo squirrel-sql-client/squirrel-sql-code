@@ -18,9 +18,9 @@ package net.sourceforge.squirrel_sql.client.resources;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
-
 import java.net.URL;
+
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
 public class SquirrelResources extends Resources
 {
@@ -106,6 +106,7 @@ public class SquirrelResources extends Resources
       String SMALL_FILE_INTERNAL_CHANGED = "smallFileInternalChanged";
 
 		String SMALL_REFRESH = "smallRefresh";
+		String REFRESH = "refresh";
 
 		String SMALL_CHOOSE_SCHEMA = "smallChooseSchema";
 

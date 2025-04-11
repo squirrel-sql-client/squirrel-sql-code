@@ -595,6 +595,23 @@ public class GUIUtils
 		return expandedLeafs;
 	}
 
+	public static void expandAllNodes(JTree tree)
+	{
+		_expandAllRows(tree, 0, tree.getRowCount());
+	}
+
+	private static void _expandAllRows(JTree tree, int start, int count)
+	{
+		for( int i = start; i < count; i++ )
+		{
+			tree.expandRow(i);
+		}
+
+		if( tree.getRowCount() != count )
+		{
+			_expandAllRows(tree, count, tree.getRowCount());
+		}
+	}
 
 	public static void forceFocus(final Component comp)
 	{

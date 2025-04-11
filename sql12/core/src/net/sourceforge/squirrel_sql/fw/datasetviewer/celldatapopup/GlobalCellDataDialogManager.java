@@ -2,8 +2,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GlobalCellDataDialogManager
 {
@@ -11,7 +11,7 @@ public class GlobalCellDataDialogManager
    private WindowAdapter _pinnedCellDataDialogWindowAdapter;
 
    private WindowAdapter _cellDataDialogWindowAdapter;
-   private Set<CellDataDialog> _openCellDataDialogs = new HashSet<>();
+   private List<CellDataDialog> _openCellDataDialogs = new ArrayList<>();
 
    public GlobalCellDataDialogManager()
    {
@@ -80,7 +80,7 @@ public class GlobalCellDataDialogManager
       _openCellDataDialogs.add(cellDataDialog);
    }
 
-   public Set<CellDataDialog> getOpenCellDataDialogs()
+   public List<CellDataDialog> getOpenCellDataDialogs()
    {
       return _openCellDataDialogs;
    }
