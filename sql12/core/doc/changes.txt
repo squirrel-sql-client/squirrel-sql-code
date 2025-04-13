@@ -1391,7 +1391,7 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 #598 Mac OS: Apple's application close command "Command key"+Q now works the same way as Ctrl+Q.
   I.e. Preferences are saved on "Command key"+Q.
   Furthermore the Apple specific About-Command now displays SQuirreL's About-box.
-  NOTE: As a consequence of these changes the minimum required is Java 11.
+  NOTE: As a consequence of these changes the minimum required Java version is Java 11.
 
 
 Bug fixes:
