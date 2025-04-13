@@ -1,7 +1,7 @@
 <project name="SQuirreLSQL" default="buildAll" basedir=".">
 
 
-    <property name="targetVM" value="11"/>
+    <property name="targetVM" value="17"/>
 
     <target name="cleanAllAndInit" description="cleanAllAndInit">
 
@@ -110,7 +110,7 @@
     </pathconvert>
 
     <target name="compileVersionCheck" description="compileVersionCheck">
-        <javac source="1.6" target="1.6"
+        <javac source="1.7" target="1.7"
                includeantruntime="false"
                srcdir="versionChecker/src"
                destdir="versionChecker/output/work/bin"

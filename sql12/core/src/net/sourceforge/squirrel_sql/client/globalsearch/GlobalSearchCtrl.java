@@ -1,13 +1,15 @@
 package net.sourceforge.squirrel_sql.client.globalsearch;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class GlobalSearchCtrl
 {
@@ -58,11 +60,18 @@ public class GlobalSearchCtrl
 
             for( GlobSearchNodeResultTab gsnResultTab : gsnSqlPanel.getGlobSearchNodeResultTabs() )
             {
-               DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(gsnResultTab);
-               sqlPanelNode.add(resultTabNode);
 
-               if(null != gsnResultTab.getGlobSearchNodeResultDetailDisplay())
+               if(null == gsnResultTab.getGlobSearchNodeResultDetailDisplay())
                {
+                  if(gsnResultTab.getGlobSearchNodeResultTabSqlResTable().executeSearch())
+                  {
+                     DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(gsnResultTab);
+                     sqlPanelNode.add(resultTabNode);
+                  }
+               }
+               else
+               {
+                  DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(gsnResultTab);
                   resultTabNode.add(new DefaultMutableTreeNode(gsnResultTab.getGlobSearchNodeResultTabSqlResTable(), false));
 
                   if(null != gsnResultTab.getGlobSearchNodeResultDetailDisplay())
@@ -70,7 +79,6 @@ public class GlobalSearchCtrl
                      resultTabNode.add(new DefaultMutableTreeNode(gsnResultTab.getGlobSearchNodeResultDetailDisplay(), false));
                   }
                }
-
             }
          }
       }
@@ -78,6 +86,34 @@ public class GlobalSearchCtrl
       _dlg.treeSearchResultNavi.setModel(treeModel);
       _dlg.treeSearchResultNavi.setRootVisible(false);
       GUIUtils.expandAllNodes(_dlg.treeSearchResultNavi);
+
+      _dlg.treeSearchResultNavi.addTreeSelectionListener(new TreeSelectionListener()
+      {
+         @Override
+         public void valueChanged(TreeSelectionEvent e)
+         {
+            onTreeSelectionChanged(e);
+         }
+      });
+   }
+
+   private void onTreeSelectionChanged(TreeSelectionEvent e)
+   {
+      _dlg.txtPreview.setText(null);
+
+      Object userObject = ((DefaultMutableTreeNode) e.getPath().getLastPathComponent()).getUserObject();
+      if(userObject instanceof GlobSearchNodeResultTab globSearchNodeResultTab)
+      {
+         if(null == globSearchNodeResultTab.getGlobSearchNodeResultDetailDisplay())
+         {
+            SearchExecutorResult executorResult = globSearchNodeResultTab.getGlobSearchNodeResultTabSqlResTable().getSearchExecutorResult();
+
+            _dlg.txtPreview.appendToPane(executorResult.getCellTextTillFirstOccurence(),false);
+            _dlg.txtPreview.appendToPane(executorResult.getFirstMatchingText(), true);
+            _dlg.txtPreview.appendToPane(executorResult.getCellTextAfterFirstOccurence(), false);
+            _dlg.txtPreview.appendToPane("\n" + globSearchNodeResultTab.toString(), false);
+         }
+      }
    }
 
    private boolean onForceSplitDividerLocation()

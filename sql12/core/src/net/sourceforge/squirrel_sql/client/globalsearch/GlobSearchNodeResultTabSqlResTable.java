@@ -10,6 +10,7 @@ public class GlobSearchNodeResultTabSqlResTable
 
 
    private ResultTabProvider _resultTab;
+   private SearchExecutorResult _searchExecutorResult;
 
    public GlobSearchNodeResultTabSqlResTable(ResultTabProvider resultTab)
    {
@@ -20,5 +21,16 @@ public class GlobSearchNodeResultTabSqlResTable
    public String toString()
    {
       return s_stringMgr.getString("GlobSearchNodeResultTabSearchable.sql", _resultTab.getResultTab().getViewableSqlString());
+   }
+
+   public boolean executeSearch()
+   {
+      _searchExecutorResult = SearchExecutor.search(_resultTab);
+      return _searchExecutorResult.hasResult();
+   }
+
+   public SearchExecutorResult getSearchExecutorResult()
+   {
+      return _searchExecutorResult;
    }
 }
