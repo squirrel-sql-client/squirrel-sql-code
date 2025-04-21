@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.globalsearch;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.ResultTabProvider;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FirstSearchResult;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -10,7 +11,7 @@ public class GlobSearchNodeResultTabSqlResTable
 
 
    private ResultTabProvider _resultTab;
-   private SearchExecutorResult _searchExecutorResult;
+   private FirstSearchResult _firstSearchResult;
 
    public GlobSearchNodeResultTabSqlResTable(ResultTabProvider resultTab)
    {
@@ -23,14 +24,14 @@ public class GlobSearchNodeResultTabSqlResTable
       return s_stringMgr.getString("GlobSearchNodeResultTabSearchable.sql", _resultTab.getResultTab().getViewableSqlString());
    }
 
-   public boolean executeSearch()
+   public boolean executeSearch(String textToSearch, GlobalSearchType globalSearchType)
    {
-      _searchExecutorResult = SearchExecutor.search(_resultTab);
-      return _searchExecutorResult.hasResult();
+      _firstSearchResult = SearchExecutor.search(_resultTab, textToSearch, globalSearchType);
+      return _firstSearchResult.hasResult();
    }
 
-   public SearchExecutorResult getSearchExecutorResult()
+   public FirstSearchResult getSearchExecutorResult()
    {
-      return _searchExecutorResult;
+      return _firstSearchResult;
    }
 }

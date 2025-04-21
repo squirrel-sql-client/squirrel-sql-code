@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.globalsearch;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FirstSearchResult;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
@@ -23,7 +24,7 @@ public class GlobalSearchCtrl
    public GlobalSearchCtrl(List<GlobSearchNodeSession> globSearchNodeSessions, String textToSearch, GlobalSearchType globalSearchType)
    {
       _globSearchNodeSessions = globSearchNodeSessions;
-      initTree();
+      initTree(textToSearch, globalSearchType);
 
       _dlg.txtTextToSearch.setText(textToSearch);
 
@@ -43,7 +44,7 @@ public class GlobalSearchCtrl
       _dlg.setVisible(true);
    }
 
-   private void initTree()
+   private void initTree(String textToSearch, GlobalSearchType globalSearchType)
    {
       DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("rootNonVisible");
       DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
@@ -63,7 +64,7 @@ public class GlobalSearchCtrl
 
                if(null == gsnResultTab.getGlobSearchNodeResultDetailDisplay())
                {
-                  if(gsnResultTab.getGlobSearchNodeResultTabSqlResTable().executeSearch())
+                  if(gsnResultTab.getGlobSearchNodeResultTabSqlResTable().executeSearch(textToSearch, globalSearchType))
                   {
                      DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(gsnResultTab);
                      sqlPanelNode.add(resultTabNode);
@@ -92,12 +93,12 @@ public class GlobalSearchCtrl
          @Override
          public void valueChanged(TreeSelectionEvent e)
          {
-            onTreeSelectionChanged(e);
+            onTreeSelectionChanged(e, textToSearch, globalSearchType);
          }
       });
    }
 
-   private void onTreeSelectionChanged(TreeSelectionEvent e)
+   private void onTreeSelectionChanged(TreeSelectionEvent e, String textToSearch, GlobalSearchType globalSearchType)
    {
       _dlg.txtPreview.setText(null);
 
@@ -106,11 +107,11 @@ public class GlobalSearchCtrl
       {
          if(null == globSearchNodeResultTab.getGlobSearchNodeResultDetailDisplay())
          {
-            SearchExecutorResult executorResult = globSearchNodeResultTab.getGlobSearchNodeResultTabSqlResTable().getSearchExecutorResult();
+            FirstSearchResult executorResult = globSearchNodeResultTab.getGlobSearchNodeResultTabSqlResTable().getSearchExecutorResult();
 
-            _dlg.txtPreview.appendToPane(executorResult.getCellTextTillFirstOccurence(),false);
+            _dlg.txtPreview.appendToPane(executorResult.getCellTextTillFirstOccurrence(), false);
             _dlg.txtPreview.appendToPane(executorResult.getFirstMatchingText(), true);
-            _dlg.txtPreview.appendToPane(executorResult.getCellTextAfterFirstOccurence(), false);
+            _dlg.txtPreview.appendToPane(executorResult.getCellTextAfterFirstOccurrence(), false);
             _dlg.txtPreview.appendToPane("\n" + globSearchNodeResultTab.toString(), false);
          }
       }

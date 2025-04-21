@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -115,6 +116,26 @@ public class DataSetViewerFindHandler
 
       return true;
    }
+
+   public DataSetViewerFindRemoteControl getDataSetViewerFindRemoteControlOrNull()
+   {
+      if (false == _resultDisplayHandler.isDataSetViewerTablePanel())
+      {
+         return null;
+      }
+
+      return (textToSearch, globalSearchType) -> onExecuteFindTillFirstResult(textToSearch, globalSearchType);
+   }
+
+   private FirstSearchResult onExecuteFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType)
+   {
+      if(false == _findPanelOpen)
+      {
+         toggleShowFindPanel();
+      }
+      return _dataSetFindPanelController.executeFindTillFirstResult(textToSearch, globalSearchType);
+   }
+
 
    /**
     * @return The replaced {@link IDataSetViewer}

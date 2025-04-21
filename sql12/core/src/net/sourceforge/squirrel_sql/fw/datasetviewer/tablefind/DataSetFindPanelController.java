@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
@@ -97,7 +98,7 @@ public class DataSetFindPanelController
 
    private void onSearchGlobally()
    {
-      DataSetFindPanel.MatchTypeCboItem matchType = (DataSetFindPanel.MatchTypeCboItem) _dataSetFindPanel.cboMatchType.getSelectedItem();
+      DataSetSearchMatchType matchType = (DataSetSearchMatchType) _dataSetFindPanel.cboMatchType.getSelectedItem();
       Main.getApplication().getGlobalSearcher().searchGlobally(_editableComboBoxHandler.getItem(), matchType.getGlobalType());
    }
 
@@ -325,11 +326,11 @@ public class DataSetFindPanelController
 
    private boolean matches(String toMatchAgainst, String viewDataAsString)
    {
-      DataSetFindPanel.MatchTypeCboItem sel = (DataSetFindPanel.MatchTypeCboItem) _dataSetFindPanel.cboMatchType.getSelectedItem();
+      DataSetSearchMatchType sel = (DataSetSearchMatchType) _dataSetFindPanel.cboMatchType.getSelectedItem();
 
       if(false == _dataSetFindPanel.chkCaseSensitive.isSelected())
       {
-         if (DataSetFindPanel.MatchTypeCboItem.REG_EX != sel)
+         if (DataSetSearchMatchType.REG_EX != sel)
          {
             toMatchAgainst = toMatchAgainst.toLowerCase();
          }
@@ -394,12 +395,27 @@ public class DataSetFindPanelController
       {
          return null;
       }
-
    }
-
 
    public void focusTextField()
    {
       _editableComboBoxHandler.focus();
+   }
+
+   public FirstSearchResult executeFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType)
+   {
+      _editableComboBoxHandler.addOrReplaceCurrentItem(textToSearch);
+      _dataSetFindPanel.cboMatchType.setSelectedItem(DataSetSearchMatchType.ofGlobalSearchType(globalSearchType));
+      _dataSetFindPanel.chkCaseSensitive.setSelected(globalSearchType == GlobalSearchType.CONTAINS_IGNORE_CASE);
+      _dataSetFindPanel.btnUnhighlightResult.doClick();
+      _dataSetFindPanel.btnDown.doClick();
+
+      if(-1 != _tableTraverser.getCol())
+      {
+         return new FirstSearchResult(_findService.getViewDataAsString(_tableTraverser.getRow(), _tableTraverser.getCol()), textToSearch, globalSearchType);
+      }
+
+      return FirstSearchResult.EMPTY;
+
    }
 }

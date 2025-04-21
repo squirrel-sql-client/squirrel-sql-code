@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultD
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ShowCellDetailCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableToolbarCtrl;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -648,7 +649,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       if(null == dataSetViewerFindHandlerOfSelectedTab)
       {
-         selectSQLResultTabSelected();
+         setSQLResultTabSelected();
          dataSetViewerFindHandlerOfSelectedTab = _resultDataSetViewerFindHandler;
       }
 
@@ -658,6 +659,15 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          s_log.warn(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
       }
    }
+
+   @Override
+   public DataSetViewerFindRemoteControl getDataSetViewerFindRemoteControlOfSQLQueryResultTabOrNull()
+   {
+      setSQLResultTabSelected();
+      return _resultDataSetViewerFindHandler.getDataSetViewerFindRemoteControlOrNull();
+   }
+
+
 
    @Override
    public void findColumn()
@@ -671,7 +681,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
-      selectSQLResultTabSelected();
+      setSQLResultTabSelected();
       FindResultColumnUtil.findAndShowResultColumns(dataSetViewerTablePanel, GUIUtils.getOwningFrame(_tabResultTabs));
    }
 
@@ -681,7 +691,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    {
       if(_markDuplicatesChooserController.actionWasFired(e))
       {
-         selectSQLResultTabSelected();
+         setSQLResultTabSelected();
       }
    }
 
@@ -786,7 +796,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       return _resultDataSetViewerFindHandler.getResultDisplayHandler();
    }
 
-   public void selectSQLResultTabSelected()
+   @Override
+   public void setSQLResultTabSelected()
    {
       _tabResultTabs.setSelectedIndex(0);
    }

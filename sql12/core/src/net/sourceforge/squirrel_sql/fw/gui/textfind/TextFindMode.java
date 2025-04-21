@@ -17,6 +17,20 @@ public enum TextFindMode
       _displayName = displayName;
    }
 
+   public static TextFindMode ofGlobalSearchType(GlobalSearchType globalSearchType)
+   {
+      switch(globalSearchType)
+      {
+         case CONTAINS: return CONTAINS;
+         case CONTAINS_IGNORE_CASE: return CONTAINS_IGNORE_CASE;
+         case EXACT: return CONTAINS;
+         case REG_EX: return CONTAINS_REG_EXP;
+         case STARTS_WITH: return CONTAINS;
+         case ENDS_WITH: return CONTAINS;
+         default: throw new IllegalStateException("Unknown GlobalSearchType " + globalSearchType.name());
+      }
+   }
+
 
    private interface I18nProvider
    {

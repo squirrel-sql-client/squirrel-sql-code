@@ -6,6 +6,9 @@ import java.util.regex.Pattern;
 public class TextFinder
 {
 
+   /**
+    * @param n Starting at 1
+    */
    public static MatchBounds findNthOccurrence(String text, String searchString, int n, TextFindMode textFindMode)
    {
       switch (textFindMode)

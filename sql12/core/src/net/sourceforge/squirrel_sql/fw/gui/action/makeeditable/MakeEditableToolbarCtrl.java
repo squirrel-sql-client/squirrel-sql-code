@@ -92,7 +92,7 @@ public class MakeEditableToolbarCtrl
          }
 
 
-         _resultTab.selectSQLResultTabSelected();
+         _resultTab.setSQLResultTabSelected();
 
          if(false == _resultTab.allowsEditing())
          {

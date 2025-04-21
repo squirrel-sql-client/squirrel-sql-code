@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -42,7 +41,7 @@ public class DataSetFindPanel extends JPanel
 
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      cboMatchType = new JComboBox(MatchTypeCboItem.values());
+      cboMatchType = new JComboBox(DataSetSearchMatchType.values());
       cboMatchType.setSelectedIndex(0);
       add(cboMatchType, gbc);
 
@@ -113,41 +112,6 @@ public class DataSetFindPanel extends JPanel
       btnHideFindPanel.setBorder(BorderFactory.createEtchedBorder());
       add(btnHideFindPanel, gbc);
 
-   }
-
-   enum MatchTypeCboItem
-   {
-      CONTAINS (s_stringMgr.getString("DataSetFindPanel.filterCboContains")),
-      EXACT (s_stringMgr.getString("DataSetFindPanel.exact")),
-      STARTS_WITH (s_stringMgr.getString("DataSetFindPanel.filterCboStartsWith")),
-      ENDS_WITH (s_stringMgr.getString("DataSetFindPanel.filterCboEndsWith")),
-      REG_EX (s_stringMgr.getString("DataSetFindPanel.filterCboRegEx"));
-      private String _name;
-
-
-      MatchTypeCboItem(String name)
-      {
-         _name = name;
-      }
-
-
-      public String toString()
-      {
-         return _name;
-      }
-
-      public GlobalSearchType getGlobalType()
-      {
-         switch(this)
-         {
-            case CONTAINS: return GlobalSearchType.CONTAINS_IGNORE_CASE;
-            case EXACT: return GlobalSearchType.EXACT;
-            case STARTS_WITH: return GlobalSearchType.STARTS_WITH;
-            case ENDS_WITH: return GlobalSearchType.ENDS_WITH;
-            case REG_EX: return GlobalSearchType.REG_EX;
-            default: throw new IllegalStateException("Unknown search type " + name());
-         }
-      }
    }
 
 }
