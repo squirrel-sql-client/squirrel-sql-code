@@ -1,10 +1,13 @@
 package net.sourceforge.squirrel_sql.fw.gui.textfind;
 
+import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextFinder
 {
+
+   public static final Color TEXT_FIND_COLOR = Color.orange;
 
    /**
     * @param n Starting at 1

@@ -1,13 +1,12 @@
 package net.sourceforge.squirrel_sql.client.globalsearch;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelApiInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.ResultTabProvider;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GlobalSearcher
 {
@@ -32,16 +31,8 @@ public class GlobalSearcher
 
             for( ResultTabProvider resultTab : gsnSQLPanel.getSqlPanelApiInfo().getAllOpenResultTabs() )
             {
-               GlobSearchNodeResultTab gsnResultTab = new GlobSearchNodeResultTab(resultTab);
-               gsnSQLPanel.addGlobSearchNodeResultTab(gsnResultTab);
-
-               gsnResultTab.setResultTab(new GlobSearchNodeResultTabSqlResTable(resultTab));
-
-               ResultDataSetAndCellDetailDisplayHandler detailDisplayHandler = resultTab.getResultTab().getResultsTabsDetailDisplayHandler();
-               if( detailDisplayHandler.isOpen() )
-               {
-                  gsnResultTab.setDetailDisplay(new GlobSearchNodeResultDetailDisplay(detailDisplayHandler));
-               }
+               GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable = new GlobSearchNodeResultTabSqlResTable(resultTab);
+               gsnSQLPanel.addGlobSearchNodeResultTabSqlResTable(nodeResultTabSqlResTable);
             }
          }
       }

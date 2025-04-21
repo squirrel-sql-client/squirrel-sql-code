@@ -4,6 +4,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FirstSearchResult
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -16,6 +19,7 @@ public class GlobalSearchCtrl
 {
    private static final String PREFS_KEY_GLOBAL_SEARCH_CTRL_SPLIT_POS = "net.sourceforge.squirrel_sql.client.globalsearch.split.pos";
 
+   public static final String PREF_KEY_SELECTED_GLOBAL_SEARCH_TYPE = "net.sourceforge.squirrel_sql.client.globalsearch.type";
 
    private GlobalSearchDlg _dlg = new GlobalSearchDlg();
 
@@ -24,10 +28,14 @@ public class GlobalSearchCtrl
    public GlobalSearchCtrl(List<GlobSearchNodeSession> globSearchNodeSessions, String textToSearch, GlobalSearchType globalSearchType)
    {
       _globSearchNodeSessions = globSearchNodeSessions;
-      initTree(textToSearch, globalSearchType);
 
       _dlg.txtTextToSearch.setText(textToSearch);
+      Props.putString(PREF_KEY_SELECTED_GLOBAL_SEARCH_TYPE, globalSearchType.name());
 
+      _dlg.btnConfig.addActionListener(e -> onConfig());
+
+      _dlg.btnRerun.addActionListener(e -> onRerun());
+      initTree();
 
       GUIUtils.forceProperty(() -> onForceSplitDividerLocation());
 
@@ -44,7 +52,40 @@ public class GlobalSearchCtrl
       _dlg.setVisible(true);
    }
 
-   private void initTree(String textToSearch, GlobalSearchType globalSearchType)
+   private void onRerun()
+   {
+      initTree();
+   }
+
+   private void onConfig()
+   {
+      JPopupMenu popup = new JPopupMenu();
+
+      GlobalSearchType selectedGlobalSearchType = getSelectedGlobalSearchType();
+
+      ButtonGroup bg = new ButtonGroup();
+      for (GlobalSearchType searchType : GlobalSearchType.values())
+      {
+         JRadioButtonMenuItem radMnu = new JRadioButtonMenuItem(searchType.getDescription());
+         if(searchType == selectedGlobalSearchType)
+         {
+            radMnu.setSelected(true);
+         }
+         radMnu.addActionListener(e -> Props.putString(PREF_KEY_SELECTED_GLOBAL_SEARCH_TYPE, searchType.name()));
+         bg.add(radMnu);
+         popup.add(radMnu);
+      }
+
+      popup.show(_dlg.btnConfig, 0,_dlg.btnConfig.getHeight());
+   }
+
+   private static GlobalSearchType getSelectedGlobalSearchType()
+   {
+      return GlobalSearchType.valueOf(Props.getString(PREF_KEY_SELECTED_GLOBAL_SEARCH_TYPE, GlobalSearchType.CONTAINS_IGNORE_CASE.name()));
+   }
+
+
+   private void initTree()
    {
       DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("rootNonVisible");
       DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
@@ -59,26 +100,12 @@ public class GlobalSearchCtrl
             DefaultMutableTreeNode sqlPanelNode = new DefaultMutableTreeNode(gsnSqlPanel);
             sessionNode.add(sqlPanelNode);
 
-            for( GlobSearchNodeResultTab gsnResultTab : gsnSqlPanel.getGlobSearchNodeResultTabs() )
+            for( GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable : gsnSqlPanel.getGlobSearchNodeResultTabSqlResTables() )
             {
-
-               if(null == gsnResultTab.getGlobSearchNodeResultDetailDisplay())
+               if(nodeResultTabSqlResTable.executeSearch(_dlg.txtTextToSearch.getText(), getSelectedGlobalSearchType()))
                {
-                  if(gsnResultTab.getGlobSearchNodeResultTabSqlResTable().executeSearch(textToSearch, globalSearchType))
-                  {
-                     DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(gsnResultTab);
-                     sqlPanelNode.add(resultTabNode);
-                  }
-               }
-               else
-               {
-                  DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(gsnResultTab);
-                  resultTabNode.add(new DefaultMutableTreeNode(gsnResultTab.getGlobSearchNodeResultTabSqlResTable(), false));
-
-                  if(null != gsnResultTab.getGlobSearchNodeResultDetailDisplay())
-                  {
-                     resultTabNode.add(new DefaultMutableTreeNode(gsnResultTab.getGlobSearchNodeResultDetailDisplay(), false));
-                  }
+                  DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(nodeResultTabSqlResTable);
+                  sqlPanelNode.add(resultTabNode);
                }
             }
          }
@@ -93,27 +120,23 @@ public class GlobalSearchCtrl
          @Override
          public void valueChanged(TreeSelectionEvent e)
          {
-            onTreeSelectionChanged(e, textToSearch, globalSearchType);
+            onTreeSelectionChanged(e);
          }
       });
    }
 
-   private void onTreeSelectionChanged(TreeSelectionEvent e, String textToSearch, GlobalSearchType globalSearchType)
+   private void onTreeSelectionChanged(TreeSelectionEvent e)
    {
       _dlg.txtPreview.setText(null);
 
       Object userObject = ((DefaultMutableTreeNode) e.getPath().getLastPathComponent()).getUserObject();
-      if(userObject instanceof GlobSearchNodeResultTab globSearchNodeResultTab)
+      if(userObject instanceof GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable)
       {
-         if(null == globSearchNodeResultTab.getGlobSearchNodeResultDetailDisplay())
-         {
-            FirstSearchResult executorResult = globSearchNodeResultTab.getGlobSearchNodeResultTabSqlResTable().getSearchExecutorResult();
-
-            _dlg.txtPreview.appendToPane(executorResult.getCellTextTillFirstOccurrence(), false);
-            _dlg.txtPreview.appendToPane(executorResult.getFirstMatchingText(), true);
-            _dlg.txtPreview.appendToPane(executorResult.getCellTextAfterFirstOccurrence(), false);
-            _dlg.txtPreview.appendToPane("\n" + globSearchNodeResultTab.toString(), false);
-         }
+         FirstSearchResult executorResult = nodeResultTabSqlResTable.getSearchExecutorResult();
+         _dlg.txtPreview.appendToPane(executorResult.getCellTextTillFirstOccurrence(), false);
+         _dlg.txtPreview.appendToPane(executorResult.getFirstMatchingText(), true);
+         _dlg.txtPreview.appendToPane(executorResult.getCellTextAfterFirstOccurrence(), false);
+         //_dlg.txtPreview.appendToPane("\n" + nodeResultTabSqlResTable.toString(), false);
       }
    }
 

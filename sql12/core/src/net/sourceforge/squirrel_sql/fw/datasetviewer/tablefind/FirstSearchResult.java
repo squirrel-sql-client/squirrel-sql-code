@@ -60,7 +60,7 @@ public class FirstSearchResult
             return "";
          }
 
-         return _contendOfMatchingTableCell.substring(_matchBounds.getEndIx(), _contendOfMatchingTableCell.length() - 1);
+         return _contendOfMatchingTableCell.substring(_matchBounds.getEndIx(), _contendOfMatchingTableCell.length());
       }
 
       return " a test.";

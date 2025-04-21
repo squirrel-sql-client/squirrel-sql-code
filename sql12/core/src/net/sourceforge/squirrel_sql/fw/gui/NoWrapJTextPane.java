@@ -1,15 +1,15 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
+import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFinder;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
-
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import java.awt.Dimension;
 
 /**
  * See https://stackoverflow.com/questions/7156038/how-to-turn-off-jtextpane-line-wrapping
@@ -26,7 +26,7 @@ public class NoWrapJTextPane extends JTextPane
       new SimpleAttributeSet(defaultStyleContext.getEmptySet());
 
       _matchAttributeSet = new SimpleAttributeSet();
-      StyleConstants.setBackground(_matchAttributeSet, Color.green);
+      StyleConstants.setBackground(_matchAttributeSet, TextFinder.TEXT_FIND_COLOR);
 
       _defaultAttributeSet = new SimpleAttributeSet();
    }

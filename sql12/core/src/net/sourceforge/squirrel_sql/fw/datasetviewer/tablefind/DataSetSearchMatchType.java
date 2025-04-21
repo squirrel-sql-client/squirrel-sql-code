@@ -43,12 +43,19 @@ enum DataSetSearchMatchType
       return _name;
    }
 
-   public GlobalSearchType getGlobalType()
+   public GlobalSearchType getGlobalType(boolean caseSensitive)
    {
       switch(this)
       {
          case CONTAINS:
-            return GlobalSearchType.CONTAINS_IGNORE_CASE;
+            if(caseSensitive)
+            {
+               return GlobalSearchType.CONTAINS;
+            }
+            else
+            {
+               return GlobalSearchType.CONTAINS_IGNORE_CASE;
+            }
          case EXACT:
             return GlobalSearchType.EXACT;
          case STARTS_WITH:

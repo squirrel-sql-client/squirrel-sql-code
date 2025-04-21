@@ -48,6 +48,7 @@ public class DataSetFindPanelController
    private FindTrace _trace = new FindTrace();
    private String _currentSearchString = null;
    private ColsToSearchHolder _colsToSearchHolder = ColsToSearchHolder.UNFILTERED;
+   private boolean _issueNotFoundMessage = true;
 
    private enum FindMode
    {
@@ -99,7 +100,7 @@ public class DataSetFindPanelController
    private void onSearchGlobally()
    {
       DataSetSearchMatchType matchType = (DataSetSearchMatchType) _dataSetFindPanel.cboMatchType.getSelectedItem();
-      Main.getApplication().getGlobalSearcher().searchGlobally(_editableComboBoxHandler.getItem(), matchType.getGlobalType());
+      Main.getApplication().getGlobalSearcher().searchGlobally(_editableComboBoxHandler.getItem(), matchType.getGlobalType(_dataSetFindPanel.chkCaseSensitive.isSelected()));
    }
 
    private void onColorMatchedCells()
@@ -280,7 +281,7 @@ public class DataSetFindPanelController
          }
       }
 
-      if (false == matchFound)
+      if (false == matchFound && _issueNotFoundMessage)
       {
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("DataSetFindPanelController.noOccurenceFoundOf", _currentSearchString));
       }
@@ -404,18 +405,26 @@ public class DataSetFindPanelController
 
    public FirstSearchResult executeFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType)
    {
-      _editableComboBoxHandler.addOrReplaceCurrentItem(textToSearch);
-      _dataSetFindPanel.cboMatchType.setSelectedItem(DataSetSearchMatchType.ofGlobalSearchType(globalSearchType));
-      _dataSetFindPanel.chkCaseSensitive.setSelected(globalSearchType == GlobalSearchType.CONTAINS_IGNORE_CASE);
-      _dataSetFindPanel.btnUnhighlightResult.doClick();
-      _dataSetFindPanel.btnDown.doClick();
-
-      if(-1 != _tableTraverser.getCol())
+      try
       {
-         return new FirstSearchResult(_findService.getViewDataAsString(_tableTraverser.getRow(), _tableTraverser.getCol()), textToSearch, globalSearchType);
+         _issueNotFoundMessage = false;
+
+         _editableComboBoxHandler.addOrReplaceCurrentItem(textToSearch);
+         _dataSetFindPanel.cboMatchType.setSelectedItem(DataSetSearchMatchType.ofGlobalSearchType(globalSearchType));
+         _dataSetFindPanel.chkCaseSensitive.setSelected(globalSearchType == GlobalSearchType.CONTAINS); // As opposed to GlobalSearchType.CONTAINS_IGNORE_CASE
+         _dataSetFindPanel.btnUnhighlightResult.doClick();
+         _dataSetFindPanel.btnDown.doClick();
+
+         if(-1 != _tableTraverser.getCol())
+         {
+            return new FirstSearchResult(_findService.getViewDataAsString(_tableTraverser.getRow(), _tableTraverser.getCol()), textToSearch, globalSearchType);
+         }
+
+         return FirstSearchResult.EMPTY;
       }
-
-      return FirstSearchResult.EMPTY;
-
+      finally
+      {
+         _issueNotFoundMessage = true;
+      }
    }
 }

@@ -21,7 +21,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.JTextComponent;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -42,7 +41,7 @@ public class TextFindCtrl
 
    int _nextOccurrenceToFind = 1;
    private String _lastTextToFind;
-   private DefaultHighlighter.DefaultHighlightPainter _highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.orange);
+   private DefaultHighlighter.DefaultHighlightPainter _highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(TextFinder.TEXT_FIND_COLOR);
 
    public TextFindCtrl(JTextComponent textComponentToSearch, JScrollPane textComponentToSearchScrollPane)
    {

@@ -1,10 +1,11 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
+import net.sourceforge.squirrel_sql.fw.gui.textfind.TextFinder;
+
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import java.awt.Color;
 import java.awt.Component;
 
 public class FindPrefsTreeCellRenderer extends DefaultTreeCellRenderer
@@ -23,11 +24,11 @@ public class FindPrefsTreeCellRenderer extends DefaultTreeCellRenderer
          {
             if(selected)
             {
-               renderer.setBackground(Color.green.darker());
+               renderer.setBackground(TextFinder.TEXT_FIND_COLOR.darker());
             }
             else
             {
-               renderer.setBackground(Color.green);
+               renderer.setBackground(TextFinder.TEXT_FIND_COLOR);
             }
 
             ((JComponent) renderer).setOpaque(true);

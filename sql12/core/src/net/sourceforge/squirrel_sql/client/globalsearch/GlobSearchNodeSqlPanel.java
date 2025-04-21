@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.client.globalsearch;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.session.SQLPanelApiInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GlobSearchNodeSqlPanel
 {
@@ -13,7 +13,7 @@ public class GlobSearchNodeSqlPanel
 
    private final SQLPanelApiInfo _sqlPanelApiInfo;
 
-   private List<GlobSearchNodeResultTab> _globSearchNodeResultTabs = new ArrayList<>();
+   private List<GlobSearchNodeResultTabSqlResTable> _globSearchNodeResultTabSqlResTables = new ArrayList<>();
 
    public GlobSearchNodeSqlPanel(SQLPanelApiInfo sqlPanelApiInfo)
    {
@@ -25,14 +25,14 @@ public class GlobSearchNodeSqlPanel
       return _sqlPanelApiInfo;
    }
 
-   public void addGlobSearchNodeResultTab(GlobSearchNodeResultTab gsnResultTab)
+   public void addGlobSearchNodeResultTabSqlResTable(GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable)
    {
-      _globSearchNodeResultTabs.add(gsnResultTab);
+      _globSearchNodeResultTabSqlResTables.add(nodeResultTabSqlResTable);
    }
 
-   public List<GlobSearchNodeResultTab> getGlobSearchNodeResultTabs()
+   public List<GlobSearchNodeResultTabSqlResTable> getGlobSearchNodeResultTabSqlResTables()
    {
-      return _globSearchNodeResultTabs;
+      return _globSearchNodeResultTabSqlResTables;
    }
 
    @Override
