@@ -54,9 +54,14 @@ public class DefaultFindService implements FindService
    }
 
    @Override
-   public void scrollToVisible(int viewRow, int viewCol)
+   public void scrollToVisible(int viewRow, int viewCol, boolean selectCell)
    {
       _table.scrollToVisible(viewRow, viewCol);
+      if(selectCell)
+      {
+         _table.setColumnSelectionInterval(viewCol, viewCol);
+         _table.setRowSelectionInterval(viewRow, viewRow);
+      }
    }
 
    @Override

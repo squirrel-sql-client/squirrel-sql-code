@@ -48,7 +48,7 @@ public class DataSetFindPanelController
    private FindTrace _trace = new FindTrace();
    private String _currentSearchString = null;
    private ColsToSearchHolder _colsToSearchHolder = ColsToSearchHolder.UNFILTERED;
-   private boolean _issueNotFoundMessage = true;
+   private boolean _inExecutingGlobalSearch = false;
 
    private enum FindMode
    {
@@ -263,7 +263,7 @@ public class DataSetFindPanelController
 
             if (FindMode.HIGHLIGHT != findMode)
             {
-               _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol());
+               _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), _inExecutingGlobalSearch);
             }
 
             _findService.repaintCell(_tableTraverser.getRow(), _tableTraverser.getCol());
@@ -281,7 +281,7 @@ public class DataSetFindPanelController
          }
       }
 
-      if (false == matchFound && _issueNotFoundMessage)
+      if (false == matchFound && false == _inExecutingGlobalSearch)
       {
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("DataSetFindPanelController.noOccurenceFoundOf", _currentSearchString));
       }
@@ -407,7 +407,7 @@ public class DataSetFindPanelController
    {
       try
       {
-         _issueNotFoundMessage = false;
+         _inExecutingGlobalSearch = true;
 
          _editableComboBoxHandler.addOrReplaceCurrentItem(textToSearch);
          _dataSetFindPanel.cboMatchType.setSelectedItem(DataSetSearchMatchType.ofGlobalSearchType(globalSearchType));
@@ -424,7 +424,7 @@ public class DataSetFindPanelController
       }
       finally
       {
-         _issueNotFoundMessage = true;
+         _inExecutingGlobalSearch = false;
       }
    }
 }

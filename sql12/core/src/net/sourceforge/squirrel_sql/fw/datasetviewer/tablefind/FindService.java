@@ -14,7 +14,7 @@ public interface FindService
 
    String getViewDataAsString(int row, int col);
 
-   void scrollToVisible(int viewRow, int viewCol);
+   void scrollToVisible(int viewRow, int viewCol, boolean selectCell);
 
    void setFindServiceCallBack(FindServiceCallBack findServiceCallBack);
 
