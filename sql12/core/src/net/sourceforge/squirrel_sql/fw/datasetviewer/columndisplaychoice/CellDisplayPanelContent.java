@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 import javax.swing.JComponent;
 
 /**
- * Marker interface for JComponents that can be contained in
+ * Marker interface for JComponents that can be contained in {@link CellDisplayPanel}
  */
 public interface CellDisplayPanelContent<T extends JComponent>
 {
