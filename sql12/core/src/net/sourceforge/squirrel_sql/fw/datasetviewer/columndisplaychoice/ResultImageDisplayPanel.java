@@ -40,7 +40,7 @@ import java.sql.Types;
 import java.util.Base64;
 import java.util.List;
 
-public class ResultImageDisplayPanel extends JPanel
+public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelContent<ResultImageDisplayPanel>
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultImageDisplayPanel.class);
    private static final ILogger s_log = LoggerController.createLogger(ResultImageDisplayPanel.class);

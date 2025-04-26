@@ -2,6 +2,9 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanelContent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultImageDisplayPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -10,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-public class CellDataColumnDataPanel extends JPanel
+public class CellDataColumnDataPanel extends JPanel implements CellDisplayPanelContent<ResultImageDisplayPanel>
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataColumnDataPanel.class);
 
@@ -112,5 +115,10 @@ public class CellDataColumnDataPanel extends JPanel
    public void setCellDataUpdateInfo(CellDataUpdateInfo cellDataUpdateInfo)
    {
       _cellDataUpdateInfo = cellDataUpdateInfo;
+   }
+
+   public GlobalFindRemoteControl getDisplayHandlerFindRemoteControlOrNull()
+   {
+      return _ioPanel.getDisplayHandlerFindRemoteControlOrNull();
    }
 }

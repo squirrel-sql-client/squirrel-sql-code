@@ -1,6 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui.textfind;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FirstSearchResult;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -97,12 +100,17 @@ public class TextFindCtrl
          {
             radMnu.setSelected(true);
          }
-         radMnu.addActionListener(e -> Props.putString(PREF_KEY_SELECTED_TEXT_MODE, mode.name()));
+         radMnu.addActionListener(e -> saveFindMode(mode));
          bg.add(radMnu);
          popup.add(radMnu);
       }
 
       popup.show(_findPanel.btnConfig, 0,_findPanel.btnConfig.getHeight());
+   }
+
+   private static void saveFindMode(TextFindMode mode)
+   {
+      Props.putString(PREF_KEY_SELECTED_TEXT_MODE, mode.name());
    }
 
    private void onSearchGlobally()
@@ -331,5 +339,27 @@ public class TextFindCtrl
 
       _findPanel.btnMarkAll.setSelected(false);
       _textComponentToSearch.getHighlighter().removeAllHighlights();
+   }
+
+   public GlobalFindRemoteControl getFindRemoteControl()
+   {
+      return (textToSearch, globalSearchType) -> onExecuteFindTillFirstResult(textToSearch, globalSearchType);
+   }
+
+   private FirstSearchResult onExecuteFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType)
+   {
+      closeFind();
+      if(false == _permanent)
+      {
+         toggleFind();
+      }
+      saveFindMode(TextFindMode.ofGlobalSearchType(globalSearchType));
+
+      _editableComboBoxHandler.addOrReplaceCurrentItem(textToSearch);
+      _findPanel.btnDown.doClick();
+
+      // Knows by itself ho to find the first occurrence.
+      // See usage of TextFinder.findNthOccurrence(...) in this class and in FirstSearchResult.
+      return new FirstSearchResult(_textComponentToSearch.getText(), textToSearch, globalSearchType);
    }
 }

@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanelContent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.DisplayMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultImageDisplayPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -11,7 +12,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JDialog;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import java.awt.GridLayout;
@@ -79,7 +79,7 @@ public class CellDataDialog extends JDialog
 
    private void onDisplayModeChanged(ColumnDisplayDefinition colDef, Object value, int row, int col, boolean isModelEditable, JTable table)
    {
-      JPanel pnlToDisplay;
+      CellDisplayPanelContent pnlToDisplay;
       if(DisplayMode.IMAGE == _cellDisplayPanel.getDisplayMode())
       {
          pnlToDisplay = new ResultImageDisplayPanel(colDef,

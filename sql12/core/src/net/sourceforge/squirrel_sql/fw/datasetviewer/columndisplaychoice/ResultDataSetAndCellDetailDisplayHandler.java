@@ -5,14 +5,13 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataColumnDataPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataUpdateInfo;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import java.awt.event.ComponentAdapter;
@@ -24,7 +23,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultDataSetAndCellDetailDisplayHandler.class);
 
    private static final String PREF_KEY_CELL_DETAIL_DIVIDER_POS = "ResultDataSetAndCellDetailDisplayHandler.cell.detail.divider.pos";
-   private final JLabel _lblNoCell;
+   private final LabelNoCellSelected _lblNoCell;
    private final CellDisplayPanel _rightCellDisplayPanel;
 
 
@@ -48,9 +47,9 @@ public class ResultDataSetAndCellDetailDisplayHandler
 
       _splitPane = new JSplitPane();
       _splitPane.setLeftComponent(_scrollPane);
-      _lblNoCell = new JLabel("No cell selected");
-      GUIUtils.setPreferredWidth(_lblNoCell, 0);
-      GUIUtils.setMinimumWidth(_lblNoCell, 0);
+      _lblNoCell = new LabelNoCellSelected("No cell selected");
+      GUIUtils.setPreferredWidth(_lblNoCell.getContentComponent(), 0);
+      GUIUtils.setMinimumWidth(_lblNoCell.getContentComponent(), 0);
 
 
       _rightCellDisplayPanel = new CellDisplayPanel(() -> onDisplayChanged(), () -> onClose());
@@ -120,7 +119,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
          ExtTableColumn column = (ExtTableColumn) dataSetViewer.getTable().getColumnModel().getColumn(colLeadSelectionIndex);
          _rightCellDisplayPanel.setCurrentColumnDisplayDefinition(column.getColumnDisplayDefinition());
 
-         JPanel pnlToDisplay;
+         CellDisplayPanelContent pnlToDisplay;
          if(DisplayMode.IMAGE == _rightCellDisplayPanel.getDisplayMode())
          {
             pnlToDisplay = new ResultImageDisplayPanel(column.getColumnDisplayDefinition(),
@@ -137,8 +136,8 @@ public class ResultDataSetAndCellDetailDisplayHandler
             pnlToDisplay = panel;
          }
 
-         GUIUtils.setPreferredWidth(pnlToDisplay, 0);
-         GUIUtils.setMinimumWidth(pnlToDisplay, 0);
+         GUIUtils.setPreferredWidth(pnlToDisplay.getContentComponent(), 0);
+         GUIUtils.setMinimumWidth(pnlToDisplay.getContentComponent(), 0);
          int dividerLocBuf = _splitPane.getDividerLocation();
          _rightCellDisplayPanel.setContentComponent(pnlToDisplay);
          _splitPane.setDividerLocation(dividerLocBuf);
@@ -283,5 +282,31 @@ public class ResultDataSetAndCellDetailDisplayHandler
    public void setCloseListener(CellDetailCloseListener cellDetailCloseListener)
    {
       _cellDetailCloseListener = cellDetailCloseListener;
+   }
+
+   public GlobalFindRemoteControl getDisplayHandlerFindRemoteControlOrNull()
+   {
+      if(false == isCellDetailSplitActive())
+      {
+         return null;
+      }
+
+      if(_rightCellDisplayPanel.getDisplayMode() != DisplayMode.DEFAULT)
+      {
+         return null;
+      }
+
+      if(null == _rightCellDisplayPanel.getContentComponent())
+      {
+         return null;
+      }
+
+
+      if(_rightCellDisplayPanel.getContentComponent().getContentComponent() instanceof CellDataColumnDataPanel cellDataColumnDataPanel)
+      {
+         return cellDataColumnDataPanel.getDisplayHandlerFindRemoteControlOrNull();
+      }
+
+      return null;
    }
 }

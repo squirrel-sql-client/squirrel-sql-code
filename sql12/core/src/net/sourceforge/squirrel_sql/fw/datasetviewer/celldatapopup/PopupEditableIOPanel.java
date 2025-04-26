@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableRSyntaxTextArea;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -185,13 +186,6 @@ public class PopupEditableIOPanel extends JPanel
 		// add a panel containing binary data editing options, if needed
 		JPanel displayPanel = new JPanel(new BorderLayout());
 		_scrollPane = new JScrollPane(_textArea);
-		/*
-		 * TODO: When 1.4 is the earliest version supported, include
-		 * the following line here:
-		 * 	scrollPane.setWheelScrollingEnabled(true);
-		 * The scroll-wheel function is important for ease of use, but the
-		 * setWheelScrollingEnabled function is not available in java 1.3.
-		 */
 
 		_textFindCtrl = new TextFindCtrl(_textArea, _scrollPane);
 		displayPanel.add(_textFindCtrl.getContainerPanel(), BorderLayout.CENTER);
@@ -1157,6 +1151,11 @@ public class PopupEditableIOPanel extends JPanel
 			_textArea.removeMouseListener(_lis);
 			_lis = null;
 		}
+	}
+
+	public GlobalFindRemoteControl getDisplayHandlerFindRemoteControlOrNull()
+	{
+		return _textFindCtrl.getFindRemoteControl();
 	}
 
 	private class LineWrapAction extends BaseAction

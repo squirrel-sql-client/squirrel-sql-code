@@ -117,7 +117,7 @@ public class DataSetViewerFindHandler
       return true;
    }
 
-   public DataSetViewerFindRemoteControl getDataSetViewerFindRemoteControlOrNull()
+   public GlobalFindRemoteControl getDataSetViewerFindRemoteControlOrNull()
    {
       if (false == _resultDisplayHandler.isDataSetViewerTablePanel())
       {

@@ -54,7 +54,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultD
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ShowCellDetailCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindRemoteControl;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.makeeditable.MakeEditableToolbarCtrl;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -661,7 +661,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    }
 
    @Override
-   public DataSetViewerFindRemoteControl getDataSetViewerFindRemoteControlOfSQLQueryResultTabOrNull()
+   public GlobalFindRemoteControl getDataSetViewerFindRemoteControlOfSQLQueryResultTabOrNull()
    {
       setSQLResultTabSelected();
       return _resultDataSetViewerFindHandler.getDataSetViewerFindRemoteControlOrNull();

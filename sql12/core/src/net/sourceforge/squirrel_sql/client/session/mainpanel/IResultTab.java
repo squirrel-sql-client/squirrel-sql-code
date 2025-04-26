@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindRemoteControl;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 
 import javax.swing.JComponent;
@@ -105,5 +105,5 @@ public interface IResultTab
 
    void setSQLResultTabSelected();
 
-   DataSetViewerFindRemoteControl getDataSetViewerFindRemoteControlOfSQLQueryResultTabOrNull();
+   GlobalFindRemoteControl getDataSetViewerFindRemoteControlOfSQLQueryResultTabOrNull();
 }

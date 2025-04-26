@@ -115,10 +115,20 @@ public class CellDisplayPanel extends JPanel
       return ret;
    }
 
-   public void setContentComponent(JComponent contentComponent)
+   public void setContentComponent(CellDisplayPanelContent<? extends JComponent> contentComponent)
    {
       _pnlContent.removeAll();
-      _pnlContent.add(contentComponent);
+      _pnlContent.add(contentComponent.getContentComponent());
+   }
+
+   public CellDisplayPanelContent<? extends JComponent> getContentComponent()
+   {
+      if(0 == _pnlContent.getComponents().length)
+      {
+         return null;
+      }
+
+      return (CellDisplayPanelContent<? extends JComponent>) _pnlContent.getComponent(0);
    }
 
    public void setCurrentColumnDisplayDefinition(ColumnDisplayDefinition cdd)

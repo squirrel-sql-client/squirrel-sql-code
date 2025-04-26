@@ -1,0 +1,14 @@
+package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
+
+import javax.swing.JComponent;
+
+/**
+ * Marker interface for JComponents that can be contained in
+ */
+public interface CellDisplayPanelContent<T extends JComponent>
+{
+   default T getContentComponent()
+   {
+      return (T) this;
+   }
+}
