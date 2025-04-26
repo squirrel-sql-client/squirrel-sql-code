@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDis
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanelContent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.DisplayMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultImageDisplayPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -106,5 +107,26 @@ public class CellDataDialog extends JDialog
    public void switchOffPinned()
    {
       _cellDisplayPanel.switchOffPinned();
+   }
+
+   public GlobalFindRemoteControl getCellDetailFindRemoteControlOrNull()
+   {
+      if(_cellDisplayPanel.getDisplayMode() != DisplayMode.DEFAULT)
+      {
+         return null;
+      }
+
+      if(null == _cellDisplayPanel.getContentComponent())
+      {
+         return null;
+      }
+
+
+      if(_cellDisplayPanel.getContentComponent().castToComponent() instanceof CellDataColumnDataPanel cellDataColumnDataPanel)
+      {
+         return cellDataColumnDataPanel.getCellDetailFindRemoteControlOrNull();
+      }
+
+      return null;
    }
 }

@@ -117,8 +117,8 @@ public class CellDataColumnDataPanel extends JPanel implements CellDisplayPanelC
       _cellDataUpdateInfo = cellDataUpdateInfo;
    }
 
-   public GlobalFindRemoteControl getDisplayHandlerFindRemoteControlOrNull()
+   public GlobalFindRemoteControl getCellDetailFindRemoteControlOrNull()
    {
-      return _ioPanel.getDisplayHandlerFindRemoteControlOrNull();
+      return _ioPanel.getCellDetailFindRemoteControlOrNull();
    }
 }

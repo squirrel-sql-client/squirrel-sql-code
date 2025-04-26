@@ -48,8 +48,8 @@ public class ResultDataSetAndCellDetailDisplayHandler
       _splitPane = new JSplitPane();
       _splitPane.setLeftComponent(_scrollPane);
       _lblNoCell = new LabelNoCellSelected("No cell selected");
-      GUIUtils.setPreferredWidth(_lblNoCell.getContentComponent(), 0);
-      GUIUtils.setMinimumWidth(_lblNoCell.getContentComponent(), 0);
+      GUIUtils.setPreferredWidth(_lblNoCell.castToComponent(), 0);
+      GUIUtils.setMinimumWidth(_lblNoCell.castToComponent(), 0);
 
 
       _rightCellDisplayPanel = new CellDisplayPanel(() -> onDisplayChanged(), () -> onClose());
@@ -136,8 +136,8 @@ public class ResultDataSetAndCellDetailDisplayHandler
             pnlToDisplay = panel;
          }
 
-         GUIUtils.setPreferredWidth(pnlToDisplay.getContentComponent(), 0);
-         GUIUtils.setMinimumWidth(pnlToDisplay.getContentComponent(), 0);
+         GUIUtils.setPreferredWidth(pnlToDisplay.castToComponent(), 0);
+         GUIUtils.setMinimumWidth(pnlToDisplay.castToComponent(), 0);
          int dividerLocBuf = _splitPane.getDividerLocation();
          _rightCellDisplayPanel.setContentComponent(pnlToDisplay);
          _splitPane.setDividerLocation(dividerLocBuf);
@@ -284,7 +284,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
       _cellDetailCloseListener = cellDetailCloseListener;
    }
 
-   public GlobalFindRemoteControl getDisplayHandlerFindRemoteControlOrNull()
+   public GlobalFindRemoteControl getCellDetailFindRemoteControlOrNull()
    {
       if(false == isCellDetailSplitActive())
       {
@@ -302,9 +302,9 @@ public class ResultDataSetAndCellDetailDisplayHandler
       }
 
 
-      if(_rightCellDisplayPanel.getContentComponent().getContentComponent() instanceof CellDataColumnDataPanel cellDataColumnDataPanel)
+      if(_rightCellDisplayPanel.getContentComponent().castToComponent() instanceof CellDataColumnDataPanel cellDataColumnDataPanel)
       {
-         return cellDataColumnDataPanel.getDisplayHandlerFindRemoteControlOrNull();
+         return cellDataColumnDataPanel.getCellDetailFindRemoteControlOrNull();
       }
 
       return null;

@@ -21,13 +21,15 @@ public class GlobalSearchCtrl
 
    public static final String PREF_KEY_SELECTED_GLOBAL_SEARCH_TYPE = "net.sourceforge.squirrel_sql.client.globalsearch.type";
 
-   private GlobalSearchDlg _dlg = new GlobalSearchDlg();
+   private final GlobalSearchDlg _dlg = new GlobalSearchDlg();
 
    private final List<GlobSearchNodeSession> _globSearchNodeSessions;
+   private final List<GlobSearchNodeCellDataDialog> _globSearchNodeCellDataDialogs;
 
-   public GlobalSearchCtrl(List<GlobSearchNodeSession> globSearchNodeSessions, String textToSearch, GlobalSearchType globalSearchType)
+   public GlobalSearchCtrl(List<GlobSearchNodeSession> globSearchNodeSessions, List<GlobSearchNodeCellDataDialog> globSearchNodeCellDataDialogs, String textToSearch, GlobalSearchType globalSearchType)
    {
       _globSearchNodeSessions = globSearchNodeSessions;
+      _globSearchNodeCellDataDialogs = globSearchNodeCellDataDialogs;
 
       _dlg.txtTextToSearch.setText(textToSearch);
       Props.putString(PREF_KEY_SELECTED_GLOBAL_SEARCH_TYPE, globalSearchType.name());
@@ -111,6 +113,15 @@ public class GlobalSearchCtrl
          }
       }
 
+      for(GlobSearchNodeCellDataDialog nodeCellDataDialog : _globSearchNodeCellDataDialogs)
+      {
+         if(nodeCellDataDialog.executeSearch(_dlg.txtTextToSearch.getText(), getSelectedGlobalSearchType()))
+         {
+            DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(nodeCellDataDialog);
+            rootNode.add(resultTabNode);
+         }
+      }
+
       _dlg.treeSearchResultNavi.setModel(treeModel);
       _dlg.treeSearchResultNavi.setRootVisible(false);
       GUIUtils.expandAllNodes(_dlg.treeSearchResultNavi);
@@ -133,11 +144,22 @@ public class GlobalSearchCtrl
       if(userObject instanceof GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable)
       {
          FirstSearchResult executorResult = nodeResultTabSqlResTable.getSearchExecutorResult();
-         _dlg.txtPreview.appendToPane(executorResult.getCellTextTillFirstOccurrence(), false);
-         _dlg.txtPreview.appendToPane(executorResult.getFirstMatchingText(), true);
-         _dlg.txtPreview.appendToPane(executorResult.getCellTextAfterFirstOccurrence(), false);
-         //_dlg.txtPreview.appendToPane("\n" + nodeResultTabSqlResTable.toString(), false);
+         showFirstSearchResult(executorResult);
       }
+      else if(userObject instanceof GlobSearchNodeCellDataDialog nodeCellDataDialog)
+      {
+         FirstSearchResult executorResult = nodeCellDataDialog.getSearchExecutorResult();
+         showFirstSearchResult(executorResult);
+      }
+   }
+
+   private void showFirstSearchResult(FirstSearchResult executorResult)
+   {
+      _dlg.txtPreview.appendToPane(executorResult.getCellTextTillFirstOccurrence(), false);
+      _dlg.txtPreview.appendToPane(executorResult.getFirstMatchingText(), true);
+      _dlg.txtPreview.appendToPane(executorResult.getCellTextAfterFirstOccurrence(), false);
+
+      _dlg.txtPreview.setCaretPosition(Math.min(executorResult.getCellTextTillFirstOccurrence().length(), _dlg.txtPreview.getText().length()));
    }
 
    private boolean onForceSplitDividerLocation()

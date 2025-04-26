@@ -7,7 +7,7 @@ import javax.swing.JComponent;
  */
 public interface CellDisplayPanelContent<T extends JComponent>
 {
-   default T getContentComponent()
+   default T castToComponent()
    {
       return (T) this;
    }

@@ -37,6 +37,9 @@ public class GlobalSearcher
          }
       }
 
-      new GlobalSearchCtrl(globSearchNodeSessions, textToSearch, globalSearchType);
+      List<GlobSearchNodeCellDataDialog> globSearchNodeCellDataDialogs =
+            Main.getApplication().getGlobalCellDataDialogManager().getOpenCellDataDialogs().stream().map(ocd -> new GlobSearchNodeCellDataDialog(ocd)).toList();
+
+      new GlobalSearchCtrl(globSearchNodeSessions, globSearchNodeCellDataDialogs, textToSearch, globalSearchType);
    }
 }

@@ -118,7 +118,7 @@ public class CellDisplayPanel extends JPanel
    public void setContentComponent(CellDisplayPanelContent<? extends JComponent> contentComponent)
    {
       _pnlContent.removeAll();
-      _pnlContent.add(contentComponent.getContentComponent());
+      _pnlContent.add(contentComponent.castToComponent());
    }
 
    public CellDisplayPanelContent<? extends JComponent> getContentComponent()

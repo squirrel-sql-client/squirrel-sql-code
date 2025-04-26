@@ -1153,7 +1153,7 @@ public class PopupEditableIOPanel extends JPanel
 		}
 	}
 
-	public GlobalFindRemoteControl getDisplayHandlerFindRemoteControlOrNull()
+	public GlobalFindRemoteControl getCellDetailFindRemoteControlOrNull()
 	{
 		return _textFindCtrl.getFindRemoteControl();
 	}

@@ -10,7 +10,6 @@ public class GlobSearchNodeResultTabSqlResTable
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GlobSearchNodeResultTabSqlResTable.class);
 
-
    private ResultTabProvider _resultTab;
    private FirstSearchResult _firstSearchResult;
 
