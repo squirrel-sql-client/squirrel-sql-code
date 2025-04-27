@@ -887,6 +887,11 @@ public class GUIUtils
 	 */
    public static <T extends AbstractButton> T styleAsToolbarButton(T btn, boolean focusable, boolean bordered)
    {
+		return styleAsToolbarButton(btn, focusable, bordered, -1);
+	}
+
+   public static <T extends AbstractButton> T styleAsToolbarButton(T btn, boolean focusable, boolean bordered, int sideLen)
+   {
 		setButtonContentAreaFilledRespectSelectedToggle(btn, false);
 
 		if (bordered)
@@ -918,6 +923,12 @@ public class GUIUtils
       {
          btn.addChangeListener(e -> btn.setContentAreaFilled(btn.isSelected() || isMouseOver(btn)));
       }
+
+		if(-1 != sideLen)
+		{
+			btn.setPreferredSize(new Dimension(sideLen,sideLen));
+		}
+
       return btn;
    }
 

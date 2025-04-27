@@ -101,17 +101,17 @@ public class GlobalSearchDlg extends JDialog
       gbc = new GridBagConstraints(1,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
       btnSearch = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND));
       btnSearch.setToolTipText(s_stringMgr.getString("GlobalSearchDlg.search.tooltip"));
-      ret.add(GUIUtils.styleAsToolbarButton(btnSearch), gbc);
+      ret.add(GUIUtils.styleAsToolbarButton(btnSearch,false, true, new JButton("Dum").getPreferredSize().height), gbc);
 
-      gbc = new GridBagConstraints(2,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      gbc = new GridBagConstraints(2,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,3,0,0), 0,0);
       btnConfig = new JButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.CONFIGURE));
       btnConfig.setToolTipText(s_stringMgr.getString("GlobalSearchDlg.configure"));
-      ret.add(GUIUtils.styleAsToolbarButton(btnConfig), gbc);
+      ret.add(GUIUtils.styleAsToolbarButton(btnConfig, false, true, new JButton("Dum").getPreferredSize().height), gbc);
 
-      gbc = new GridBagConstraints(3,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+      gbc = new GridBagConstraints(3,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,3,0,5), 0,0);
       btnStop = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.STOP));
       btnStop.setToolTipText(s_stringMgr.getString("GlobalSearchDlg.stop.tooltip"));
-      ret.add(GUIUtils.styleAsToolbarButton(btnStop), gbc);
+      ret.add(GUIUtils.styleAsToolbarButton(btnStop, false, true, new JButton("Dum").getPreferredSize().height), gbc);
 
       return ret;
    }

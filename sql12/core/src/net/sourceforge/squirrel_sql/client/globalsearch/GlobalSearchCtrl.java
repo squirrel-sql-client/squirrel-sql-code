@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.WindowAdapter;
@@ -39,7 +38,10 @@ public class GlobalSearchCtrl
       _dlg.getRootPane().setDefaultButton(_dlg.btnSearch);
       _dlg.btnSearch.addActionListener(e -> onSearchGlobally());
 
+      _dlg.btnClose.addActionListener(e -> close());
+
       GUIUtils.clearDefaultTreeEntries(_dlg.treeSearchResultNavi);
+      _dlg.treeSearchResultNavi.addTreeSelectionListener(e -> onTreeSelectionChanged(e));
 
       GUIUtils.forceProperty(() -> onForceSplitDividerLocation());
 
@@ -56,6 +58,13 @@ public class GlobalSearchCtrl
       GUIUtils.enableCloseByEscape(_dlg, dlg -> onClose());
       GUIUtils.initLocation(_dlg, 600, 600);
       _dlg.setVisible(true);
+   }
+
+   private void close()
+   {
+      onClose();
+      _dlg.setVisible(false);
+      _dlg.dispose();
    }
 
    private void onSearchGlobally()
@@ -76,21 +85,33 @@ public class GlobalSearchCtrl
       for( GlobSearchNodeSession gsnSession : nodesToSearch.globSearchNodeSessions() )
       {
          DefaultMutableTreeNode sessionNode = new DefaultMutableTreeNode(gsnSession);
-         rootNode.add(sessionNode);
 
+         boolean sessionNodeHasResults = false;
          for( GlobSearchNodeSqlPanel gsnSqlPanel : gsnSession.getGlobSearchNodeSqlPanels() )
          {
             DefaultMutableTreeNode sqlPanelNode = new DefaultMutableTreeNode(gsnSqlPanel);
-            sessionNode.add(sqlPanelNode);
 
+            boolean sqlPanelNodeHasSearchResult = false;
             for( GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable : gsnSqlPanel.getGlobSearchNodeResultTabSqlResTables() )
             {
                if(nodeResultTabSqlResTable.executeSearch(_cboTextTeSearchHandler.getItem(), getSelectedGlobalSearchType()))
                {
                   DefaultMutableTreeNode resultTabNode = new DefaultMutableTreeNode(nodeResultTabSqlResTable);
                   sqlPanelNode.add(resultTabNode);
+                  sessionNodeHasResults = true;
+                  sqlPanelNodeHasSearchResult = true;
                }
             }
+
+            if(sqlPanelNodeHasSearchResult)
+            {
+               sessionNode.add(sqlPanelNode);
+            }
+         }
+
+         if(sessionNodeHasResults)
+         {
+            rootNode.add(sessionNode);
          }
       }
 
@@ -107,14 +128,16 @@ public class GlobalSearchCtrl
       _dlg.treeSearchResultNavi.setRootVisible(false);
       GUIUtils.expandAllNodes(_dlg.treeSearchResultNavi);
 
-      _dlg.treeSearchResultNavi.addTreeSelectionListener(new TreeSelectionListener()
+
+      if(0 == rootNode.getChildCount())
       {
-         @Override
-         public void valueChanged(TreeSelectionEvent e)
-         {
-            onTreeSelectionChanged(e);
-         }
-      });
+         JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("GlobalSearchCtrl.no.results"));
+      }
+      else
+      {
+         _dlg.treeSearchResultNavi.setSelectionRow(0);
+         GUIUtils.executeDelayed(() -> GUIUtils.forceFocus(_dlg.treeSearchResultNavi), 300);
+      }
    }
 
    private void onConfig()
@@ -167,7 +190,7 @@ public class GlobalSearchCtrl
       _dlg.txtPreview.appendToPane(executorResult.getFirstMatchingText(), true);
       _dlg.txtPreview.appendToPane(executorResult.getCellTextAfterFirstOccurrence(), false);
 
-      _dlg.txtPreview.setCaretPosition(Math.min(executorResult.getCellTextTillFirstOccurrence().length(), _dlg.txtPreview.getText().length()));
+      _dlg.txtPreview.setCaretPosition(Math.min(executorResult.getCellTextTillFirstOccurrence().length() + executorResult.getFirstMatchingText().length(), _dlg.txtPreview.getText().length()));
    }
 
    private boolean onForceSplitDividerLocation()
