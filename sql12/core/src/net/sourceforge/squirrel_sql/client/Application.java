@@ -25,7 +25,6 @@ package net.sourceforge.squirrel_sql.client;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
-import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearcher;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelSplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
@@ -244,7 +243,6 @@ public class Application implements IApplication
 	private GlobalCellDataDialogManager _globalCellDataDialogManager = new GlobalCellDataDialogManager();
 
 	private SyntaxManager _syntaxManager = new SyntaxManager();
-	private GlobalSearcher _globalSearcher = new GlobalSearcher();
 
 	public Application()
 	{
@@ -1585,10 +1583,4 @@ public class Application implements IApplication
 	{
 		return _syntaxManager;
 	}
-
-   @Override
-   public GlobalSearcher getGlobalSearcher()
-   {
-      return _globalSearcher;
-   }
 }

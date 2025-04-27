@@ -24,7 +24,6 @@ public class TextFindPanel extends JPanel
    final JButton btnUp;
    final JToggleButton btnMarkAll;
    final JButton btnConfig;
-   final JButton btnSearchGlobally;
    final JButton btnHide;
 
    public TextFindPanel(boolean permanent)
@@ -64,14 +63,7 @@ public class TextFindPanel extends JPanel
       btnConfig.setFocusable(false);
       add(btnConfig, gbc);
 
-      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,5,2,0),0,0 );
-      btnSearchGlobally = new JButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.SEARCH_GLOBALLY));
-      btnSearchGlobally.setToolTipText(s_stringMgr.getString("TextSetFindPanel.searchGlobally"));
-      btnSearchGlobally.setBorder(BorderFactory.createEtchedBorder());
-      btnSearchGlobally.setFocusable(false);
-      add(btnSearchGlobally, gbc);
-
-      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,5,2,5),0,0 );
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2,5,2,5),0,0 );
       btnHide = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.CLOSE));
       if (permanent)
       {

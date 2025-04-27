@@ -30,7 +30,6 @@ public class DataSetFindPanel extends JPanel
    JButton btnShowRowsFoundInTable;
    JButton btnColorMatchedCells;
    JButton btnNarrowColsToSearch;
-   JButton btnSearchGlobally;
 
    public DataSetFindPanel()
    {
@@ -99,13 +98,7 @@ public class DataSetFindPanel extends JPanel
       btnNarrowColsToSearch.setBorder(BorderFactory.createEtchedBorder());
       add(btnNarrowColsToSearch, gbc);
 
-      gbc = new GridBagConstraints(10,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
-      btnSearchGlobally = new JButton(rsrc.getIcon(LibraryResources.IImageNames.SEARCH_GLOBALLY));
-      btnSearchGlobally.setToolTipText(s_stringMgr.getString("DataSetFindPanel.search.globally"));
-      btnSearchGlobally.setBorder(BorderFactory.createEtchedBorder());
-      add(btnSearchGlobally, gbc);
-
-      gbc = new GridBagConstraints(11,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(10,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnHideFindPanel = new JButton(rsrc.getIcon(LibraryResources.IImageNames.HIDE));
       btnHideFindPanel.setPressedIcon(rsrc.getIcon(LibraryResources.IImageNames.HIDE_SELECTED));
       btnHideFindPanel.setToolTipText(s_stringMgr.getString("DataSetFindPanel.hideFind"));

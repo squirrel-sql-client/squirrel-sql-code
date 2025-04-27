@@ -117,6 +117,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.SearchInResultsAction;
 import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
@@ -573,6 +574,8 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
 		addToMenu(rsrc, FindAliasAction.class, menu);
 		addToMenu(rsrc, FindAliasAltAcceleratorAction.class, menu);
+		menu.addSeparator();
+		addToMenu(rsrc, SearchInResultsAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, SessionOpenAction.class, menu);
 		addToMenu(rsrc, ViewDriversAction.class, menu);

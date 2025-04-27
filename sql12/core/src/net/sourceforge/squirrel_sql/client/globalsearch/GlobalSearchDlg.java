@@ -9,12 +9,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -29,9 +29,9 @@ public class GlobalSearchDlg extends JDialog
    final JTree treeSearchResultNavi = new JTree();
    final JButton btnClose = new JButton(s_stringMgr.getString("GlobalSearchDlg.close"));
    final JSplitPane splitPane;
-   JTextField txtTextToSearch = new JTextField();
+   JComboBox cboTextToSearch = new JComboBox();
    JButton btnConfig;
-   JButton btnRerun;
+   JButton btnSearch;
    JButton btnStop;
    NoWrapJTextPane txtPreview;
 
@@ -95,19 +95,18 @@ public class GlobalSearchDlg extends JDialog
 
 
       gbc = new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,0), 0,0);
-      ret.add(txtTextToSearch, gbc);
-
+      ret.add(cboTextToSearch, gbc);
 
 
       gbc = new GridBagConstraints(1,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      btnSearch = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND));
+      btnSearch.setToolTipText(s_stringMgr.getString("GlobalSearchDlg.search.tooltip"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnSearch), gbc);
+
+      gbc = new GridBagConstraints(2,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
       btnConfig = new JButton(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.CONFIGURE));
       btnConfig.setToolTipText(s_stringMgr.getString("GlobalSearchDlg.configure"));
       ret.add(GUIUtils.styleAsToolbarButton(btnConfig), gbc);
-
-      gbc = new GridBagConstraints(2,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
-      btnRerun = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.REFRESH));
-      btnRerun.setToolTipText(s_stringMgr.getString("GlobalSearchDlg.rerun.tooltip"));
-      ret.add(GUIUtils.styleAsToolbarButton(btnRerun), gbc);
 
       gbc = new GridBagConstraints(3,1,1,0,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
       btnStop = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.STOP));

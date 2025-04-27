@@ -62,8 +62,6 @@ public class LibraryResources extends Resources
       String CONFIGURE = "configure";
 
       String MARK_ALL_RESULTS = "mark_all_results";
-
-      String SEARCH_GLOBALLY = "searchGlobally";
    }
 
 	public LibraryResources()

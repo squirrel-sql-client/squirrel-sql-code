@@ -74,6 +74,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.SearchInResultsAction;
 import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
@@ -460,6 +461,8 @@ public class ActionRegistry
       actionCollection.add(new UncommentActionAltAccelerator());
       actionCollection.add(new SquirrelCopyAsRtfAction());
       // Former Syntax-Plugin entries, END
+
+      actionCollection.add(new SearchInResultsAction());
    }
 
    public ActionCollection getActionCollection()

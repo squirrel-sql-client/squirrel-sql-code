@@ -22,9 +22,22 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPopUpMenuAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.SessionPopUpMenuAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPreferencesAction;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewAliasConnectionAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.action.SearchInResultsAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommitSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
@@ -91,6 +104,9 @@ public class MainFrameToolBar extends ToolBar
 		add(actions.get(SaveAndManageGroupOfSavedSessionsAction.class));
 		add(actions.get(SessionOpenAction.class));
 		add(actions.get(SessionManageAction.class));
+
+      addSeparator();
+      add(actions.get(SearchInResultsAction.class));
 	}
 }
 

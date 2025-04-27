@@ -8,13 +8,13 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Re
 import java.util.ArrayList;
 import java.util.List;
 
-public class GlobalSearcher
+public class GlobalSearchUtil
 {
    /**
     * Information on how to access SQL result tabs of SqlPanels can be found in
     * {@link net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel}
     */
-   public void searchGlobally(String textToSearch, GlobalSearchType globalSearchType)
+   public static NodesToSearch getNodesToSearch()
    {
       List<ISession> openSessions = Main.getApplication().getSessionManager().getOpenSessions();
       List<GlobSearchNodeSession> globSearchNodeSessions = new ArrayList<>();
@@ -39,7 +39,8 @@ public class GlobalSearcher
 
       List<GlobSearchNodeCellDataDialog> globSearchNodeCellDataDialogs =
             Main.getApplication().getGlobalCellDataDialogManager().getOpenCellDataDialogs().stream().map(ocd -> new GlobSearchNodeCellDataDialog(ocd)).toList();
-
-      new GlobalSearchCtrl(globSearchNodeSessions, globSearchNodeCellDataDialogs, textToSearch, globalSearchType);
+      NodesToSearch result = new NodesToSearch(globSearchNodeSessions, globSearchNodeCellDataDialogs);
+      return result;
    }
+
 }

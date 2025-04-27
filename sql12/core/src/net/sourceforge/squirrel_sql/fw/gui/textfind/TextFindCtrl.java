@@ -75,7 +75,6 @@ public class TextFindCtrl
       _findPanel.btnUp.addActionListener(e -> onFind(false));
       _findPanel.btnMarkAll.addActionListener(e -> onToggleMarkAll());
       _findPanel.btnConfig.addActionListener(e -> onConfig());
-      _findPanel.btnSearchGlobally.addActionListener(e -> onSearchGlobally());
       _findPanel.btnHide.addActionListener(e -> closeFind());
 
       initKeyStrokes();
@@ -112,12 +111,6 @@ public class TextFindCtrl
    {
       Props.putString(PREF_KEY_SELECTED_TEXT_MODE, mode.name());
    }
-
-   private void onSearchGlobally()
-   {
-      Main.getApplication().getGlobalSearcher().searchGlobally(_editableComboBoxHandler.getItem(), getSelectedFindMode().getGlobalType());
-   }
-
 
    private static TextFindMode getSelectedFindMode()
    {

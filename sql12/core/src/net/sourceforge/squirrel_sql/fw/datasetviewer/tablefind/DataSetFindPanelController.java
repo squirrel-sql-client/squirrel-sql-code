@@ -73,8 +73,6 @@ public class DataSetFindPanelController
 
       _dataSetFindPanel.btnNarrowColsToSearch.addActionListener(e -> onNarrowColsToSearch());
 
-      _dataSetFindPanel.btnSearchGlobally.addActionListener(e -> onSearchGlobally());
-
       _dataSetFindPanel.btnHideFindPanel.addActionListener(e -> dataSetFindPanelListener.hideFindPanel());
 
       _dataSetFindPanel.chkCaseSensitive.addActionListener(e -> clearFind());
@@ -95,12 +93,6 @@ public class DataSetFindPanelController
       {
          _dataSetFindPanel.btnNarrowColsToSearch.setIcon(Main.getApplication().getResourcesFw().getIcon(LibraryResources.IImageNames.SELECT_COLUMN_CHECKED));
       }
-   }
-
-   private void onSearchGlobally()
-   {
-      DataSetSearchMatchType matchType = (DataSetSearchMatchType) _dataSetFindPanel.cboMatchType.getSelectedItem();
-      Main.getApplication().getGlobalSearcher().searchGlobally(_editableComboBoxHandler.getItem(), matchType.getGlobalType(_dataSetFindPanel.chkCaseSensitive.isSelected()));
    }
 
    private void onColorMatchedCells()
