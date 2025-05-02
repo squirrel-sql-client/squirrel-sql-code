@@ -51,6 +51,8 @@ public interface ISQLResultExecutor
      */
     IResultTab getSelectedResultTab();
 
+   void selectResultTab(IResultTab resultTab);
+
    /**
     *
     * @param icon may be null

@@ -640,6 +640,12 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
     }
 
    @Override
+   public void selectResultTab(IResultTab resultTab)
+   {
+      _tabbedExecutionsPanel.setSelectedComponent(resultTab.getCompleteResultTab());
+   }
+
+   @Override
    public void addCustomResult(CustomResultPanel resultPanel, String title, Icon icon)
    {
       _tabAdder.add(title, resultPanel);

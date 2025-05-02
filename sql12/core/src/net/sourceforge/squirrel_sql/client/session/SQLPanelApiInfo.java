@@ -1,14 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecutor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.ResultTabProvider;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SQLPanelApiInfo
 {
@@ -80,6 +80,11 @@ public class SQLPanelApiInfo
       }
 
       return List.of();
+   }
+
+   public ISQLPanelAPI getSqlPanelApi()
+   {
+      return _sqlPanelApi;
    }
 
    public SessionInternalFrame getParentSessionMainWindow()

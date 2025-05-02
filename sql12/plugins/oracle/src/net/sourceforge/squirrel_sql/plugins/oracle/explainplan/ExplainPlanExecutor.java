@@ -877,6 +877,12 @@ public class ExplainPlanExecutor extends JPanel implements ISQLResultExecutor
   }
 
    @Override
+   public void selectResultTab(IResultTab resultTab)
+   {
+
+   }
+
+   @Override
    public void addCustomResult(CustomResultPanel resultPanel, String title, Icon icon)
    {
 

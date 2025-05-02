@@ -3,7 +3,8 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import java.util.ArrayList;
@@ -106,7 +107,7 @@ public class EditableComboBoxHandler
 
    public void focus()
    {
-      GUIUtils.forceFocus(_cbo.getEditor().getEditorComponent());
+      GUIUtils.executeDelayed(() -> _cbo.getEditor().getEditorComponent().requestFocus(), 100);
    }
 
    public String getItem()

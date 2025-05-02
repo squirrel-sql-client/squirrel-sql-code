@@ -45,6 +45,7 @@ public class TextFindCtrl
    int _nextOccurrenceToFind = 1;
    private String _lastTextToFind;
    private DefaultHighlighter.DefaultHighlightPainter _highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(TextFinder.TEXT_FIND_COLOR);
+   private boolean _inExecutingGlobalSearch = false;
 
    public TextFindCtrl(JTextComponent textComponentToSearch, JScrollPane textComponentToSearchScrollPane)
    {
@@ -169,15 +170,18 @@ public class TextFindCtrl
          }
          else
          {
-            if(1 == _nextOccurrenceToFind)
+            if(false == _inExecutingGlobalSearch)
             {
-               String msg = s_stringMgr.getString("TextFindCtrl.could.not.find", _editableComboBoxHandler.getItem());
-               Main.getApplication().getMessageHandler().showWarningMessage(msg);
-            }
-            else
-            {
-               String msg = s_stringMgr.getString("TextFindCtrl.last.occurrence.reached", _editableComboBoxHandler.getItem());
-               Main.getApplication().getMessageHandler().showMessage(msg);
+               if(1 == _nextOccurrenceToFind)
+               {
+                  String msg = s_stringMgr.getString("TextFindCtrl.could.not.find", _editableComboBoxHandler.getItem());
+                  Main.getApplication().getMessageHandler().showWarningMessage(msg);
+               }
+               else
+               {
+                  String msg = s_stringMgr.getString("TextFindCtrl.last.occurrence.reached", _editableComboBoxHandler.getItem());
+                  Main.getApplication().getMessageHandler().showMessage(msg);
+               }
             }
             _nextOccurrenceToFind = 1;
          }
@@ -341,18 +345,27 @@ public class TextFindCtrl
 
    private FirstSearchResult onExecuteFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType)
    {
-      closeFind();
-      if(false == _permanent)
+      try
       {
-         toggleFind();
+         _inExecutingGlobalSearch = true;
+
+         closeFind();
+         if(false == _permanent)
+         {
+            toggleFind();
+         }
+         saveFindMode(TextFindMode.ofGlobalSearchType(globalSearchType));
+
+         _editableComboBoxHandler.addOrReplaceCurrentItem(textToSearch);
+         _findPanel.btnDown.doClick();
+
+         // Knows by itself ho to find the first occurrence.
+         // See usage of TextFinder.findNthOccurrence(...) in this class and in FirstSearchResult.
+         return new FirstSearchResult(_textComponentToSearch.getText(), textToSearch, globalSearchType);
       }
-      saveFindMode(TextFindMode.ofGlobalSearchType(globalSearchType));
-
-      _editableComboBoxHandler.addOrReplaceCurrentItem(textToSearch);
-      _findPanel.btnDown.doClick();
-
-      // Knows by itself ho to find the first occurrence.
-      // See usage of TextFinder.findNthOccurrence(...) in this class and in FirstSearchResult.
-      return new FirstSearchResult(_textComponentToSearch.getText(), textToSearch, globalSearchType);
+      finally
+      {
+         _inExecutingGlobalSearch = false;
+      }
    }
 }

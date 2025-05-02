@@ -52,4 +52,9 @@ public class ResultTabProvider
    {
       return null != getResultTab();
    }
+
+   public ISQLPanelAPI getSqlPanelApiOrNull()
+   {
+      return _panel;
+   }
 }

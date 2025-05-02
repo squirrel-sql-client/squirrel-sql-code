@@ -33,4 +33,9 @@ public class GlobSearchNodeCellDataDialog
    {
       return _firstSearchResult;
    }
+
+   public void bringDialogToFront()
+   {
+      _cellDataDialog.toFront();
+   }
 }

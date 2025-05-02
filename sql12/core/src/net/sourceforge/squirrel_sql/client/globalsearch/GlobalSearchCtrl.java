@@ -9,12 +9,16 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -43,6 +47,28 @@ public class GlobalSearchCtrl
       GUIUtils.clearDefaultTreeEntries(_dlg.treeSearchResultNavi);
       _dlg.treeSearchResultNavi.addTreeSelectionListener(e -> onTreeSelectionChanged(e));
 
+      _dlg.treeSearchResultNavi.addMouseListener(new MouseAdapter()
+      {
+         public void mouseClicked(MouseEvent evt)
+         {
+            onMouseClickedTree(evt);
+         }
+
+         @Override
+         public void mousePressed(MouseEvent evt)
+         {
+            maybeShowTreePopup(evt);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent evt)
+         {
+            maybeShowTreePopup(evt);
+         }
+      });
+
+
+
       GUIUtils.forceProperty(() -> onForceSplitDividerLocation());
 
       _cboTextTeSearchHandler.focus();
@@ -59,6 +85,95 @@ public class GlobalSearchCtrl
       GUIUtils.initLocation(_dlg, 600, 600);
       _dlg.setVisible(true);
    }
+
+   private void onMouseClickedTree(MouseEvent evt)
+   {
+      TreePath path = _dlg.treeSearchResultNavi.getSelectionPath();
+
+      if(null == path)
+      {
+         return;
+      }
+
+      if (null != evt)
+      {
+         if (evt.getClickCount() < 2)
+         {
+            return;
+         }
+
+         if (false == _dlg.treeSearchResultNavi.getPathBounds(path).contains(evt.getPoint()))
+         {
+            return;
+         }
+      }
+
+      DefaultMutableTreeNode tn = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+      Object userObject = tn.getUserObject();
+      if(userObject instanceof GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable)
+      {
+         bringSqlResultToFront(nodeResultTabSqlResTable, tn);
+      }
+      else if(userObject instanceof GlobSearchNodeCellDataDialog nodeCellDataDialog)
+      {
+         bringCellDataDialogToFront(nodeCellDataDialog);
+      }
+   }
+
+   private static void bringCellDataDialogToFront(GlobSearchNodeCellDataDialog nodeCellDataDialog)
+   {
+      nodeCellDataDialog.bringDialogToFront();
+   }
+
+   private static void bringSqlResultToFront(GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable, DefaultMutableTreeNode tn)
+   {
+      DefaultMutableTreeNode tnParent = (DefaultMutableTreeNode) tn.getParent();
+      GlobSearchNodeSqlPanel globSearchNodeSqlPanel = (GlobSearchNodeSqlPanel) tnParent.getUserObject();
+      nodeResultTabSqlResTable.bringResultToFront(globSearchNodeSqlPanel.getSqlPanelApiInfo());
+   }
+
+   private void maybeShowTreePopup(MouseEvent evt)
+   {
+      if(false == evt.isPopupTrigger())
+      {
+         return;
+      }
+
+      TreePath clickedPath  = _dlg.treeSearchResultNavi.getPathForLocation(evt.getX(), evt.getY());
+
+      if(null == clickedPath)
+      {
+         return;
+      }
+
+      DefaultMutableTreeNode tn = (DefaultMutableTreeNode) clickedPath.getLastPathComponent();
+
+      JPopupMenu popUp = null;
+
+      Object userObject = tn.getUserObject();
+      if(userObject instanceof GlobSearchNodeResultTabSqlResTable nodeResultTabSqlResTable)
+      {
+         popUp = new JPopupMenu();
+         JMenuItem mnuBringResultToFront = new JMenuItem(s_stringMgr.getString("GlobalSearchCtrl.bring.result.to.front"));
+         mnuBringResultToFront.addActionListener(e -> bringSqlResultToFront(nodeResultTabSqlResTable, tn));
+         popUp.add(mnuBringResultToFront);
+      }
+      else if(userObject instanceof GlobSearchNodeCellDataDialog nodeCellDataDialog)
+      {
+         popUp = new JPopupMenu();
+
+         JMenuItem mnuCellDataDialogToFront = new JMenuItem(s_stringMgr.getString("GlobalSearchCtrl.bring.result.to.front"));
+         mnuCellDataDialogToFront.addActionListener(e -> bringCellDataDialogToFront(nodeCellDataDialog));
+         popUp.add(mnuCellDataDialogToFront);
+      }
+
+      if(null != popUp)
+      {
+         popUp.show(evt.getComponent(), evt.getX(), evt.getY());
+      }
+   }
+
 
    private void close()
    {
@@ -136,7 +251,7 @@ public class GlobalSearchCtrl
       else
       {
          _dlg.treeSearchResultNavi.setSelectionRow(0);
-         GUIUtils.executeDelayed(() -> GUIUtils.forceFocus(_dlg.treeSearchResultNavi), 300);
+         GUIUtils.executeDelayed(() -> _dlg.treeSearchResultNavi.requestFocus(), 500);
       }
    }
 
