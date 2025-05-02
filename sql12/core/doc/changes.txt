@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Search in all open SQL results and cell data dialogs.
+  To open the new search dialog use the menu File --> Find in all results, ctrl shift R,
+  or the new main window tool bar button.
+  Click the leaves in the result tree to preview results.
+  Use double click or right mouse of the leaves in the result tree to navigate to
+  the SQL results or cell data dialogs that match the search.
+
 Introduced Java 24 compatibility.
 
 Adjusted mouse double click selection behavior in SQL editor and cell details display to additionally

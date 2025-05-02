@@ -255,7 +255,14 @@ public class DataSetFindPanelController
 
             if (FindMode.HIGHLIGHT != findMode)
             {
-               _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), _inExecutingGlobalSearch);
+               if(_inExecutingGlobalSearch)
+               {
+                  SwingUtilities.invokeLater(() -> _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), true));
+               }
+               else
+               {
+                  _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), false);
+               }
             }
 
             _findService.repaintCell(_tableTraverser.getRow(), _tableTraverser.getCol());
