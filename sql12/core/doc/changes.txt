@@ -14,6 +14,7 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/61
   Use double click or right mouse of the leaves in the result tree to navigate to
   the SQL results or cell data dialogs that match the search.
   Thanks to SHD (www.shd.de) for sponsoring parts of this feature.
+  NOTE: As a consequence of these changes the minimum required Java version is Java 17.
 
 Introduced Java 24 compatibility.
 
