@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Option to warp the Aliases' toolbar to two lines:
+  A new toggle button (or checked menu item) in the Aliases toolbar,
+  Aliases menu, or Aliases right-click menu allows users
+  to switch the Aliases toolbar between one or two lines.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/61
   Search in all open SQL results and cell data dialogs.
   To open the new search dialog use the menu File --> Find in all results, ctrl shift R,

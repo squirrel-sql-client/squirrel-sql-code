@@ -25,7 +25,8 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.JInternalFrame;
+import javax.swing.SwingUtilities;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
@@ -99,17 +100,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame<AliasesList>
 				if (propName == null
 					|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_ALIASES_TOOL_BAR))
 				{
-					boolean show = _app.getSquirrelPreferences().getShowAliasesToolBar();
-					if (show)
-					{
-						_uiFactory.createToolBar();
-					}
-					else
-					{
-						_uiFactory.removeToolbar();
-					}
-					setToolBar(_uiFactory.getToolBar());
-				}
+               reInitToolBar();
+            }
 			}
 		});
 
@@ -123,6 +115,11 @@ public class AliasesListInternalFrame extends BaseListInternalFrame<AliasesList>
 
       });
 
+   }
+
+   public void reInitToolBar()
+   {
+      setToolBar(_uiFactory.getToolBar());
    }
 
    public AliasesList getAliasesList()

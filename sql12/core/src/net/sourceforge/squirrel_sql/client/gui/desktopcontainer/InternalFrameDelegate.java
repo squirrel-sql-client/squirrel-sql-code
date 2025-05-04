@@ -6,10 +6,12 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 
-import javax.swing.*;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Window;
 
 public class InternalFrameDelegate extends JInternalFrame implements IDialogDelegate, IDockDelegate, ITabDelegate
 {
@@ -21,6 +23,7 @@ public class InternalFrameDelegate extends JInternalFrame implements IDialogDele
    private boolean _inAddNotify;
 
    private WidgetEventCaster _eventCaster = new WidgetEventCaster();
+   private boolean _inUnderlineDispose = false;
 
    public InternalFrameDelegate(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable, IWidget widget)
    {
@@ -68,7 +71,21 @@ public class InternalFrameDelegate extends JInternalFrame implements IDialogDele
 
    public void _dispose()
    {
-      super.dispose();
+      if(_inUnderlineDispose)
+      {
+         return;
+      }
+
+      try
+      {
+         _inUnderlineDispose = true;
+         super.dispose();
+      }
+      finally
+      {
+         _inUnderlineDispose = false;
+      }
+
    }
    @Override
    public void dispose()

@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesActio
 import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseAllAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseSelectedAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ColorAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CompressAliasToolbarAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
@@ -880,6 +881,9 @@ public class WindowManager
 		actions.add(new ExpandSelectedAliasFolderAction(_app, al));
 		actions.add(new TransferAliasAction(al));
 		actions.add(new ModifyMultipleAliasesAction(al));
+		actions.add(new CompressAliasToolbarAction());
+
+
 		actions.add(new ViewInAliasesAction());
 
       return new AliasesListInternalFrame(_app, al);

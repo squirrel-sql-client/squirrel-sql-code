@@ -18,9 +18,9 @@ package net.sourceforge.squirrel_sql.client.resources;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.net.URL;
-
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
+
+import java.net.URL;
 
 public class SquirrelResources extends Resources
 {
@@ -225,6 +225,8 @@ public class SquirrelResources extends Resources
 		String COLOR_SELECTOR_IMAGE = "ColorSelector";
 		String FOREGROUND_IMAGE = "Foreground";
 		String ITALIC_IMAGE = "Italic";
+
+		String COMPRESS = "compress";
 
 	}
 
