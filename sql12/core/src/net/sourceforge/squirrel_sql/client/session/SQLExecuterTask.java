@@ -28,6 +28,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.ToBeExecutedNextDecision;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.SQLTypeCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -111,9 +112,9 @@ public class SQLExecuterTask implements Runnable
       _executionListeners = executionListeners;
    }
 
-   public void clearExecutionListeners()
+   public void reduceExecutionListenersForLargeScript()
    {
-       _executionListeners.clear();
+       _executionListeners.removeIf(l -> false == l.callThisListenerForLargeScripts());
    }
 
    public void setExecuteEditableCheck(boolean executeEditableCheck)
@@ -184,6 +185,12 @@ public class SQLExecuterTask implements Runnable
             {
                continue;
             }
+
+            if(ToBeExecutedNextDecision.DO_NOT_EXECUTE == fireToBeExecutedNext(querySql))
+            {
+               continue;
+            }
+
 
             ++processedStatementCount;
             if (_handler != null)
@@ -308,6 +315,18 @@ public class SQLExecuterTask implements Runnable
 
          SwingUtilities.invokeLater(() -> fireExecutionListenersFinshed());
       }
+   }
+
+   private ToBeExecutedNextDecision fireToBeExecutedNext(QueryHolder querySql)
+   {
+      for(ISQLExecutionListener executionListener : _executionListeners.toArray(new ISQLExecutionListener[0]))
+      {
+         if(ToBeExecutedNextDecision.DO_NOT_EXECUTE == executionListener.toBeExecutedNext(querySql))
+         {
+            return ToBeExecutedNextDecision.DO_NOT_EXECUTE;
+         }
+      }
+      return ToBeExecutedNextDecision.EXECUTE;
    }
 
    private StatementWrapper createStatementWrapper(ISQLConnection conn) throws SQLException

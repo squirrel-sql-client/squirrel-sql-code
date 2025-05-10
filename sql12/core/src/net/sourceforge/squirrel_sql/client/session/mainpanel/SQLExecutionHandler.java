@@ -67,14 +67,19 @@ class SQLExecutionHandler implements ISQLExecuterHandler
    {
       this(resultTabToReplace, session, sql, executionHandlerListener, executionListeners, null);
    }
-   public SQLExecutionHandler(IResultTab resultTabToReplace, ISession session, String sql, ISQLExecutionHandlerListener executionHandlerListener, ISQLExecutionListener[] executionListeners, String tableToBeEdited)
+   public SQLExecutionHandler(IResultTab resultTabToReplace,
+                              ISession session,
+                              String sql,
+                              ISQLExecutionHandlerListener executionHandlerListener,
+                              ISQLExecutionListener[] executionListenersClone,
+                              String tableToBeEdited)
    {
       _session = session;
       _executionHandlerListener = executionHandlerListener;
 
       FinishedNotificationSoundHandler finishedNotificationSoundHandler = new FinishedNotificationSoundHandler();
 
-      ArrayList<ISQLExecutionListener> buf = new ArrayList<>(Arrays.asList(executionListeners));
+      ArrayList<ISQLExecutionListener> buf = new ArrayList<>(Arrays.asList(executionListenersClone));
       buf.add(finishedNotificationSoundHandler.getExecutionFinishedListener());
 
       _executer = new SQLExecuterTask(_session, sql, this, buf, tableToBeEdited);
@@ -82,7 +87,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 
       if (prefs.getLargeScriptStmtCount() > 0  && _executer.getQueryCount() > prefs.getLargeScriptStmtCount())
       {
-         _executer.clearExecutionListeners();
+         _executer.reduceExecutionListenersForLargeScript();
          setLargeScript(true);
       }
 

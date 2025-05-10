@@ -24,6 +24,12 @@ public class SqlListenerService
       _sqlExecutionListeners.add(new SQLExecutionAdapter()
       {
          @Override
+         public boolean callThisListenerForLargeScripts()
+         {
+            return false;
+         }
+
+         @Override
          public void statementExecuted(QueryHolder queryHolder)
          {
             addSQLToHistory(queryHolder.getOriginalQuery());
@@ -33,6 +39,12 @@ public class SqlListenerService
 
       _sqlExecutionListeners.add(new SQLExecutionAdapter()
       {
+         @Override
+         public boolean callThisListenerForLargeScripts()
+         {
+            return false;
+         }
+
          @Override
          public void statementExecuted(QueryHolder queryHolder)
          {

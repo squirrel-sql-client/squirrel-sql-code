@@ -205,6 +205,12 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/62
+  When executing a script that contains statements with the file export markers @file or
+  @msExcelWorkbook these statements where not executed in order but at the beginning of the script.
+  Info: For more information on exporting open the "Export ..." dialog using the right mouse menu on
+  any table and click "About exporting ..." at the bottom of the dialog.
+
 Changed SQuirreL's main frame icon (arcon.png) from APNG (animated PNG) to a usual PNG file.
   Thanks to Federico Bruni for the fix.
 

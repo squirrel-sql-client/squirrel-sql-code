@@ -5,9 +5,12 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.*;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportFileWriter;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.FileExportProgressManager;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportData;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferences;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferencesDAO;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -19,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,36 +47,11 @@ public class ExportToFileHandler
       _sqlPaneAPI = sqlPaneAPI;
    }
 
-   public String exportToFile(String initialSql)
+   public void exportToFile(List<QueryHolder> queryHolders)
    {
-      IQueryTokenizer queryTokenizer = _session.getQueryTokenizer();
 
-      queryTokenizer.setScriptToTokenize(initialSql);
-
-      StringBuilder sqlsNotToWriteToFile = new StringBuilder();
-
-      while(queryTokenizer.hasQuery())
+      for(QueryHolder query : queryHolders)
       {
-         QueryHolder query = queryTokenizer.nextQuery();
-
-         if(false == willBeHandledByMe(query))
-         {
-            sqlsNotToWriteToFile.append(query.getQuery());
-
-            if(1 == queryTokenizer.getSQLStatementSeparator().length())
-            {
-               sqlsNotToWriteToFile.append(queryTokenizer.getSQLStatementSeparator()).append("\n");
-            }
-            else
-            {
-               sqlsNotToWriteToFile.append(" ").append(queryTokenizer.getSQLStatementSeparator()).append("\n");
-            }
-
-            continue;
-         }
-
-
-
          String sqlWithFilePrefix = query.getQuery().trim();
 
          int fileBeginMarkerPos = sqlWithFilePrefix.indexOf('\'');
@@ -108,17 +87,7 @@ public class ExportToFileHandler
 
       }
 
-
       _sqlPaneAPI.getSQLEntryPanel().requestFocus();
-
-      if (0 == sqlsNotToWriteToFile.length())
-      {
-         return null;
-      }
-      else
-      {
-         return sqlsNotToWriteToFile.toString();
-      }
    }
 
    public static boolean containsMyMarker(String initialSqlString)

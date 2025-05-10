@@ -5,10 +5,23 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.*;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportControllerProxy;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDataException;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDataInfo;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDataInfoList;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportSqlNamed;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.Exporter;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.FileEndings;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.FileExportProgressManager;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MsExcelSheet;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MsExcelWorkbook;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MsExcelWorkbookList;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportDestinationInfo;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportData;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferences;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferencesDAO;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -70,36 +83,12 @@ public class ExportToMultiSheetMsExcelHandler
       return StringUtils.startsWithIgnoreCase(sql.getQuery().trim(), MS_EXCEL_WORKBOOK_PREFIX);
    }
 
-   public String exportToMsExcel(String initialSql)
+   public void exportToMsExcel(List<QueryHolder> queryHolders)
    {
-      IQueryTokenizer queryTokenizer = _session.getQueryTokenizer();
-
-      queryTokenizer.setScriptToTokenize(initialSql);
-
-      StringBuilder sqlsNotToWriteToFile = new StringBuilder();
-
       MsExcelWorkbookList workbooks = new MsExcelWorkbookList();
 
-      while (queryTokenizer.hasQuery())
+      for(QueryHolder query : queryHolders)
       {
-         QueryHolder query = queryTokenizer.nextQuery();
-
-         if (false == willBeHandledByMe(query))
-         {
-            sqlsNotToWriteToFile.append(query.getQuery());
-
-            if (1 == queryTokenizer.getSQLStatementSeparator().length())
-            {
-               sqlsNotToWriteToFile.append(queryTokenizer.getSQLStatementSeparator()).append("\n");
-            }
-            else
-            {
-               sqlsNotToWriteToFile.append(" ").append(queryTokenizer.getSQLStatementSeparator()).append("\n");
-            }
-
-            continue;
-         }
-
          String sqlWithPrefix = query.getQuery().trim();
 
          int contentBeginMarkerPos = sqlWithPrefix.indexOf('\'');
@@ -152,14 +141,14 @@ public class ExportToMultiSheetMsExcelHandler
 
             if (sqlWithPrefix.length() <= contentEndMarkerPos)
             {
-               Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.missingSheetNameForWorkbook"));
+               Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.missingSheetNameForWorkbook", workbook));
                continue;
             }
 
             String afterWorkbookSql = sqlWithPrefix.substring(contentEndMarkerPos + 1).trim();
             if (false == isSheetPrefixed(new QueryHolder(afterWorkbookSql)))
             {
-               Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.missingSheetNameForWorkbook"));
+               //Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ExportToMultiSheetMsExcelHandler.missingSheetNameForWorkbook", workbook));
                continue;
             }
 
@@ -205,15 +194,7 @@ public class ExportToMultiSheetMsExcelHandler
       if(null != workbook)
       {
          callExportWorkbook(workbook);
-      }
-
-      if (0 == sqlsNotToWriteToFile.length())
-      {
-         return null;
-      }
-      else
-      {
-         return sqlsNotToWriteToFile.toString();
+         _sqlPaneAPI.getSQLEntryPanel().requestFocus();
       }
    }
 

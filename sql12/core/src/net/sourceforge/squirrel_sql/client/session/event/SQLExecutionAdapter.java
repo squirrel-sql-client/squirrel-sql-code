@@ -30,6 +30,12 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 public class SQLExecutionAdapter implements ISQLExecutionListener
 {
 
+	@Override
+	public boolean callThisListenerForLargeScripts()
+	{
+		return true;
+	}
+
 	/**
 	 * Called prior to an individual statement being executed. If you modify the
 	 * script remember to return it so that the caller knows about the
@@ -48,7 +54,13 @@ public class SQLExecutionAdapter implements ISQLExecutionListener
    {
    }
 
-   @Override
+	@Override
+	public ToBeExecutedNextDecision toBeExecutedNext(QueryHolder querySql)
+	{
+		return ToBeExecutedNextDecision.EXECUTE;
+	}
+
+	@Override
    public void executionFinished()
    {
    }

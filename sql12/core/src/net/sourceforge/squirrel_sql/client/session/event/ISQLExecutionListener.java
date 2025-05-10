@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 public interface ISQLExecutionListener
 {
 
+	boolean callThisListenerForLargeScripts();
+
    /**
 	 * Called prior to an individual statement being executed. If you modify the
 	 * script remember to return it so that the caller knows about the
@@ -53,4 +55,13 @@ public interface ISQLExecutionListener
    void statementExecuted(QueryHolder sql);
 
    void executionFinished();
+
+	/**
+	 * Called from within {@link  net.sourceforge.squirrel_sql.client.session.SQLExecuterTask}.
+	 * Is usually not called on the EDT.
+	 *
+	 * @param querySql to be executed
+	 * @return false when {@link  net.sourceforge.squirrel_sql.client.session.SQLExecuterTask} should continue without executing this statement.
+	 */
+   ToBeExecutedNextDecision toBeExecutedNext(QueryHolder querySql);
 }

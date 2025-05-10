@@ -84,10 +84,13 @@ public class ConfigureFinishedSoundDlg extends JDialog
       gbc = new GridBagConstraints(1,0,1, 1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       txtSoundFile = new JTextField();
       txtSoundFile.setEditable(false);
-      ret.add(txtSoundFile, gbc);
+      ret.add(GUIUtils.setMinimumWidth(txtSoundFile, 0), gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnTestSound = new JToggleButton(s_stringMgr.getString("ConfigureFinishedSoundDlg.sound.test"));
+      String btnText = s_stringMgr.getString("ConfigureFinishedSoundDlg.sound.test");
+      btnTestSound = new JToggleButton(btnText);
+      btnTestSound.setToolTipText(btnText);
+      GUIUtils.setMinimumWidth(btnTestSound, btnTestSound.getFontMetrics(btnTestSound.getFont()).stringWidth(btnText) + 50);
       ret.add(btnTestSound, gbc);
 
       return ret;
