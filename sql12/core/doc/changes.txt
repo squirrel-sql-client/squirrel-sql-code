@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/63
+  Aliases panel: The selected Alias can now be connected by hitting enter.
+
 Option to warp the Aliases' toolbar to two lines:
   A new toggle button (or checked menu item) in the Aliases toolbar,
   Aliases menu, or Aliases right-click menu allows users

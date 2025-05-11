@@ -7,7 +7,12 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree.AliasDndExport;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasdndtree.AliasDndImport;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.gui.*;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDndDropPosition;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDndDropPositionData;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -18,18 +23,27 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import javax.activation.DataHandler;
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -90,6 +104,15 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       initAliasExportDnd();
 
+      _tree.addKeyListener(new KeyAdapter()
+      {
+         @Override
+         public void keyTyped(KeyEvent e)
+         {
+            onKeyTyped(e);
+         }
+      });
+
       _aliasesListModel.addListDataListener(new ListDataListener()
       {
          public void intervalAdded(ListDataEvent e)
@@ -119,6 +142,22 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       {
          _tree.addPropertyChangeListener(JTree.LEAD_SELECTION_PATH_PROPERTY,
                                          evt -> selectionListener.selectionChanged(getLeadSelectionValue()));
+      }
+   }
+
+   private void onKeyTyped(KeyEvent e)
+   {
+      if(e.getKeyChar() == KeyEvent.VK_ENTER && 0 == e.getModifiersEx() )
+      {
+         if(null == _tree.getSelectionPath())
+         {
+            return;
+         }
+
+         if(((DefaultMutableTreeNode)_tree.getSelectionPath().getLastPathComponent()).getUserObject() instanceof SQLAlias alias)
+         {
+            ConnectAliasOnEnterUtil.connectToSelectedAlias(e);
+         }
       }
    }
 

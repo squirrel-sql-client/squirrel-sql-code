@@ -7,10 +7,13 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 /*
@@ -78,6 +81,23 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 		if (selectionListener != null)
 		{
 			getList().addListSelectionListener(evt -> selectionListener.selectionChanged(getLeadSelectionValue()));
+		}
+
+		getList().addKeyListener(new KeyAdapter()
+		{
+			@Override
+			public void keyTyped(KeyEvent e)
+			{
+				onKeyTyped(e);
+			}
+		});
+	}
+
+	private void onKeyTyped(KeyEvent e)
+	{
+		if(null != getSelectedAlias(null))
+		{
+			ConnectAliasOnEnterUtil.connectToSelectedAlias(e);
 		}
 	}
 
