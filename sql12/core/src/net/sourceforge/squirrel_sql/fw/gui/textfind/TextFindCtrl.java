@@ -82,7 +82,7 @@ public class TextFindCtrl
 
       if(_permanent)
       {
-         openFind();
+         openFind(false);
       }
    }
 
@@ -240,7 +240,10 @@ public class TextFindCtrl
                   TextFinder.findNthOccurrence(_textComponentToSearch.getText(), _editableComboBoxHandler.getItem(), nextOccurrenceToFind, getSelectedFindMode());
          }
 
-         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("TextFindCtrl.mark.count", matchCount));
+         if(false == _inExecutingGlobalSearch)
+         {
+            Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("TextFindCtrl.mark.count", matchCount));
+         }
       }
       catch (BadLocationException e)
       {
@@ -301,11 +304,11 @@ public class TextFindCtrl
       return _containerPanel;
    }
 
-   public void toggleFind()
+   public void toggleFind(boolean focusTextField)
    {
       if (1 == _containerPanel.getComponents().length)
       {
-         openFind();
+         openFind(focusTextField);
       }
       else if (2 == _containerPanel.getComponents().length)
       {
@@ -313,14 +316,17 @@ public class TextFindCtrl
       }
    }
 
-   private void openFind()
+   private void openFind(boolean focusTextField)
    {
       _containerPanel.remove(_findPanel);
       _containerPanel.add(_findPanel, BorderLayout.SOUTH);
       _containerPanel.doLayout();
       _findPanel.doLayout();
       _findPanel.cboTextToFind.doLayout();
-      _editableComboBoxHandler.focus();
+      if(focusTextField)
+      {
+         _editableComboBoxHandler.focus();
+      }
    }
 
    private void closeFind()
@@ -340,10 +346,10 @@ public class TextFindCtrl
 
    public GlobalFindRemoteControl getFindRemoteControl()
    {
-      return (textToSearch, globalSearchType) -> onExecuteFindTillFirstResult(textToSearch, globalSearchType);
+      return (textToSearch, globalSearchType, highlightAll) -> onExecuteFindTillFirstResult(textToSearch, globalSearchType, highlightAll);
    }
 
-   private FirstSearchResult onExecuteFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType)
+   private FirstSearchResult onExecuteFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType, boolean highlightAll)
    {
       try
       {
@@ -352,12 +358,20 @@ public class TextFindCtrl
          closeFind();
          if(false == _permanent)
          {
-            toggleFind();
+            toggleFind(false);
          }
          saveFindMode(TextFindMode.ofGlobalSearchType(globalSearchType));
 
          _editableComboBoxHandler.addOrReplaceCurrentItem(textToSearch);
-         _findPanel.btnDown.doClick();
+
+         if(highlightAll)
+         {
+            _findPanel.btnMarkAll.doClick();
+         }
+         else
+         {
+            _findPanel.btnDown.doClick();
+         }
 
          // Knows by itself ho to find the first occurrence.
          // See usage of TextFinder.findNthOccurrence(...) in this class and in FirstSearchResult.

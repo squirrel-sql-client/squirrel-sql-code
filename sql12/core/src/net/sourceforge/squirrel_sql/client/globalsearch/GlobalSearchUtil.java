@@ -38,7 +38,11 @@ public class GlobalSearchUtil
       }
 
       List<GlobSearchNodeCellDataDialog> globSearchNodeCellDataDialogs =
-            Main.getApplication().getGlobalCellDataDialogManager().getOpenCellDataDialogs().stream().map(ocd -> new GlobSearchNodeCellDataDialog(ocd)).toList();
+            Main.getApplication().getGlobalCellDataDialogManager().getOpenCellDataDialogs().stream()
+                // Exclude the pinned dialog because it will automatically positioned when result data matches are found.
+                .filter(ocd -> false == Main.getApplication().getGlobalCellDataDialogManager().isPinned(ocd))
+                .map(ocd -> new GlobSearchNodeCellDataDialog(ocd)).toList();
+
       NodesToSearch result = new NodesToSearch(globSearchNodeSessions, globSearchNodeCellDataDialogs);
       return result;
    }

@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.globalsearch;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FirstSearchResult;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -273,6 +274,13 @@ public class GlobalSearchCtrl
          {
             _dlg.treeSearchResultNavi.setSelectionRow(0);
          }
+
+         if(null != Main.getApplication().getGlobalCellDataDialogManager().getPinnedCellDataDialog())
+         {
+            Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("GlobalSearchCtrl.pinned.cell.data.dialog.shows.last.result"));
+         }
+
+
          GUIUtils.executeDelayed(() -> _dlg.treeSearchResultNavi.requestFocus(), 500);
       }
    }

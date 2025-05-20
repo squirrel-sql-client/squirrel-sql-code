@@ -36,6 +36,8 @@ public class DataSetFindPanelController
 
    private static final String PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF_PREFIX = "SquirrelSQL.DataSetFind.tableSearch.StrPref_";
 
+   private final DataSetFindPanelListener _dataSetFindPanelListener;
+
    private DataSetFindPanel _dataSetFindPanel;
    private EditableComboBoxHandler _editableComboBoxHandler;
 
@@ -55,8 +57,9 @@ public class DataSetFindPanelController
       FORWARD, BACKWARD, HIGHLIGHT
    }
 
-   public DataSetFindPanelController(final DataSetFindPanelListener dataSetFindPanelListener, final ISession session)
+   public DataSetFindPanelController(final ISession session, final DataSetFindPanelListener dataSetFindPanelListener)
    {
+      _dataSetFindPanelListener = dataSetFindPanelListener;
       _dataSetFindPanel = new DataSetFindPanel();
 
       _dataSetFindPanel.btnDown.addActionListener(e -> onFind(FindMode.FORWARD));
@@ -73,7 +76,7 @@ public class DataSetFindPanelController
 
       _dataSetFindPanel.btnNarrowColsToSearch.addActionListener(e -> onNarrowColsToSearch());
 
-      _dataSetFindPanel.btnHideFindPanel.addActionListener(e -> dataSetFindPanelListener.hideFindPanel());
+      _dataSetFindPanel.btnHideFindPanel.addActionListener(e -> _dataSetFindPanelListener.hideFindPanel());
 
       _dataSetFindPanel.chkCaseSensitive.addActionListener(e -> clearFind());
 
@@ -257,11 +260,16 @@ public class DataSetFindPanelController
             {
                if(_inExecutingGlobalSearch)
                {
-                  SwingUtilities.invokeLater(() -> _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), true));
+                  // Other trials to cope with table search panel being displayed after the result table was scrolled to the positon of a finding.
+                  // The preferable way turned out to introduce the parameter adjustScrollPositonDueToTableSearchPanelBeingDisplayedLater.
+                  //SwingUtilities.invokeLater(() -> _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), true));
+                  //GUIUtils.executeDelayed(() -> _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), true), 300);
+
+                  _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), true, true);
                }
                else
                {
-                  _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), false);
+                  _findService.scrollToVisible(_tableTraverser.getRow(), _tableTraverser.getCol(), true, false);
                }
             }
 
@@ -275,6 +283,10 @@ public class DataSetFindPanelController
 
             if (FindMode.HIGHLIGHT != findMode)
             {
+               if(matchFound)
+               {
+                  _dataSetFindPanelListener.matchFound(_currentSearchString, getSelectedMatchType(), _dataSetFindPanel.chkCaseSensitive.isSelected());
+               }
                return;
             }
          }
@@ -326,7 +338,7 @@ public class DataSetFindPanelController
 
    private boolean matches(String toMatchAgainst, String viewDataAsString)
    {
-      DataSetSearchMatchType sel = (DataSetSearchMatchType) _dataSetFindPanel.cboMatchType.getSelectedItem();
+      DataSetSearchMatchType sel = getSelectedMatchType();
 
       if(false == _dataSetFindPanel.chkCaseSensitive.isSelected())
       {
@@ -352,6 +364,12 @@ public class DataSetFindPanelController
       }
 
       throw new IllegalArgumentException("Unknown match type " + sel);
+   }
+
+   private DataSetSearchMatchType getSelectedMatchType()
+   {
+      DataSetSearchMatchType sel = (DataSetSearchMatchType) _dataSetFindPanel.cboMatchType.getSelectedItem();
+      return sel;
    }
 
    public DataSetFindPanel getPanel()

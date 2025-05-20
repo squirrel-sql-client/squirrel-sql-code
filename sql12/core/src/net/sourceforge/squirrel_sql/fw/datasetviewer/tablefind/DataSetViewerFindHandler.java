@@ -22,6 +22,8 @@ public class DataSetViewerFindHandler
 
    private DataSetFindPanelController _dataSetFindPanelController;
 
+   private DetailsTextFindExecutor _detailsTextFindExecutor = new DetailsTextFindExecutor();
+
 
    public DataSetViewerFindHandler(IDataSetViewer dataSetViewer, ISession session, ResultTableType resultTableType)
    {
@@ -45,7 +47,20 @@ public class DataSetViewerFindHandler
       //_split.setDividerLocation(0);
       //_split.setEnabled(false); // Avoids unwanted display of thin empty bar above the SQL result table.
 
-      _dataSetFindPanelController = new DataSetFindPanelController(() -> toggleShowFindPanel(), session);
+      _dataSetFindPanelController = new DataSetFindPanelController(session, new DataSetFindPanelListener()
+      {
+         @Override
+         public void hideFindPanel()
+         {
+            toggleShowFindPanel();
+         }
+
+         @Override
+         public void matchFound(String currentSearchString, DataSetSearchMatchType selectedMatchType, boolean caseSensitive)
+         {
+            _detailsTextFindExecutor.findDelayedInRelatedDetailTextDisplays(currentSearchString, _resultDisplayHandler, selectedMatchType.getGlobalType(caseSensitive));
+         }
+      });
 
       if (_resultDisplayHandler.isDataSetViewerTablePanel())
       {
@@ -124,7 +139,7 @@ public class DataSetViewerFindHandler
          return null;
       }
 
-      return (textToSearch, globalSearchType) -> onExecuteFindTillFirstResult(textToSearch, globalSearchType);
+      return (textToSearch, globalSearchType, highlightAll) -> onExecuteFindTillFirstResult(textToSearch, globalSearchType);
    }
 
    private FirstSearchResult onExecuteFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType)

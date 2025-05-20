@@ -4,4 +4,5 @@ public interface DataSetFindPanelListener
 {
    void hideFindPanel();
 
+   void matchFound(String currentSearchString, DataSetSearchMatchType selectedMatchType, boolean caseSensitive);
 }

@@ -69,7 +69,7 @@ public class GlobalCellDataDialogManager
       }
    }
 
-   CellDataDialog getPinnedCellDataDialog()
+   public CellDataDialog getPinnedCellDataDialog()
    {
       return _pinnedCellDataDialog;
    }
@@ -83,5 +83,10 @@ public class GlobalCellDataDialogManager
    public List<CellDataDialog> getOpenCellDataDialogs()
    {
       return _openCellDataDialogs;
+   }
+
+   public boolean isPinned(CellDataDialog cellDataDialog)
+   {
+      return null != _pinnedCellDataDialog && _pinnedCellDataDialog == cellDataDialog;
    }
 }

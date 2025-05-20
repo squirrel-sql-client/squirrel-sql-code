@@ -503,7 +503,7 @@ public class PopupEditableIOPanel extends JPanel
 		}
 		else if(e.getActionCommand().equals(ACTION_FIND))
 		{
-			_textFindCtrl.toggleFind();
+			_textFindCtrl.toggleFind(true);
 		}
 		else
 		{

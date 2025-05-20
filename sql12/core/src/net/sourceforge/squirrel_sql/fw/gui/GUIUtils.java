@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -1338,5 +1339,30 @@ public class GUIUtils
 		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) tree.getModel().getRoot();
 		rootNode.removeAllChildren();
 		((DefaultTreeModel) tree.getModel()).nodeStructureChanged(rootNode);
+	}
+
+	public static void scrollTableUpBy(JTable table, int pixels)
+	{
+		JScrollPane scrollPane = getScrollPaneOfTable(table);
+
+		if(null == scrollPane)
+		{
+			return;
+		}
+
+		Point currentPosition = scrollPane.getViewport().getViewPosition();
+		currentPosition.y = Math.max(0, currentPosition.y + pixels); // Ensure we don't scroll past the top
+		scrollPane.getViewport().setViewPosition(currentPosition);
+	}
+
+	private static JScrollPane getScrollPaneOfTable(JTable table)
+	{
+		// Traverse the component hierarchy to find the JScrollPane
+		Container parent = table.getParent();
+		while( parent != null && !(parent instanceof JScrollPane) )
+		{
+			parent = parent.getParent();
+		}
+		return (JScrollPane) parent; // This will be null if not found
 	}
 }

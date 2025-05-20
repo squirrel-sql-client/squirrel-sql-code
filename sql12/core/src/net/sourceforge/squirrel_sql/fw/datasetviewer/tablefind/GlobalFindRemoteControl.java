@@ -5,5 +5,10 @@ import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
 @FunctionalInterface
 public interface GlobalFindRemoteControl
 {
-   FirstSearchResult executeFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType);
+   default FirstSearchResult executeFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType)
+   {
+      return executeFindTillFirstResult(textToSearch, globalSearchType, false);
+   }
+
+   FirstSearchResult executeFindTillFirstResult(String textToSearch, GlobalSearchType globalSearchType, boolean highlightAll);
 }
