@@ -27,7 +27,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
@@ -45,6 +47,9 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultImageDisplayPanel.class);
    private static final ILogger s_log = LoggerController.createLogger(ResultImageDisplayPanel.class);
    private final JScrollPane _scrImage = new JScrollPane();
+   private final ImageContainerSizeProvider _imageContainerSizeProvider;
+   private JLabel _lblImage = new JLabel();
+   private BufferedImage _image;
 
 
    public ResultImageDisplayPanel(ColumnDisplayDefinition cdd,
@@ -52,8 +57,10 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
                                   boolean tableEditable,
                                   int selRow,
                                   int selCol,
+                                  ImageContainerSizeProvider imageContainerSizeProvider,
                                   DataSetViewerTable table)
    {
+      _imageContainerSizeProvider = imageContainerSizeProvider;
       setLayout(new BorderLayout(3,3));
       add(_scrImage, BorderLayout.CENTER);
 
@@ -169,10 +176,9 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
             return new JLabel(StringUtilities.NULL_AS_STRING);
          }
 
-         BufferedImage image;
          if(valueToDisplay instanceof String)
          {
-            image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode((String) valueToDisplay)));
+            _image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode((String) valueToDisplay)));
          }
          else if (valueToDisplay instanceof BlobDescriptor)
          {
@@ -190,7 +196,7 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
                   return new JLabel(StringUtilities.NULL_AS_STRING);
                }
             }
-            image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(data)));
+            _image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(data)));
          }
          else if (valueToDisplay instanceof ClobDescriptor)
          {
@@ -208,14 +214,14 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
                }
             }
 
-            image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
+            _image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
          }
          else
          {
-            image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(valueToDisplay)));
+            _image = ImageIO.read(new ByteArrayInputStream(Utilities.toPrimitiveByteArray(valueToDisplay)));
          }
 
-         if(null == image)
+         if(null == _image)
          {
             String msg = s_stringMgr.getString("ResultImageDisplayPanel.could.create.image", ColumnDisplayUtil.getColumnName(cdd), cdd.getSqlTypeName());
 
@@ -233,9 +239,9 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
             return new MultipleLineLabel(msg);
          }
 
-         JLabel lblImage = new JLabel();
-         lblImage.setIcon(new ImageIcon(image));
-         return lblImage;
+         _lblImage.setHorizontalAlignment(SwingConstants.CENTER);
+         _lblImage.setIcon(new ImageIcon(_image));
+         return _lblImage;
       }
       catch(Exception e)
       {
@@ -267,5 +273,36 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
    {
       DataTypeClobProperties props = new DataTypeClobProperties().loadProperties();
       return props.isReadCompleteClobs() && false == props.isReadClobsNever();
+   }
+
+   public void scaleImageToPanelSize()
+   {
+      if(null == _image || 0 == _image.getWidth() || 0 == _image.getWidth())
+      {
+         return;
+      }
+
+      Dimension parentSize = _imageContainerSizeProvider.getImageContainerSize();
+      parentSize.width -= 5;
+      parentSize.height -= 5;
+      //if(parentSize.width > 40 && parentSize.height > 40 && (_image.getWidth() > parentSize.getWidth() || _image.getWidth() > parentSize.getWidth()))
+      if(parentSize.width > 40 && parentSize.height > 40 )
+      {
+         int scaleToWidth;
+         int scaleToHeight;
+
+         if( parentSize.getWidth() / ((double)_image.getWidth()) > parentSize.getHeight() / ((double)_image.getHeight()) )
+         {
+            scaleToWidth = (int) (parentSize.getHeight() / ((double)_image.getHeight()) * ((double)_image.getWidth()) + 0.5);
+            scaleToHeight = parentSize.height;
+         }
+         else
+         {
+            scaleToWidth = parentSize.width;
+            scaleToHeight = (int) (parentSize.getWidth() / ((double)_image.getWidth()) * ((double)_image.getHeight()) + 0.5);
+         }
+
+         _lblImage.setIcon(new ImageIcon(GUIUtils.scaleImage(_image, scaleToWidth, scaleToHeight)));
+      }
    }
 }

@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
-@FunctionalInterface
 public interface DisplayPanelListener
 {
    void displayModeChanged();
+   void scaleImageToPanelSize();
 }

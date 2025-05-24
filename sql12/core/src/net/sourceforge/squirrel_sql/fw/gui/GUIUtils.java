@@ -64,12 +64,14 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -86,6 +88,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
@@ -1364,5 +1367,22 @@ public class GUIUtils
 			parent = parent.getParent();
 		}
 		return (JScrollPane) parent; // This will be null if not found
+	}
+
+	public static BufferedImage scaleImage(BufferedImage originalImage, int newWidth, int newHeight)
+	{
+		// Create a new BufferedImage with the desired dimensions
+		BufferedImage scaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+
+		// Get the Graphics2D object
+		Graphics2D g2d = scaledImage.createGraphics();
+
+		// Draw the original image scaled to the new size
+		g2d.drawImage(originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
+
+		// Dispose of the graphics context
+		g2d.dispose();
+
+		return scaledImage;
 	}
 }

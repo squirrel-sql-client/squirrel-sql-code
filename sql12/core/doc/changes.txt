@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Table cell data dialog / Table cell data detail:
+  Image display offers a button to scale the image to the current display size.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/61 (second)
   When searching a SQL result table with its table cell detail display open
   or a pinned cell data dialog, occurrences of the search string will be highlighted

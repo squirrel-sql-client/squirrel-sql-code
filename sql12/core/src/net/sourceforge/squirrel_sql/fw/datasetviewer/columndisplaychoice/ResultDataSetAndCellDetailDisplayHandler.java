@@ -52,7 +52,16 @@ public class ResultDataSetAndCellDetailDisplayHandler
       GUIUtils.setMinimumWidth(_lblNoCell.castToComponent(), 0);
 
 
-      _rightCellDisplayPanel = new CellDisplayPanel(() -> onDisplayChanged(), () -> onClose());
+      DisplayPanelListener displayPanelListener = new DisplayPanelListener()
+      {
+         @Override
+         public void displayModeChanged() {onDisplayChanged();}
+
+         @Override
+         public void scaleImageToPanelSize() {onScaleImageToPanelSize();}
+      };
+
+      _rightCellDisplayPanel = new CellDisplayPanel(displayPanelListener, () -> onClose());
       _splitPane.setRightComponent(_rightCellDisplayPanel);
 
       _splitPane.addComponentListener(new ComponentAdapter()
@@ -74,6 +83,14 @@ public class ResultDataSetAndCellDetailDisplayHandler
       else
       {
          setCellDetailVisible(false, true);
+      }
+   }
+
+   private void onScaleImageToPanelSize()
+   {
+      if(_rightCellDisplayPanel.getContentComponent() instanceof ResultImageDisplayPanel imageDisplayPanel)
+      {
+         imageDisplayPanel.scaleImageToPanelSize();
       }
    }
 
@@ -127,6 +144,7 @@ public class ResultDataSetAndCellDetailDisplayHandler
                                                        dataSetViewer.isTableEditable(),
                                                        rowLeadSelectionIndex,
                                                        colLeadSelectionIndex,
+                                                       () -> _rightCellDisplayPanel.getContentComponent().castToComponent().getSize(),
                                                        dataSetViewer.getTable());
          }
          else

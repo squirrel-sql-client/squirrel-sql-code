@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanelContent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.DisplayMode;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.DisplayPanelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultImageDisplayPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -56,15 +57,38 @@ public class CellDataDialog extends JDialog
       }
 
       setTitle(s_stringMgr.getString("cellDataPopup.valueofColumn", columnName));
-      _cellDisplayPanel =
-            new CellDisplayPanel(() -> onDisplayModeChanged(colDef, value, rowIx, colIx, isModelEditable, table),
-                                 sticky -> onToggleSticky(sticky), pinned);
+
+      DisplayPanelListener displayPanelListener = new DisplayPanelListener()
+      {
+         @Override
+         public void displayModeChanged()
+         {
+            onDisplayModeChanged(colDef, value, rowIx, colIx, isModelEditable, table);
+         }
+
+         @Override
+         public void scaleImageToPanelSize()
+         {
+            onScaleImageToPanelSize();
+         }
+      };
+
+      _cellDisplayPanel =new CellDisplayPanel(displayPanelListener,sticky -> onToggleSticky(sticky), pinned);
 
       _cellDisplayPanel.setCurrentColumnDisplayDefinition(colDef);
       getContentPane().add(_cellDisplayPanel);
 
       onDisplayModeChanged(colDef, value, rowIx, colIx, isModelEditable, table);
    }
+
+   private void onScaleImageToPanelSize()
+   {
+      if(_cellDisplayPanel.getContentComponent() instanceof ResultImageDisplayPanel imageDisplayPanel)
+      {
+         imageDisplayPanel.scaleImageToPanelSize();
+      }
+   }
+
 
    private void onToggleSticky(boolean sticky)
    {
@@ -88,6 +112,7 @@ public class CellDataDialog extends JDialog
                                                     isModelEditable,
                                                     row,
                                                     col,
+                                                    () -> _cellDisplayPanel.getContentComponent().castToComponent().getSize(),
                                                     (DataSetViewerTable) table);
       }
       else

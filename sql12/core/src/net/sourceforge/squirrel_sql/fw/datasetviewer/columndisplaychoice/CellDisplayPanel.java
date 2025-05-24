@@ -35,6 +35,7 @@ public class CellDisplayPanel extends JPanel
    private JComboBox<DisplayMode> _cboDisplayMode = new JComboBox<>(DisplayMode.values());
    private JButton _btnClose = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.CLOSE));
    private JToggleButton _btnTogglePinned;
+   private JButton _btnScale;
 
    public CellDisplayPanel(DisplayPanelListener displayPanelListener,
                            ToggleCellDataDialogPinnedListener toggleCellDataDialogPinnedListener,
@@ -73,6 +74,8 @@ public class CellDisplayPanel extends JPanel
          Main.getApplication().getCellDetailDisplayModeManager().putDisplayMode(_currentColumnDisplayDefinition, getDisplayMode());
       }
 
+      _btnScale.setEnabled(DisplayMode.IMAGE == e.getItem());
+
       _displayPanelListener.displayModeChanged();
    }
 
@@ -92,9 +95,16 @@ public class CellDisplayPanel extends JPanel
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,3,3,0), 0,0);
       ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("DisplayPanel.info.button")).getButton(), gbc);
 
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,3,3,0), 0,0);
+      _btnScale = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SCALE));
+      _btnScale.setToolTipText(s_stringMgr.getString("DisplayPanel.scale.image.to.fit"));
+      _btnScale.addActionListener(e -> _displayPanelListener.scaleImageToPanelSize());
+      _btnScale.setEnabled(false);
+      ret.add(GUIUtils.styleAsToolbarButton(_btnScale), gbc);
+
       if(null != _toggleCellDataDialogPinnedListener)
       {
-         gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,10,3,0), 0,0);
+         gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,10,3,0), 0,0);
          _btnTogglePinned = new JToggleButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.PINNED));
          _btnTogglePinned.setToolTipText(s_stringMgr.getString("CellDisplayPanel.pinned.tooltip"));
          _btnTogglePinned.setSelected(pinned);

@@ -227,6 +227,7 @@ public class SquirrelResources extends Resources
 		String ITALIC_IMAGE = "Italic";
 
 		String COMPRESS = "compress";
+		String SCALE = "scale";
 
 	}
 
