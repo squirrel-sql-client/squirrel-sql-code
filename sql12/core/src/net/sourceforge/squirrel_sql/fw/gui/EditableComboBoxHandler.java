@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 
 public class EditableComboBoxHandler
 {
-   private final JComboBox _cbo;
+   private final JComboBox<String> _cbo;
    private final String _prefKeyPrefix;
    private final int _maxItemCount;
    private String _defaultString;
@@ -63,15 +64,20 @@ public class EditableComboBoxHandler
    {
       if(0 < _cbo.getItemCount())
       {
-         addOrReplaceCurrentItem((String) _cbo.getItemAt(0));
+         addOrReplaceCurrentItem(_cbo.getItemAt(0));
       }
    }
 
    public void addOrReplaceCurrentItem(String newItem)
    {
+      if(StringUtilities.isEmpty(newItem))
+      {
+         return;
+      }
+
       for (int i = 0; i < _cbo.getItemCount(); i++)
       {
-         if(newItem.equals(_cbo.getItemAt(i)))
+         if(StringUtils.equals(newItem, _cbo.getItemAt(i)))
          {
             _cbo.removeItemAt(i);
          }
@@ -79,10 +85,10 @@ public class EditableComboBoxHandler
       ((DefaultComboBoxModel)_cbo.getModel()).insertElementAt(newItem, 0);
 
 
-      ArrayList itemsToRemove = new ArrayList();
+      ArrayList<String> itemsToRemove = new ArrayList<>();
       for (int i = 0; i <  _cbo.getItemCount(); i++)
       {
-         final String item = (String) _cbo.getItemAt(i);
+         final String item = _cbo.getItemAt(i);
          if (_maxItemCount > i && false == StringUtilities.isEmpty(item))
          {
             Props.putString(_prefKeyPrefix + i, item);
