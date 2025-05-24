@@ -178,7 +178,7 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
 
          if(valueToDisplay instanceof String)
          {
-            _image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode((String) valueToDisplay)));
+            _image = ImageIO.read(new ByteArrayInputStream(Base64DecodeHelper.decodeBase64OmittingInvalidBase64Chars((String) valueToDisplay)));
          }
          else if (valueToDisplay instanceof BlobDescriptor)
          {
@@ -214,7 +214,7 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
                }
             }
 
-            _image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
+            _image = ImageIO.read(new ByteArrayInputStream(Base64DecodeHelper.decodeBase64OmittingInvalidBase64Chars(data)));
          }
          else
          {

@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Image display in table cell data dialog or table cell data detail:
+  When decoding Base64, characters that are not valid Base64 characters are ignored.
+  This is helpful, for example, when MySQL's TO_BASE64 function is used,
+  as it introduces line feeds into the Base64 string.
+
 Table cell data dialog / Table cell data detail:
   Image display offers a button to scale the image to the current display size.
 
