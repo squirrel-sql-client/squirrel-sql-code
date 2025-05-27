@@ -18,17 +18,22 @@
  */
 package net.sourceforge.squirrel_sql.fw.sql;
 
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author manningr : except where noted
@@ -389,22 +394,59 @@ public class SQLUtilities
 
    public static String getQualifiedTableName(String catalog, String schema, String tableName)
    {
+		return getQualifiedTableName(catalog, schema, tableName, false);
+	}
+
+	public static String getQualifiedTableName(String catalog, String schema, String tableName, boolean quoted)
+   {
       String ret = "";
 
-      if(null != catalog)
+      if(false == StringUtilities.isEmpty(catalog))
       {
-         ret += catalog + ".";
+         if( quoted )
+         {
+            ret += "\"" + catalog + "\".";
+         }
+         else
+         {
+				ret += catalog + ".";
+         }
       }
 
-      if(null != schema)
+      if(false == StringUtilities.isEmpty(schema))
       {
-         ret += schema + ".";
+         if( quoted )
+         {
+            ret += "\"" + schema + "\".";
+         }
+         else
+         {
+				ret += schema + ".";
+         }
       }
 
-      ret += tableName;
+      if( quoted )
+      {
+			ret += "\"" + tableName + "\"";
+      }
+      else
+      {
+			ret += tableName;
+      }
 
       return ret;
    }
+
+	//public static void main(String[] args)
+	//{
+	//	System.out.println(SQLUtilities.getQualifiedTableName("Cat", "Schem", "Tabw"));
+	//	System.out.println(SQLUtilities.getQualifiedTableName("Cat", "Schem", "Tabw", true));
+	//	System.out.println(SQLUtilities.getQualifiedTableName( null, "Schem", "Tabw"));
+	//	System.out.println(SQLUtilities.getQualifiedTableName( null, "Schem", "Tabw", true));
+	//	System.out.println(SQLUtilities.getQualifiedTableName( null, null, "Tabw"));
+	//	System.out.println(SQLUtilities.getQualifiedTableName( null, null, "Tabw", true));
+	//}
+
 
    public static String createColumnDefinitionString(String sColumnName, String sType, int columnSize, int decimalDigits)
    {

@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class TableQualifier
 {
@@ -38,6 +38,11 @@ public class TableQualifier
       {
          _catalog = list.get(2);
       }
+   }
+
+   public String getQualifiedTableName(boolean quoted)
+   {
+      return SQLUtilities.getQualifiedTableName(_catalog, _schema, _tableName, quoted);
    }
 
    public String getCatalog()

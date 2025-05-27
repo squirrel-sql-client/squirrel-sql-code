@@ -19,14 +19,29 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -35,13 +50,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DropTableDialog;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class DropTablesCommand extends AbstractRefactoringCommand
 {
@@ -173,8 +181,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		}
 		catch (final UnsupportedOperationException e2)
 		{
-			_session.showMessage(s_stringMgr.getString("DropTablesCommand.unsupportedOperationMsg",
-				_dialect.getDisplayName()));
+			String msg = s_stringMgr.getString("DropTablesCommand.unsupportedOperationMsg", _dialect.getDisplayName());
+			_session.showMessage(msg);
+			s_log.error(msg, e2);
 		}
 		return result.toArray(new String[] {});
 	}
@@ -411,6 +420,15 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 				}
 				tableCount++;
 			}
+		}
+
+		@Override
+		public String sqlExecutionException(Throwable th, String postErrorString)
+		{
+			String msgRet = super.sqlExecutionException(th, postErrorString);
+
+			s_log.error(postErrorString, th);
+			return msgRet;
 		}
 	}
 

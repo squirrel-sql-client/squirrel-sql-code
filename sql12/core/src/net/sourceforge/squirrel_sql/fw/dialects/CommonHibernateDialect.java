@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.Hibernate
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
 
@@ -501,9 +502,13 @@ public abstract class CommonHibernateDialect implements HibernateDialect, String
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		if(prefs.isQualifyTableNames())
+		{
+			return SQLUtilities.getQualifiedTableName(qualifier.getCatalog(), qualifier.getSchema(), identifier, prefs.isQuoteIdentifiers());
+		}
+
 		return identifier;
 	}
 

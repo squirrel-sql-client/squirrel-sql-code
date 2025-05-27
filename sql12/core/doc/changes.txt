@@ -221,6 +221,10 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Refactoring Plugin:
+  Dropping tables didn't respect configurations from Global Prefrences --> tab Refactoring.
+  See right mouse menu on table in Object tree --> Refactoring --> Table --> Drop Table(s)
+
 Fixed memory leak:
   Closed Sessions were not garbage collected when cell data dialogs had been opened.
 
