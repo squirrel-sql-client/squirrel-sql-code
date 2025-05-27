@@ -8,4 +8,10 @@ public class LabelNoCellSelected extends JLabel implements CellDisplayPanelConte
    {
       super(text);
    }
+
+   @Override
+   public void cleanUp()
+   {
+
+   }
 }

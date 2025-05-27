@@ -6,8 +6,8 @@ public class CellDataUpdateInfo
 {
    private final int _row;
    private final int _col;
-   private final JTable _table;
-   private final CellDataDialog _parentDialog;
+   private JTable _table;
+   private CellDataDialog _parentDialog;
 
    public CellDataUpdateInfo(int row, int col, JTable table, CellDataDialog parentDialog)
    {
@@ -41,5 +41,11 @@ public class CellDataUpdateInfo
 
       _parentDialog.setVisible(false);
       _parentDialog.dispose();
+   }
+
+   public void cleanUp()
+   {
+      _parentDialog = null;
+      _table = null;
    }
 }

@@ -221,6 +221,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Fixed memory leak:
+  Closed Sessions were not garbage collected when cell data dialogs had been opened.
+
 Fixed possible NullPointerException which could occur in editable combo boxes.
   For example in the file export dialog.
 

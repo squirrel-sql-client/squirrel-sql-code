@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
+import java.awt.BorderLayout;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanelContent;
@@ -7,11 +12,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultI
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 
 public class CellDataColumnDataPanel extends JPanel implements CellDisplayPanelContent<ResultImageDisplayPanel>
 {
@@ -120,5 +120,15 @@ public class CellDataColumnDataPanel extends JPanel implements CellDisplayPanelC
    public GlobalFindRemoteControl getCellDetailFindRemoteControlOrNull()
    {
       return _ioPanel.getCellDetailFindRemoteControlOrNull();
+   }
+
+   @Override
+   public void cleanUp()
+   {
+      if(null != _cellDataUpdateInfo)
+      {
+         _cellDataUpdateInfo.cleanUp();
+         _cellDataUpdateInfo = null;
+      }
    }
 }

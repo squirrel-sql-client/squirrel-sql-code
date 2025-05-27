@@ -11,4 +11,9 @@ public interface CellDisplayPanelContent<T extends JComponent>
    {
       return (T) this;
    }
+
+   /**
+    * Memory leak: Allows closed Sessions to be garbage collected after a CellDataDialog was opened.
+    */
+   void cleanUp();
 }

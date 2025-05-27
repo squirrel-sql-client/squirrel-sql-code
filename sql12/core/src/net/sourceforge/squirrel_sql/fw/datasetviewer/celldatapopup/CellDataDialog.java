@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
+import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JDialog;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
@@ -9,14 +16,10 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.Display
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.DisplayPanelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultImageDisplayPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
+import net.sourceforge.squirrel_sql.fw.gui.CloseByEscapeListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JDialog;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import java.awt.GridLayout;
 
 public class CellDataDialog extends JDialog
 {
@@ -37,7 +40,34 @@ public class CellDataDialog extends JDialog
 
       initCellDisplayPanel(parentTable, columnName, rowIx, colIx, colDef, objectToDisplay, isModelEditable,false);
 
-      GUIUtils.enableCloseByEscape(this);
+      GUIUtils.enableCloseByEscape(this, new CloseByEscapeListener()
+      {
+         @Override
+         public void willCloseByEscape(JDialog dialog)
+         {
+            cleanUp();
+         }
+      });
+
+      addWindowListener(new WindowAdapter()
+      {
+         @Override
+         public void windowClosing(WindowEvent e)
+         {
+            cleanUp();
+         }
+
+         @Override
+         public void windowClosed(WindowEvent e)
+         {
+            cleanUp();
+         }
+      });
+   }
+
+   private void cleanUp()
+   {
+      _cellDisplayPanel.cleanUp();
    }
 
    public void initCellDisplayPanel(JTable table,
