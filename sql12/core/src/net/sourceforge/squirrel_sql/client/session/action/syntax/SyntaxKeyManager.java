@@ -1,15 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session.action.syntax;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 
-import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
 
 
 /**
@@ -17,10 +16,6 @@ import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
  */
 public class SyntaxKeyManager
 {
-   /**
-    * See also {@link SQLEntryPanelUtil#isParseStop(char, boolean)}
-    */
-   private static final char[] STOP_AT = new char[]{'.', '(', ')' , '\'', '\n', ',', '=', '<', '>', '"'};
 
    private JTextComponent _textPane;
 
@@ -156,13 +151,7 @@ public class SyntaxKeyManager
       }
 
 
-      for(; pos > 0; --pos)
-      {
-         if(isToStopAt(text.charAt(pos-1), text.charAt(pos)))
-         {
-            break;
-         }
-      }
+      pos = CtrlLeftRightStopUtil.getStopToTheLeftPos(pos, text);
 
       if(select)
       {
@@ -195,13 +184,7 @@ public class SyntaxKeyManager
       }
 
 
-      for(; pos < text.length(); ++pos)
-      {
-         if(isToStopAt(text.charAt(pos), text.charAt(pos-1)))
-         {
-            break;
-         }
-      }
+      pos = CtrlLeftRightStopUtil.getStopToTheRightPos(pos, text);
 
       if(select)
       {
@@ -211,35 +194,6 @@ public class SyntaxKeyManager
       {
          _textPane.setCaretPosition(pos);
       }
-   }
-
-   private boolean isToStopAt(char toCheck, char former)
-   {
-      if(isInStopAtArray(former) || isInStopAtArray(toCheck))
-      {
-         return true;
-      }
-      else if(false == Character.isWhitespace(former) && Character.isWhitespace(toCheck)  ||
-              Character.isWhitespace(former) && false == Character.isWhitespace(toCheck)  )
- //     else if(Character.isWhitespace(former) && false == Character.isWhitespace(toCheck))
-      {
-         return true;
-      }
-
-      return false;
-   }
-
-   private boolean isInStopAtArray(char toCheck)
-   {
-      for (int i = 0; i < STOP_AT.length; i++)
-      {
-         if(toCheck == STOP_AT[i])
-         {
-            return true;
-         }
-      }
-
-      return false;
    }
 
 

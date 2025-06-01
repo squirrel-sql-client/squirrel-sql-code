@@ -99,7 +99,8 @@ public class SQLEntryPanelUtil
    }
 
    /**
-    * See also {@link net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxKeyManager#STOP_AT}
+    * See also {@link net.sourceforge.squirrel_sql.client.session.action.syntax.CtrlLeftRightStopUtil#STOP_AT}
+    * and {@link net.sourceforge.squirrel_sql.plugins.codecompletion.CompleteCodeAction#getNextStopCharPos}
     */
    private static boolean isParseStop(char c, boolean treatDotAsStop)
    {

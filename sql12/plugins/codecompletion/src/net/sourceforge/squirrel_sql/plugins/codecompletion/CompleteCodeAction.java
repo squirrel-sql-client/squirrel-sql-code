@@ -137,6 +137,10 @@ public class CompleteCodeAction extends SquirrelAction
       }
    }
 
+   /**
+    * See also {@link net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil#isParseStop(char, boolean)}
+    * and {@link net.sourceforge.squirrel_sql.client.session.action.syntax.CtrlLeftRightStopUtil#STOP_AT}
+    */
    private int getNextStopCharPos(int startPos)
 	{
 		String text = _sqlEntryPanel.getText();
