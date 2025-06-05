@@ -232,12 +232,6 @@ public class SQLExecuterTask implements Runnable
             }
             catch (SQLException ex)
             {
-               // If the user has cancelled the query, don't bother logging
-               // an error message.  It is likely that the cancel request
-               // interfered with the attempt to fetch results from the
-               // ResultSet, which is to be expected when the Statement is
-               // closed.  So, let's not bug the user with obvious error
-               // messages that we can do nothing about.
                if (_cancelExecution)
                {
                   String msg =
