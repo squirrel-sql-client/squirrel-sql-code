@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Improved logging:
+  When a statement execution is canceled the JDBC driver usually exits the statement's execution
+  by throwing an exception. This exception is now logged with level info.
+
 Image display in table cell data dialog or table cell data detail:
   When decoding Base64, characters that are not valid Base64 characters are ignored.
   This is helpful, for example, when MySQL's TO_BASE64 function is used,

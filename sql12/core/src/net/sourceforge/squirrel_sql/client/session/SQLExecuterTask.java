@@ -27,6 +27,14 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ToBeExecutedNextDecision;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
@@ -45,14 +53,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.SwingUtilities;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This class can be used to execute SQL.
@@ -240,6 +240,10 @@ public class SQLExecuterTask implements Runnable
                // messages that we can do nothing about.
                if (_cancelExecution)
                {
+                  String msg =
+                        "java.sql.Statement.execute(String) raised following exception after java.sql.Statement.cancel() was called.\n"
+                        + "Most likely, this is the correct reaction to canceling the statement.";
+                  s_log.info(msg, ex);
                   break;
                }
                else
