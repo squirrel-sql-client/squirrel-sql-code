@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/61 (third)
+SQL result search function: The tool tips of the "find next" and "find previous" buttons
+  now show their keyboard shortcuts: Enter or F3 and Shift F3 respectively.
+
 Improved logging:
   When a statement execution is canceled the JDBC driver usually exits the statement's execution
   by throwing an exception. This exception is now logged with level info.

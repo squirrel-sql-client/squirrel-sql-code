@@ -156,14 +156,6 @@ public class DataSetFindPanelController
          }
       };
 
-      Action unhighlightAction = new AbstractAction("DataSetFind.Unhighlight")
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            _dataSetFindPanel.btnUnhighlightResult.doClick();
-         }
-      };
-
       EscapeAction escapeAction = new EscapeAction(_dataSetFindPanel.btnUnhighlightResult, _dataSetFindPanel.btnHideFindPanel);
 
       JComponent comp = (JComponent) _dataSetFindPanel.cboString.getEditor().getEditorComponent();
