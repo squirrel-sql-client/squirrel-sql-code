@@ -52,6 +52,7 @@ public class ResultSetExportData implements IExportData
     * ResultSet to export and its Statement.
     * The ResultSet has an associated Statement because mostly Statements allow only a single ResultSet at a time.
     */
+   private final String _sqlToWriteToFile;
    private Statement _stat;
    private ResultSet _resultSet;
 
@@ -76,6 +77,7 @@ public class ResultSetExportData implements IExportData
     */
    public ResultSetExportData(Statement stat, String sqlToWriteToFile, DialectType dialect) throws SQLException
    {
+      _sqlToWriteToFile = sqlToWriteToFile;
       _stat = stat;
       _resultSet = stat.executeQuery(sqlToWriteToFile);
       _colDispDef = new ArrayList<>();
@@ -104,7 +106,11 @@ public class ResultSetExportData implements IExportData
          headers.add(headerValue);
       }
       return headers.iterator();
+   }
 
+   public String getSqlToWriteToFile()
+   {
+      return _sqlToWriteToFile;
    }
 
    /**

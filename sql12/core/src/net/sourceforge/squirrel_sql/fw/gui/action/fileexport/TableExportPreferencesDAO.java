@@ -36,6 +36,7 @@ public class TableExportPreferencesDAO
    private static final String PREF_KEY_EXCEL_HEADER_FONT_SIZE = "SQuirrelSQL.csvexport.excelHeaderFontSize";
    private static final String PREF_KEY_EXCEL_HEADER_FONT_BOLD = "SQuirrelSQL.csvexport.excelHeaderFontBold";
    private static final String PREF_KEY_EXCEL_HEADER_FONT_ITALIC = "SQuirrelSQL.csvexport.excelHeaderFontItalic";
+   private static final String PREF_KEY_EXCEL_SQL_STATEMENT_IN_ADDITIONAL_SHEET = "SQuirrelSQL.csvexport.excelExportSQLStatementInAdditionalSheet";
 
    private static final String PREF_KEY_FORMAT_XML = "SquirrelSQL.csvexport.formatXML";
    private static final String PREF_KEY_FORMAT_JSON = "SquirrelSQL.csvexport.formatJSON";
@@ -69,6 +70,7 @@ public class TableExportPreferencesDAO
       ret.setExcelFirstRowFrozen(Props.getBoolean(PREF_KEY_EXCEL_FIRST_ROW_FROZEN, ret.isExcelFirstRowFrozen()));
       ret.setExcelFirstRowBold(Props.getBoolean(PREF_KEY_EXCEL_FIRST_ROW_BOLD, ret.isExcelFirstRowBold()));
       ret.setExcelFirstRowCentered(Props.getBoolean(PREF_KEY_EXCEL_FIRST_ROW_CENTERED, ret.isExcelFirstRowCentered()));
+      ret.setExcelExportSQLStatementInAdditionalSheet(Props.getBoolean(PREF_KEY_EXCEL_SQL_STATEMENT_IN_ADDITIONAL_SHEET, ret.isExcelExportSQLStatementInAdditionalSheet()));
 
       ret.setExcelFontNoSelection(Props.getBoolean(PREF_KEY_EXCEL_FONT_NO_SELECTION, ret.isExcelFontNoSelection()));
       ret.setExcelFontFamily(Props.getString(PREF_KEY_EXCEL_FONT_FAMILY, ret.getExcelFontFamily()));
@@ -124,6 +126,7 @@ public class TableExportPreferencesDAO
       Props.putInt(PREF_KEY_EXCEL_HEADER_FONT_SIZE, prefs.getExcelHeaderFontSize());
       Props.putBoolean(PREF_KEY_EXCEL_HEADER_FONT_BOLD, prefs.isExcelHeaderFontBold());
       Props.putBoolean(PREF_KEY_EXCEL_HEADER_FONT_ITALIC, prefs.isExcelHeaderFontItalic());
+      Props.putBoolean(PREF_KEY_EXCEL_SQL_STATEMENT_IN_ADDITIONAL_SHEET, prefs.isExcelExportSQLStatementInAdditionalSheet());
 
       Props.putBoolean(PREF_KEY_FORMAT_XML, prefs.isFormatXML());
       Props.putBoolean(PREF_KEY_FORMAT_JSON, prefs.isFormatJSON());

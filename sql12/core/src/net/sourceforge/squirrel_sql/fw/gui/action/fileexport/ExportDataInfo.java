@@ -62,4 +62,14 @@ public class ExportDataInfo
       }
 
    }
+
+   public ResultSetExportData getResultSetExportData()
+   {
+      if(_exportData instanceof ResultSetExportData ret)
+      {
+         return ret;
+      }
+
+      return null;
+   }
 }

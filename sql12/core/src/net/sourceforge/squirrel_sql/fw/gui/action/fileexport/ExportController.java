@@ -191,6 +191,8 @@ public class ExportController
          _dlg.btnChooseExcelHeaderFont.setEnabled(false);
          _dlg.lblExcelFontName.setEnabled(false);
          _dlg.lblExcelHeaderFontName.setEnabled(false);
+         _dlg.chkExcelExportSQLStatementInAdditionalSheet.setEnabled(false);
+
 
          if(_dlg.chkSeparatorTab.isSelected())
          {
@@ -229,6 +231,7 @@ public class ExportController
          _dlg.btnChooseExcelHeaderFont.setEnabled(true);
          _dlg.lblExcelFontName.setEnabled(true);
          _dlg.lblExcelHeaderFontName.setEnabled(true);
+         _dlg.chkExcelExportSQLStatementInAdditionalSheet.setEnabled(true && _exportDialogType == ExportDialogType.RESULT_SET_EXPORT);
 
          if(replaceEnding)
          {
@@ -255,6 +258,7 @@ public class ExportController
          _dlg.btnChooseExcelHeaderFont.setEnabled(false);
          _dlg.lblExcelFontName.setEnabled(false);
          _dlg.lblExcelHeaderFontName.setEnabled(false);
+         _dlg.chkExcelExportSQLStatementInAdditionalSheet.setEnabled(false);
 
 
          if(replaceEnding)
@@ -499,6 +503,7 @@ public class ExportController
       prefs.setExcelFirstRowFrozen(_dlg.chkExcelFirstRowFrozen.isSelected());
       prefs.setExcelFirstRowCentered(_dlg.chkExcelFirstRowCentered.isSelected());
       prefs.setExcelFirstRowBold(_dlg.chkExcelFirstRowBold.isSelected());
+      prefs.setExcelExportSQLStatementInAdditionalSheet(_dlg.chkExcelExportSQLStatementInAdditionalSheet.isSelected());
       _excelFontCtrl.writeToPrefs(prefs);
 
 
@@ -540,6 +545,8 @@ public class ExportController
       _dlg.chkExcelFirstRowFrozen.setSelected(prefs.isExcelFirstRowFrozen());
       _dlg.chkExcelFirstRowCentered.setSelected(prefs.isExcelFirstRowCentered());
       _dlg.chkExcelFirstRowBold.setSelected(prefs.isExcelFirstRowBold());
+      _dlg.chkExcelExportSQLStatementInAdditionalSheet.setSelected(prefs.isExcelExportSQLStatementInAdditionalSheet());
+
 
       _dlg.cboCharsets.setSelectedItem(prefs.getEncoding());
       _dlg.chkWithHeaders.setSelected(prefs.isWithHeaders());

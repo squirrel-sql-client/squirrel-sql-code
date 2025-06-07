@@ -93,6 +93,11 @@ public class DataExportExcelWriter
          {
             _sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, exportDataInfo.getExportData().getColumnCount() - 1));
          }
+
+         if(prefs.isExcelExportSQLStatementInAdditionalSheet() && null != exportDataInfo.getResultSetExportData())
+         {
+            ExcelSQLStatementSheet.createSqlStatementSheet(exportDataInfo, _workbook);
+         }
       }
       _fileExportService.progress(s_stringMgr.getString("DataExportExcelWriter.finishedLoading", NumberFormat.getInstance().format(rowsCount)));
 

@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -51,6 +52,8 @@ public class ExportDlg extends JDialog
 
    JButton btnChooseExcelHeaderFont;
    MultipleLineLabel lblExcelHeaderFontName;
+
+   JCheckBox chkExcelExportSQLStatementInAdditionalSheet;
 
    JRadioButton radFormatXML;
    JRadioButton radFormatJSON;
@@ -245,6 +248,22 @@ public class ExportDlg extends JDialog
 
       gbc = new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 3, 3, 0), 0, 0);
       ret.add(createFontPanel(), gbc);
+
+      gbc = new GridBagConstraints(0, 2, GridBagConstraints.REMAINDER, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 3, 3, 0), 0, 0);
+      ret.add(createSQLStatementInAdditionalSheetPanel(), gbc);
+
+      return ret;
+   }
+
+   private JPanel createSQLStatementInAdditionalSheetPanel()
+   {
+      JPanel ret = new JPanel(new BorderLayout());
+
+      chkExcelExportSQLStatementInAdditionalSheet = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.excel.SQL.in.extra.sheet"));
+      ret.add(chkExcelExportSQLStatementInAdditionalSheet, BorderLayout.CENTER);
+
+      SmallToolTipInfoButton btnInfo = new SmallToolTipInfoButton(s_stringMgr.getString("TableExportCsvDlg.excel.SQL.in.extra.sheet.infoButton"));
+      ret.add(btnInfo.getButton(), BorderLayout.EAST);
 
       return ret;
    }

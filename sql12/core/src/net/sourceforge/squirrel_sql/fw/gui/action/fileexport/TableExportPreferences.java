@@ -76,6 +76,7 @@ public class TableExportPreferences
    private int _excelHeaderFontSize;
    private boolean _excelHeaderFontBold;
    private boolean _excelHeaderFontItalic;
+   private boolean _excelExportSQLStatementInAdditionalSheet;
 
    public boolean isFormatXLS()
    {
@@ -415,5 +416,14 @@ public class TableExportPreferences
    public void setExcelHeaderFontItalic(boolean excelHeaderFontItalic)
    {
       _excelHeaderFontItalic = excelHeaderFontItalic;
+   }
+
+   public boolean isExcelExportSQLStatementInAdditionalSheet()
+   {
+      return _excelExportSQLStatementInAdditionalSheet;
+   }
+   public void setExcelExportSQLStatementInAdditionalSheet(boolean excelExportSQLStatementInAdditionalSheet)
+   {
+      _excelExportSQLStatementInAdditionalSheet = excelExportSQLStatementInAdditionalSheet;
    }
 }

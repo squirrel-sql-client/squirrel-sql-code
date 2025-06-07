@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#620 Direct SQL to MS Excel exports now offers to create additional
+  sheets containing the exported SQL statements.
+  Note: For direct SQL exports, right mouse click an SQL statement or hit Ctrl+T --> sql2file
+  or check the multiple sheet export explained in the "About Exporting" link at the bottom of the export dialog.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/61 (third)
 SQL result search function: The tool tips of the "find next" and "find previous" buttons
   now show their keyboard shortcuts: Enter or F3 and Shift F3 respectively.
