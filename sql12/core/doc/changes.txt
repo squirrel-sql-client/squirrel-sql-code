@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#621 The UI table's "Copy separated by ..." right mouse menu function now allows
+  to include column headers and to define a cell delimiter.
+
 #620 Direct SQL to MS Excel exports now offers to create additional
   sheets containing the exported SQL statements.
   Note: For direct SQL exports, right mouse click an SQL statement or hit Ctrl+T --> sql2file

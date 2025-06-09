@@ -13,6 +13,8 @@ public class CopySeparatedByCtrl
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CopySeparatedByCtrl.class);
 
    private static final String PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR = "Squirrel.copyseparatedbyctrl.cell.separator";
+   private static final String PREF_KEY_COPYSEPARATEDBYCTRL_CELL_DELIMITER = "Squirrel.copyseparatedbyctrl.cell.delimiter";
+   private static final String PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS = "Squirrel.copyseparatedbyctrl.include.headers";
    private static final String PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR = "Squirrel.copyseparatedbyctrl.row.separator";
    private static final String PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN = "Squirrel.copyseparatedbyctrl.prefered.line.len";
 
@@ -20,9 +22,11 @@ public class CopySeparatedByCtrl
    private CopySeparatedByDlg _copySeparatedByDlg;
    private boolean _enableRowSeparator;
    private String _cellSeparator = "";
+   private String _cellDelimiter = "";
+   private boolean _includeHeaders;
    private String _rowSeparator = "";
+   private int _preferredLineLength;
    private boolean _isOk;
-   private int _preferedLineLength;
 
    public CopySeparatedByCtrl(DataSetViewerTable table, boolean enableRowSeparator)
    {
@@ -30,15 +34,15 @@ public class CopySeparatedByCtrl
       _enableRowSeparator = enableRowSeparator;
 
       _copySeparatedByDlg.txtCellSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, ","));
+      _copySeparatedByDlg.txtCellDelimiter.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_DELIMITER, ""));
+
       _copySeparatedByDlg.txtLineLength.setInt(Props.getInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, 100));
       _copySeparatedByDlg.txtRowSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, "\\n"));
 
-      if(false == _enableRowSeparator)
-      {
-         _copySeparatedByDlg.txtRowSeparator.setEnabled(false);
-         _copySeparatedByDlg._lblRowSeparator.setEnabled(false);
-         _copySeparatedByDlg.txtRowSeparator.setText(null);
-      }
+      _copySeparatedByDlg.chkIncludeHeaders.setSelected(Props.getBoolean(PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS, false));
+
+      _copySeparatedByDlg.chkIncludeHeaders.addActionListener(e -> updateEnabled());
+      updateEnabled();
 
       _copySeparatedByDlg.btnOk.addActionListener(e -> onOk());
       _copySeparatedByDlg.btnCancel.addActionListener(e -> onCancel());
@@ -47,6 +51,29 @@ public class CopySeparatedByCtrl
 
       _copySeparatedByDlg.setVisible(true);
 
+   }
+
+   private void updateEnabled()
+   {
+      _copySeparatedByDlg.txtRowSeparator.setEnabled(true);
+      _copySeparatedByDlg._lblRowSeparator.setEnabled(true);
+
+      _copySeparatedByDlg.txtLineLength.setEnabled(true);
+      _copySeparatedByDlg.lblPreferredLineLength.setEnabled(true);
+
+
+      if(false == _enableRowSeparator || _copySeparatedByDlg.chkIncludeHeaders.isSelected())
+      {
+         _copySeparatedByDlg.txtRowSeparator.setEnabled(false);
+         _copySeparatedByDlg._lblRowSeparator.setEnabled(false);
+         //_copySeparatedByDlg.txtRowSeparator.setText(null);
+      }
+
+      if(_copySeparatedByDlg.chkIncludeHeaders.isSelected())
+      {
+         _copySeparatedByDlg.txtLineLength.setEnabled(false);
+         _copySeparatedByDlg.lblPreferredLineLength.setEnabled(false);
+      }
    }
 
    private void onCancel()
@@ -70,27 +97,34 @@ public class CopySeparatedByCtrl
          text = _copySeparatedByDlg.txtCellSeparator.getText();
       }
       Props.putString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, text);
+      _cellSeparator = doReplacements(text);
 
 
-
-      if (null != _copySeparatedByDlg.txtCellSeparator.getText())
+      String cellDelim = "";
+      if (null != _copySeparatedByDlg.txtCellDelimiter.getText())
       {
-         _cellSeparator = doReplacements(_copySeparatedByDlg.txtCellSeparator.getText());
+         cellDelim = _copySeparatedByDlg.txtCellDelimiter.getText();
       }
+      Props.putString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_DELIMITER, cellDelim);
+      _cellDelimiter = cellDelim;
+
+
+      Props.putBoolean(PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS, _copySeparatedByDlg.chkIncludeHeaders.isSelected());
+      _includeHeaders = _copySeparatedByDlg.chkIncludeHeaders.isSelected();
 
       Props.putInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, _copySeparatedByDlg.txtLineLength.getInt());
-      _preferedLineLength = _copySeparatedByDlg.txtLineLength.getInt();
+      _preferredLineLength = _copySeparatedByDlg.txtLineLength.getInt();
 
       if(_enableRowSeparator && null != _copySeparatedByDlg.txtRowSeparator.getText())
       {
-         text = "";
+         text = "\\n";
          if (null != _copySeparatedByDlg.txtRowSeparator.getText())
          {
             text = _copySeparatedByDlg.txtRowSeparator.getText();
          }
          Props.putString(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, text);
 
-         _rowSeparator = doReplacements(_copySeparatedByDlg.txtRowSeparator.getText());
+         _rowSeparator = doReplacements(text);
       }
 
       _isOk = true;
@@ -117,9 +151,19 @@ public class CopySeparatedByCtrl
       return _rowSeparator;
    }
 
-   public int getPreferedLineLength()
+   public int getPreferredLineLength()
    {
-      return _preferedLineLength;
+      return _preferredLineLength;
+   }
+
+   public String getCellDelimiter()
+   {
+      return _cellDelimiter;
+   }
+
+   public boolean isIncludeHeaders()
+   {
+      return _includeHeaders;
    }
 
    public boolean isOk()
