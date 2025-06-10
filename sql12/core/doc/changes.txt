@@ -237,6 +237,11 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+When the database connection of a Session is broken the possible log message
+  "Failed to read database meta data. Connection may have been closed by reconnect (Ctrl+T)"
+  was corrected to
+  "Failed to read database meta data. Connection may have been closed by reconnect (Ctrl+Alt+T)"
+
 Refactoring Plugin:
   Dropping tables didn't respect configurations from Global Prefrences --> tab Refactoring.
   See right mouse menu on table in Object tree --> Refactoring --> Table --> Drop Table(s)

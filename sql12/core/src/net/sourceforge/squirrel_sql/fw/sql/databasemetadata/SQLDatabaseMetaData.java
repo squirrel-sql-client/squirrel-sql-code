@@ -19,6 +19,21 @@ package net.sourceforge.squirrel_sql.fw.sql.databasemetadata;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -52,21 +67,6 @@ import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * This class represents the metadata for a database. It is essentially a wrapper around
@@ -1913,7 +1913,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		final Connection connection = _conn.getConnection();
 		if(null == connection)
 		{
-			throw new IllegalStateException("Failed to read database meta data. Connection may have been closed by reconnect (Ctrl+T)");
+			throw new IllegalStateException("Failed to read database meta data. Connection may have been closed by reconnect (Ctrl+Alt+T)");
 		}
 
 		return MetaDataTimeOutProxyFactory.wrap(() -> connection.getMetaData());
