@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 
@@ -42,6 +43,7 @@ public class JTableExportData implements IExportData
    private JTable _table;
 
    private int _nbrSelRows;
+   private final SQLExecutionInfo _sqlExecutionInfo;
    private int _nbrSelCols;
    private int[] _selRows;
    private int[] _selcols;
@@ -49,12 +51,14 @@ public class JTableExportData implements IExportData
    /**
     * Constructor using a JTable.
     *
-    * @param table    the JTable to use.
-    * @param complete flag, if the complete table or only the selection should be used.
+    * @param table            the JTable to use.
+    * @param sqlExecutionInfo
+    * @param complete         flag, if the complete table or only the selection should be used.
     */
-   public JTableExportData(JTable table, boolean complete)
+   public JTableExportData(JTable table, SQLExecutionInfo sqlExecutionInfo, boolean complete)
    {
       _table = table;
+      _sqlExecutionInfo = sqlExecutionInfo;
 
       _nbrSelRows = table.getSelectedRowCount();
       if (0 == _nbrSelRows || complete)
@@ -157,5 +161,10 @@ public class JTableExportData implements IExportData
    public void close()
    {
 
+   }
+
+   public SQLExecutionInfo getSqlExecutionInfo()
+   {
+      return _sqlExecutionInfo;
    }
 }

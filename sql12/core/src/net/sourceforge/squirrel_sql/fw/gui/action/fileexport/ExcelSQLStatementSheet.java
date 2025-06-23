@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -13,6 +14,11 @@ public class ExcelSQLStatementSheet
 {
    public static void createSqlStatementSheet(ExportDataInfo exportDataInfo, Workbook workbook)
    {
+      if(StringUtilities.isEmpty(exportDataInfo.getSqlToWriteToFile(), true))
+      {
+         return;
+      }
+
       String sqlStatementTabName = getUniqueSqlSheetName(workbook, exportDataInfo.getExcelSheetTabName(), 0);
 
       Sheet sheet = workbook.createSheet(sqlStatementTabName);
@@ -24,7 +30,7 @@ public class ExcelSQLStatementSheet
 
       Cell cell = row.createCell(0, CellType.STRING);
 
-      cell.setCellValue(exportDataInfo.getResultSetExportData().getSqlToWriteToFile());
+      cell.setCellValue(exportDataInfo.getSqlToWriteToFile());
 
       CellStyle cellStyle = workbook.createCellStyle();
       Font font = workbook.createFont();

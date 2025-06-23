@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -9,7 +10,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -502,10 +507,11 @@ public class TableExportSelectionPanelController
          final SqlResultTabHandle handle = listEntry.getHandle();
          final IDataSetViewer sqlResultDataSetViewer = handle.getSQLResultDataSetViewer();
 
-         if(sqlResultDataSetViewer instanceof DataSetViewerTablePanel)
+         if(sqlResultDataSetViewer instanceof DataSetViewerTablePanel dataSetViewerTablePanel)
          {
-            final DataSetViewerTable table = ((DataSetViewerTablePanel) sqlResultDataSetViewer).getTable();
-            ret.add(new ExportDataInfo(new JTableExportData(table, true), listEntry.getExportNameFileNormalized()));
+            final DataSetViewerTable table = dataSetViewerTablePanel.getTable();
+            SQLExecutionInfo sqlExecutionInfo = dataSetViewerTablePanel.getDataModelImplementationDetails().getSQLExecutionInfo();
+            ret.add(new ExportDataInfo(new JTableExportData(table, sqlExecutionInfo, true), listEntry.getExportNameFileNormalized()));
          }
       }
 

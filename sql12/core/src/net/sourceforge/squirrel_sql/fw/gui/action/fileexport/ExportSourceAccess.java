@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -8,7 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,10 +28,9 @@ public class ExportSourceAccess
    private MultipleSqlResultExportDestinationInfo _currentExportDestinationInfo;
 
 
-   public ExportSourceAccess(JTable table)
+   public ExportSourceAccess(JTable table, SQLExecutionInfo sqlExecutionInfo)
    {
-      _uiTableExportData = new UITableExportData();
-      _uiTableExportData._tableExportDialogWasOpenedFor = table;
+      _uiTableExportData = new UITableExportData(table, sqlExecutionInfo);
    }
 
    public ExportSourceAccess(List<SelectSQLInfo> selectSQLInfo, Connection con, DialectType dialect)
@@ -46,7 +46,7 @@ public class ExportSourceAccess
       }
       else
       {
-         return ExportUtil.isUITableMissingBlobData(_uiTableExportData._tableExportDialogWasOpenedFor, separatorChar);
+         return ExportUtil.isUITableMissingBlobData(_uiTableExportData.getTableExportDialogWasOpenedFor(), separatorChar);
       }
    }
 
@@ -122,7 +122,7 @@ public class ExportSourceAccess
 
    private ExportDataInfoList createUiTableExportDataInfoList()
    {
-      if(_uiTableExportData._sqlResultDataSetViewersExportDataList.isEmpty())
+      if(_uiTableExportData.getSqlResultDataSetViewersExportDataList().isEmpty())
       {
          if(_exportMultipleResults)
          {
@@ -132,12 +132,12 @@ public class ExportSourceAccess
          else
          {
             // This is the default behavior, i.e. export of single table.
-            return ExportDataInfoList.single(new JTableExportData(_uiTableExportData._tableExportDialogWasOpenedFor, false == _uiTableExportData._exportUITableSelection));
+            return ExportDataInfoList.single(new JTableExportData(_uiTableExportData.getTableExportDialogWasOpenedFor(), _uiTableExportData.getSqlExecutionInfo(), false == _uiTableExportData.isExportUITableSelection()));
          }
       }
       else
       {
-         return new ExportDataInfoList(_uiTableExportData._sqlResultDataSetViewersExportDataList, _currentExportDestinationInfo);
+         return new ExportDataInfoList(_uiTableExportData.getSqlResultDataSetViewersExportDataList(), _currentExportDestinationInfo);
       }
    }
 
@@ -182,8 +182,8 @@ public class ExportSourceAccess
 
    public void prepareSqlResultDataSetViewersExport(List<ExportDataInfo> sqlResultDataSetViewersExportDataList, boolean exportUITableSelection, MultipleSqlResultExportDestinationInfo currentExportDestinationInfo, boolean exportMultipleResults)
    {
-      _uiTableExportData._sqlResultDataSetViewersExportDataList = sqlResultDataSetViewersExportDataList;
-      _uiTableExportData._exportUITableSelection = exportUITableSelection;
+      _uiTableExportData.setSqlResultDataSetViewersExportDataList(sqlResultDataSetViewersExportDataList);
+      _uiTableExportData.setExportUITableSelection(exportUITableSelection);
 
       _currentExportDestinationInfo = currentExportDestinationInfo;
       _exportMultipleResults = exportMultipleResults;
@@ -193,10 +193,19 @@ public class ExportSourceAccess
    {
       if(false == isResultSetExport())
       {
-         throw new IllegalStateException("Not exporting SQL statement(s)!");
+         return _jdbcResultSetExportData.getOriginalSqlsToExport();
       }
-
-      return _jdbcResultSetExportData.getOriginalSqlsToExport();
+      else
+      {
+         if(null == _uiTableExportData.getSqlExecutionInfo())
+         {
+            return List.of();
+         }
+         else
+         {
+            return List.of(_uiTableExportData.getSqlExecutionInfo().getQueryHolder().getOriginalQuery());
+         }
+      }
    }
 
    public boolean hasNamedSqls()

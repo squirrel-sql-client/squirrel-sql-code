@@ -94,7 +94,7 @@ public class DataExportExcelWriter
             _sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, exportDataInfo.getExportData().getColumnCount() - 1));
          }
 
-         if(prefs.isExcelExportSQLStatementInAdditionalSheet() && null != exportDataInfo.getResultSetExportData())
+         if(prefs.isExcelExportSQLStatementInAdditionalSheet())
          {
             ExcelSQLStatementSheet.createSqlStatementSheet(exportDataInfo, _workbook);
          }

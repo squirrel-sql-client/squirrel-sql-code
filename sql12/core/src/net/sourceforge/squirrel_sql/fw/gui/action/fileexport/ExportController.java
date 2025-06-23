@@ -231,7 +231,7 @@ public class ExportController
          _dlg.btnChooseExcelHeaderFont.setEnabled(true);
          _dlg.lblExcelFontName.setEnabled(true);
          _dlg.lblExcelHeaderFontName.setEnabled(true);
-         _dlg.chkExcelExportSQLStatementInAdditionalSheet.setEnabled(true && _exportDialogType == ExportDialogType.RESULT_SET_EXPORT);
+         _dlg.chkExcelExportSQLStatementInAdditionalSheet.setEnabled(true);
 
          if(replaceEnding)
          {

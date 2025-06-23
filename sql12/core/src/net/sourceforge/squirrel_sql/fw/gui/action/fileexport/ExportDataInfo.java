@@ -72,4 +72,21 @@ public class ExportDataInfo
 
       return null;
    }
+
+   public String getSqlToWriteToFile()
+   {
+      if(_exportData instanceof ResultSetExportData resultSetExportData)
+      {
+         return resultSetExportData.getSqlToWriteToFile();
+      }
+      else if(_exportData instanceof JTableExportData jTableExportData)
+      {
+         if(null != jTableExportData.getSqlExecutionInfo())
+         {
+            return jTableExportData.getSqlExecutionInfo().getQueryHolder().getOriginalQuery();
+         }
+      }
+
+      return null;
+   }
 }

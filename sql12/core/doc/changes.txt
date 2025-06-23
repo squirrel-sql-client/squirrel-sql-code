@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#620 UI table to MS Excel exports of SQL results now offers to create additional
+  sheets containing the exported SQL statements.
+  This is an extension of the original implementation of feature request 620.
+
 #621 The UI table's "Copy separated by ..." right mouse menu function now allows
   to include column headers and to define a cell delimiter.
 

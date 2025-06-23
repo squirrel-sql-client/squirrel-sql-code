@@ -1,6 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import javax.swing.*;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import java.io.File;
 
 /**
@@ -15,9 +18,9 @@ public class TableExport
 {
    private Exporter _exporter;
 
-   public TableExport(JTable table)
+   public TableExport(JTable table, SQLExecutionInfo sqlExecutionInfo)
    {
-      final ExportController exportController = new ExportController(new ExportSourceAccess(table) , SwingUtilities.windowForComponent(table), ExportDialogType.UI_TABLE_EXPORT);
+      final ExportController exportController = new ExportController(new ExportSourceAccess(table, sqlExecutionInfo) , SwingUtilities.windowForComponent(table), ExportDialogType.UI_TABLE_EXPORT);
       exportController.showDialog();
       _exporter = new Exporter(() -> null, new ExportControllerProxy(exportController));
    }

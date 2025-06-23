@@ -20,12 +20,26 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.TableSelectionDiff;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableClickPosition;
-import net.sourceforge.squirrel_sql.fw.gui.action.*;
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.ShowRowNumbersCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyAlignedCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyColumnHeaderCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInsertStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyUpdateStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyWhereStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionType;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.CopyColoredRowsToNewWindowCommand;
@@ -46,8 +60,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.time.StopWatch;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterJob;
@@ -86,7 +106,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private GotoColorMenuController _gotoColorMenuController = new GotoColorMenuController();
 	private CopyColoredRowsToNewWindowAction _copyColoredRowsToNewWindow = new CopyColoredRowsToNewWindowAction();
 
-	private ExportAction _export = new ExportAction();
+	private ExportAction _export;
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
 	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
    private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
@@ -120,7 +140,7 @@ public class TablePopupMenu extends BasePopupMenu
 	 */
 	public TablePopupMenu(boolean allowEditing,
 								 IDataSetUpdateableModel updateableModel,
-								 DataSetViewerTablePanel dataSetViewerTable,
+								 DataSetViewerTablePanel DataSetViewerTablePanel,
 								 ISession session)
 	{
 		// save the pointer needed to enable editing of data on-demand
@@ -128,11 +148,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 
 		// save the pointer needed for insert and delete operations
-		_dataSetViewerTablePanel = dataSetViewerTable;
+		_dataSetViewerTablePanel = DataSetViewerTablePanel;
 		_session = session;
 
 
-		_copy = new DataSetViewerTableCopyAction(dataSetViewerTable.getTable());
+		_copy = new DataSetViewerTableCopyAction(DataSetViewerTablePanel.getTable());
 		addAction(_copy, DataSetViewerTableCopyAction.getTableCopyActionKeyStroke());
 
 
@@ -171,7 +191,8 @@ public class TablePopupMenu extends BasePopupMenu
 		add(_copyColoredRowsToNewWindow);
 		addSeparator();
 
-		addAction(_export);
+      _export = new ExportAction(DataSetViewerTablePanel.getDataModelImplementationDetails().getSQLExecutionInfo());
+      addAction(_export);
       addSeparator();
 
 		add(TableSelectionDiff.createMenu(() -> _dataSetViewerTablePanel.getTable()));
@@ -283,7 +304,8 @@ public class TablePopupMenu extends BasePopupMenu
 
 		addSeparator();
 		add(_print);
-	}
+      _export = new ExportAction(dataSetViewerTablePanel.getDataModelImplementationDetails().getSQLExecutionInfo());
+   }
 
 	public void reset()
 	{
@@ -479,15 +501,18 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class ExportAction extends BaseAction
    {
-		ExportAction()
+      private final SQLExecutionInfo _sqlExecutionInfo;
+
+      ExportAction(SQLExecutionInfo sqlExecutionInfo)
       {
          // i18n[TablePopupMenu.export=Export CSV / MS Excel / XML ...]
          super(s_stringMgr.getString("TablePopupMenu.export"));
+         _sqlExecutionInfo = sqlExecutionInfo;
       }
 
       public void actionPerformed(ActionEvent evt)
       {
-			TableExport tableExport = new TableExport(_dataSetViewerTablePanel.getTable());
+			TableExport tableExport = new TableExport(_dataSetViewerTablePanel.getTable(), _sqlExecutionInfo);
 
 
 			StopWatch stopWatch = new StopWatch();
