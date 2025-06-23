@@ -191,7 +191,7 @@ public class ExportSourceAccess
 
    public List<String> getOriginalSqlsToExport()
    {
-      if(false == isResultSetExport())
+      if(isResultSetExport())
       {
          return _jdbcResultSetExportData.getOriginalSqlsToExport();
       }
