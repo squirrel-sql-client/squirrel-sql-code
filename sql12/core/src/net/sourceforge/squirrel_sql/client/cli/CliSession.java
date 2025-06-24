@@ -22,11 +22,14 @@ public class CliSession extends CliSessionAdapter
    private final SQLConnection _sqlConnection;
    private final QueryTokenizer _tokenizer;
    private final SessionProperties _sessionProperties;
+   private final SQLAlias _aliasToConnectTo;
 
    public CliSession(SQLAlias aliasToConnectTo)
    {
       try
       {
+         _aliasToConnectTo = aliasToConnectTo;
+
          IIdentifier driverID = aliasToConnectTo.getDriverIdentifier();
          ISQLDriver sqlDriver = Main.getApplication().getAliasesAndDriversManager().getDriver(driverID);
 
@@ -94,5 +97,11 @@ public class CliSession extends CliSessionAdapter
       // Close on _sqlConnection will start threads
       // that will prevent ending the process when in Batch mode.
       _sqlConnection.getConnection().close();
+   }
+
+   @Override
+   public SQLAlias getAlias()
+   {
+      return _aliasToConnectTo;
    }
 }

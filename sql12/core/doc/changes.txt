@@ -244,6 +244,8 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Command line interface (CLI): Fixed UnsupportedOperationException when executing SQL statements.
+
 When the database connection of a Session is broken the possible log message
   "Failed to read database meta data. Connection may have been closed by reconnect (Ctrl+T)"
   was corrected to
