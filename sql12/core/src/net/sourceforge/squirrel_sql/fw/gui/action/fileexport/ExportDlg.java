@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
@@ -17,12 +18,15 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
@@ -84,67 +88,59 @@ public class ExportDlg extends JDialog
       // i18n[TableExportCSVDlg.exportTitleNew=CSV / MS Excel / XML export]
       setTitle(s_stringMgr.getString("TableExportCSVDlg.exportTitleNew"));
 
-      getContentPane().setLayout(new GridBagLayout());
+      JPanel pnlContent = new JPanel(new GridBagLayout());
+
+      pnlContent.setLayout(new GridBagLayout());
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0);
       // i18n[TableExportCsvDlg.exportCsvFile=Export to file:]
-      getContentPane().add(new JLabel(s_stringMgr.getString("TableExportCsvDlg.exportCsvFile")), gbc);
+      pnlContent.add(new JLabel(s_stringMgr.getString("TableExportCsvDlg.exportCsvFile")), gbc);
 
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
-      getContentPane().add(getFilePanel(), gbc);
+      pnlContent.add(getFilePanel(), gbc);
 
       gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 5, 5), 0, 0);
-      getContentPane().add(getExportFormatPanel(exportDialogType.isEnableColoring()), gbc);
+      pnlContent.add(getExportFormatPanel(exportDialogType.isEnableColoring()), gbc);
 
       // i18n[TableExportCsvDlg.withHeaders=Include column headers]
       chkWithHeaders = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.withHeaders"));
       gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
-      getContentPane().add(chkWithHeaders, gbc);
+      pnlContent.add(chkWithHeaders, gbc);
 
 
 
       gbc = new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 5, 5), 0, 0);
-      getContentPane().add(getSeparatorPanel(), gbc);
+      pnlContent.add(getSeparatorPanel(), gbc);
 
 
       gbc = new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15, 5, 5, 5), 0, 0);
-      //switch (exportDialogType)
-      //{
-      //   case UI_TABLE_EXPORT:
-      //      gbc = new GridBagConstraints(0, 5, 1, 1, 0, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15, 5, 5, 5), 0, 0);
-      //      break;
-      //   case RESULT_SET_EXPORT:
-      //      gbc = new GridBagConstraints(0, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
-      //      break;
-      //   default:
-      //      throw new UnsupportedOperationException("Unknown exportDialogType=" + exportDialogType);
-      //
-      //}
-      getContentPane().add(exportSelectionPanel, gbc);
+      pnlContent.add(exportSelectionPanel, gbc);
 
       gbc = new GridBagConstraints(0, 6, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
-      getContentPane().add(getFormattingPanel(), gbc);
+      pnlContent.add(getFormattingPanel(), gbc);
 
       chkExecCommand = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.executeCommand"));
       gbc = new GridBagConstraints(0, 7, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0);
-      getContentPane().add(chkExecCommand, gbc);
+      pnlContent.add(chkExecCommand, gbc);
 
       gbc = new GridBagConstraints(0, 8, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 5, 5), 0, 0);
-      getContentPane().add(getCommandPanel(), gbc);
+      pnlContent.add(getCommandPanel(), gbc);
 
 
       gbc = new GridBagConstraints(0, 9, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
-      getContentPane().add(getButtonPanel(), gbc);
+      pnlContent.add(getButtonPanel(), gbc);
 
-      //gbc = new GridBagConstraints(0, 10, 0, 0, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 10, 5), 0, 0);
-      //getContentPane().add(createInfoLinkLabel(), gbc);
 
-      //if(exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
-      //{
-      //   gbc = new GridBagConstraints(0, 10, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
-      //   getContentPane().add(new JPanel(), gbc);
-      //}
+
+      GUIUtils.setMinimumWidth(pnlContent, 1);
+      GUIUtils.setPreferredWidth(pnlContent, 1);
+
+      getContentPane().setLayout(new GridLayout(1,1));
+      JScrollPane scrollPane = new JScrollPane(pnlContent);
+      scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      getContentPane().add(scrollPane);
+
    }
 
 
