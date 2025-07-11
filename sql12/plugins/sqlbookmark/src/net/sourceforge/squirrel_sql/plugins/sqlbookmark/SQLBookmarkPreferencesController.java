@@ -19,6 +19,15 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import java.awt.Component;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -27,17 +36,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlbookmark.exportimport.BookmarkExportImport;
 import org.apache.commons.lang3.ArrayUtils;
-
-import javax.swing.JOptionPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.Component;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * Manage the bookmarks.
@@ -63,7 +61,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
    protected SQLBookmarkPlugin _plugin;
    private DefaultMutableTreeNode _nodeSquirrelMarks;
    private DefaultMutableTreeNode _nodeUserMarks;
-
+   private BookmarksUserFolderHandler _bookmarksUserFolderHandler;
 
 
    /**
@@ -95,6 +93,8 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       _pnlPrefs.treBookmarks.setModel(dtm);
       _pnlPrefs.treBookmarks.setRootVisible(false);
 
+      _pnlPrefs.treBookmarks.setCellRenderer(new BookmarksTreeCellRenderer());
+
       _pnlPrefs.treBookmarks.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
       Bookmark[] defaultBookmarks = DefaultBookmarksFactory.getDefaultBookmarks();
@@ -124,10 +124,11 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       _pnlPrefs.treBookmarks.getSelectionModel().addTreeSelectionListener(e -> updateButtonsEnabled());
 
-
+      _bookmarksUserFolderHandler = new BookmarksUserFolderHandler(_pnlPrefs.treBookmarks, _nodeUserMarks);
 
       _pnlPrefs.btnRun.addActionListener(e -> onRun());
       _pnlPrefs.btnAdd.addActionListener(e -> onAdd());
+      _pnlPrefs.btnAddFolder.addActionListener(e -> _bookmarksUserFolderHandler.addFolder());
       _pnlPrefs.btnEdit.addActionListener(e -> onEdit());
       _pnlPrefs.btnDel.addActionListener(e -> onDelete());
       _pnlPrefs.btnUp.addActionListener(e -> onUp());
@@ -236,7 +237,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          _pnlPrefs.btnRun.setEnabled(false);
          _pnlPrefs.btnEdit.setEnabled(false);
 
-         if(false == BookMarksUtil.areOnlyUserBookmarksSelected(selectionPaths, _nodeUserMarks))
+         if(false == BookmarkTreeUtil.areAllPathsChildrenOf(selectionPaths, _nodeUserMarks))
          {
             _pnlPrefs.btnUp.setEnabled(false);
             _pnlPrefs.btnDown.setEnabled(false);
@@ -265,6 +266,19 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
             {
                _pnlPrefs.btnEdit.setText(s_stringMgr.getString("SQLBookmarkPreferencesPanel.sqlbookmark.btnTextEdit"));
             }
+         }
+         else if(dmtn.getUserObject() instanceof UserBookmarkFolder)
+         {
+            _pnlPrefs.btnEdit.setText(s_stringMgr.getString("SQLBookmarkPreferencesPanel.sqlbookmark.btnTextEdit"));
+            _pnlPrefs.btnEdit.setEnabled(true);
+
+            _pnlPrefs.btnRun.setEnabled(false);
+            //_pnlPrefs.btnUp.setEnabled(false);
+            //_pnlPrefs.btnDown.setEnabled(false);
+            _pnlPrefs.btnDel.setEnabled(false);
+            _pnlPrefs.btnImport.setEnabled(false);
+            _pnlPrefs.btnExport.setEnabled(false);
+
          }
          else
          {
@@ -320,25 +334,14 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
    public void onAdd()
    {
-      BookmarkEditController ctrlr = new BookmarkEditController(Main.getApplication().getMainFrame(), null, true, _nodeUserMarks);
+      BookmarkEditController ctrl = new BookmarkEditController(Main.getApplication().getMainFrame(), null, true, _nodeUserMarks);
 
-      if (ctrlr.isCanceled())
+      if (ctrl.isCanceled())
       {
          return;
       }
 
-      DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(ctrlr.getBookmark());
-      _nodeUserMarks.add(newChild);
-
-      ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
-
-      selectNode(newChild);
-   }
-
-   private void selectNode(DefaultMutableTreeNode toSel)
-   {
-      TreeNode[] pathToRoot = ((DefaultTreeModel) _pnlPrefs.treBookmarks.getModel()).getPathToRoot(toSel);
-      _pnlPrefs.treBookmarks.setSelectionPath(new TreePath(pathToRoot));
+     _bookmarksUserFolderHandler.addBookMarkNode(ctrl.getBookmark());
    }
 
    /**
@@ -355,43 +358,37 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          selNode = (DefaultMutableTreeNode) _pnlPrefs.treBookmarks.getSelectionPath().getLastPathComponent();
       }
 
-      if (null == selNode || false == selNode.getUserObject() instanceof Bookmark)
+      Runnable showErrMsg = () -> Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noEditSelection"));
+
+
+      if(null == selNode)
       {
-         // i18n[sqlbookmark.noEditSelection=Please select the bookmark to edit]
-         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noEditSelection"));
+         showErrMsg.run();
          return;
       }
 
-      boolean editable = selNode.getParent() == _nodeUserMarks;
-
-      BookmarkEditController ctrlr = new BookmarkEditController(Main.getApplication().getMainFrame(), (Bookmark) selNode.getUserObject(), editable, _nodeUserMarks);
-
-      if(ctrlr.isCanceled())
+      if (selNode.getUserObject() instanceof Bookmark bookmark)
       {
-         return;
+         boolean editable = BookmarkTreeUtil.isMyPredecessor(selNode, _nodeUserMarks);
+
+         BookmarkEditController ctrl = new BookmarkEditController(Main.getApplication().getMainFrame(), bookmark, editable, _nodeUserMarks);
+
+         if(ctrl.isCanceled())
+         {
+            return;
+         }
+
+         selNode.setUserObject(ctrl.getBookmark());
+         ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeChanged(selNode);
+
       }
-
-      selNode.setUserObject(ctrlr.getBookmark());
-
-      refreshTree(selNode);
-
-   }
-
-   private void refreshTree(DefaultMutableTreeNode selNode)
-   {
-      boolean squirrelPathExpanded = _pnlPrefs.treBookmarks.isExpanded(new TreePath(_nodeSquirrelMarks.getPath()));
-
-      DefaultTreeModel model = (DefaultTreeModel) _pnlPrefs.treBookmarks.getModel();
-      TreeNode root = (TreeNode) model.getRoot();
-      model.setRoot(null);
-
-      model.setRoot(root);
-
-      _pnlPrefs.treBookmarks.setSelectionPath(new TreePath(selNode.getPath()));
-
-      if(squirrelPathExpanded)
+      else if (selNode.getUserObject() instanceof UserBookmarkFolder)
       {
-         _pnlPrefs.treBookmarks.expandPath(new TreePath(_nodeSquirrelMarks.getPath()));
+         _bookmarksUserFolderHandler.editFolder(selNode);
+      }
+      else
+      {
+         showErrMsg.run();
       }
    }
 
@@ -433,7 +430,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       if (null != nextSel)
       {
-         selectNode(nextSel);
+         BookmarkTreeUtil.selectNode(_pnlPrefs.treBookmarks, nextSel);
       }
 
    }
@@ -455,9 +452,9 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          return;
       }
 
-      // Note: Up / Down buttons are enabled only when without exception kids of _nodeUserMarks are selected
+      // Note: Up / Down buttons are enabled only when leaves of _nodeUserMarks are selected
 
-      Arrays.sort(selPaths, Comparator.comparingInt(o -> _nodeUserMarks.getIndex((DefaultMutableTreeNode) o.getLastPathComponent())));
+      Arrays.sort(selPaths, Comparator.comparingInt(path -> _nodeUserMarks.getIndex((DefaultMutableTreeNode) path.getLastPathComponent())));
 
       for (TreePath selPath : selPaths)
       {

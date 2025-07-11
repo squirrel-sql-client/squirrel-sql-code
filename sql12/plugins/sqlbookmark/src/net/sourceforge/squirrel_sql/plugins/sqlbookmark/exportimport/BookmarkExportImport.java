@@ -1,5 +1,17 @@
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark.exportimport;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -12,21 +24,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.sqlbookmark.BookMarksUtil;
 import net.sourceforge.squirrel_sql.plugins.sqlbookmark.Bookmark;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JTree;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import net.sourceforge.squirrel_sql.plugins.sqlbookmark.BookmarkTreeUtil;
 
 public class BookmarkExportImport
 {
@@ -44,7 +43,7 @@ public class BookmarkExportImport
 
          if(   null == selectionPaths
             || 0 == selectionPaths.length
-            || false == BookMarksUtil.areOnlyUserBookmarksSelected(selectionPaths, nodeUserMarks))
+            || false == BookmarkTreeUtil.areAllPathsChildrenOf(selectionPaths, nodeUserMarks))
          {
 
             JOptionPane.showMessageDialog(treBookmarks, s_stringMgr.getString("BookmarkImportExport.userbookmarks.only"));

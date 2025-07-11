@@ -1,14 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.*;
-import java.awt.event.*;
 
 public class BookmarkEditController
 {
@@ -84,17 +85,16 @@ public class BookmarkEditController
 
       if(null == _mark)
       {
-         for (int i = 0; i < _userBookmarksNode.getChildCount(); i++)
+         List<DefaultMutableTreeNode> nodeList = BookmarkTreeUtil.getAllBookmarkNodes(_userBookmarksNode);
+         for(DefaultMutableTreeNode bookmarkNode : nodeList)
          {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) _userBookmarksNode.getChildAt(i);
-            Bookmark bookmark = (Bookmark) node.getUserObject();
+            Bookmark bookmark = (Bookmark) bookmarkNode.getUserObject();
 
             if(StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(bookmark.getName(), name))
             {
                JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("BookmarkEditController.duplicate.bookmark.name", name));
                return;
             }
-
          }
       }
 
