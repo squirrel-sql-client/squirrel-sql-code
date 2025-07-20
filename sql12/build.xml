@@ -70,9 +70,9 @@
 
 
     <property name="izpack-dist" value="${basedir}/installer/izpack5"/>
-    <property name="izpack-installer" value="izpack-5.1.3-with-dependencies.jar"/>
+    <property name="izpack-installer" value="izpack-5.2.4-with-dependencies.jar"/>
     <path id="lib.path">
-        <fileset dir="${izpack-dist}" includes="izpack-5.1.3-with-dependencies.jar"/>
+        <fileset dir="${izpack-dist}" includes="izpack-5.2.4-with-dependencies.jar"/>
     </path>
 
     <taskdef name="izpack"

@@ -244,6 +244,11 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/issues/2
+  Ubuntu Installer failure: Installer threw an ArrayIndexOutOfBoundsException.
+  Thanks to Francesco Goinavi for the pull request
+  https://github.com/squirrel-sql-client/squirrel-sql-code/pull/65
+
 Command line interface (CLI): Fixed UnsupportedOperationException when executing SQL statements.
 
 When the database connection of a Session is broken the possible log message
