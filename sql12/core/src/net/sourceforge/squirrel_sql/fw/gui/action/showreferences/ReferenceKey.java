@@ -1,12 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showreferences;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
-import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 
 public class ReferenceKey
 {
@@ -18,10 +16,12 @@ public class ReferenceKey
    private final String _pktable_schem;
    private final String _pktable_name;
    private ReferenceType _referenceType;
+   private final String referenceIdentifier;
+
    private boolean _showQualified;
    private HashMap<String, String> _fkColumn_pkcolumn = new HashMap<String, String>();
 
-   public ReferenceKey(String fkName, String fktable_cat, String fktable_schem, String fktable_name, String pktable_cat, String pktable_schem, String pktable_name, ReferenceType referenceType)
+   public ReferenceKey(String fkName, String fktable_cat, String fktable_schem, String fktable_name, String pktable_cat, String pktable_schem, String pktable_name, ReferenceType referenceType, String referenceIdentifier)
    {
       _fkName = fkName;
       _fktable_cat = fktable_cat;
@@ -31,6 +31,7 @@ public class ReferenceKey
       _pktable_schem = pktable_schem;
       _pktable_name = pktable_name;
       _referenceType = referenceType;
+      this.referenceIdentifier = referenceIdentifier;
    }
 
    public void addColumn(String fkcolumn_name, String pkcolumn_name)

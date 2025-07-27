@@ -1,17 +1,17 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showreferences;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
-import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
-import org.apache.commons.lang3.ArrayUtils;
-
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
+import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class ShowReferencesUtil
 {
@@ -37,7 +37,7 @@ public class ShowReferencesUtil
             refrenceKeys = jdbcMetaData.getExportedKeys(globalDbTable.getCatalogName(), globalDbTable.getSchemaName(), globalDbTable.getTableName());
          }
 
-         HashMap<String, ReferenceKey> fkName_refrenceKey = new HashMap<String, ReferenceKey>();
+         HashMap<String, ReferenceKey> fkIdentifier_referenceKey = new HashMap<>();
          while(refrenceKeys.next())
          {
             String fkName = refrenceKeys.getString("FK_NAME");
@@ -52,23 +52,30 @@ public class ShowReferencesUtil
             String fkcolumn_name = refrenceKeys.getString("FKCOLUMN_NAME");
             String pkcolumn_name = refrenceKeys.getString("PKCOLUMN_NAME");
 
-            ReferenceKey referenceKey = fkName_refrenceKey.get(fkName);
+            String fkIdentifier = createFkIdentifier(fkName, fktable_cat, fktable_schem, fktable_name, pktable_cat, pktable_schem, pktable_name);
+
+            ReferenceKey referenceKey = fkIdentifier_referenceKey.get(fkIdentifier);
 
             if(null == referenceKey)
             {
-               referenceKey = new ReferenceKey(fkName, fktable_cat, fktable_schem, fktable_name, pktable_cat, pktable_schem, pktable_name, referenceType);
-               fkName_refrenceKey.put(fkName, referenceKey);
+               referenceKey = new ReferenceKey(fkName, fktable_cat, fktable_schem, fktable_name, pktable_cat, pktable_schem, pktable_name, referenceType, fkIdentifier);
+               fkIdentifier_referenceKey.put(fkIdentifier, referenceKey);
             }
             referenceKey.addColumn(fkcolumn_name, pkcolumn_name);
          }
          refrenceKeys.close();
 
-         return fkName_refrenceKey;
+         return fkIdentifier_referenceKey;
       }
       catch (SQLException e)
       {
          throw new RuntimeException(e);
       }
+   }
+
+   private static String createFkIdentifier(String fkName, String fktableCat, String fktableSchem, String fktableName, String pktableCat, String pktableSchem, String pktableName)
+   {
+      return "FkName=%s||FkTable=%s.%s.%s||PkTable=%s.%s.%s".formatted(fkName, fktableCat, fktableSchem, fktableName, pktableCat, pktableSchem, pktableName);
    }
 
    public static JoinSQLInfo generateJoinSQLInfo(Object[] path)
