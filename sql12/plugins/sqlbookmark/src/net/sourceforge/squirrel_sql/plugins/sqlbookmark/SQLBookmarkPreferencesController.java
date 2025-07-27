@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -446,7 +447,6 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
 
       final boolean pathsContainTheFirstNode = Arrays.stream(selPaths).anyMatch(p -> null == ((DefaultMutableTreeNode) p.getLastPathComponent()).getPreviousSibling());
-
       if(pathsContainTheFirstNode)
       {
          return;
@@ -454,15 +454,24 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       // Note: Up / Down buttons are enabled only when leaves of _nodeUserMarks are selected
 
-      Arrays.sort(selPaths, Comparator.comparingInt(path -> _nodeUserMarks.getIndex((DefaultMutableTreeNode) path.getLastPathComponent())));
+
+      boolean selectedNodesBelongToDifferentParents = List.of(selPaths).stream().anyMatch(sp -> sp.getParentPath().getLastPathComponent() != selPaths[0].getParentPath().getLastPathComponent());
+      if(selectedNodesBelongToDifferentParents)
+      {
+         return;
+      }
+
+      DefaultMutableTreeNode selectionParent = (DefaultMutableTreeNode) selPaths[0].getParentPath().getLastPathComponent();
+
+      Arrays.sort(selPaths, Comparator.comparingInt(path -> selectionParent.getIndex((DefaultMutableTreeNode) path.getLastPathComponent())));
 
       for (TreePath selPath : selPaths)
       {
          DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
-         int selIx = _nodeUserMarks.getIndex(selNode);
-         _nodeUserMarks.insert(selNode, selIx - 1);
+         int selIx = selectionParent.getIndex(selNode);
+         selectionParent.insert(selNode, selIx - 1);
       }
-      ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
+      ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(selectionParent);
       _pnlPrefs.treBookmarks.setSelectionPaths(selPaths);
 
    }
@@ -487,16 +496,24 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       // Note: Up / Down buttons are enabled only when without exception kids of _nodeUserMarks are selected
 
-      Arrays.sort(selPaths, Comparator.comparingInt(o -> _nodeUserMarks.getIndex((DefaultMutableTreeNode) o.getLastPathComponent())));
+      boolean selectedNodesBelongToDifferentParents = List.of(selPaths).stream().anyMatch(sp -> sp.getParentPath().getLastPathComponent() != selPaths[0].getParentPath().getLastPathComponent());
+      if(selectedNodesBelongToDifferentParents)
+      {
+         return;
+      }
+
+      DefaultMutableTreeNode selectionParent = (DefaultMutableTreeNode) selPaths[0].getParentPath().getLastPathComponent();
+
+      Arrays.sort(selPaths, Comparator.comparingInt(o -> selectionParent.getIndex((DefaultMutableTreeNode) o.getLastPathComponent())));
 
       ArrayUtils.reverse(selPaths);
       for (TreePath selPath : selPaths)
       {
          DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
-         int selIx = _nodeUserMarks.getIndex(selNode);
-         _nodeUserMarks.insert(selNode, selIx + 1);
+         int selIx = selectionParent.getIndex(selNode);
+         selectionParent.insert(selNode, selIx + 1);
       }
-      ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
+      ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(selectionParent);
       _pnlPrefs.treBookmarks.setSelectionPaths(selPaths);
    }
 
