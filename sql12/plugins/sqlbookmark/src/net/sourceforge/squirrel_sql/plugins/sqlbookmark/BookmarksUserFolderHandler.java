@@ -80,7 +80,15 @@ public class BookmarksUserFolderHandler
       }
 
       DefaultMutableTreeNode newUserFolder = GUIUtils.createFolderNode(new UserBookmarkFolder(editedFolderName));
-      parent.add(newUserFolder);
+      int siblingIndex = parent.getIndex(lastPathComponent);
+      if(-1 < siblingIndex)
+      {
+         parent.insert(newUserFolder, siblingIndex+1);
+      }
+      else
+      {
+         parent.add(newUserFolder);
+      }
       ((DefaultTreeModel)_treBookmarks.getModel()).nodeStructureChanged(parent);
       BookmarkTreeUtil.selectNode(_treBookmarks, newUserFolder);
    }

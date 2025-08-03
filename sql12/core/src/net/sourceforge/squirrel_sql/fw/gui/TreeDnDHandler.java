@@ -1,11 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.DnDConstants;
@@ -17,6 +11,11 @@ import java.awt.dnd.DropTargetEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TooManyListenersException;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * If a tree is based upon DefaultTreeModel and DefaultMutableTreeNodes this class

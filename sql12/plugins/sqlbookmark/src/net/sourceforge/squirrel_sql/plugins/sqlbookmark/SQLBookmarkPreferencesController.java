@@ -276,7 +276,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
             _pnlPrefs.btnRun.setEnabled(false);
             //_pnlPrefs.btnUp.setEnabled(false);
             //_pnlPrefs.btnDown.setEnabled(false);
-            _pnlPrefs.btnDel.setEnabled(false);
+            //_pnlPrefs.btnDel.setEnabled(false);
             _pnlPrefs.btnImport.setEnabled(false);
             _pnlPrefs.btnExport.setEnabled(false);
 
@@ -403,7 +403,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          selNode = (DefaultMutableTreeNode) _pnlPrefs.treBookmarks.getSelectionPath().getLastPathComponent();
       }
 
-      if (null == selNode || false == selNode.getUserObject() instanceof Bookmark)
+      if (null == selNode || (false == selNode.getUserObject() instanceof Bookmark && false == selNode.getUserObject() instanceof UserBookmarkFolder))
       {
          // i18n[sqlbookmark.noDeleteSelection=Please select the bookmark to delete]
          Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noDeleteSelection"));
@@ -425,7 +425,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          nextSel = selNode.getPreviousSibling();
       }
 
-      _nodeUserMarks.remove(selNode);
+      ((DefaultMutableTreeNode)selNode.getParent()).remove(selNode);
 
       ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
 
