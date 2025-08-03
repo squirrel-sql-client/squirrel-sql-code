@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 public interface TreeDnDHandlerCallback
 {
@@ -23,4 +23,9 @@ public interface TreeDnDHandlerCallback
    }
 
    default void updateDragPosition(TreeDndDropPositionData treeDndDropPositionData) {}
+
+   default boolean allowDND(DefaultMutableTreeNode targetNode, ArrayList<DefaultMutableTreeNode> draggedNodes)
+   {
+      return true;
+   }
 }

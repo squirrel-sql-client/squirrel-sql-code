@@ -125,7 +125,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       _pnlPrefs.treBookmarks.getSelectionModel().addTreeSelectionListener(e -> updateButtonsEnabled());
 
-      _bookmarksUserFolderHandler = new BookmarksUserFolderHandler(_pnlPrefs.treBookmarks, _nodeUserMarks);
+      _bookmarksUserFolderHandler = new BookmarksUserFolderHandler(_pnlPrefs.treBookmarks, _nodeUserMarks, _nodeSquirrelMarks);
 
       _pnlPrefs.btnRun.addActionListener(e -> onRun());
       _pnlPrefs.btnAdd.addActionListener(e -> onAdd());

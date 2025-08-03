@@ -4,11 +4,13 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
@@ -22,11 +24,13 @@ public class BookmarksUserFolderHandler
 
    private final JTree _treBookmarks;
    private final DefaultMutableTreeNode _nodeUserMarks;
+   private final DefaultMutableTreeNode _nodeSquirrelMarks;
 
-   public BookmarksUserFolderHandler(JTree treBookmarks, DefaultMutableTreeNode nodeUserMarks)
+   public BookmarksUserFolderHandler(JTree treBookmarks, DefaultMutableTreeNode nodeUserMarks, DefaultMutableTreeNode nodeSquirrelMarks)
    {
       _treBookmarks = treBookmarks;
       _nodeUserMarks = nodeUserMarks;
+      _nodeSquirrelMarks = nodeSquirrelMarks;
       new TreeDnDHandler(_treBookmarks, new TreeDnDHandlerCallback()
       {
          @Override
@@ -40,8 +44,34 @@ public class BookmarksUserFolderHandler
          {
             throw new UnsupportedOperationException("Should not have been called.");
          }
+
+         @Override
+         public boolean allowDND(DefaultMutableTreeNode targetNode, ArrayList<DefaultMutableTreeNode> draggedNodes)
+         {
+            return onAllowDND(targetNode, draggedNodes);
+         }
       });
 
+   }
+
+   private boolean onAllowDND(DefaultMutableTreeNode targetNode, ArrayList<DefaultMutableTreeNode> draggedNodes)
+   {
+      if(false == Stream.of(targetNode.getPath()).anyMatch(n -> n == _nodeUserMarks))
+      {
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("BookmarksUserFolderHandler.can.not.move.to.squirrel.bookmarks"));
+         return false;
+      }
+
+      for(DefaultMutableTreeNode node : draggedNodes)
+      {
+         if(false == Stream.of(node.getPath()).anyMatch(n -> n == _nodeUserMarks))
+         {
+            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("BookmarksUserFolderHandler.only.user.bookmarks.can.be.moved"));
+            return false;
+         }
+      }
+
+      return true;
    }
 
    public void addFolder()

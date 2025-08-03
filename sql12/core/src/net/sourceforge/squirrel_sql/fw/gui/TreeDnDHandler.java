@@ -168,9 +168,16 @@ public class TreeDnDHandler
       {
          DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
 
+         ArrayList<DefaultMutableTreeNode> simulatedCutNodes = cutDraggedNodes(pathsToPaste, null, dtm, true);
+
+         if(false == _treeDnDHandlerCallback.allowDND(root, simulatedCutNodes))
+         {
+            return;
+         }
+
          if (_treeDnDHandlerCallback.nodeAcceptsKids(root))
          {
-            cutNodes = cutDraggedNodes(pathsToPaste, null, dtm);
+            cutNodes = cutDraggedNodes(pathsToPaste, null, dtm, false);
 
             int[] childIndices = new int[cutNodes.size()];
             for (int i = 0; i < cutNodes.size(); i++)
@@ -183,9 +190,15 @@ public class TreeDnDHandler
       }
       else
       {
-         cutNodes = cutDraggedNodes(pathsToPaste, treeDndDropPositionData.getTreePath(), dtm);
-
+         ArrayList<DefaultMutableTreeNode>  simulatedCutNodes = cutDraggedNodes(pathsToPaste, treeDndDropPositionData.getTreePath(), dtm, true);
          DefaultMutableTreeNode targetNode = treeDndDropPositionData.getNode();
+
+         if(false == _treeDnDHandlerCallback.allowDND(targetNode, simulatedCutNodes))
+         {
+            return;
+         }
+
+         cutNodes = cutDraggedNodes(pathsToPaste, treeDndDropPositionData.getTreePath(), dtm, false);
 
          switch (treeDndDropPositionData.getPos())
          {
@@ -239,17 +252,18 @@ public class TreeDnDHandler
       _tree.setSelectionPaths(newSelPaths);
    }
 
-   private ArrayList<DefaultMutableTreeNode> cutDraggedNodes(TreePath[] pathsToPaste, TreePath targetPath, DefaultTreeModel dtm)
+   private ArrayList<DefaultMutableTreeNode> cutDraggedNodes(TreePath[] pathsToPaste, TreePath targetPath, DefaultTreeModel dtm, boolean simulateOnly)
    {
       ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<>();
 
-      for (int i = 0; i < pathsToPaste.length; i++)
+      for(TreePath path : pathsToPaste)
       {
-         if(false == pathsToPaste[i].equals(targetPath))
+         if(false == path.equals(targetPath))
          {
-            DefaultMutableTreeNode cutNode = (DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent();
+            DefaultMutableTreeNode cutNode = (DefaultMutableTreeNode) path.getLastPathComponent();
             cutNodes.add(cutNode);
-            if (null != cutNode.getParent())
+
+            if(false == simulateOnly && null != cutNode.getParent())
             {
                dtm.removeNodeFromParent(cutNode);
             }
