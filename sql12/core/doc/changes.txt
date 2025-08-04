@@ -244,7 +244,7 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
-File export dialog: Removed red border.
+File export dialog: Removed red border line.
 
 Show foreign key references' feature didn't show all FK-references to a table
   when the FK-references names were not unique.
