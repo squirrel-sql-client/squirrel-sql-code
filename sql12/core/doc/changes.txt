@@ -244,6 +244,9 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+Alias Schema Properties dialog, tab Schema: Clearing the Schema table when a cell editor was active
+  raised an IndexOutOfBoundsException when the dialog's OK button was clicked.
+
 File export dialog: Removed red border line.
 
 Show foreign key references' feature didn't show all FK-references to a table
