@@ -244,6 +244,12 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
 
 Bug fixes:
 
+#1534 If a database or JDBC driver does not provide any table types on
+  calling java.sql.DatabaseMetaData.getTableTypes(), then SQuirreL's Object tree
+  used to display no tables. Now, by internally adding the common table types
+  "TABLE", "VIEW", "SYSTEM TABLE", SQuirreL increases the chance
+  for tables to occur in the Object tree.
+
 Alias Schema Properties dialog, tab Schema: Clearing the Schema table when a cell editor was active
   raised an IndexOutOfBoundsException when the dialog's OK button was clicked.
 

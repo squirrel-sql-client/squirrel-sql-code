@@ -1,5 +1,17 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
@@ -17,23 +29,11 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.DefaultTableTypesEnum;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This class is Serializable and yet doesn't declare serialVersionUID.  This is done intentionally so that 
@@ -185,9 +185,8 @@ public class SchemaInfoCache implements Serializable
 
    private void initTypes()
    {
-      ArrayList<String> tableTypeCandidates = new ArrayList<>();
-      tableTypeCandidates.add("TABLE");
-      tableTypeCandidates.add("SYSTEM TABLE");
+      ArrayList<String> tableTypeCandidates = new
+            ArrayList<>(DefaultTableTypesEnum.getRealTableDefaultTableTypeNames());
 
       if(BaseTableTypeHandler.isDatabaseUsingTypeBaseTableInsteadOpTable(_session.getMetaData()))
       {
@@ -197,7 +196,7 @@ public class SchemaInfoCache implements Serializable
       new SynonymHandler(_session.getSQLConnection().getSQLMetaData()).appendSynonymTableTypesForSchemaInfoCache(tableTypeCandidates);
 
       ArrayList<String> viewTypeCandidates = new ArrayList<>();
-      viewTypeCandidates.add("VIEW");
+      viewTypeCandidates.add(DefaultTableTypesEnum.getDefaultViewTypeName());
 
       try
       {
