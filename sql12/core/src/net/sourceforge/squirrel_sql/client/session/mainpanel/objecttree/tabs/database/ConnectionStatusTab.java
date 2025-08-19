@@ -36,10 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class ConnectionStatusTab extends BaseDataSetTab
 {
-    
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ConnectionStatusTab.class);
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConnectionStatusTab.class);
     
 	/**
 	 * Return the title for the tab.

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Client properties in Object tree:
+  A new detail tab name "Client Properties" of the Object tree's root node displays
+  the properties returned by java.sql.Connection.getClientInfo().
+
 #620 Equipped the file export dialog with a vertical scrollbar when needed.
   To better support this, the dialog was partly rearranged.
 
