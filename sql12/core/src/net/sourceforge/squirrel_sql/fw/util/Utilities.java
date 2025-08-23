@@ -18,10 +18,6 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,6 +33,10 @@ import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * General purpose utilities functions.
@@ -676,4 +676,19 @@ public class Utilities
       return length > max;
    }
 
+   public static String getToStringSave(Object obj)
+   {
+      String ret = "<Failed to create string representation of object>";
+
+      try
+      {
+         ret = "" + obj;
+      }
+      catch(Throwable e)
+      {
+         // Intentionally empty
+      }
+
+      return ret;
+   }
 }

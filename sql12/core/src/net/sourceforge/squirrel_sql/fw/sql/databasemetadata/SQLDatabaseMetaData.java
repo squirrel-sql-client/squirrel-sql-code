@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -757,7 +756,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	{
 		final String key = "getTableTypes";
 		String[] value = (String[]) _cache.get(key);
-		if (value != null) { return value; }
+      if(value != null)
+      {
+         return value;
+      }
 
 		final DatabaseMetaData md = privateGetJDBCMetaData();
 
@@ -859,7 +861,15 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			tableTypes.add(SynonymHandler.SYNONYM_TABLE_TYPE_NAME);
 		}
 
-		value = tableTypes.toArray(new String[tableTypes.size()]);
+		if(tableTypes.isEmpty())
+		{
+         tableTypes.addAll(DefaultTableTypesEnum.getAllDefaultTableTypeNames());
+
+			s_log.warn("Neither java.sql.DatabaseMetaData.getTableTypes() nor any exiting DB specific rules provided any table types. " +
+                          "We now add default table types. For some discussion see SourceForge bug #1534");
+		}
+
+		value = tableTypes.toArray(new String[0]);
 		_cache.put(key, value);
 		return value;
 	}

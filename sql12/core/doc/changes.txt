@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Client properties in Object tree:
+  A new detail tab name "Client Properties" of the Object tree's root node displays
+  the properties returned by java.sql.Connection.getClientInfo().
+
 #620 Equipped the file export dialog with a vertical scrollbar when needed.
   To better support this, the dialog was partly rearranged.
 
@@ -243,6 +247,17 @@ Table cell data popup now offers find, Xml/Json-reformatting and export function
   To open the cell data popup double-click a table cell.
 
 Bug fixes:
+
+#1534 If a database or JDBC driver does not provide any table types on
+  calling java.sql.DatabaseMetaData.getTableTypes(), then SQuirreL's Object tree
+  used to display no tables. Now, by internally adding the common table types
+  "TABLE", "VIEW", "SYSTEM TABLE", SQuirreL increases the chance
+  for tables to occur in the Object tree.
+
+Alias Schema Properties dialog, tab Schema: Clearing the Schema table when a cell editor was active
+  raised an IndexOutOfBoundsException when the dialog's OK button was clicked.
+
+File export dialog: Removed red border line.
 
 Show foreign key references' feature didn't show all FK-references to a table
   when the FK-references names were not unique.
