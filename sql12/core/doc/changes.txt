@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in our GIT repository, snapshots and future releases.
 ===============================================================================================
 
+5.0.0 (09/18/2025)
+==================
 Enhancements:
 
 Introduced Java 25 compatibility.
