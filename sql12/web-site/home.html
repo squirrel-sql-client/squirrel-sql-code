@@ -41,17 +41,32 @@
 	<tr>
       <td class="body_left_border">&nbsp;</td>
       <td width='100%' class="body" bgcolor="white" valign="top">
-         <h3 class="body"><A name="newfeatures">Feature highlights of 4.8.0:</A></h3>
+         <h3 class="body"><A name="newfeatures">Feature highlights of 5.0.0:</A></h3>
 		 <ul>
-			 <li>Saved Session Groups: store and restore groups of Sessions</li>
-			 <li>Cell detail display at the right of SQL results</li>
-			 <li>Cell detail display and cell detail popup support image display</li>
-			 <li>Renaming additional SQL tabs</li>
-			 <li>Fixed dark theme</li>
-			 <li>Java 22 compatibility</li>
-			 <li>Many more features and bug fixes</li>
-		 </ul>
-		 All new features and bug fixes of the 4.8.0 release can be found in our change log at
+             <li>The Object tree's root node has a new detail tab named "Client Properties"</li>
+             <li>The Object tree didn't show tables when the JDBC driver didn't provide table types</li>
+             <li>Support for Java 25</li>
+             <li>SQL result table search now highlights results in cell detail display, too</li>
+             <li>Cell data image display offers to scale images to fit the display size</li>
+             <li>MS Excel exports offer to create tabs containing the exports' SQL statements</li>
+             <li>Improved memory footprint</li>
+             <li>Enhanced 'Copy separated by ...' function</li>
+             <li>Searching all open SQL results and cell data dialogs</li>
+             <li>Code completion for JOIN ON clauses</li>
+             <li>Cell data display highlights JSON and XML after reformatting</li>
+             <li>Choosing fonts for MS-Excel export</li>
+             <li>Aliases can be made read-only</li>
+             <li>SQL result tabs that match the current SQL in the editor are marked</li>
+             <li>SQL result's find function now offers to narrow the columns to search</li>
+             <li>SQL result's detail data display now allows to automatically reformat XML or Json</li>
+             <li>Numeric values can be right aligned</li>
+             <li>Export to MS-Excel allows to configure auto filtering</li>
+             <li>Header rows of MS-Excel exports can be made bold/centered/frozen</li>
+             <li>Option to change the statement separator during SQL execution using --#SET TERMINATOR &lt;separator&gt;</li>
+             <li>Besides sums, means and deviations can now be displayed for selections in numerical columns</li>
+             <li>New Alias tree icons which for FlatLaf Look and Feels show if top level folders are expanded or collapsed </li>
+         </ul>
+		 All new features and bug fixes of the 5.0.0 release can be found in our change log at
 			  <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
 			  or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.
 
@@ -103,7 +118,22 @@
 			<h1 class="body"><a name="latestnews"><h2 class="body">Latest News</h2></a></h1>
 
 			<center>
-				<h3 class="body">
+                <h3 class="body">
+                    <font size="+2">SQuirreL 5.0.0 is released (09/18/2025).</font><br>
+                    The list of feature highlights is rather long and can be found above.<br>
+                    For all new features and bug fixes see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
+                    or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
+                    <b>Note that SQuirreL 5.0.0 requires at least Java 17.</b><br>
+                    <br>
+                    5.0.0 releases on SourceForge:<br>
+                    <A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0/squirrel-sql-5.0.0-standard.jar/download">Download installer for Windows/Linux/others</a><br>
+                    <A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0/squirrel-sql-5.0.0-MACOSX-install.jar/download">Download installer for Mac OS </a><br><br>
+                    5.0.0 releases on GitHub:<br>
+                    <A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/v5000/squirrel-sql-5.0.0-standard.jar">Download installer for Windows/Linux/others</a><br>
+                    <A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/v5000/squirrel-sql-5.0.0-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
+                </h3>
+                <div style="border-top: 3px solid grey"></div>
+                <h3 class="body">
 					The latest snapshot-20250824_2124 is one more candidate for the 5.0.0 release.<br>
 					Latest changes are<br>
 					<table>
@@ -130,121 +160,6 @@
 					or<br>
 					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots">https://sourceforge.net/projects/squirrel-sql/files/3-snapshots</A><br>
 					for the latest snapshots regularly.<br>
-				</h3>
-                <div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					The latest snapshot-20250724_2037 is another release candidate for the 5.0.0 release,<br>
-					which as compared to the last one<br>
-					<table>
-						<tr><td><b>&rArr; contains an update of the IzPack installer to fix an installation issue with Java 17 on Ubuntu,</b></td></tr>
-						<tr><td><b>&rArr; fixes a bug in the 'Show foreign key references'-function of SQL result tables.</b></td></tr>
-					</table>
-					Please give it a try.<br><br>
-					The minimum required Java version for this snapshot is 17.x.<br>
-					<br>
-					For all new features and bug fixes see our change log at
-					<a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br><br>
-					snapshot-20250724_2037 releases on SourceForge are:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20250724_2037/squirrel-sql-snapshot-20250724_2037-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20250724_2037/squirrel-sql-snapshot-20250724_2037-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
-					snapshot-20250724_2037 releases on GitHub are:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20250724_2037/squirrel-sql-snapshot-20250724_2037-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20250724_2037/squirrel-sql-snapshot-20250724_2037-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					The latest snapshot-20250625_2304 is a release candidate for the 5.0.0 release.<br>
-					Please give it a try.<br><br>
-					Remember that since the previous snapshot announced here the minimum required Java version is 17.x.<br>
-					As compared to the last snapshot announced here this snapshot comes with the following new feature highlights:<br>
-					<table>
-						<tr><td><b>&rArr; SQL result table search now highlights results in cell detail display, too</b></td></tr>
-						<tr><td><b>&rArr; Cell data image display offers to scale images to fit the display size</b></td></tr>
-						<tr><td><b>&rArr; MS Excel exports offer to create tabs containing the exports' SQL statements</b></td></tr>
-						<tr><td><b>&rArr; Enhanced 'Copy separated by ...' function</b></td></tr>
-					</table>
-					<br>
-					For all new features and bug fixes see our change log at
-					<a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br><br>
-					snapshot-20250625_2304 releases on SourceForge are:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20250625_2304/squirrel-sql-snapshot-20250625_2304-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20250625_2304/squirrel-sql-snapshot-20250625_2304-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
-					snapshot-20250625_2304 releases on GitHub are:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20250625_2304/squirrel-sql-snapshot-20250625_2304-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20250625_2304/squirrel-sql-snapshot-20250625_2304-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					Since snapshot snapshot-20250504_2040 the minimum required Java version is 17.x.<br><br>
-					The latest snapshot, snapshot-20250511_2032, includes the following<br>
-					new features compared to the previous news entry:
-					<table>
-						<tr><td><b>&rArr; Searching all open SQL results and cell data dialogs</b></td></tr>
-						<tr><td><b>&rArr; Java 24 compatibility</b></td></tr>
-						<tr><td><b>&rArr; Code completion for JOIN ON clauses</b></td></tr>
-						<tr><td><b>&rArr; Cell data display highlights JSON and XML after reformatting</b></td></tr>
-						<tr><td><b>&rArr; Choosing fonts for MS-Excel export</b></td></tr>
-						<tr><td><b>&rArr; Aliases can be made read-only</b></td></tr>
-					</table>
-					<br>
-					For all new features and bug fixes see our change log at
-					<a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br><br>
-					snapshot-20250511_2032 releases on SourceForge are:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20250511_2032/squirrel-sql-snapshot-20250511_2032-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20250511_2032/squirrel-sql-snapshot-20250511_2032-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
-					snapshot-20250511_2032 releases on GitHub are:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20250511_2032/squirrel-sql-snapshot-20250511_2032-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20250511_2032/squirrel-sql-snapshot-20250511_2032-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					New snapshot snapshot-20241219_2026 containing the following new features since the 4.8.0 release:<br>
-					<table>
-						<tr><td><b>&rArr; SQL result tabs that match the current SQL in the editor are marked</b></td></tr>
-						<tr><td><b>&rArr; SQL result's find function now offers to narrow the columns to search</b></td></tr>
-						<tr><td><b>&rArr; SQL result's detail data display now allows to automatically reformat XML or Json</b></td></tr>
-						<tr><td><b>&rArr; Numeric values can be right aligned</b></td></tr>
-						<tr><td><b>&rArr; Export to MS-Excel allows to configure auto filtering</b></td></tr>
-						<tr><td><b>&rArr; Header rows of MS-Excel exports can be made bold/centered/frozen</b></td></tr>
-						<tr><td><b>&rArr; Option to change the statement separator during SQL execution using --#SET TERMINATOR &lt;separator&gt;</b></td></tr>
-						<tr><td><b>&rArr; Besides sums, means and deviations can now be displayed for selections in numerical columns</b></td></tr>
-						<tr><td><b>&rArr; New Alias tree icons which for FlatLaf Look and Feels show if top level folders are expanded or collapsed </b></td></tr>
-					</table>
-					<br>
-					For all new features and bug fixes see our change log at
-					<a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br><br>
-					snapshot-20241219_2026 releases on SourceForge are:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20241219_2026/squirrel-sql-snapshot-20241219_2026-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20241219_2026/squirrel-sql-snapshot-20241219_2026-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
-					snapshot-20241219_2026 releases on GitHub are:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20241219_2026/squirrel-sql-snapshot-20241219_2026-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20241219_2026/squirrel-sql-snapshot-20241219_2026-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					<font size="+2">SQuirreL 4.8.0 is released (09/01/2024), feature highlights of 4.8.0:</font>
-					<table>
-						<tr><td><b>&rArr; Saved Session Groups: store and restore groups of Sessions</b></td></tr>
-						<tr><td><b>&rArr; Cell detail display at the right of SQL results</b></td></tr>
-						<tr><td><b>&rArr; Cell detail display and cell detail popup support image display</b></td></tr>
-						<tr><td><b>&rArr; Renaming additional SQL tabs</b></td></tr>
-						<tr><td><b>&rArr; Fixed dark theme</b></td></tr>
-						<tr><td><b>&rArr; Java 22 compatibility</b></td></tr>
-						<tr><td><b>&rArr; Many more features and bug fixes</b></td></tr>
-					</table>
-					For all new features and bug fixes see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
-					<br>
-					4.8.0 releases on SourceForge:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/4.8.0/squirrel-sql-4.8.0-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/4.8.0/squirrel-sql-4.8.0-MACOSX-install.jar/download">Download installer for Mac OS </a><br><br>
-					4.8.0 releases on GitHub:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.8.0-installer/squirrel-sql-4.8.0-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.8.0-installer/squirrel-sql-4.8.0-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
 				</h3>
 			</center>
 		</td>
@@ -274,7 +189,7 @@
 			allow you to view the structure of a JDBC compliant
 			database, browse the data in tables, issue SQL commands etc, see 
 			<a href="index.php?page=screenshots">Introduction</a>.
-			<p>From the 4.3.0 release on the minimum required Java version is 11.x. From the 4.9.0 release on the minimum required Java version will be 17.x.
+			<p>From the 4.3.0 release on the minimum required Java version is 11.x. From the 5.0.0 release on the minimum required Java version will be 17.x.
 			<p>
             <p>SQuirreL's functionality can be extended through the use of <A HREF="index.php?page=plugins">plugins</A>.
 
@@ -319,19 +234,19 @@
 				<tr>
 					<td>
 						<UL>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.8.0/squirrel-sql-4.8.0-standard.jar/download">Install jar of SQuirreL 4.8.0 for Windows/Linux/others</a></B></LI>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.8.0/squirrel-sql-4.8.0-MACOSX-install.jar/download">Install jar of SQuirreL 4.8.0 for MacOS X</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0/squirrel-sql-5.0.0-standard.jar/download">Install jar of SQuirreL 5.0.0 for Windows/Linux/others</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0/squirrel-sql-5.0.0-MACOSX-install.jar/download">Install jar of SQuirreL 5.0.0 for MacOS X</a></B></LI>
 							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/3-snapshots/">Install jars of latest snapshots</a></B></LI>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.8.0-plainzip/">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0-plainzip/">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
 							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/">Overview of all available downloads</a></B></LI>
 						</UL>
 					</td>
 					<td>
 						<UL>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.8.0-installer/squirrel-sql-4.8.0-standard.jar">Install jar of SQuirreL 4.8.0 for Windows/Linux/others</a></B></LI>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.8.0-installer/squirrel-sql-4.8.0-MACOSX-install.jar">Install jar of SQuirreL 4.8.0 for MacOS X</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/v5000/squirrel-sql-5.0.0-standard.jar">Install jar of SQuirreL 5.0.0 for Windows/Linux/others</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/v5000/squirrel-sql-5.0.0-MACOSX-install.jar">Install jar of SQuirreL 5.0.0 for MacOS X</a></B></LI>
 							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases">Install jars of latest snapshots</a></B></LI>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/tag/4.8.0-a_plainzip">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/tag/v500">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
 							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases">Overview of all stable releases</a></B></LI>
 						</UL>
 					</td>
