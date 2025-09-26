@@ -4,6 +4,15 @@ SQuirreL SQL Client Change Log
 Not yet released, available in our GIT repository, snapshots and future releases.
 ===============================================================================================
 
+Enhancements:
+
+
+Bug fixes:
+
+File import: Import dialog did not work when the import file
+  contained lines longer than 100000 characters.
+
+
 5.0.0 (09/18/2025)
 ==================
 Enhancements:

@@ -20,17 +20,17 @@
  */
 package net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.csv.csvreader;
 
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
+
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * A stream based parser for parsing delimited text data from a file or a
@@ -1094,10 +1094,8 @@ public class CsvReader
                         {
                            _dataBuffer.position++;
 
-                           if (_csvReaderSettings.safetySwitch
-                                 && _dataBuffer.position
-                                 - _dataBuffer.columnStart
-                                 + _columnBuffer.position > 100000)
+                           if (    _csvReaderSettings.safetySwitch
+                                && _dataBuffer.position - _dataBuffer.columnStart + _columnBuffer.position > 100000)
                            {
                               close();
 
@@ -1167,72 +1165,6 @@ public class CsvReader
       _dataBuffer.position = 0;
       _dataBuffer.lineStart = 0;
       _dataBuffer.columnStart = 0;
-   }
-
-   /**
-    * Read the first record of data as column headers.
-    *
-    * @return Whether the header record was successfully read or not.
-    * @throws IOException Thrown if an error occurs while reading data from the
-    *                     source stream.
-    */
-   public boolean readHeaders() throws IOException
-   {
-      boolean result = readRecord();
-
-      // copy the header data from the column array
-      // to the header string array
-
-      _headersHolder.length = _columnsCount;
-
-      _headersHolder.headers = new String[_columnsCount];
-
-      for (int i = 0; i < _headersHolder.length; i++)
-      {
-         String columnValue = get(i);
-
-         _headersHolder.headers[i] = columnValue;
-
-         // if there are duplicate header names, we will save the last one
-         _headersHolder.indexByName.put(columnValue, Integer.valueOf(i));
-      }
-
-      if (result)
-      {
-         _currentRecord--;
-      }
-
-      _columnsCount = 0;
-
-      return result;
-   }
-
-   /**
-    * Returns the column header value for a given column index.
-    *
-    * @param columnIndex The index of the header column being requested.
-    * @return The value of the column header at the given column index.
-    * @throws IOException Thrown if this object has already been closed.
-    */
-   public String getHeader(int columnIndex) throws IOException
-   {
-      checkClosed();
-
-      // check to see if we have read the header record yet
-
-      // check to see if the column index is within the bounds
-      // of our header array
-
-      if (columnIndex > -1 && columnIndex < _headersHolder.length)
-      {
-         // return the processed header data for this column
-
-         return _headersHolder.headers[columnIndex];
-      }
-      else
-      {
-         return "";
-      }
    }
 
    public boolean isQualified(int columnIndex) throws IOException
@@ -1427,34 +1359,6 @@ public class CsvReader
       {
          return -1;
       }
-   }
-
-   /**
-    * Skips the next record of data by parsing each column.&nbsp;Does not
-    * increment
-    * {@link CsvReader#getCurrentRecord getCurrentRecord()}.
-    *
-    * @return Whether another record was successfully skipped or not.
-    * @throws IOException Thrown if an error occurs while reading data from the
-    *                     source stream.
-    */
-   public boolean skipRecord() throws IOException
-   {
-      checkClosed();
-
-      boolean recordRead = false;
-
-      if (_hasMoreData)
-      {
-         recordRead = readRecord();
-
-         if (recordRead)
-         {
-            _currentRecord--;
-         }
-      }
-
-      return recordRead;
    }
 
    /**
