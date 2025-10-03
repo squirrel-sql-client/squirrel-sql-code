@@ -11,6 +11,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,6 +71,13 @@ final class CreditsPanel extends JScrollPane
 
       setViewportView(credits);
       credits.setCaretPosition(0);
+      credits.addHyperlinkListener(new HyperlinkListener() {
+         public void hyperlinkUpdate(HyperlinkEvent e) {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+               // Do nothing, effectively disabling the hyperlink.
+            }
+         }
+      });
    }
 
    private String readCreditsHtml(IApplication app)

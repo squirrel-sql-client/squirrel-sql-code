@@ -89,7 +89,6 @@ public class ShowDriverWebsiteCommand implements ICommand
             }
         } 
         if (url != null && !"".equals(url)) {
-            _app.openURL(url);
         }
 	}
 }
