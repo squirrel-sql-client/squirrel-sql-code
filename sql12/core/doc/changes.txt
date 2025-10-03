@@ -6,6 +6,19 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+
+Bug fixes:
+
+File import: Import dialog did not work when the import file
+  contained lines longer than 100000 characters.
+
+
+5.0.0 (09/18/2025)
+==================
+Enhancements:
+
+Introduced Java 25 compatibility.
+
 Client properties in Object tree:
   A new detail tab name "Client Properties" of the Object tree's root node displays
   the properties returned by java.sql.Connection.getClientInfo().

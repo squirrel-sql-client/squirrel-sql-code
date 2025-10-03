@@ -17,6 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.c
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import net.sourceforge.squirrel_sql.client.session.action.dataimport.gui.ImportPropsDAO;
 import net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.client.session.action.dataimport.importer.FailedToInterpretHandler;
@@ -26,11 +31,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * This class implements the IFileImporter interface for reading CSV files.
@@ -96,6 +96,7 @@ public class CSVFileImporter implements IFileImporter
    public String[][] getPreview(int noOfLines) throws IOException
    {
       CsvReader csvReader = new CsvReader(importFile, settings.getImportCharset(), settings.getSeperator(), _trimValues, settings.isUseDoubleQuotesAsTextQualifier());
+      csvReader.setSafetySwitch(false);
       String[][] data = new String[noOfLines][];
 
       int row = 0;
