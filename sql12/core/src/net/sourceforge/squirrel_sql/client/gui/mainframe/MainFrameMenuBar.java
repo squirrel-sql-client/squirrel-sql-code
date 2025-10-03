@@ -563,7 +563,6 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ModifyDriverAction.class, menu);
 		addToMenu(rsrc, DeleteDriverAction.class, menu);
 		addToMenu(rsrc, CopyDriverAction.class, menu);
-      addToMenu(rsrc, ShowDriverWebsiteAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, InstallDefaultDriversAction.class, menu);
 		menu.addSeparator();

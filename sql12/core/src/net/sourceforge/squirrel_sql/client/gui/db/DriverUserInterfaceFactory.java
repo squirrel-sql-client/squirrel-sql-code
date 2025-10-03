@@ -43,7 +43,6 @@ final class DriverUserInterfaceFactory implements IUserInterfaceFactory<DriversL
       _pm.addSeparator();
       addToPopup(actions.get(ModifyDriverAction.class), _pm);
       addToPopup(actions.get(CopyDriverAction.class), _pm);
-      addToPopup(actions.get(ShowDriverWebsiteAction.class), _pm);
       _pm.addSeparator();
       addToPopup(actions.get(DeleteDriverAction.class), _pm);
       _pm.addSeparator();
@@ -117,7 +116,6 @@ final class DriverUserInterfaceFactory implements IUserInterfaceFactory<DriversL
       _tb.add(actions.get(CreateDriverAction.class));
       _tb.add(actions.get(ModifyDriverAction.class));
       _tb.add(actions.get(CopyDriverAction.class));
-      _tb.add(actions.get(ShowDriverWebsiteAction.class));
       _tb.add(actions.get(DeleteDriverAction.class));
       _tb.addSeparator();
       _tb.add(actions.get(InstallDefaultDriversAction.class));

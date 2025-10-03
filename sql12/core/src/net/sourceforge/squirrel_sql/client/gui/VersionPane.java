@@ -38,7 +38,7 @@ import java.net.URISyntaxException;
  * A class that encapsulates the work of rendering the version and copyright.
  * This is used in both the splash screen and the about dialog.
  */
-public class VersionPane extends JTextPane implements MouseMotionListener, MouseListener
+public class VersionPane extends JTextPane
 {
    /**
     * Logger for this class.
@@ -69,53 +69,9 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
             StyledDocument doc = getStyledDocument();
             doc.setParagraphAttributes(0, content.length(), getDefaultStyleAttributeSet(), true);
             doc.insertString(0, content, null);
-
-            appendWebsiteLink(doc, Version.getWebSite());
-            doc.insertString(doc.getLength(), "\n", null);
-            appendWebsiteLink(doc, Version.getWebSite2());
-            doc.insertString(doc.getLength(), "\n", null);
-            appendWebsiteLink(doc, Version.getWebSite3());
-            doc.insertString(doc.getLength(), "\n", null);
-            appendWebsiteLink(doc, Version.getWebSite4());
-            doc.insertString(doc.getLength(), "\n\n", null);
-
-            content = "Check for stable versions at\n";
-            doc.setParagraphAttributes(doc.getLength(), content.length(), getDefaultStyleAttributeSet(), true);
-            doc.insertString(doc.getLength(), content, null);
-
-            appendWebsiteLink(doc, Version.getSourceforgeStableVersions());
-            doc.insertString(doc.getLength(), "\n", null);
-            appendWebsiteLink(doc, Version.getGitHubStableVersions());
-            doc.insertString(doc.getLength(), "\n\n", null);
-
-            content = "Check for snapshot versions at\n";
-            doc.setParagraphAttributes(doc.getLength(), content.length(), getDefaultStyleAttributeSet(), true);
-            doc.insertString(doc.getLength(), content, null);
-
-            appendWebsiteLink(doc, Version.getSourceforgeSnapshotVersions());
-            doc.insertString(doc.getLength(), "\n", null);
-            appendWebsiteLink(doc, Version.getGitHubSnapshotVersions());
-
-            addMouseListener(this);
-            addMouseMotionListener(this);
          }
          else
          {
-            text.append(Version.getWebSite() + "\n");
-            text.append(Version.getWebSite2() + "\n");
-            text.append(Version.getWebSite3() + "\n");
-            text.append(Version.getWebSite4());
-
-            text.append("\n\nCheck for stable versions at\n");
-            text.append(Version.getSourceforgeStableVersions() + "\n");
-            text.append(Version.getGitHubStableVersions() + "\n");
-
-            text.append("\n\nCheck for snapshot versions at\n");
-
-            text.append(Version.getSourceforgeSnapshotVersions() + "\n");
-            text.append(Version.getGitHubSnapshotVersions() + "\n");
-
-
             String content = text.toString();
             putClientProperty(HONOR_DISPLAY_PROPERTIES, true);
             setContentType("text/html");
@@ -144,123 +100,5 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
       return s;
    }
 
-   private void appendWebsiteLink(StyledDocument doc, String webContent) throws BadLocationException
-   {
-      SimpleAttributeSet w = new SimpleAttributeSet();
-      StyleConstants.setAlignment(w, StyleConstants.ALIGN_CENTER);
-      StyleConstants.setUnderline(w, true);
-      SimpleAttributeSet hrefAttr = new SimpleAttributeSet();
-      hrefAttr.addAttribute(HTML.Attribute.HREF, webContent);
-      w.addAttribute(HTML.Tag.A, hrefAttr);
-      doc.setParagraphAttributes(doc.getLength(), webContent.length(), w, false);
-      doc.insertString(doc.getLength(), webContent, null);
-   }
 
-   public void mouseMoved(MouseEvent ev)
-   {
-      JTextPane editor = (JTextPane) ev.getSource();
-      editor.setEditable(false);
-      Point pt = new Point(ev.getX(), ev.getY());
-      int pos = editor.viewToModel2D(pt);
-      if (pos >= 0)
-      {
-         Document eDoc = editor.getDocument();
-         if (eDoc instanceof DefaultStyledDocument)
-         {
-            DefaultStyledDocument hdoc =
-                  (DefaultStyledDocument) eDoc;
-            Element e = hdoc.getCharacterElement(pos);
-            AttributeSet a = e.getAttributes();
-            AttributeSet tagA = (AttributeSet) a.getAttribute(HTML.Tag.A);
-            String href = null;
-            if (tagA != null)
-            {
-               href = (String) tagA.getAttribute(HTML.Attribute.HREF);
-            }
-            if (href != null)
-            {
-               editor.setToolTipText(href);
-               if (editor.getCursor().getType() != Cursor.HAND_CURSOR)
-               {
-                  editor.setCursor(new Cursor(Cursor.HAND_CURSOR));
-               }
-            }
-            else
-            {
-               editor.setToolTipText(null);
-               if (editor.getCursor().getType() != Cursor.DEFAULT_CURSOR)
-               {
-                  editor.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-               }
-            }
-         }
-      }
-      else
-      {
-         editor.setToolTipText(null);
-      }
-   }
-
-   public void mouseClicked(MouseEvent ev)
-   {
-      JTextPane editor = (JTextPane) ev.getSource();
-      editor.setEditable(false);
-      Point pt = new Point(ev.getX(), ev.getY());
-      int pos = editor.viewToModel2D(pt);
-      if (pos >= 0)
-      {
-         Document eDoc = editor.getDocument();
-         if (eDoc instanceof DefaultStyledDocument)
-         {
-            DefaultStyledDocument hdoc =
-                  (DefaultStyledDocument) eDoc;
-            Element e = hdoc.getCharacterElement(pos);
-            AttributeSet a = e.getAttributes();
-            AttributeSet tagA = (AttributeSet) a.getAttribute(HTML.Tag.A);
-            String href = null;
-            if (tagA != null)
-            {
-               href = (String) tagA.getAttribute(HTML.Attribute.HREF);
-            }
-            if (href != null)
-            {
-               Desktop desktop = Desktop.getDesktop();
-               try
-               {
-                  desktop.browse(new URI(href));
-               }
-               catch (IOException e1)
-               {
-                  s_log.error("mouseClicked: Unexpected exception " + e1.getMessage());
-               }
-               catch (URISyntaxException e1)
-               {
-                  s_log.error("mouseClicked: Unexpected exception " + e1.getMessage());
-               }
-
-            }
-         }
-
-      }
-   }
-
-   public void mouseEntered(MouseEvent arg0)
-   {
-   }
-
-   public void mouseExited(MouseEvent arg0)
-   {
-   }
-
-   public void mousePressed(MouseEvent arg0)
-   {
-   }
-
-   public void mouseReleased(MouseEvent arg0)
-   {
-   }
-
-   public void mouseDragged(MouseEvent arg0)
-   {
-   }
 }
