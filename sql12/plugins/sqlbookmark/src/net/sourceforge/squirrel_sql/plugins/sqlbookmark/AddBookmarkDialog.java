@@ -1,14 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -16,6 +7,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 public class AddBookmarkDialog extends JDialog
 {
@@ -131,20 +130,8 @@ public class AddBookmarkDialog extends JDialog
       lblAccesshint.setForeground(Color.red);
       getContentPane().add(lblAccesshint, gbc);
 
-
-      JPanel pnlButtons = new JPanel(new GridBagLayout());
-
-      btnOK = new JButton(plugin.getResourceString(BM_OK));
-      gbc = new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      pnlButtons.add(btnOK, gbc);
-
-      btnCancel = new JButton(plugin.getResourceString(BM_CANCEL));
-      gbc = new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
-      pnlButtons.add(btnCancel, gbc);
-
-
       gbc = new GridBagConstraints(1,3,1,1,1.0,0.0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10,5,5,5),0,0);
-      getContentPane().add(pnlButtons, gbc);
+      getContentPane().add(createLowerButtonsPanel(), gbc);
 
       getRootPane().setDefaultButton(btnOK);
 
@@ -154,6 +141,22 @@ public class AddBookmarkDialog extends JDialog
 
       setSize(430, 150);
    }
+
+   private JPanel createLowerButtonsPanel()
+   {
+      GridBagConstraints gbc;
+      JPanel pnlButtons = new JPanel(new GridBagLayout());
+
+      btnOK = new JButton(plugin.getResourceString(BM_OK));
+      gbc = new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      pnlButtons.add(btnOK, gbc);
+
+      btnCancel = new JButton(plugin.getResourceString(BM_CANCEL));
+      gbc = new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+      pnlButtons.add(btnCancel, gbc);
+      return pnlButtons;
+   }
+
 
    public boolean isOK()
    {

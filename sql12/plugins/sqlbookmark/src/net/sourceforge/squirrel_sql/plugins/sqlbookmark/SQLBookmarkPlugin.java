@@ -26,12 +26,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
-
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -48,8 +46,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -455,15 +453,15 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
          if(null == _boomarkProps)
          {
             FileWrapper usf = getPluginUserSettingsFolder();
-            FileWrapper boomarkPropsFile = fileWrapperFactory.create(usf, BOOKMARKS_PROPS_FILE);
+            FileWrapper bookmarkPropsFile = fileWrapperFactory.create(usf, BOOKMARKS_PROPS_FILE);
 
-            if(false == boomarkPropsFile.exists())
+            if(false == bookmarkPropsFile.exists())
             {
                _boomarkProps = new Properties();
             }
             else
             {
-               fis = boomarkPropsFile.getFileInputStream();
+               fis = bookmarkPropsFile.getFileInputStream();
                _boomarkProps = new Properties();
                _boomarkProps.load(fis);
             }

@@ -18,9 +18,8 @@ package net.sourceforge.squirrel_sql.client.resources;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
-
 import java.net.URL;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
 public class SquirrelResources extends Resources
 {
@@ -229,6 +228,7 @@ public class SquirrelResources extends Resources
 		String COMPRESS = "compress";
 		String SCALE = "scale";
 
+		String BOOKMARK_SINGLE = "bookmark_single";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

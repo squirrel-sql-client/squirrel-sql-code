@@ -19,6 +19,15 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import java.awt.Component;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -27,17 +36,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlbookmark.exportimport.BookmarkExportImport;
 import org.apache.commons.lang3.ArrayUtils;
-
-import javax.swing.JOptionPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.Component;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * Manage the bookmarks.
@@ -95,6 +93,8 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       _pnlPrefs.treBookmarks.setModel(dtm);
       _pnlPrefs.treBookmarks.setRootVisible(false);
 
+      _pnlPrefs.treBookmarks.setCellRenderer(new BookmarksTreeCellRenderer());
+
       _pnlPrefs.treBookmarks.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
       Bookmark[] defaultBookmarks = DefaultBookmarksFactory.getDefaultBookmarks();
@@ -116,7 +116,6 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       _pnlPrefs.chkSquirrelMarksInPopup.setSelected(Boolean.valueOf(propDefaultMarksInPopup).booleanValue());
 
-
       String useContainsToFilterBookmarks =
          _plugin.getBookmarkProperties().getProperty(SQLBookmarkPlugin.BOOKMARK_PROP_USE_CONTAINS_TO_FILTER_BOOKMARKS, "" + false);
 
@@ -124,7 +123,9 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       _pnlPrefs.treBookmarks.getSelectionModel().addTreeSelectionListener(e -> updateButtonsEnabled());
 
-
+      _pnlPrefs.chkDisplayUserBookmarksAsTree.setSelected(BookmarkAsTreeUtil.isDisplayUserBookmarksAsTree());
+      _pnlPrefs.cboTreeSeparator.setSelectedItem(BookmarkAsTreeUtil.getSelectedTreePathSeparator());
+      maybeDisplayUserBookmarksAsTree();
 
       _pnlPrefs.btnRun.addActionListener(e -> onRun());
       _pnlPrefs.btnAdd.addActionListener(e -> onAdd());
@@ -138,6 +139,22 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       updateButtonsEnabled();
 
+      _pnlPrefs.chkDisplayUserBookmarksAsTree.addActionListener(e -> maybeDisplayUserBookmarksAsTree());
+      _pnlPrefs.cboTreeSeparator.addActionListener(e -> maybeDisplayUserBookmarksAsTree());
+   }
+
+   private void maybeDisplayUserBookmarksAsTree()
+   {
+      if(_pnlPrefs.chkDisplayUserBookmarksAsTree.isSelected())
+      {
+         _pnlPrefs.cboTreeSeparator.setEnabled(true);
+         BookmarkAsTreeUtil.displayUserBookMarksAsTree(_pnlPrefs.treBookmarks, _nodeUserMarks, (Character)_pnlPrefs.cboTreeSeparator.getSelectedItem());
+      }
+      else
+      {
+         BookmarkAsTreeUtil.undoDisplayUserBookMarksAsTree(_pnlPrefs.treBookmarks, _nodeUserMarks);
+         _pnlPrefs.cboTreeSeparator.setEnabled(false);
+      }
    }
 
    public void uninitialize(IApplication app)
@@ -175,15 +192,17 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       bookmarks.removeAll();
 
-      for (int i = 0; i < _nodeUserMarks.getChildCount(); ++i)
+      for(DefaultMutableTreeNode leaf : BookmarkAsTreeUtil.getLeaves(_nodeUserMarks))
       {
-         Bookmark bookmark = (Bookmark) ((DefaultMutableTreeNode) _nodeUserMarks.getChildAt(i)).getUserObject();
+         Bookmark bookmark = (Bookmark) leaf.getUserObject();
          bookmarks.add(bookmark);
       }
 
       // rebuild the bookmark menu.
       _plugin.rebuildMenu();
       bookmarks.save();
+
+      BookmarkAsTreeUtil.savePrefs(_pnlPrefs.chkDisplayUserBookmarksAsTree.isSelected(), (Character)_pnlPrefs.cboTreeSeparator.getSelectedItem());
 
 
       _plugin.getBookmarkProperties().put(SQLBookmarkPlugin.BOOKMARK_PROP_DEFAULT_MARKS_IN_POPUP, "" + _pnlPrefs.chkSquirrelMarksInPopup.isSelected());
@@ -210,7 +229,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
    {
 
       final TreePath[] selectionPaths = _pnlPrefs.treBookmarks.getSelectionPaths();
-      if(null == selectionPaths || 0 == selectionPaths.length)
+      if(null == selectionPaths || 0 == selectionPaths.length || false == BookmarkAsTreeUtil.containsLeavesOnly(selectionPaths))
       {
          _pnlPrefs.btnUp.setEnabled(false);
          _pnlPrefs.btnDown.setEnabled(false);
@@ -327,18 +346,14 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          return;
       }
 
+      BookmarkTreeState treeState = new BookmarkTreeState(_pnlPrefs.treBookmarks, _nodeSquirrelMarks);
+
       DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(ctrlr.getBookmark());
       _nodeUserMarks.add(newChild);
 
       ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
-
-      selectNode(newChild);
-   }
-
-   private void selectNode(DefaultMutableTreeNode toSel)
-   {
-      TreeNode[] pathToRoot = ((DefaultTreeModel) _pnlPrefs.treBookmarks.getModel()).getPathToRoot(toSel);
-      _pnlPrefs.treBookmarks.setSelectionPath(new TreePath(pathToRoot));
+      maybeDisplayUserBookmarksAsTree();
+      treeState.applyState(newChild);
    }
 
    /**
@@ -362,39 +377,22 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          return;
       }
 
-      boolean editable = selNode.getParent() == _nodeUserMarks;
+      boolean editable = BookmarkAsTreeUtil.isUserBookmarkChild(selNode, _nodeUserMarks);
 
-      BookmarkEditController ctrlr = new BookmarkEditController(Main.getApplication().getMainFrame(), (Bookmark) selNode.getUserObject(), editable, _nodeUserMarks);
+      BookmarkEditController ctrl = new BookmarkEditController(Main.getApplication().getMainFrame(), (Bookmark) selNode.getUserObject(), editable, _nodeUserMarks);
 
-      if(ctrlr.isCanceled())
+      if(ctrl.isCanceled())
       {
          return;
       }
 
-      selNode.setUserObject(ctrlr.getBookmark());
+      BookmarkTreeState treeState = new BookmarkTreeState(_pnlPrefs.treBookmarks, _nodeSquirrelMarks);
 
-      refreshTree(selNode);
+      selNode.setUserObject(ctrl.getBookmark());
 
+      maybeDisplayUserBookmarksAsTree();
+      treeState.applyState(selNode);
    }
-
-   private void refreshTree(DefaultMutableTreeNode selNode)
-   {
-      boolean squirrelPathExpanded = _pnlPrefs.treBookmarks.isExpanded(new TreePath(_nodeSquirrelMarks.getPath()));
-
-      DefaultTreeModel model = (DefaultTreeModel) _pnlPrefs.treBookmarks.getModel();
-      TreeNode root = (TreeNode) model.getRoot();
-      model.setRoot(null);
-
-      model.setRoot(root);
-
-      _pnlPrefs.treBookmarks.setSelectionPath(new TreePath(selNode.getPath()));
-
-      if(squirrelPathExpanded)
-      {
-         _pnlPrefs.treBookmarks.expandPath(new TreePath(_nodeSquirrelMarks.getPath()));
-      }
-   }
-
 
    public void onDelete()
    {
@@ -420,6 +418,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          return;
       }
 
+      BookmarkTreeState treeState = new BookmarkTreeState(_pnlPrefs.treBookmarks, _nodeSquirrelMarks);
 
       DefaultMutableTreeNode nextSel = selNode.getNextSibling();
       if(null == nextSel)
@@ -431,11 +430,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
 
-      if (null != nextSel)
-      {
-         selectNode(nextSel);
-      }
-
+      treeState.applyState(nextSel);
    }
 
    private void onUp()

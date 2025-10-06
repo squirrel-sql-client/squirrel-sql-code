@@ -1,10 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.Vector;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class SQLBookmarkPreferencesPanel extends JPanel
 {
@@ -25,6 +36,8 @@ public class SQLBookmarkPreferencesPanel extends JPanel
    JCheckBox chkSquirrelMarksInPopup;
    JCheckBox chkUseContainsToFilterBookmarks;
 
+   JCheckBox chkDisplayUserBookmarksAsTree;
+   JComboBox<Character> cboTreeSeparator;
 
    public SQLBookmarkPreferencesPanel(SQLBookmarkPlugin plugin)
    {
@@ -37,7 +50,7 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       add(new JScrollPane(treBookmarks), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,5,5), 0,0);
-      add(createButtonPane(), gbc);
+      add(createRightButtonPanel(), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       add(createSouthPane(plugin), gbc);
@@ -64,6 +77,9 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       pnlSouth.add(lblAccesshint, gbc);
 
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      pnlSouth.add(createViewAsTreePanel(), gbc);
+
       gbc = new GridBagConstraints(1,0,1,3,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
       pnlSouth.add(new JPanel(), gbc);
 
@@ -71,7 +87,7 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       return pnlSouth;
    }
 
-   private JPanel createButtonPane()
+   private JPanel createRightButtonPanel()
    {
       JPanel buttonPane = new JPanel(new GridBagLayout());
 
@@ -117,4 +133,28 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       buttonPane.add(new JPanel(), gbc);
       return buttonPane;
    }
+
+   private JPanel createViewAsTreePanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      // First line
+      gbc= new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,3,0), 0,0);
+      chkDisplayUserBookmarksAsTree = new JCheckBox(s_stringMgr.getString("SQLBookmarkPreferencesPanel.show.as.tree"));
+      ret.add(chkDisplayUserBookmarksAsTree, gbc);
+
+      gbc= new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,3,3,0), 0,0);
+      cboTreeSeparator = new JComboBox<>(new Vector<>(BookmarkAsTreeUtil.getTreePathSeparators()));
+      cboTreeSeparator.setSelectedItem(BookmarkAsTreeUtil.getTreePathSeparators().get(0));
+      ret.add(GUIUtils.setPreferredWidth(cboTreeSeparator, 40), gbc);
+
+      gbc= new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,3,3,0), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SQLBookmarkPreferencesPanel.show.as.tree.as.path.separator")), gbc);
+
+      ret.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
+      return ret;
+   }
+
 }
