@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+DB2 Plugin: The table details in the Object tree has a new tab
+  which displays Check Constraints for DB2 LUW.
+
 #622 Bookmarks Plugin: User Bookmarks can be displayed as tree.
   The tree structure is generated from the Bookmarks' names and from a path separator
   that can be configured at the bottom of the Bookmarks' preferences panel.

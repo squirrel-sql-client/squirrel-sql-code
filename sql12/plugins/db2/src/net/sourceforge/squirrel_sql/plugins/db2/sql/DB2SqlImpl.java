@@ -780,4 +780,34 @@ public class DB2SqlImpl implements DB2Sql
       return ret;
    }
 
+   @Override
+   public String getCheckConstraintSql()
+   {
+   	String ret = null;
+   	switch (db2Type)
+		{
+			case OS400:
+				break;
+			case LUW:
+				ret = """
+                  SELECT
+                  syscat.checks.constname as constraint_name,
+                  CASE tab.enforced when 'N' then 'Disabled' when 'Y' then 'Active' end as status,
+                  syscat.colchecks.colname as column_name,
+                  cast(syscat.checks.text as varchar) as text
+                  FROM syscat.checks
+                  INNER JOIN syscat.colchecks on syscat.colchecks.constname = syscat.checks.constname and syscat.colchecks.tabschema = syscat.checks.tabschema and syscat.colchecks.tabname = syscat.checks.tabname
+                  INNER JOIN syscat.tabconst as tab on tab.constname = syscat.checks.constname and tab.tabschema = syscat.checks.tabschema and tab.tabname = syscat.checks.tabname
+                  WHERE syscat.checks.tabschema = ?
+                  AND syscat.checks.tabname = ?
+                  ORDER BY syscat.colchecks.colname
+                  """;
+				break;
+			case ZOS:
+            break;
+		}
+
+      return ret;
+   }
+
 }

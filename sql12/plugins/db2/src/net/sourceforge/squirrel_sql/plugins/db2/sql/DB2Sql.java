@@ -30,4 +30,7 @@ public interface DB2Sql
    String getTriggerSourceSql();
 
    String getDB2SpecificColumnDetailsSql();
+
+   String getCheckConstraintSql();
+
 }

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.db2;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
@@ -46,6 +47,7 @@ import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableTriggerExtractorImpl
 import net.sourceforge.squirrel_sql.plugins.db2.exp.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
 import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2SqlImpl;
+import net.sourceforge.squirrel_sql.plugins.db2.tab.DB2CheckConstraintsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.DB2SpecificColumnDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.ProcedureSourceTab;
@@ -57,8 +59,6 @@ import net.sourceforge.squirrel_sql.plugins.db2.tab.UDFDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.UDFSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.types.DB2XmlTypeDataTypeComponentFactory;
-
-import java.sql.SQLException;
 
 /**
  * The main controller class for the DB2 plugin.
@@ -296,6 +296,7 @@ public class DB2Plugin extends DefaultSessionPlugin
 
 		objectTreeAPI.addDetailTab(DatabaseObjectType.TABLE, new TableSourceTab("Show MQT Source", stmtSep, db2Sql));
 		objectTreeAPI.addDetailTab(DatabaseObjectType.TABLE, new DB2SpecificColumnDetailsTab(db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TABLE, new DB2CheckConstraintsTab(db2Sql));
 
 		// Expanders - trigger and index expanders are added inside the table
 		// expander
