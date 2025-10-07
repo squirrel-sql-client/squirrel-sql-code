@@ -44,7 +44,20 @@ public class BookmarkTreeState
     *
     * @param selNode null, means no selection
     */
-   void applyState(DefaultMutableTreeNode selNode)
+   public void applyState(DefaultMutableTreeNode selNode)
+   {
+      if(null == selNode)
+      {
+         applyState(List.of());
+      }
+      else
+      {
+         applyState(List.of(selNode));
+      }
+
+   }
+
+   public void applyState(List<DefaultMutableTreeNode> selNodes)
    {
       boolean squirrelPathExpanded = _treBookmarks.isExpanded(new TreePath(_nodeSquirrelMarks.getPath()));
 
@@ -56,9 +69,10 @@ public class BookmarkTreeState
 
       applyExpanded((DefaultMutableTreeNode) root);
 
-      if(null != selNode)
+      if(false == selNodes.isEmpty())
       {
-         _treBookmarks.setSelectionPath(new TreePath(selNode.getPath()));
+         TreePath[] treePaths = selNodes.stream().map(n -> new TreePath(n.getPath())).toArray(TreePath[]::new);
+         _treBookmarks.setSelectionPaths(treePaths);
       }
 
       if(squirrelPathExpanded)

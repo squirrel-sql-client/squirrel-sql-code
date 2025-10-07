@@ -1,5 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark.exportimport;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -14,19 +25,8 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.sqlbookmark.BookMarksUtil;
 import net.sourceforge.squirrel_sql.plugins.sqlbookmark.Bookmark;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JTree;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import net.sourceforge.squirrel_sql.plugins.sqlbookmark.BookmarkAsTreeUtil;
+import net.sourceforge.squirrel_sql.plugins.sqlbookmark.BookmarkTreeState;
 
 public class BookmarkExportImport
 {
@@ -70,8 +70,18 @@ public class BookmarkExportImport
          }
 
 
-         List<Bookmark> selectedBookmarks =
-               Arrays.stream(selectionPaths).map(p -> (Bookmark) ((DefaultMutableTreeNode) p.getLastPathComponent()).getUserObject()).collect(Collectors.toList());
+         List<Bookmark> selectedBookmarks = new ArrayList<>();
+         for(TreePath selectionPath : selectionPaths)
+         {
+            selectedBookmarks.addAll(
+               BookmarkAsTreeUtil.getLeaves((DefaultMutableTreeNode) selectionPath.getLastPathComponent())
+                                 .stream()
+                                 .map(l -> (Bookmark) l.getUserObject())
+                                 .toList()
+            );
+
+         }
+
 
          XMLBeanWriter xmlBeanWriter = new XMLBeanWriter();
          xmlBeanWriter.addIteratorToRoot(selectedBookmarks.iterator());
@@ -112,10 +122,9 @@ public class BookmarkExportImport
          ArrayList<Bookmark> conflictingImportBookmarks = new ArrayList<>();
          BookmarkImportConflictOption conflictOption = null;
 
-         for (int i = 0; i < nodeUserMarks.getChildCount(); i++)
+         for(DefaultMutableTreeNode leaf : BookmarkAsTreeUtil.getLeaves(nodeUserMarks))
          {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodeUserMarks.getChildAt(i);
-            Bookmark bookmark = (Bookmark) node.getUserObject();
+            Bookmark bookmark = (Bookmark) leaf.getUserObject();
 
             for (Bookmark importBookmark : importBookmarks)
             {
@@ -264,6 +273,8 @@ public class BookmarkExportImport
    {
       ArrayList<DefaultMutableTreeNode> nodesToSelect = new ArrayList<>();
 
+      BookmarkTreeState bookmarkTreeState = new BookmarkTreeState(treBookmarks, nodeUserMarks);
+
       if(null != treBookmarks.getSelectionPath() && nodeUserMarks.isNodeChild((DefaultMutableTreeNode) treBookmarks.getSelectionPath().getLastPathComponent()))
       {
          DefaultMutableTreeNode sibling = (DefaultMutableTreeNode) treBookmarks.getSelectionPath().getLastPathComponent();
@@ -289,10 +300,7 @@ public class BookmarkExportImport
 
       ((DefaultTreeModel)treBookmarks.getModel()).nodeStructureChanged(nodeUserMarks);
 
-
-      List<TreePath> pathsToSelect = nodesToSelect.stream().map(n -> new TreePath(n.getPath())).collect(Collectors.toList());
-
-      treBookmarks.setSelectionPaths(pathsToSelect.toArray(new TreePath[0]));
+      bookmarkTreeState.applyState(nodesToSelect);
    }
 
    private static List<Bookmark> readBookmarks(File importFile, JTree treBookmarks)

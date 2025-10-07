@@ -10,7 +10,7 @@ import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import org.apache.commons.lang3.StringUtils;
 
-class BookmarkAsTreeUtil
+public class BookmarkAsTreeUtil
 {
    private static final List<Character> TREE_PATH_SEPARATORS = List.of('.', '/', '\\', '|', ',', ';', ':', '-', '_', '+', '#', '%', '&');
    private static final String PREF_DISPLAY_BOOKMARKS_AS_TREE = "BookmarkPlugin.DisplayBookmarksAsTree";
@@ -80,11 +80,11 @@ class BookmarkAsTreeUtil
       treBookmarks.expandPath(new TreePath(nodeUserMarks.getPath()));
    }
 
-   static List<DefaultMutableTreeNode> getLeaves(DefaultMutableTreeNode nodeUserMarks)
+   public static List<DefaultMutableTreeNode> getLeaves(DefaultMutableTreeNode parent)
    {
       List<DefaultMutableTreeNode> leaves = new ArrayList<>();
 
-      fillLeaves(nodeUserMarks, leaves);
+      fillLeaves(parent, leaves);
 
       return leaves;
    }
@@ -102,12 +102,6 @@ class BookmarkAsTreeUtil
             fillLeaves((DefaultMutableTreeNode) parent.getChildAt(i), leavesToFill);
          }
       }
-   }
-
-   public static void main(String[] args)
-   {
-      String[] split = StringUtils.split("...dd.d..ddd.", ".");
-      System.out.println("split = " + split);
    }
 
    static void savePrefs(boolean displayUserBookmarksAsTree, char treePathSeparator)
@@ -163,4 +157,11 @@ class BookmarkAsTreeUtil
 
       return false;
    }
+
+   public static void main(String[] args)
+   {
+      String[] split = StringUtils.split("...dd.d..ddd.", ".");
+      System.out.println("split = " + split);
+   }
+
 }

@@ -23,6 +23,8 @@ import java.awt.Component;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -135,12 +137,22 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       _pnlPrefs.btnDown.addActionListener(e -> onDown());
 
       _pnlPrefs.btnExport.addActionListener(e -> BookmarkExportImport.exportBookMarks(_nodeUserMarks, _pnlPrefs.treBookmarks));
-      _pnlPrefs.btnImport.addActionListener(e -> BookmarkExportImport.importBookMarks(_nodeUserMarks, _pnlPrefs.treBookmarks));
+      _pnlPrefs.btnImport.addActionListener(e -> onImportBookMarks());
 
       updateButtonsEnabled();
 
       _pnlPrefs.chkDisplayUserBookmarksAsTree.addActionListener(e -> maybeDisplayUserBookmarksAsTree());
       _pnlPrefs.cboTreeSeparator.addActionListener(e -> maybeDisplayUserBookmarksAsTree());
+   }
+
+   private void onImportBookMarks()
+   {
+      BookmarkExportImport.importBookMarks(_nodeUserMarks, _pnlPrefs.treBookmarks);
+      BookmarkTreeState treeState = new BookmarkTreeState(_pnlPrefs.treBookmarks, _nodeSquirrelMarks);
+
+      List<DefaultMutableTreeNode> toSelect = Stream.of(_pnlPrefs.treBookmarks.getSelectionPaths()).map(tp -> (DefaultMutableTreeNode) tp.getLastPathComponent()).toList();
+      maybeDisplayUserBookmarksAsTree();
+      treeState.applyState(toSelect);
    }
 
    private void maybeDisplayUserBookmarksAsTree()
@@ -426,10 +438,11 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          nextSel = selNode.getPreviousSibling();
       }
 
-      _nodeUserMarks.remove(selNode);
+      ((DefaultMutableTreeNode)selNode.getParent()).remove(selNode);
 
       ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
 
+      maybeDisplayUserBookmarksAsTree();
       treeState.applyState(nextSel);
    }
 
