@@ -21,15 +21,15 @@ package net.sourceforge.squirrel_sql.fw.gui.table;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import java.util.ArrayList;
-import java.util.Arrays;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 
 public class SortableTableModel extends AbstractTableModel
 {
@@ -41,11 +41,6 @@ public class SortableTableModel extends AbstractTableModel
 
 	private TableSortingAdmin _tableSortingAdmin = new TableSortingAdmin();
 
-   public TableModel getActualModel()
-	{
-		return _actualModel;
-	}
-
 	/**
 	 * Contains the indexes within <TT>_actualModel</TT> after sorting. I.E.
 	 * if after sorting <TT>_actualModel[1]</TT> should be the first line and
@@ -56,7 +51,7 @@ public class SortableTableModel extends AbstractTableModel
 
 	public SortableTableModel(TableModel model)
 	{
-		setActualModel(model);
+		setActualModel(null == model ? new DefaultTableModel() : model);
 	}
 
 	public void setActualModel(TableModel newModel)
@@ -73,7 +68,20 @@ public class SortableTableModel extends AbstractTableModel
 		tableChangedIntern();
 	}
 
-	/**
+   public TableModel getActualModel()
+   {
+      if(null == _actualModel)
+      {
+         return this;
+      }
+      else
+      {
+         return _actualModel;
+      }
+   }
+
+
+   /**
 	 * Return the number of rows in this table.
 	 *
 	 * @return Number of rows in this table.

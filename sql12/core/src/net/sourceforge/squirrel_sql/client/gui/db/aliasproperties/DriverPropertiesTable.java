@@ -18,11 +18,11 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.DriverPropertyInfo;
-
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -31,13 +31,14 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
-
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTable;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel.IColumnIndexes, MouseListener
+class DriverPropertiesTable extends SortableTable implements DriverPropertiesTableModel.IColumnIndexes, MouseListener
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverPropertiesTable.class);
 
@@ -45,13 +46,13 @@ class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel
 
 	DriverPropertiesTable(SQLDriverPropertyCollection props)
 	{
-		super(new DriverPropertiesTableModel(props));
+      super(new DriverPropertiesTableModel(props));
 		init();
 	}
 
 	DriverPropertiesTableModel getTypedModel()
 	{
-		return (DriverPropertiesTableModel) getModel();
+		return (DriverPropertiesTableModel) ((SortableTableModel)getModel()).getActualModel();
 	}
 
 	private void init()

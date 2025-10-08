@@ -18,19 +18,18 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.gui.table.SortableTable;
-import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTable;
+import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
 public class PluginSummaryTable extends SortableTable
@@ -87,8 +86,7 @@ public class PluginSummaryTable extends SortableTable
 	PluginStatus[] getPluginStatus()
 	{
         SortableTableModel stm = getSortableTableModel();
-        SortableTableModel stm2 = (SortableTableModel)stm.getActualModel();
-        MyTableModel tm = (MyTableModel)(stm2.getActualModel());
+        MyTableModel tm = (MyTableModel)(stm.getActualModel());
 		return tm.getPluginStatus();
 	}
 

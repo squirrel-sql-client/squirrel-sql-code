@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/67
+  Alias properties: Driver properties table is now sortable.
+
 DB2 Plugin: The table details in the Object tree has a new tab
   which displays Check Constraints for DB2 LUW.
 

@@ -54,8 +54,15 @@ public class SortableTable extends JTable
 
 	public void setModel(TableModel model)
 	{
-		super.setModel(new SortableTableModel(model));
-	}
+      if(model instanceof SortableTableModel)
+      {
+         super.setModel(model);
+      }
+      else
+      {
+         super.setModel(new SortableTableModel(model));
+      }
+   }
 
 	public void setSortableTableModel(SortableTableModel model)
 	{

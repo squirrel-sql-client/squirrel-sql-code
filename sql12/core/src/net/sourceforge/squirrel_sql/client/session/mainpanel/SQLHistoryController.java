@@ -1,5 +1,25 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
@@ -9,15 +29,6 @@ import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import static java.lang.Math.max;
 
@@ -153,7 +164,7 @@ public class SQLHistoryController
       {
          public void actionPerformed(ActionEvent e)
          {
-            onChckFiltered();
+            onCheckFiltered();
          }
       });
 
@@ -207,7 +218,7 @@ public class SQLHistoryController
       }
    }
 
-   private void onChckFiltered()
+   private void onCheckFiltered()
    {
       if(_dontReactToChkFiltered)
       {
@@ -223,10 +234,9 @@ public class SQLHistoryController
       {
          SortableTableModel stm = (SortableTableModel) _dlg.tblHistoryItems.getModel();
          SqlHistoryTableModel tm = (SqlHistoryTableModel) stm.getActualModel();
-         
-         ArrayList<SQLHistoryItemWrapper> clone = 
-             new ArrayList<SQLHistoryItemWrapper>(_sqlHistoryItemWrappers);
-        tm.setData(clone);
+
+         ArrayList<SQLHistoryItemWrapper> clone = new ArrayList<>(_sqlHistoryItemWrappers);
+         tm.setData(clone);
       }
    }
 
