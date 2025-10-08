@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Driver;
+import java.sql.DriverPropertyInfo;
+import java.util.Properties;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -7,13 +14,6 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Driver;
-import java.sql.DriverPropertyInfo;
-import java.util.Properties;
 
 /**
  * This dialog allows the user to review and maintain
@@ -150,14 +150,11 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
 
    public String getTitle()
    {
-      //i18n[DriverPropertiesController.title=DriverProperties]
       return s_stringMgr.getString("DriverPropertiesController.title");
    }
 
    public String getHint()
    {
-      //i18n[DriverPropertiesController.Hint=DriverProperties]
-      return s_stringMgr.getString("DriverPropertiesController.title");
+      return s_stringMgr.getString("DriverPropertiesController.Hint");
    }
-
 }
