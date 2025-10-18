@@ -1,13 +1,13 @@
 #SQuirreL SQL Client
 
 ## Build instructions
-SQuirreL SQL uses an Ant based built system, see http://ant.apache.org/. To build SQuirreL you need to download Ant version 1.9.3 or higher from here: http://ant.apache.org/bindownload.cgi
+SQuirreL SQL uses an Ant based build system, see http://ant.apache.org/. To build SQuirreL you need to download Ant version 1.9.3 or higher from here: http://ant.apache.org/bindownload.cgi
 
 Then open a cmd/shell window and change directory to `<squirrel-git-root>/sql12/`. Form there execute `<ant-home>/bin/ant`. This will generate the directory `<squirrel-git-root>/sql12/output/` where all the build artefacts (installer jars, plainzip packages) are placed.
 
 The build script itself is located at `<squirrel-git-root>/sql12/build.xml` and contains a few more than 200 lines of code.
 
-With the restructuring of the build system went a new directory structure:
+With the restructuring of the build system came a new directory structure:
 
   * `<squirrel-git-root>/sql12/core/`: Contains the code of SQuirreL's base application..
   * `<squirrel-git-root>/sql12/plugins/`: Contains all Plugins.
