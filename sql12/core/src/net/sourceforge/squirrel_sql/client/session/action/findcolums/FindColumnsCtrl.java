@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session.action.findcolums;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -8,14 +15,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 
 public class FindColumnsCtrl
 {
@@ -58,7 +57,7 @@ public class FindColumnsCtrl
             _resultDataSet.setColPos(def.getBeanPropName(), def.ordinal());
          }
 
-         _dlg.tblSearchResult.getTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+         //_dlg.tblSearchResult.getTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
          _dlg.tblSearchResult.getTable().getSelectionModel().setSelectionInterval(0,0);
 
          _resultDataSet.setJavaBeanList(new ArrayList<>());

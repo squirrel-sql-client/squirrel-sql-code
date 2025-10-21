@@ -20,6 +20,13 @@ DB2 Plugin: The table details in the Object tree has a new tab
 
 Bug fixes:
 
+Find columns dialog: The result table now allows to select multiple rows.
+  Info: The find columns function available in
+  - Session menu and toolbar (Alt+Shift+F)
+  - Right mouse menu of Object tree
+  - Right mouse menu of Graphs
+
+
 File import: Import dialog did not work when the import file
   contained lines longer than 100000 characters.
 
