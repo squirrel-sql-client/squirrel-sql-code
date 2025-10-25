@@ -31,9 +31,11 @@ import javax.swing.JTable;
 public interface IWikiTableTransformer {
 	
 	/**
-	 * Transform the selected area of the table into a WIKI table.
-	 * @param table Table, which should be transformed into a WIKI table
-	 * @return String, which represents a WIKI table.
-	 */
-	String transform(JTable table);
+    * Transform the selected area of the table into a WIKI table.
+    *
+    * @param table                  Table, which should be transformed into a WIKI table
+    * @param isExampleInConfigTable
+    * @return String, which represents a WIKI table.
+    */
+	String transform(JTable table, boolean isExampleInConfigTable);
 }

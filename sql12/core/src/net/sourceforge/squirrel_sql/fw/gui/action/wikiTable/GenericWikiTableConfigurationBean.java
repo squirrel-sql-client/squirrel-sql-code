@@ -19,7 +19,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
 import java.io.Serializable;
-
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -161,13 +160,15 @@ public class GenericWikiTableConfigurationBean implements IWikiTableConfiguratio
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration#setHeaderCell(java.lang.String)
 	 */
 	@Override
-	public void setHeaderCell(String headerCell) {
-		checkReadOnly();
-		if(StringUtils.contains(headerCell, VALUE_PLACEHOLDER) == false){
-			throw new IllegalArgumentException(s_stringMgr.getString("GenericWikiTableConfigurationBean.headerCellErrorValueVariableMissing")); //$NON-NLS-1$
-		}
-		this.headerCell = headerCell;
-	}
+   public void setHeaderCell(String headerCell)
+   {
+      checkReadOnly();
+      if(false == UNUSED.equals(headerCell) && StringUtils.contains(headerCell, VALUE_PLACEHOLDER) == false)
+      {
+         throw new IllegalArgumentException(s_stringMgr.getString("GenericWikiTableConfigurationBean.headerCellErrorValueVariableMissing")); //$NON-NLS-1$
+      }
+      this.headerCell = headerCell;
+   }
 
 	/**
 	 * @see
@@ -218,13 +219,15 @@ public class GenericWikiTableConfigurationBean implements IWikiTableConfiguratio
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration#setDataCell(java.lang.String)
 	 */
 	@Override
-	public void setDataCell(String dataCell) {
-		checkReadOnly();
-		if(StringUtils.contains(dataCell, VALUE_PLACEHOLDER) == false){
-			throw new IllegalArgumentException(s_stringMgr.getString("GenericWikiTableConfigurationBean.dataCellErrorValueVariableMissing")); //$NON-NLS-1$
-		}
-		this.dataCell = dataCell;
-	}
+   public void setDataCell(String dataCell)
+   {
+      checkReadOnly();
+      if(false == UNUSED.equals(headerCell) && StringUtils.contains(dataCell, VALUE_PLACEHOLDER) == false)
+      {
+         throw new IllegalArgumentException(s_stringMgr.getString("GenericWikiTableConfigurationBean.dataCellErrorValueVariableMissing")); //$NON-NLS-1$
+      }
+      this.dataCell = dataCell;
+   }
 
 	/**
 	 * @see
@@ -285,13 +288,15 @@ public class GenericWikiTableConfigurationBean implements IWikiTableConfiguratio
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration#setNoWikiTag(java.lang.String)
 	 */
 	@Override
-	public void setNoWikiTag(String escapeSequence) {
-		checkReadOnly();
-		if(StringUtils.contains(escapeSequence, VALUE_PLACEHOLDER) == false){
-			throw new IllegalArgumentException(s_stringMgr.getString("GenericWikiTableConfigurationBean.noWikiErrorValueVariableMissing")); //$NON-NLS-1$
-		}
-		this.noWikiTag = escapeSequence;
-	}
+   public void setNoWikiTag(String escapeSequence)
+   {
+      checkReadOnly();
+      if(false == UNUSED.equals(headerCell) && StringUtils.contains(escapeSequence, VALUE_PLACEHOLDER) == false)
+      {
+         throw new IllegalArgumentException(s_stringMgr.getString("GenericWikiTableConfigurationBean.noWikiErrorValueVariableMissing")); //$NON-NLS-1$
+      }
+      this.noWikiTag = escapeSequence;
+   }
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration#getName()
@@ -306,13 +311,15 @@ public class GenericWikiTableConfigurationBean implements IWikiTableConfiguratio
 	 * @throws IllegalArgumentException if the name is null or only contains blanks
 	 */
 	@Override
-	public void setName(String name) {
-		checkReadOnly();
-		if(StringUtils.isBlank(name)){
-			throw new IllegalArgumentException(s_stringMgr.getString("GenericWikiTableConfigurationBean.nameIsRequired")); //$NON-NLS-1$
-		}
-		this.name = name;
-	}
+   public void setName(String name)
+   {
+      checkReadOnly();
+      if(StringUtils.isBlank(name))
+      {
+         throw new IllegalArgumentException(s_stringMgr.getString("GenericWikiTableConfigurationBean.nameIsRequired")); //$NON-NLS-1$
+      }
+      this.name = name;
+   }
 
 	/**
 	 * @see java.lang.Object#toString()
@@ -337,10 +344,10 @@ public class GenericWikiTableConfigurationBean implements IWikiTableConfiguratio
 
 	/**
 	 * @see java.lang.Object#clone()
-	 * @see IWikiTableConfiguration#clone()
+	 * @see IWikiTableConfiguration#cloneConfiguration()
 	 */
 	@Override
-	public  IWikiTableConfiguration clone() {
+	public  IWikiTableConfiguration cloneConfiguration() {
 		return new GenericWikiTableConfigurationBean(this);
 	}
 

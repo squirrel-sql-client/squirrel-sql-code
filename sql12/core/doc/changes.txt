@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The "Copy as WIKI Table" - function of tables now supports copying the Jira/Cloud table format.
+  See the right mouse menu of any table.
+
 For databases which support catalogs the "Refresh tree and Cache" function
   now refreshes the catalogs combo box, too.
   Info: To execute the refresh function use F5, toolbar or the Session menu --> "Refresh tree and Cache"

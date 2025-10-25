@@ -55,10 +55,10 @@ public class JIRAConfluenceTableConfiguration extends GenericWikiTableConfigurat
 	}
 	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean#clone()
+	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean#cloneConfiguration()
 	 */
 	@Override
-	public IWikiTableConfiguration clone(){
+	public IWikiTableConfiguration cloneConfiguration(){
 		JIRAConfluenceTableConfiguration config = new JIRAConfluenceTableConfiguration();
 		config.setEnabled(isEnabled());
 		return config;

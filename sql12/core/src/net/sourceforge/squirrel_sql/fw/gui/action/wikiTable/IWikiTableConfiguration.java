@@ -92,6 +92,8 @@ public interface IWikiTableConfiguration extends Cloneable, Serializable {
 	 */
 	public static String VALUE_PLACEHOLDER = "%V";
 
+   public static String UNUSED = "<unused>";
+
 	/**
 	 * If this string occurs in any part of the configuration, it will be
 	 * replaced by a new line character. More concrete, it will be replaced by
@@ -313,7 +315,7 @@ public interface IWikiTableConfiguration extends Cloneable, Serializable {
 	 * 
 	 * @return a copy of the configuration.
 	 */
-	IWikiTableConfiguration clone();
+	IWikiTableConfiguration cloneConfiguration();
 
 	/**
 	 * Creates a user specific copy of the current configuration. If a build-in

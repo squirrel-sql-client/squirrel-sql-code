@@ -55,10 +55,10 @@ public class MediaWikiTableConfiguration extends GenericWikiTableConfigurationBe
 
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean#clone()
+	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean#cloneConfiguration()
 	 */
 	@Override
-	public IWikiTableConfiguration clone(){
+	public IWikiTableConfiguration cloneConfiguration(){
 		 MediaWikiTableConfiguration config = new MediaWikiTableConfiguration();
 		 config.setEnabled(isEnabled());
 		 return config;

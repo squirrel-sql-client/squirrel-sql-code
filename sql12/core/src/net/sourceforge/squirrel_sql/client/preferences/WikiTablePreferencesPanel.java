@@ -18,16 +18,20 @@
  */
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean;
-import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration;
-import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
-import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import org.apache.commons.lang3.StringUtils;
-
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -44,19 +48,17 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.ArrayList;
-import java.util.List;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.JIRACloudTableConfiguration;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Preferences panel for WIKI table configurations
@@ -237,10 +239,11 @@ public class WikiTablePreferencesPanel extends JPanel {
 		jp.add(new JLabel(s_stringMgr.getString("WikiTablePreferencesPanel.titleResultExample")), gbc); //$NON-NLS-1$
 		
 		
-		exampleText = new JTextArea(15,20);
-		exampleText.setWrapStyleWord(true);
+		exampleText = new JTextArea();
+		//exampleText.setWrapStyleWord(true);
 		exampleText.setEditable(false);
-		exampleText.setLineWrap(false);
+		//exampleText.setLineWrap(false);
+      exampleText.setFont(new Font("monospaced", Font.PLAIN, 12));
 		
 		
 		gbc.gridy=2;
@@ -332,7 +335,14 @@ public class WikiTablePreferencesPanel extends JPanel {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IWikiTableConfiguration newConfig = ((IWikiTableConfiguration)wikiConfigList.getSelectedValue()).copyAsUserSpecific();
+            IWikiTableConfiguration selectedValue = (IWikiTableConfiguration) wikiConfigList.getSelectedValue();
+            if(selectedValue instanceof JIRACloudTableConfiguration)
+            {
+               Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("WikiTablePreferencesPanel.cannot.copy.JIRACloudTableConfiguration"));
+               return;
+            }
+
+            IWikiTableConfiguration newConfig = selectedValue.copyAsUserSpecific();
 
 				int suffix = 0;
 				
@@ -674,7 +684,7 @@ public class WikiTablePreferencesPanel extends JPanel {
 		exampleTable.changeSelection(exampleTable.getRowCount()-1, exampleTable.getColumnCount()-1, true, true);
 		
 		
-		String example = selectedValue.createTransformer().transform(this.exampleTable);
+		String example = selectedValue.createTransformer().transform(this.exampleTable, true);
 		this.exampleText.setText(example);
 	}
 

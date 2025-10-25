@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
 import org.apache.commons.lang3.StringUtils;
 
@@ -60,7 +59,7 @@ public class GenericWikiTableTransformer implements IWikiTableTransformer {
 	 * #transform(javax.swing.JTable)
 	 */
 	@Override
-	public String transform(JTable table) {
+	public String transform(JTable table, boolean isExampleInConfigTable) {
 		int nbrSelRows = table.getSelectedRowCount();
 		int nbrSelCols = table.getSelectedColumnCount();
 		int[] selRows = table.getSelectedRows();
@@ -139,27 +138,30 @@ public class GenericWikiTableTransformer implements IWikiTableTransformer {
 	 * @see #VALUE_PLACEHOLDER
 	 * @see IWikiTableConfiguration#getNoWikiTag() 
 	 *  */
-	public void appendWithReplacement(StringBuilder buff, String token, String value) {
-		
-		if(StringUtils.contains(token, IWikiTableConfiguration.VALUE_PLACEHOLDER) && value == null){
-			value = ""; //$NON-NLS-1$
-		}else if (!StringUtils.contains(token, IWikiTableConfiguration.VALUE_PLACEHOLDER) && value != null) {
-			throw new IllegalStateException("there is no place holder for the value, but I should inject a value!"); //$NON-NLS-1$
-		}
-			
-		if(StringUtils.isNotBlank(token)){
-			// Escape the value;
-			if(StringUtils.contains(token, IWikiTableConfiguration.VALUE_PLACEHOLDER)){
-				value = escapeString(value);
-			}
-			
-			value = replacePlaceHolder(token, value);
-			
-			buff.append(value);
-		}
-		
-		
-	}
+   public void appendWithReplacement(StringBuilder buff, String token, String value)
+   {
+      if(StringUtils.contains(token, IWikiTableConfiguration.VALUE_PLACEHOLDER) && value == null)
+      {
+         value = ""; //$NON-NLS-1$
+      }
+      else if(false == IWikiTableConfiguration.UNUSED.equals(token) && !StringUtils.contains(token, IWikiTableConfiguration.VALUE_PLACEHOLDER) && value != null)
+      {
+         throw new IllegalStateException("there is no place holder for the value, but I should inject a value!"); //$NON-NLS-1$
+      }
+
+      if(StringUtils.isNotBlank(token))
+      {
+         // Escape the value;
+         if(StringUtils.contains(token, IWikiTableConfiguration.VALUE_PLACEHOLDER))
+         {
+            value = escapeString(value);
+         }
+
+         value = replacePlaceHolder(token, value);
+
+         buff.append(value);
+      }
+   }
 
 	private String replacePlaceHolder(String token, String value) {
 		// Replace the place holders in the token

@@ -56,10 +56,6 @@ public class WikiTableSelection implements Transferable {
 		return supportedFlavors;
 	}
 
-	/**
-	 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.
-	 * datatransfer.DataFlavor)
-	 */
 	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		boolean result = false;

@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
@@ -37,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.JIRACloudTableConfiguration;
 import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.JIRAConfluenceTableConfiguration;
 import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.MediaWikiTableConfiguration;
 import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.TiddlyWikiTableConfiguration;
@@ -132,11 +132,11 @@ public class WikiTableConfigurationPlugin extends DefaultSessionPlugin {
 	 * @see TiddlyWikiTableConfiguration
 	 */
 	private void addBuildInConfigs() {
-		
+
+      wikiTableConfigFactory.addBuilInConfiguration(new JIRACloudTableConfiguration());
+      wikiTableConfigFactory.addBuilInConfiguration(new JIRAConfluenceTableConfiguration());
 		wikiTableConfigFactory.addBuilInConfiguration(new MediaWikiTableConfiguration());
 		wikiTableConfigFactory.addBuilInConfiguration(new TiddlyWikiTableConfiguration());
-		wikiTableConfigFactory.addBuilInConfiguration(new JIRAConfluenceTableConfiguration());
-		
 	}
 
 

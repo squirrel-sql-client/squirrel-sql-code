@@ -20,9 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-
-import javax.swing.*;
-
+import javax.swing.JTable;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableTransformer;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableSelection;
@@ -92,7 +90,7 @@ public class TableCopyWikiCommand implements ICommand {
 	@Override
 	public void execute() {
 
-		String result = this.config.createTransformer().transform(table);
+		String result = this.config.createTransformer().transform(table, false);
 		if (result != null) {
 			selection.setData(result);
 			Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();

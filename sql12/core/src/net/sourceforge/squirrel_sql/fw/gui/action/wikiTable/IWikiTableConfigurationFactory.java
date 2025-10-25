@@ -47,7 +47,7 @@ public interface IWikiTableConfigurationFactory {
 	 * The returned list is sorted by the name of the configuration.
 	 * @return A list with copies of all available configurations.
 	 */
-	public abstract List<IWikiTableConfiguration> getConfigurations();
+	List<IWikiTableConfiguration> getConfigurations();
 
 	/**
 	 * Provides all available user specific configurations.
@@ -56,7 +56,7 @@ public interface IWikiTableConfigurationFactory {
 	 * The returned list is sorted by the name of the configuration.
 	 * @return A list with copies of all available user specific configurations.
 	 */
-	public abstract List<IWikiTableConfiguration> getUserSpecificConfigurations();
+	List<IWikiTableConfiguration> getUserSpecificConfigurations();
 
 	/**
 	 * Provides all available build-in configurations.
@@ -65,7 +65,7 @@ public interface IWikiTableConfigurationFactory {
 	 * The returned list is sorted by the name of the configuration.
 	 * @return A list with copies of all available build-in configurations.
 	 */
-	public abstract List<IWikiTableConfiguration> getBuildInConfigurations();
+	List<IWikiTableConfiguration> getBuildInConfigurations();
 
 	/**
 	 * Adds the additional build-in config to the configuration.
@@ -75,7 +75,7 @@ public interface IWikiTableConfigurationFactory {
 	 * @throws IllegalArgumentException if the configuration is not read-only
 	 * @throws IllegalArgumentException if the name of the configuration is not unique
 	 */
-	public abstract void addBuilInConfiguration(IWikiTableConfiguration additionalBuildInConfig);
+	void addBuilInConfiguration(IWikiTableConfiguration additionalBuildInConfig);
 	
 	/**
 	 * Replaces the current build-in configurations with the new one.
@@ -86,7 +86,7 @@ public interface IWikiTableConfigurationFactory {
 	 * @throws IllegalArgumentException if the name of a configuration is not unique
 	 * @see #addBuilInConfiguration(IWikiTableConfiguration)
 	 */
-	public abstract void replaceBuilInConfiguration(List<IWikiTableConfiguration> configurations);
+	void replaceBuilInConfiguration(List<IWikiTableConfiguration> configurations);
 
 
 	/**
@@ -96,7 +96,7 @@ public interface IWikiTableConfigurationFactory {
 	 * @throws IllegalArgumentException if a new config is read only.
 	 * @see #addUserSpecificConfigurations(IWikiTableConfiguration)
 	 */
-	public abstract void replaceUserSpecificConfigurations(List<IWikiTableConfiguration> config);
+	void replaceUserSpecificConfigurations(List<IWikiTableConfiguration> config);
 	
 	/**
 	 * Adds a user specific configuration.
@@ -104,6 +104,6 @@ public interface IWikiTableConfigurationFactory {
 	 * @throws IllegalArgumentException if a name of a new config is not unique
 	 * @throws IllegalArgumentException if a new config is read only.
 	 */
-	public abstract void addUserSpecificConfigurations(IWikiTableConfiguration config);
+	void addUserSpecificConfigurations(IWikiTableConfiguration config);
 
 }

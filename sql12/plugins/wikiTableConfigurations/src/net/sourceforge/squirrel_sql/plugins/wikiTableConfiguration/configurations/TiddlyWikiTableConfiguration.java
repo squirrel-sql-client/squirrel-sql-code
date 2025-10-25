@@ -53,10 +53,10 @@ public class TiddlyWikiTableConfiguration extends GenericWikiTableConfigurationB
 	}
 	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean#clone()
+	 * @see net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean#cloneConfiguration()
 	 */
 	@Override
-	public IWikiTableConfiguration clone(){
+	public IWikiTableConfiguration cloneConfiguration(){
 		TiddlyWikiTableConfiguration conifg = new TiddlyWikiTableConfiguration();
 		conifg.setEnabled(isEnabled());
 		return conifg;

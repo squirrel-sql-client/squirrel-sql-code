@@ -1,6 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.copyasmarkdown;
 
-import net.sourceforge.squirrel_sql.client.Main;
+import java.sql.Types;
+import java.util.ArrayList;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
@@ -10,23 +13,24 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.steppschuh.markdowngenerator.table.Table;
 
-import javax.swing.*;
-import javax.swing.table.TableColumn;
-import java.util.ArrayList;
-
 public class CopyAsMarkDown
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CopyAsMarkDown.class);
 
    public static String createMarkdownForSelectedCells(JTable table)
    {
-      return _createMarkDownForSelectedCells(table, null);
+      return _createMarkDownForSelectedCells(table, null, true);
+   }
+
+   public static String createMarkdownForSelectedCells(JTable table, boolean appendTopAndBottomLines)
+   {
+      return _createMarkDownForSelectedCells(table, null, appendTopAndBottomLines);
    }
 
    public static CopyAsMarkDownResult createMarkdownForSelectedCellsIncludingRawData(JTable table)
    {
       RawDataTable rawDataTable = new RawDataTable();
-      String markDownString = _createMarkDownForSelectedCells(table, rawDataTable);
+      String markDownString = _createMarkDownForSelectedCells(table, rawDataTable, true);
 
       if(null == markDownString)
       {
@@ -36,7 +40,7 @@ public class CopyAsMarkDown
       return new CopyAsMarkDownResult(markDownString, rawDataTable);
    }
 
-   private static String _createMarkDownForSelectedCells(JTable table, RawDataTable rawDataTable)
+   private static String _createMarkDownForSelectedCells(JTable table, RawDataTable rawDataTable, boolean appendTopAndBottomLines)
    {
       int nbrSelRows = table.getSelectedRowCount();
       int nbrSelCols = table.getSelectedColumnCount();
@@ -63,8 +67,9 @@ public class CopyAsMarkDown
          }
          else
          {
-            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("TableCopyAsMarkdownCommand.failed.to.copy"));
-            return null;
+            columnDisplayDefinitions.add(createDefaultStringColumnDisplayDefinition(col));
+            //Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("TableCopyAsMarkdownCommand.failed.to.copy"));
+            //return null;
          }
       }
 
@@ -131,8 +136,25 @@ public class CopyAsMarkDown
 
       int width = markdownString.indexOf('\n');
 
-      String line = StringUtilities.pad(width, '-')  + "\n";
+      if(appendTopAndBottomLines)
+      {
+         String line = StringUtilities.pad(width, '-')  + "\n";
 
-      return line + markdownString + "\n" + line;
+         return line + markdownString + "\n" + line;
+      }
+      else
+      {
+         return markdownString;
+      }
+   }
+
+   private static ColumnDisplayDefinition createDefaultStringColumnDisplayDefinition(TableColumn col)
+   {
+      String colName = "" + col.getHeaderValue();
+      ColumnDisplayDefinition stringDisplayDefinition = new ColumnDisplayDefinition(100, colName);
+      stringDisplayDefinition.setColumnName(colName);
+      stringDisplayDefinition.setSqlType(Types.VARCHAR);
+      stringDisplayDefinition.setSqlTypeName("VARCHAR");
+      return stringDisplayDefinition;
    }
 }

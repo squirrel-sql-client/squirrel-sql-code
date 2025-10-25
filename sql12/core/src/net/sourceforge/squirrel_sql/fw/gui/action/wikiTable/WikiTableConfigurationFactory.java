@@ -18,13 +18,12 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -114,7 +113,7 @@ public class WikiTableConfigurationFactory implements IWikiTableConfigurationFac
 		List<IWikiTableConfiguration> result = new ArrayList<IWikiTableConfiguration>();
 		
 		for (IWikiTableConfiguration config : userSpecificConfigurations) {
-			result.add(config.clone());
+			result.add(config.cloneConfiguration());
 		}
 		
 		sortByName(result);
@@ -130,7 +129,7 @@ public class WikiTableConfigurationFactory implements IWikiTableConfigurationFac
 	public synchronized  List<IWikiTableConfiguration> getBuildInConfigurations() {
 		List<IWikiTableConfiguration> result = new ArrayList<IWikiTableConfiguration>();
 		for (IWikiTableConfiguration config : buildInConfigurations) {
-			result.add(config.clone());
+			result.add(config.cloneConfiguration());
 		}
 		sortByName(result);
 		return result;
@@ -158,7 +157,7 @@ public class WikiTableConfigurationFactory implements IWikiTableConfigurationFac
 			throw new IllegalArgumentException("A not read-only configuration cannot be a build-in configuration!");
 		}
 		if(isNameUnique(additionalBuildInConfig)){
-			this.buildInConfigurations.add(additionalBuildInConfig.clone());
+			this.buildInConfigurations.add(additionalBuildInConfig.cloneConfiguration());
 		}else{
 			throw new IllegalArgumentException("The name of the configuration " + additionalBuildInConfig.getName() + " is not unique!");
 		}
@@ -222,7 +221,7 @@ public class WikiTableConfigurationFactory implements IWikiTableConfigurationFac
 			throw new IllegalArgumentException("A read-only configuration cannot be added to the user specific configurations!");
 		}
 		if(isNameUnique(config)){
-			this.userSpecificConfigurations.add(config.clone());
+			this.userSpecificConfigurations.add(config.cloneConfiguration());
 		}else{
 			throw new IllegalArgumentException("The name of the configuration " + config.getName() + " is not unique!");
 		}
