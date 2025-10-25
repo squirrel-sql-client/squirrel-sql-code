@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+For databases which support catalogs the "Refresh tree and Cache" function
+  now refreshes the catalogs combo box, too.
+  Info: To execute the refresh function use F5, toolbar or the Session menu --> "Refresh tree and Cache"
+
 #1536 and https://github.com/squirrel-sql-client/squirrel-sql-code/issues/67
   Alias properties: Driver properties table is now sortable.
 

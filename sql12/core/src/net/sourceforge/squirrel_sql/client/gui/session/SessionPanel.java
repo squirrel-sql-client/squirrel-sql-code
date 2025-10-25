@@ -20,6 +20,16 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.Action;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel.RowColumnLabel;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
@@ -43,17 +53,6 @@ import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.Action;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SessionPanel extends JPanel
 {
@@ -298,6 +297,17 @@ public class SessionPanel extends JPanel
 
       return _sessionPanelToolBar.getCatalogsPanelController().getSelectedCatalog();
    }
+
+   public void refreshCatalogsPanel()
+   {
+      if(null == _sessionPanelToolBar)
+      {
+         return;
+      }
+
+      _sessionPanelToolBar.getCatalogsPanelController().refreshCatalogsPanel();
+   }
+
 
    public IMainPanelTab getMainPanelTabAt(int tabIndex)
    {

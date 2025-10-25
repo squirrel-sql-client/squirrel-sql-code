@@ -19,17 +19,16 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateListener;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateListener;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 /**
  * This <CODE>Action</CODE> will refresh the object tree.
@@ -77,13 +76,7 @@ public class RefreshSchemaInfoAction extends SquirrelAction implements ISessionA
                _session.getSchemaInfo().removeSchemaInfoUpdateListener(_schemaInfoUpdateListener);
             }
 
-            _schemaInfoUpdateListener = new SchemaInfoUpdateListener()
-            {
-               public void schemaInfoUpdated()
-               {
-                  onSchemaInfoUpdated(_session);
-               }
-            };
+            _schemaInfoUpdateListener = () -> onSchemaInfoUpdated(_session);
 
             _session.getSchemaInfo().addSchemaInfoUpdateListener(_schemaInfoUpdateListener);
          }

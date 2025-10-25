@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.session.catalogspanel;
 
+import java.io.File;
+import java.util.ArrayList;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
-
-import java.io.File;
 
 public class CatalogLoadModelManager
 {
@@ -35,5 +35,11 @@ public class CatalogLoadModelManager
    public void save()
    {
       JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getCatalogLoadModelJsonFile(), _catalogLoadModelJsonBean);
+   }
+
+   public void removeCatalogs(SQLAlias alias, ArrayList<String> catalogsToRemove)
+   {
+      getAliasCatalogLoadModelJsonBean(alias).getAdditionalUserChosenCatalogs().removeAll(catalogsToRemove);
+
    }
 }

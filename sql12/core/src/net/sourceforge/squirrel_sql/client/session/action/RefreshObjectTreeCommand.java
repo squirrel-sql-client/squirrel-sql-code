@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
  */
 public class RefreshObjectTreeCommand implements ICommand
 {
-	/** The object tree is to be refreshed. */
 	private final IObjectTreeAPI _tree;
 
 	/**
@@ -42,7 +41,6 @@ public class RefreshObjectTreeCommand implements ICommand
 	 */
 	public RefreshObjectTreeCommand(IObjectTreeAPI tree)
 	{
-		super();
 		if (tree == null)
 		{
 			throw new IllegalArgumentException("IObjectTreeAPI == null");
@@ -56,5 +54,7 @@ public class RefreshObjectTreeCommand implements ICommand
 	public void execute()
 	{
 		_tree.refreshTree(true);
+
+      _tree.getSession().getSessionPanel().refreshCatalogsPanel();
 	}
 }

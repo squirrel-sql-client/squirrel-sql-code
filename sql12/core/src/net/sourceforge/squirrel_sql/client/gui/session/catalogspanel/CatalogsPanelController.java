@@ -1,5 +1,15 @@
 package net.sourceforge.squirrel_sql.client.gui.session.catalogspanel;
 
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.swing.JComponent;
+import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -17,15 +27,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.*;
-import javax.swing.tree.TreePath;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class CatalogsPanelController
 {
@@ -50,12 +51,13 @@ public class CatalogsPanelController
       _catalogsComboListener = e -> onCatalogSelected();
       _connectionPropetryListener = evt -> GUIUtils.processOnSwingEventThread(() -> onConnectionPropertyChanged(evt));
 
+      _catalogsPanel.btnConfigureCatalogLoading.addActionListener(e -> onConfigureCatalogLoading());
       init();
    }
 
    private void updateAdditionalCatalogsIcon()
    {
-      boolean hasAdditionalCatalogs = !Main.getApplication().getCatalogLoadModelManager().getAliasCatalogLoadModelJsonBean(_session.getAlias()).getAdditionalUserChosenCatalogs().isEmpty();
+      boolean hasAdditionalCatalogs = hasAdditionalUserChosenAndExistingCatalogs();
       _catalogsPanel.setHasAdditionalCatalogs(hasAdditionalCatalogs);
    }
 
@@ -68,13 +70,8 @@ public class CatalogsPanelController
          _catalogsPanel.catalogsCmb.removeActionListener(_catalogsComboListener);
          _session.getSQLConnection().removePropertyChangeListener(_connectionPropetryListener);
 
-         if(false == _session.getSQLConnection().getSQLMetaData().supportsCatalogs())
-         {
-            return;
-         }
-
-         final String[] catalogs = _session.getSQLConnection().getSQLMetaData().getCatalogs();
-         if(null == catalogs || 0 == catalogs.length)
+         final String[] catalogs = CatalogsPanelUtil.getCatalogsIfSupportedElseNull(_session);
+         if(catalogs == null)
          {
             return;
          }
@@ -84,8 +81,6 @@ public class CatalogsPanelController
 
          setCatalogs(catalogs, selected);
          _catalogsPanel.catalogsCmb.addActionListener(_catalogsComboListener);
-
-         _catalogsPanel.btnConfiCatalogLoading.addActionListener(e -> onConfigureCatalogLoading());
 
 
          _catalogsPanel.initSizeAndBackgroundAfterCatalogsComboFilled();
@@ -104,8 +99,8 @@ public class CatalogsPanelController
    {
       if(new AdditionalCatalogsController(_session).isOk())
       {
-         updateAdditionalCatalogsIcon();
          refreshSchemaAndTree();
+         updateAdditionalCatalogsIcon();
       }
    }
 
@@ -143,7 +138,7 @@ public class CatalogsPanelController
          catch (Exception ex)
          {
             _session.showErrorMessage(ex);
-            refreshCatalogs();
+            _refreshCatalogs();
          }
       }
    }
@@ -225,7 +220,7 @@ public class CatalogsPanelController
 
 
 
-   private void refreshCatalogs()
+   private void _refreshCatalogs()
    {
       init();
    }
@@ -247,4 +242,44 @@ public class CatalogsPanelController
    {
       return _catalogsPanel;
    }
+
+   public void refreshCatalogsPanel()
+   {
+      _refreshCatalogs();
+      updateAdditionalCatalogsIcon();
+   }
+
+   private boolean hasAdditionalUserChosenAndExistingCatalogs()
+   {
+      String[] catalogs = CatalogsPanelUtil.getCatalogsIfSupportedElseNull(_session);
+
+      if(null == catalogs)
+      {
+         return false;
+      }
+
+      List<String> lowerCaseCatalogsInDB = List.of(catalogs).stream().map(s -> StringUtils.toRootLowerCase(s)).toList();
+
+      List<String> additionalUserChosenCatalogs = Main.getApplication().getCatalogLoadModelManager().getAliasCatalogLoadModelJsonBean(_session.getAlias()).getAdditionalUserChosenCatalogs();
+
+      boolean ret = false;
+      ArrayList<String> catalogsToRemove = new ArrayList<>();
+
+      for(String additionalUserChosenCatalog : additionalUserChosenCatalogs)
+      {
+         if(lowerCaseCatalogsInDB.contains(StringUtils.toRootLowerCase(additionalUserChosenCatalog)))
+         {
+            ret = true;
+         }
+         else
+         {
+            catalogsToRemove.add(additionalUserChosenCatalog);
+         }
+      }
+
+      Main.getApplication().getCatalogLoadModelManager().removeCatalogs(_session.getAlias(), catalogsToRemove);
+
+      return ret;
+   }
+
 }
