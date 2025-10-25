@@ -18,6 +18,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Component;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JTable;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
@@ -34,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModel
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -49,13 +56,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JTable;
-import java.awt.Component;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * This is the tab showing the contents (data) of the table.
@@ -253,7 +253,9 @@ public class ContentsTab extends BaseTableTab
 
                   if(null == rs)
                   {
-                     throw new IllegalStateException("Failed any way to execute content SQL. See former warning log entries for details.");
+                     s_log.error("Failed any way to execute content SQL. See former warning log entries for details.");
+                     _contentsTabHeaderController.updateHeader(-1, session.getProperties());
+                     return SimpleDataSet.createMessageDataSet("ERROR: Failed to read table contents. See logs for details.");
                   }
                }
             }
@@ -356,7 +358,7 @@ public class ContentsTab extends BaseTableTab
       }
       catch (Throwable e)
       {
-         s_log.warn("Failed to execute content SQL: " + buf, e);
+         s_log.error("Failed to execute content SQL: " + buf, e);
          return null;
       }
    }

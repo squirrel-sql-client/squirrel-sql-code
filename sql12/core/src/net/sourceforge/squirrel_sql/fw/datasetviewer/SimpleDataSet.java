@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
+import java.util.ArrayList;
 import java.util.List;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 public class SimpleDataSet implements IDataSet
 {
@@ -15,6 +15,14 @@ public class SimpleDataSet implements IDataSet
    {
       _allRows = allRows;
       _columnDisplayDefinitions = columnDisplayDefinitions;
+   }
+
+   public static IDataSet createMessageDataSet(String msg)
+   {
+      ArrayList<Object[]> msgList = new ArrayList<>();
+      msgList.add(new String[]{msg});
+
+      return new SimpleDataSet(msgList, new ColumnDisplayDefinition[]{new ColumnDisplayDefinition(400, "Message")});
    }
 
    public int getColumnCount()
