@@ -342,4 +342,5 @@ public interface IWikiTableConfiguration extends Cloneable, Serializable {
 
 	String escapeCellData(String cellData);
 
+   boolean supportsCopying();
 }

@@ -40,4 +40,10 @@ public class JIRACloudTableConfiguration extends GenericWikiTableConfigurationBe
    {
       return new JIRACloudTransformer();
    }
+
+   @Override
+   public boolean supportsCopying()
+   {
+      return false;
+   }
 }

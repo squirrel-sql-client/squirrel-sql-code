@@ -395,7 +395,13 @@ public class GenericWikiTableConfigurationBean implements IWikiTableConfiguratio
 		return cellData;
 	}
 
-	/**
+   @Override
+   public boolean supportsCopying()
+   {
+      return true;
+   }
+
+   /**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

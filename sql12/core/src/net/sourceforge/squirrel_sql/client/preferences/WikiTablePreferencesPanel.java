@@ -57,7 +57,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurati
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.JIRACloudTableConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -336,9 +335,9 @@ public class WikiTablePreferencesPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
             IWikiTableConfiguration selectedValue = (IWikiTableConfiguration) wikiConfigList.getSelectedValue();
-            if(selectedValue instanceof JIRACloudTableConfiguration)
+            if(false == selectedValue.supportsCopying())
             {
-               Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("WikiTablePreferencesPanel.cannot.copy.JIRACloudTableConfiguration"));
+               Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("WikiTablePreferencesPanel.configuration.does.not.support.copying", selectedValue.getName()));
                return;
             }
 
