@@ -1,16 +1,17 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class AliasTreeUtil
 {
@@ -112,4 +113,29 @@ public class AliasTreeUtil
       return null;
    }
 
+   public static String editAliasFolderName(String folderNameToEdit)
+   {
+      String title;
+      String text;
+
+      if( null == folderNameToEdit )
+      {
+         title = s_stringMgr.getString("AliasTreeUtil.NewAliasFolderDlgTitle");
+         text = s_stringMgr.getString("AliasTreeUtil.NewAliasFolderDlgText");
+      }
+      else
+      {
+         title = s_stringMgr.getString("AliasTreeUtil.EditAliasFolderDlgTitle");
+         text = s_stringMgr.getString("AliasTreeUtil.EditAliasFolderDlgText");
+      }
+
+      EditAliasFolderDlg dlg = new EditAliasFolderDlg(Main.getApplication().getMainFrame(), title, text, folderNameToEdit);
+      GUIUtils.centerWithinParent(dlg);
+
+      dlg.setVisible(true);
+
+      String folderName = dlg.getFolderName();
+
+      return folderName;
+   }
 }

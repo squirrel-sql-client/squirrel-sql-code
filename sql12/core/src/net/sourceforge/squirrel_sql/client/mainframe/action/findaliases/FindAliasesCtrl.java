@@ -1,7 +1,28 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findaliases;
 
+import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.*;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasTreeUtil;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectCompletionCallback;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
+import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.FindAliasListCellRenderer;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -10,16 +31,6 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
 
 public class FindAliasesCtrl
 {
@@ -235,7 +246,22 @@ public class FindAliasesCtrl
          return;
       }
 
-      AliasWindowManager.showModifyAliasInternalFrame(selectedWrapperAlias.getAlias());
+      if( null != selectedWrapperAlias.getAlias() )
+      {
+         AliasWindowManager.showModifyAliasInternalFrame(selectedWrapperAlias.getAlias());
+      }
+      else if( null != selectedWrapperAlias.getAliasFolder() )
+      {
+         String folderName = AliasTreeUtil.editAliasFolderName(selectedWrapperAlias.getAliasFolder().getFolderName());
+         if(null != folderName)
+         {
+            selectedWrapperAlias.getAliasFolder().setFolderName(folderName);
+         }
+      }
+      else
+      {
+         throw new IllegalStateException("selectedWrapperAlias.getAlias() and selectedWrapperAlias.getAliasFolder() cannot be null at the same time.");
+      }
 
       if(false == _dlg.chkLeaveOpen.isSelected())
       {

@@ -21,6 +21,11 @@ public class AliasFolder implements Serializable
       return _folderName;
    }
 
+   public void setFolderName(String folderName)
+   {
+      _folderName = folderName;
+   }
+
    public int getColorRGB()
    {
       return _colorRGB;

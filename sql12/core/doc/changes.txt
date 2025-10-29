@@ -27,6 +27,9 @@ DB2 Plugin: The table details in the Object tree has a new tab
 
 Bug fixes:
 
+Alias find dialog (ctrl+alt+shift+g or ctrl+alt+shift+f):
+  Modifying an Alias folder raised NullPointerException.
+
 Object tree: When reading the contents of a table failed with an error
   it could prevent all detail tabs from being displayed.
 

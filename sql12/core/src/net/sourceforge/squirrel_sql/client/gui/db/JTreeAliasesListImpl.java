@@ -1,5 +1,35 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import javax.activation.DataHandler;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
@@ -21,36 +51,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
-import javax.activation.DataHandler;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.TransferHandler;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 {
@@ -690,15 +690,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
       else if(selNode.getUserObject() instanceof AliasFolder)
       {
-         String title = s_stringMgr.getString("JTreeAliasesListImpl.EditAliasFolderDlgTitle");
-         String text = s_stringMgr.getString("JTreeAliasesListImpl.EditAliasFolderDlgText");
-         EditAliasFolderDlg dlg = new EditAliasFolderDlg(_app.getMainFrame(), title, text, selNode.getUserObject().toString());
-
-         GUIUtils.centerWithinParent(dlg);
-
-         dlg.setVisible(true);
-
-         String folderName = dlg.getFolderName();
+         String folderName = AliasTreeUtil.editAliasFolderName(selNode.getUserObject().toString());
 
          if(null == folderName)
          {
@@ -860,20 +852,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    public void createNewFolder()
    {
-      String title = s_stringMgr.getString("JTreeAliasesListImpl.NewAliasFolderDlgTitle");
-      String text = s_stringMgr.getString("JTreeAliasesListImpl.NewAliasFolderDlgText");
-      EditAliasFolderDlg dlg = new EditAliasFolderDlg(_app.getMainFrame(), title, text, null);
-      GUIUtils.centerWithinParent(dlg);
-
-      dlg.setVisible(true);
-
-      String folderName = dlg.getFolderName();
-
-      if(null == folderName)
+      String folderName = AliasTreeUtil.editAliasFolderName(null);
+      if( folderName == null )
       {
          return;
       }
-
 
       DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
       TreePath selPath = _tree.getSelectionPath();
