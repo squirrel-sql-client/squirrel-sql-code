@@ -44,6 +44,8 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    private DockPanel _pnlDock = new DockPanel();
 
+   private JPanel _titlePanel = new JPanel(new BorderLayout());
+   private JLabel _titleLabel = new JLabel();
    private DesktopTabbedPane _tabbedPane;
 
    private JSplitPane _split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -58,10 +60,12 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    private DockTabDesktopManager _dockTabDesktopManager = new DockTabDesktopManager();
 
    private ScrollableTabHandler _scrollableTabHandler;
+   private boolean _useNewFramePerConnection = false;
 
    public DockTabDesktopPane(IApplication app, boolean belongsToMainApplicationWindow, DockTabDesktopPaneListener dockTabDesktopPaneListener)
    {
       _app = app;
+      _useNewFramePerConnection = app.getSquirrelPreferences().getUseNewFramePerConnection();
       _belongsToMainApplicationWindow = belongsToMainApplicationWindow;
       _dockTabDesktopPaneListener = dockTabDesktopPaneListener;
 
@@ -85,7 +89,15 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
          }
       });
 
-      _split.setRightComponent(_tabbedPane);
+       _tabbedPane._titleLabel = _titleLabel;
+      if (_useNewFramePerConnection && !belongsToMainApplicationWindow) {
+          _titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+          _titlePanel.add(_tabbedPane, BorderLayout.CENTER);
+          _titlePanel.add(_titleLabel, BorderLayout.NORTH);
+          _split.setRightComponent(_titlePanel);
+      } else {
+          _split.setRightComponent(_tabbedPane);
+      }
 
 
       add(_split, BorderLayout.CENTER);
@@ -216,6 +228,9 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       _tabbedPane.setSelectedIndex(tabIx);
       _scrollableTabHandler.tabAdded();
 
+       if (_belongsToMainApplicationWindow && _useNewFramePerConnection) {
+           onToWindow(tabHandle);
+       }
       return tabHandle;
    }
 
@@ -232,7 +247,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       Dimension size = getSelectedHandle().getWidget().getContentPane().getSize();
       //
       ////////////////////////////////////////////////////////////////////////////////////
-      TabWindowController tabWindowController = new TabWindowController(locationOnScreen, size, _app);
+      TabWindowController tabWindowController = new TabWindowController(_titleLabel.getText(), locationOnScreen, size, _app);
 
 
       _app.getMultipleWindowsHandler().registerDesktop(tabWindowController);

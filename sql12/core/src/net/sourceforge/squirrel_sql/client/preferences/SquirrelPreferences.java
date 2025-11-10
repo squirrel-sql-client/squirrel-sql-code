@@ -86,6 +86,7 @@ public class SquirrelPreferences implements Serializable
       String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
       String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
       String TABBED_STYLE = "tabbedStyle";
+      String USE_NEW_FRAME_PER_CONNECTION = "useNewFramePerConnection";
       String USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS = "useScrollableTabbedPanesForSessionTabs";
       String SHOW_TABBED_STYLE_HINT = "showTabbedStyleHint";
       String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
@@ -187,6 +188,8 @@ public class SquirrelPreferences implements Serializable
 
 
    private boolean _tabbedStyle = true;
+
+   private boolean _useNewFramePerConnection = false;
 
    private boolean _useScrollableTabbedPanesForSessionTabs;
 
@@ -424,7 +427,12 @@ public class SquirrelPreferences implements Serializable
 		return _tabbedStyle;
 	}
 
-	public synchronized void setTabbedStyle(boolean data)
+    public boolean getUseNewFramePerConnection()
+    {
+        return _useNewFramePerConnection;
+    }
+
+    public synchronized void setTabbedStyle(boolean data)
 	{
 		if (data != _tabbedStyle)
 		{
@@ -434,6 +442,17 @@ public class SquirrelPreferences implements Serializable
 												oldValue, _tabbedStyle);
 		}
 	}
+
+    public synchronized void setUseNewFramePerConnection(boolean data)
+    {
+        if (data != _useNewFramePerConnection)
+        {
+            final boolean oldValue = _useNewFramePerConnection;
+            _useNewFramePerConnection = data;
+            getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_NEW_FRAME_PER_CONNECTION,
+                    oldValue, _useNewFramePerConnection);
+        }
+    }
 
    public boolean getUseScrollableTabbedPanesForSessionTabs()
    {

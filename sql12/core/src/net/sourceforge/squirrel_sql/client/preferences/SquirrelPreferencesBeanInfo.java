@@ -50,6 +50,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(SHOW_CONTENTS_WHEN_DRAGGING, SquirrelPreferences.class, "getShowContentsWhenDragging", "setShowContentsWhenDragging"),
 
             prop(TABBED_STYLE, SquirrelPreferences.class, "getTabbedStyle", "setTabbedStyle"),
+            prop(USE_NEW_FRAME_PER_CONNECTION, SquirrelPreferences.class, "getUseNewFramePerConnection", "setUseNewFramePerConnection"),
             prop(USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS, SquirrelPreferences.class, "getUseScrollableTabbedPanesForSessionTabs", "setUseScrollableTabbedPanesForSessionTabs"),
             prop(SHOW_TABBED_STYLE_HINT, SquirrelPreferences.class, "getShowTabbedStyleHint", "setShowTabbedStyleHint"),
 
