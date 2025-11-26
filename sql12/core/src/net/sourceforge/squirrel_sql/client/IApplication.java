@@ -20,11 +20,16 @@ package net.sourceforge.squirrel_sql.client;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.File;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordManager;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
@@ -60,11 +65,6 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import java.io.File;
 
 /**
  * Defines the API to do callbacks on the application.
@@ -322,4 +322,6 @@ public interface IApplication
 	GlobalCellDataDialogManager getGlobalCellDataDialogManager();
 
 	SyntaxManager getSyntaxManager();
+
+   AliasKeyPasswordManager getAliasKeyPasswordManager();
 }

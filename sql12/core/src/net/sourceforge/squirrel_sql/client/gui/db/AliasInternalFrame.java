@@ -18,10 +18,37 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.AliasPropertiesController;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.EncryptedPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.client.gui.db.passwordaccess.PasswordInAliasCtrl;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
@@ -44,32 +71,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
 /**
@@ -164,6 +165,8 @@ public class AliasInternalFrame extends DialogWidget
 		createUserInterface();
 		loadData();
 		pack();
+
+      Main.getApplication().getAliasKeyPasswordManager().aliasFrameOpened(this);
 	}
 
 	/**
@@ -280,10 +283,7 @@ public class AliasInternalFrame extends DialogWidget
 		StringBuffer buf = new StringBuffer();
 		buf.append(_passwordInAliasCtrl.getPassword());
 
-		alias.setEncryptPassword(_chkSavePasswordEncrypted.isSelected());
-
-		String unencryptedPassword = buf.toString();
-		AliasPasswordHandler.setPassword(alias, unencryptedPassword);
+      EncryptedPasswordHandler.apply(alias, new String(_passwordInAliasCtrl.getPassword()), _chkSavePasswordEncrypted.isSelected());
 
 		alias.setReadOnly(_chkReadOnly.isSelected());
 
@@ -441,8 +441,8 @@ public class AliasInternalFrame extends DialogWidget
       gbc = new GridBagConstraints(1,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(_chkConnectAtStartup, gbc);
 
-		gbc = new GridBagConstraints(0,6,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-		pnl.add(_chkSavePasswordEncrypted, gbc);
+		gbc = new GridBagConstraints(0,6,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+		pnl.add(createPasswordEncryptedPanel(), gbc);
 
       gbc = new GridBagConstraints(0,7, GridBagConstraints.REMAINDER, 1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       _btnAliasProps.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
@@ -459,7 +459,25 @@ public class AliasInternalFrame extends DialogWidget
 		return pnl;
 	}
 
-	private JPanel getReadOnlyPanel()
+   private JPanel createPasswordEncryptedPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(_chkSavePasswordEncrypted, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(AliasKeyPasswordInfo.getSmallInfoButtonInfoForAliasWidget(), gbc);
+
+      //gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,2,0,0), 0,0);
+      //ret.add(AliasKeyPasswordInfo.getSmallInfoButtonInfoForAliasWidget(), gbc);
+
+      return ret;
+   }
+
+   private JPanel getReadOnlyPanel()
 	{
 		JPanel ret = new JPanel(new GridBagLayout());
 

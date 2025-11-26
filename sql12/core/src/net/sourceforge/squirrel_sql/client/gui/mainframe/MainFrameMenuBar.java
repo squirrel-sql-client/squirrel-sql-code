@@ -18,10 +18,19 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.ChanneledAction;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordEncryptionAction;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
@@ -176,15 +185,6 @@ import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.Action;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 /**
  * Menu bar for <CODE>MainFrame</CODE>.
  */
@@ -394,6 +394,8 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, AliasPopUpMenuAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, SessionOpenAction.class, menu);
+		menu.addSeparator();
+      addToMenu(rsrc, AliasKeyPasswordEncryptionAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, DumpApplicationAction.class, menu);
       addToMenu(rsrc, SavePreferencesAction.class, menu);

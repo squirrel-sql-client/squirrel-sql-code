@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.client.action;
 
 
+import javax.swing.Action;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordEncryptionAction;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPopUpMenuAction;
@@ -158,8 +160,6 @@ import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import org.fife.ui.rtextarea.RTextAreaEditorKit;
-
-import javax.swing.Action;
 
 /**
  * Supposed to be the place where actions are
@@ -463,6 +463,8 @@ public class ActionRegistry
       // Former Syntax-Plugin entries, END
 
       actionCollection.add(new SearchInResultsAction());
+
+      actionCollection.add(new AliasKeyPasswordEncryptionAction());
    }
 
    public ActionCollection getActionCollection()
