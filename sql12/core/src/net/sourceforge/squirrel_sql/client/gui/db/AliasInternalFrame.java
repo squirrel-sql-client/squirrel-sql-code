@@ -39,6 +39,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -49,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.AliasPropertie
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.EncryptedPasswordHandler;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.MissingAliasKeyPasswordException;
 import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.client.gui.db.passwordaccess.PasswordInAliasCtrl;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
@@ -69,6 +71,7 @@ import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -78,7 +81,6 @@ import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALI
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-@SuppressWarnings("serial")
 public class AliasInternalFrame extends DialogWidget
 {
 
@@ -212,7 +214,7 @@ public class AliasInternalFrame extends DialogWidget
 		_txtAliasName.setText(_sqlAlias.getName());
 		_txtUserName.setText(_sqlAlias.getUserName());
 
-		_passwordInAliasCtrl.setPassword(AliasPasswordHandler.getPassword(_sqlAlias));
+      _passwordInAliasCtrl.setPassword(loadPassword());
 
 		_chkAutoLogon.setSelected(_sqlAlias.isAutoLogon());
 		_chkConnectAtStartup.setSelected(_sqlAlias.isConnectAtStartup());
@@ -235,7 +237,28 @@ public class AliasInternalFrame extends DialogWidget
 		}
 	}
 
-	private void performClose()
+   private String loadPassword()
+   {
+      String password = null;
+      try
+      {
+         password = AliasPasswordHandler.getPassword(_sqlAlias);
+      }
+      catch(Exception e)
+      {
+         if(Utilities.getDeepestThrowable(e) instanceof MissingAliasKeyPasswordException)
+         {
+            int answer = JOptionPane.showConfirmDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("AliasInternalFrame.missingAliasKeyPassword.open.with.empty.password"));
+            if(answer != JOptionPane.YES_OPTION)
+            {
+               throw Utilities.wrapRuntime(e);
+            }
+         }
+      }
+      return password;
+   }
+
+   private void performClose()
 	{
 		setVisible(false);
 		dispose();

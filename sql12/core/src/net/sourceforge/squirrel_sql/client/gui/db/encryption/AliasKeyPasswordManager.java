@@ -63,9 +63,9 @@ public class AliasKeyPasswordManager
 
       if(null == _keyPassword)
       {
-         MissingKeyPasswordException missingKeyPasswordException = new MissingKeyPasswordException();
-         Main.getApplication().getMessageHandler().showErrorMessage(missingKeyPasswordException.getMessage());
-         throw missingKeyPasswordException;
+         MissingAliasKeyPasswordException missingAliasKeyPasswordException = new MissingAliasKeyPasswordException();
+         Main.getApplication().getMessageHandler().showErrorMessage(missingAliasKeyPasswordException.getMessage());
+         throw missingAliasKeyPasswordException;
       }
 
       return _keyPassword;
