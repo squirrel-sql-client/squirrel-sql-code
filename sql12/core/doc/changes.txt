@@ -6,7 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
-Security: Introduced option to use a key password for encrypting Alias passwords.
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/73
+  Security: Introduced option to use a key password for encrypting Alias passwords.
   When a key password is used SQuirreL can decrypt Alias-passwords only after the key password was entered.
   SQuirreL stores the key password in memory only. As a consequence the key password must be entered
   after SQuirreL was started and before an Alias, that uses password encryption, can be connected to.
