@@ -18,18 +18,18 @@ package net.sourceforge.squirrel_sql.fw.gui.statusbar;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.LogPanel;
-import net.sourceforge.squirrel_sql.client.gui.MemoryPanel;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.LogPanel;
+import net.sourceforge.squirrel_sql.client.gui.MemoryPanel;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordStatusBarPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
 
 /**
  * Statusbar component for the main frame.
@@ -42,9 +42,10 @@ public class MainFrameStatusBar extends JPanel
 
 	private final GridBagConstraints _gbc = new GridBagConstraints();
 	private JTextField _textLbl = new JTextField();
+   private AliasKeyPasswordStatusBarPanel _aliasKeyPasswordStatusBarPanel;
 
 
-	public MainFrameStatusBar(IApplication app)
+   public MainFrameStatusBar(IApplication app)
 	{
 		super(new GridBagLayout());
 		createGUI(app);
@@ -71,6 +72,8 @@ public class MainFrameStatusBar extends JPanel
 		_gbc.insets.left = 2;
 
 
+      _aliasKeyPasswordStatusBarPanel = new AliasKeyPasswordStatusBarPanel();
+      addJComponent(_aliasKeyPasswordStatusBarPanel);
 		addJComponent(new LogPanel(app));
 		addJComponent(new MemoryPanel(app));
 		addJComponent(new TimePanel());
@@ -109,5 +112,8 @@ public class MainFrameStatusBar extends JPanel
 		StatusBarUtil.updateSubcomponentsFont(this, _font);
 	}
 
-
+   public AliasKeyPasswordStatusBarPanel getAliasKeyPasswordStatusBarPanel()
+   {
+      return _aliasKeyPasswordStatusBarPanel;
+   }
 }

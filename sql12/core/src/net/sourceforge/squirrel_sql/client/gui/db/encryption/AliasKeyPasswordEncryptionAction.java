@@ -44,5 +44,8 @@ public class AliasKeyPasswordEncryptionAction extends SquirrelAction
             Main.getApplication().getAliasKeyPasswordManager().initKeyPassword(ctrl.getKeyPassword());
          }
       }
+
+      Main.getApplication().getMainFrame().getMainFrameStatusBar().getAliasKeyPasswordStatusBarPanel().updatePanel();
+
    }
 }

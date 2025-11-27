@@ -49,7 +49,16 @@ public class AliasPasswordEncryptionLoginDlg extends JDialog
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      ret.add(new JLabel(s_stringMgr.getString("AliasPasswordEncryptionDlg.enter.encryption.key.for.encrypted.Alias.passwords")), gbc);
+      String descr;
+      if(Main.getApplication().getAliasKeyPasswordManager().isLoggedIn())
+      {
+         descr = s_stringMgr.getString("AliasPasswordEncryptionDlg.enter.encryption.key.for.encrypted.Alias.passwords.already.logged.in");
+      }
+      else
+      {
+         descr = s_stringMgr.getString("AliasPasswordEncryptionDlg.enter.encryption.key.for.encrypted.Alias.passwords");
+      }
+      ret.add(new JLabel(descr), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,2,0,0), 0,0);
       ret.add(AliasKeyPasswordInfo.getSmallInfoButton(), gbc);

@@ -71,6 +71,11 @@ public class AliasKeyPasswordManager
       return _keyPassword;
    }
 
+   public boolean isLoggedIn()
+   {
+      return isUseKeyPassword() && null != _keyPassword;
+   }
+
    public void setKeyPassword(String keyPassword)
    {
       _keyPassword = keyPassword;

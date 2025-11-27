@@ -229,6 +229,8 @@ public class SquirrelResources extends Resources
 		String SCALE = "scale";
 
 		String BOOKMARK_SINGLE = "bookmark_single";
+
+      String PASSWORD_12X12 = "password12x12";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

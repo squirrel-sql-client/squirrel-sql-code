@@ -22,7 +22,6 @@ package net.sourceforge.squirrel_sql.client;
 
 import java.io.File;
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JMenu;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
@@ -224,21 +223,7 @@ public interface IApplication
 	 */
 	void addToMenu(int menuId, Action action);
 
-	/**
-	 * Add component to the main frames status bar.
-	 *
-	 * @param	comp	Component to add.
-	 */
-	void addToStatusBar(JComponent comp);
-
-	/**
-	 * Remove component to the main frames status bar.
-	 *
-	 * @param	comp	Component to remove.
-	 */
-	void removeFromStatusBar(JComponent comp);
-
-	/**
+   /**
 	 * Application startup processing.
 	 */
 	void startup();
