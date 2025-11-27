@@ -26,10 +26,19 @@ public class AliasPasswordEncryptionLoginCtrl
 
       _dlg.btnChangeKeyPassword.addActionListener(e -> onChangeKeyPassword());
 
+      _dlg.btnLogOut.setEnabled(Main.getApplication().getAliasKeyPasswordManager().isLoggedIn());
+      _dlg.btnLogOut.addActionListener(e -> onLogout());
+
       GUIUtils.enableCloseByEscape(_dlg);
-      GUIUtils.initLocation(_dlg, 480,150);
+      GUIUtils.initLocation(_dlg, 570,150);
       GUIUtils.forceFocus(_dlg.txtPassword);
       _dlg.setVisible(true);
+   }
+
+   private void onLogout()
+   {
+      Main.getApplication().getAliasKeyPasswordManager().logout();
+      closeDlg();
    }
 
    private void onOk()

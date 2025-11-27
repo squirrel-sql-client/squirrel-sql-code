@@ -19,6 +19,7 @@ public class AliasPasswordEncryptionLoginDlg extends JDialog
    final JPasswordField txtPassword = new JPasswordField();
    final JButton btnOk = new JButton(s_stringMgr.getString("AliasPasswordEncryptionDlg.ok"));
    final JButton btnCancel = new JButton(s_stringMgr.getString("AliasPasswordEncryptionDlg.cancel"));
+   final JButton btnLogOut = new JButton(s_stringMgr.getString("AliasPasswordEncryptionDlg.log.out"));
    final JButton btnChangeKeyPassword = new JButton(s_stringMgr.getString("AliasPasswordEncryptionDlg.change.key.password"));
    final JButton btnRemoveKeyPassword = new JButton(s_stringMgr.getString("AliasPasswordEncryptionDlg.remove.key.password"));
 
@@ -82,9 +83,12 @@ public class AliasPasswordEncryptionLoginDlg extends JDialog
       ret.add(new JPanel(), gbc);
 
       gbc = new GridBagConstraints(3,0, 1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      ret.add(btnChangeKeyPassword, gbc);
+      ret.add(btnLogOut, gbc);
 
       gbc = new GridBagConstraints(4,0, 1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
+      ret.add(btnChangeKeyPassword, gbc);
+
+      gbc = new GridBagConstraints(5,0, 1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
       ret.add(btnRemoveKeyPassword, gbc);
 
 
