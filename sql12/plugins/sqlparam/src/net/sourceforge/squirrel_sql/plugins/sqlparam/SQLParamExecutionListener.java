@@ -17,21 +17,18 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentRemover;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;
-
-import javax.swing.SwingUtilities;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This listener listens for SQL execution.
@@ -136,7 +133,9 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
          m.reset();
       }
 
-      GUIUtils.processOnSwingEventThread(() -> new SelectWidgetCommand(_sqlPanelAPI.getSession().getActiveSessionWindow()).execute());
+
+      // Was removed because it messed with the feature https://github.com/squirrel-sql-client/squirrel-sql-code/issues/75
+      //GUIUtils.processOnSwingEventThread(() -> new SelectWidgetCommand(_sqlPanelAPI.getSession().getActiveSessionWindow()).execute());
       // log.info("SQL passing to execute: " + buffer.toString());
 
       //////////////////////////////////////////////////////////////////

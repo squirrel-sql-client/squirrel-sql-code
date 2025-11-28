@@ -19,12 +19,11 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SquirrelPreferences</CODE>.
@@ -57,6 +56,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(LARGE_SCRIPT_STMT_COUNT, SquirrelPreferences.class, "getLargeScriptStmtCount", "setLargeScriptStmtCount"),
 
             prop(ALLOW_RUN_ALL_SQLS_IN_EDITOR, SquirrelPreferences.class, "isAllowRunAllSQLsInEditor", "setAllowRunAllSQLsInEditor"),
+            prop(ALLOW_RUN_SQLS_IN_ALL_OPEN_SESSIONS, SquirrelPreferences.class, "isAllowRunSqlInAllSessions", "setAllowRunSqlInAllSessions"),
 
             prop(MARK_CURRENT_SQL, SquirrelPreferences.class, "isMarkCurrentSql", "setMarkCurrentSql"),
             prop(CURRENT_SQL_MARK_COLOR_RGB, SquirrelPreferences.class, "getCurrentSqlMarkColorRGB", "setCurrentSqlMarkColorRGB"),

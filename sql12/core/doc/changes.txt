@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/75
+  New function to execute a SQL in multiple Sessions:
+  The new Session toolbar button "Run SQL in all open Sessions" (ctrl+alt+shift+ENTER)
+  executes the current SQL in all open Sessions.
+  The feature can be switched off at menu File --> Global Preferences --> tab SQL
+  --> checkbox "Allow to run a SQL in all open Sessions"
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/74
   Multiple selected Aliases can be selected and connected to.
 

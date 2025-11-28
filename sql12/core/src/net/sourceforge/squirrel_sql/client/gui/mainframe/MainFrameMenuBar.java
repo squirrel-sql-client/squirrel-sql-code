@@ -105,6 +105,7 @@ import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlInAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToAliasSessionAction;
@@ -428,14 +429,12 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, FindColumnsAction.class, menu);
 		addToMenu(rsrc, ExecuteSqlAction.class, menu);
 		addToMenu(rsrc, ExecuteAllSqlsAction.class, menu);
+		addToMenu(rsrc, ExecuteSqlInAllSessionsAction.class, menu);
       menu.add(createTransactionMenu(rsrc));
       addToMenu(rsrc, SQLFilterAction.class, menu);
       menu.addSeparator();
       addToMenu(rsrc, ViewObjectAtCursorInObjectTreeAction.class, menu);
-		menu.addSeparator();
       menu.add(createSessionWindowFileMenu(rsrc));
-		addToMenu(rsrc, ChangeTrackAction.class, menu);
-      menu.addSeparator();
 		menu.add(createSavedSessionMenu(rsrc));
       menu.addSeparator();
 		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
@@ -655,6 +654,7 @@ final class MainFrameMenuBar extends JMenuBar
       addToMenu(rsrc, FileAppendAction.class, menu);
       addToMenu(rsrc, FilePrintAction.class, menu);
       addToMenu(rsrc, FileReloadAction.class, menu);
+      addToMenu(rsrc, ChangeTrackAction.class, menu);
       return menu;
    }
 

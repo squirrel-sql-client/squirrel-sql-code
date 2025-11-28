@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlInAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
 import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
@@ -45,6 +46,7 @@ class SQLInternalFrameToolBar extends ToolBar
       add(actions.get(ExecuteSqlAction.class));
       addSeparator();
       add(actions.get(ExecuteAllSqlsAction.class));
+      add(actions.get(ExecuteSqlInAllSessionsAction.class));
       addSeparator();
       add(actions.get(FileNewAction.class));
       add(actions.get(FileDetachAction.class));

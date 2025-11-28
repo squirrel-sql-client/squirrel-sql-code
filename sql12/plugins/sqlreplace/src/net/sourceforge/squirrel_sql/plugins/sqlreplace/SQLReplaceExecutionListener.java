@@ -18,10 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -79,12 +77,13 @@ public class SQLReplaceExecutionListener extends SQLExecutionAdapter
 		if (log.isDebugEnabled()) {
 			log.debug("statementExecuting: replacedStmnt = "+replacedStmnt);
 		}
-		
-		GUIUtils.processOnSwingEventThread(new Runnable() {
-			public void run() {
-				new SelectWidgetCommand(session.getActiveSessionWindow()).execute();
-			}
-		});
+
+      // Was removed because it messed with the feature https://github.com/squirrel-sql-client/squirrel-sql-code/issues/75
+		//GUIUtils.processOnSwingEventThread(new Runnable() {
+		//	public void run() {
+		//		new SelectWidgetCommand(session.getActiveSessionWindow()).execute();
+		//	}
+		//});
 		return replacedStmnt;
 	}
 

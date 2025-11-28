@@ -19,6 +19,10 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.util.ArrayList;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import net.sourceforge.squirrel_sql.client.session.action.UndoRedoActionContext;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -29,11 +33,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import java.util.ArrayList;
 
 /**
  * This interface defines the API through which plugins can work with the SQL
@@ -198,8 +197,9 @@ public interface ISQLPanelAPI extends IFileEditorAPI
 
 	void executeAllSQLs();
 
+   void executeSQL(String sqlScriptToBeExecuted);
 
-	/**
+   /**
 	 * Close all the SQL result tabs.
 	 */
 	void closeAllSQLResultTabs();

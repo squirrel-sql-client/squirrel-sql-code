@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlInAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsInObjectTreeNodesAction;
@@ -184,6 +185,7 @@ public class ActionRegistry
       toolsPopupController.addAction("redo", sqlPanel.getRedoAction());
       toolsPopupController.addAction("runsql", ac.get(ExecuteSqlAction.class));
       toolsPopupController.addAction("runallsqls", ac.get(ExecuteAllSqlsAction.class));
+      toolsPopupController.addAction("runsqlinallsession", ac.get(ExecuteSqlInAllSessionsAction.class));
       toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
       toolsPopupController.addAction("filedetach", ac.get(FileDetachAction.class));
       toolsPopupController.addAction("fileopen", ac.get(FileOpenAction.class));
@@ -325,6 +327,7 @@ public class ActionRegistry
       actionCollection.add(new DumpSessionAction(app));
       actionCollection.add(new ExecuteSqlAction(app));
       actionCollection.add(new ExecuteAllSqlsAction(app));
+      actionCollection.add(new ExecuteSqlInAllSessionsAction());
       actionCollection.add(new ExitAction(app));
       actionCollection.add(new FileNewAction(app));
       actionCollection.add(new FileDetachAction(app));

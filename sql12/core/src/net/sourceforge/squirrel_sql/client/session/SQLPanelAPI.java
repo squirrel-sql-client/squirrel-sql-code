@@ -21,6 +21,12 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Frame;
+import java.util.ArrayList;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
@@ -60,13 +66,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.Mar
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
-import java.awt.Frame;
-import java.util.ArrayList;
 
 /**
  * This class is the API through which plugins can work with the SQL Panel.
@@ -518,6 +517,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
    public void executeAllSQLs()
    {
       _panel.runAllSqlsExecuter();
+   }
+
+   @Override
+   public void executeSQL(String sqlToBeExecuted)
+   {
+      _panel.getSQLExecPanel().executeSQL(sqlToBeExecuted);
    }
 
    /**

@@ -20,6 +20,15 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.gui.db.mainframetitle.PositionInMainFrameTitle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
@@ -36,16 +45,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
-import java.awt.Color;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.Serializable;
-import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 /**
  * This class represents the application preferences.
  *
@@ -63,6 +62,7 @@ public class SquirrelPreferences implements Serializable
       String LARGE_SCRIPT_STMT_COUNT = "largeScriptStmtCount";
       String COPY_QUOTED_SQLS_TO_CLIP = "copyQuotedSqlsToClip";
       String ALLOW_RUN_ALL_SQLS_IN_EDITOR = "allowRunAllSQLsInEditor";
+      String ALLOW_RUN_SQLS_IN_ALL_OPEN_SESSIONS = "allowRunSqlInAllSessions";
       String MARK_CURRENT_SQL = "markCurrentSql";
       String CURRENT_SQL_MARK_COLOR_RGB = "currentSqlMarkColorRGB";
 
@@ -215,7 +215,9 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _allowRunAllSQLsInEditor = true;
 
-	/** Show tooltips for controls. */
+   private boolean _allowRunSqlInAllSessions = true;
+
+   /** Show tooltips for controls. */
 	private boolean _showToolTips = true;
 
 	/** Use scrollable tabbed panes. JDK 1.4 and above only. */
@@ -1331,7 +1333,7 @@ public class SquirrelPreferences implements Serializable
 
 	public boolean getAllowRunAllSQLsInEditor()
 	{
-		return _allowRunAllSQLsInEditor;
+		return isAllowRunAllSQLsInEditor();
 	}
 
 	public boolean isAllowRunAllSQLsInEditor()
@@ -1344,7 +1346,23 @@ public class SquirrelPreferences implements Serializable
 		_allowRunAllSQLsInEditor = allowRunAllSQLsInEditor;
 	}
 
-	public boolean isMarkCurrentSql()
+   public boolean getAllowRunSqlInAllSessions()
+   {
+      return isAllowRunSqlInAllSessions();
+   }
+
+   public boolean isAllowRunSqlInAllSessions()
+   {
+      return _allowRunSqlInAllSessions;
+   }
+
+   public void setAllowRunSqlInAllSessions(boolean allowRunSqlInAllSessions)
+   {
+      _allowRunSqlInAllSessions = allowRunSqlInAllSessions;
+   }
+
+
+   public boolean isMarkCurrentSql()
 	{
 		return _markCurrentSql;
 	}

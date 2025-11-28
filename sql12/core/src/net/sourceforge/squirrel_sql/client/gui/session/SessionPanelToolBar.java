@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlInAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
 import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
@@ -76,6 +77,7 @@ class SessionPanelToolBar extends ToolBar
       add(actions.get(ExecuteSqlAction.class));
       addSeparator();
       add(actions.get(ExecuteAllSqlsAction.class));
+      add(actions.get(ExecuteSqlInAllSessionsAction.class));
       addSeparator();
 //			actions.get(ExecuteSqlAction.class).setEnabled(false);
       add(actions.get(SQLFilterAction.class));
