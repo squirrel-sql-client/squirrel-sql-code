@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 /*
  * Copyright (C) 2004 Colin Bell
@@ -28,6 +29,8 @@ public interface IAliasesList extends IBaseList
     * @param evt
     */
 	SQLAlias getSelectedAlias(MouseEvent evt);
+
+   List<SQLAlias> getAllSelectedAliases();
 
    void sortAliases();
 

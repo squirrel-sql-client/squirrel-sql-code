@@ -1,16 +1,18 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
-import net.sourceforge.squirrel_sql.client.ApplicationListener;
-import net.sourceforge.squirrel_sql.client.IApplication;
-
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.awt.*;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public abstract class BaseList implements IBaseList
@@ -27,10 +29,17 @@ public abstract class BaseList implements IBaseList
    private JScrollPane _comp = new JScrollPane(_list);
 
 
-   public BaseList(SortedListModel sortedListModel, IApplication app)
+   public BaseList(SortedListModel sortedListModel, boolean allowMultipleSelection)
    {
       _list.setModel(sortedListModel);
-      getList().getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      if(allowMultipleSelection)
+      {
+         getList().getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+      }
+      else
+      {
+         getList().getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      }
 
       // Add listener to listen for items added/removed from list.
       _list.getModel().addListDataListener(new ListDataListener()
@@ -51,14 +60,7 @@ public abstract class BaseList implements IBaseList
 
       _comp.setPreferredSize(new Dimension(100, 100));
 
-      app.addApplicationListener(new ApplicationListener()
-      {
-         public void saveApplicationState()
-         {
-            onSaveApplicationState();
-         }
-      });
-
+      Main.getApplication().addApplicationListener(() -> onSaveApplicationState());
 
       setSelIxFromPrefs();
    }

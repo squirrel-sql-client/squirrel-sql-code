@@ -18,6 +18,12 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JFrame;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
@@ -26,11 +32,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 abstract class BaseListInternalFrame<T extends IBaseList> extends DockWidget
 {
@@ -89,13 +90,6 @@ abstract class BaseListInternalFrame<T extends IBaseList> extends DockWidget
    {
       if (evt.isPopupTrigger())
       {
-
-         // If the user wants to select for Right mouse clicks then change the selection before popup appears
-         if (Main.getApplication().getSquirrelPreferences().getSelectOnRightMouseClick())
-         {
-            _uiFactory.getList().selectListEntryAtPoint(evt.getPoint());
-         }
-
          if (_popupMenu == null)
          {
             _popupMenu = _uiFactory.getPopupMenu();

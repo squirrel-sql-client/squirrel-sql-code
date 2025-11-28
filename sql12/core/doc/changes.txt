@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/74
+  Multiple selected Aliases can be selected and connected to.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/73
   Security: Introduced option to use a key password for encrypting Alias passwords.
   When a key password is used SQuirreL can decrypt Alias-passwords only after the key password was entered.

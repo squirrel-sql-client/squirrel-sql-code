@@ -18,18 +18,17 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import javax.swing.ToolTipManager;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 /**
  * This is a <CODE>JList</CODE> that dispays all the <CODE>ISQLDriver</CODE>
  * objects.
@@ -61,7 +60,7 @@ public class DriversList extends BaseList implements IDriversList
 	 */
 	public DriversList(IApplication app) throws IllegalArgumentException
 	{
-      super(new DriversListModel(), app);
+      super(new DriversListModel(), false);
 		_app = app;
 		_model = (DriversListModel) getList().getModel();
 

@@ -1,20 +1,20 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import java.awt.BorderLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import javax.swing.JList;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.ListAliasColorSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JList;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import java.awt.BorderLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 
 /*
  * Copyright (C) 2001-2004 Colin Bell
@@ -53,7 +53,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 
 	public JListAliasesListImpl(IApplication app, AliasesListModel aliasesListModel, AliasListSelectionListener selectionListener)
 	{
-      super(aliasesListModel, app);
+      super(aliasesListModel, true);
       _model = aliasesListModel;
 		getList().setLayout(new BorderLayout());
 
@@ -159,6 +159,12 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 	{
 		return (SQLAlias)getList().getSelectedValue();
 	}
+
+   @Override
+   public List<SQLAlias> getAllSelectedAliases()
+   {
+      return getList().getSelectedValuesList();
+   }
 
    public void sortAliases()
    {

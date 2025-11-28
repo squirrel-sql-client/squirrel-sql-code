@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import javax.activation.DataHandler;
@@ -29,7 +30,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
@@ -542,6 +542,16 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
 
       _tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(newNode)));
+   }
+
+   public List<SQLAlias> getAllSelectedAliases()
+   {
+      return
+         Arrays.stream(_tree.getSelectionPaths())
+               .map(p -> p.getLastPathComponent())
+               .filter(n -> n instanceof DefaultMutableTreeNode dmt && dmt.getUserObject() instanceof SQLAlias)
+               .map(n -> (SQLAlias)((DefaultMutableTreeNode) n).getUserObject())
+               .toList();
    }
 
    public SQLAlias getSelectedAlias(MouseEvent evt)

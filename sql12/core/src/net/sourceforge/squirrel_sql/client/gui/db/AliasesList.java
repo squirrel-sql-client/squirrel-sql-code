@@ -1,18 +1,19 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * Copyright (C) 2001-2004 Colin Bell
@@ -163,6 +164,12 @@ public class AliasesList implements IToogleableAliasesList
 	public SQLAlias getSelectedAlias(MouseEvent evt)
 	{
       return getCurrentImpl().getSelectedAlias(evt);
+   }
+
+   @Override
+   public List<SQLAlias> getAllSelectedAliases()
+   {
+      return getCurrentImpl().getAllSelectedAliases();
    }
 
    @Override

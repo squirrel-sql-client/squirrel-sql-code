@@ -18,11 +18,11 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.event.ActionEvent;
+import java.util.List;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-
-import java.awt.event.ActionEvent;
 
 public class ConnectToAliasAction extends AliasAction
 {
@@ -51,11 +51,9 @@ public class ConnectToAliasAction extends AliasAction
     */
    public void actionPerformed(ActionEvent evt)
    {
-      moveToFrontAndSelectAliasFrame();      
-      final SQLAlias alias = _aliases.getSelectedAlias(null);
-      if (alias != null)
-      {
-         new ConnectToAliasCommand(alias).executeConnect();
-      }
+      moveToFrontAndSelectAliasFrame();
+      List<SQLAlias> selectedAliases = _aliases.getAllSelectedAliases();
+
+      selectedAliases.forEach(a -> new ConnectToAliasCommand(a).executeConnect());
    }
 }
