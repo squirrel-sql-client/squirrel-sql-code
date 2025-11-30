@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/76
+  Cell data popup and cell detail display now offer right mouse menus to
+  Base64/Base32/Hex-decode selected text. The decoded text is written to the message panel.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/75
   New function to execute a SQL in multiple Sessions:
   The new Session toolbar button "Run SQL in all open Sessions" (ctrl+alt+shift+ENTER)
