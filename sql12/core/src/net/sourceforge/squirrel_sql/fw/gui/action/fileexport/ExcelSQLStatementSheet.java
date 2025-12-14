@@ -12,16 +12,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public class ExcelSQLStatementSheet
 {
-   public static void createSqlStatementSheet(ExportDataInfo exportDataInfo, Workbook workbook)
+   public static void createSqlStatementSheet(ExportDataInfo exportDataInfo, Workbook workbook, TableExportPreferences prefs)
    {
       if(StringUtilities.isEmpty(exportDataInfo.getSqlToWriteToFile(), true))
       {
          return;
       }
 
-      String sqlStatementTabName = getUniqueSqlSheetName(workbook, exportDataInfo.getExcelSheetTabName(), 0);
-
-      Sheet sheet = workbook.createSheet(sqlStatementTabName);
+      Sheet sheet = getOrCreateSqlStatementSheet(exportDataInfo, workbook, prefs);
       Row row = sheet.createRow(0);
 
       // Does not work
@@ -40,9 +38,24 @@ public class ExcelSQLStatementSheet
       cell.setCellStyle(cellStyle);
    }
 
+   private static Sheet getOrCreateSqlStatementSheet(ExportDataInfo exportDataInfo, Workbook workbook, TableExportPreferences prefs)
+   {
+      if(ExcelSheetReplaceUtil.isReplaceExcelSheets(prefs))
+      {
+         String sqlStatementTabName = getInitialCandidateSqlSheetName(exportDataInfo.getExcelSheetTabName(prefs));
+         return ExcelSheetReplaceUtil.getOrCreateSheet(workbook, sqlStatementTabName, prefs);
+      }
+      else
+      {
+         String sqlStatementTabName = getUniqueSqlSheetName(workbook, exportDataInfo.getExcelSheetTabName(prefs), 0);
+         Sheet sheet = workbook.createSheet(sqlStatementTabName);
+         return sheet;
+      }
+   }
+
    private static String getUniqueSqlSheetName(Workbook workbook, String excelSheetTabName, int numberToCheck)
    {
-      String candidate = excelSheetTabName + "_SQL";
+      String candidate = getInitialCandidateSqlSheetName(excelSheetTabName);
 
       if(numberToCheck > 0)
       {
@@ -59,5 +72,10 @@ public class ExcelSQLStatementSheet
       }
 
       return candidate;
+   }
+
+   private static String getInitialCandidateSqlSheetName(String excelSheetTabName)
+   {
+      return excelSheetTabName + "_SQL";
    }
 }

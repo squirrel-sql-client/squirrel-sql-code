@@ -1,8 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
 import java.io.File;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class ExportDataInfo
 {
@@ -50,27 +49,20 @@ public class ExportDataInfo
       }
    }
 
-   public String getExcelSheetTabName()
+   public String getExcelSheetTabName(TableExportPreferences prefs)
    {
-      if(StringUtilities.isEmpty(_exportNameFileNormalized, true))
-      {
-         return DataExportExcelWriter.DEFAULT_EXCEL_EXPORT_SHEET_NAME;
-      }
-      else
+      if(false == StringUtilities.isEmpty(_exportNameFileNormalized, true))
       {
          return _exportNameFileNormalized;
       }
-
-   }
-
-   public ResultSetExportData getResultSetExportData()
-   {
-      if(_exportData instanceof ResultSetExportData ret)
+      else if(false == StringUtilities.isEmpty(prefs.getExcelSheetNameFileNormalized()))
       {
-         return ret;
+         return prefs.getExcelSheetNameFileNormalized();
       }
-
-      return null;
+      else
+      {
+         return DataExportExcelWriter.DEFAULT_EXCEL_EXPORT_SHEET_NAME;
+      }
    }
 
    public String getSqlToWriteToFile()

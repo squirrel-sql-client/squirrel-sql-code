@@ -77,6 +77,8 @@ public class TableExportPreferences
    private boolean _excelHeaderFontBold;
    private boolean _excelHeaderFontItalic;
    private boolean _excelExportSQLStatementInAdditionalSheet;
+   private String _excelSheetNameFileNormalized;
+   private boolean _excelReplaceSheets;
 
    public boolean isFormatXLS()
    {
@@ -425,5 +427,25 @@ public class TableExportPreferences
    public void setExcelExportSQLStatementInAdditionalSheet(boolean excelExportSQLStatementInAdditionalSheet)
    {
       _excelExportSQLStatementInAdditionalSheet = excelExportSQLStatementInAdditionalSheet;
+   }
+
+   public void setExcelSheetNameFileNormalized(String excelSheetNameFileNormalized)
+   {
+      _excelSheetNameFileNormalized = excelSheetNameFileNormalized;
+   }
+
+   public String getExcelSheetNameFileNormalized()
+   {
+      return _excelSheetNameFileNormalized;
+   }
+
+   public void setExcelReplaceSheets(boolean excelReplaceSheets)
+   {
+      _excelReplaceSheets = excelReplaceSheets;
+   }
+
+   public boolean isExcelReplaceSheets()
+   {
+      return _excelReplaceSheets;
    }
 }

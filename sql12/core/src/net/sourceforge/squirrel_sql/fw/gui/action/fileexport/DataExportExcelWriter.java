@@ -18,6 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.sql.Types;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
@@ -33,15 +41,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.sql.Types;
-import java.text.NumberFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Exports {@link IExportData} to a Excel file.
@@ -80,7 +79,7 @@ public class DataExportExcelWriter
 
       for (ExportDataInfo exportDataInfo : exportDataInfoList.getExportDataInfos())
       {
-         _sheet = _workbook.createSheet(exportDataInfo.getExcelSheetTabName());
+         _sheet = ExcelSheetReplaceUtil.getOrCreateSheet(_workbook, exportDataInfo.getExcelSheetTabName(prefs), prefs);
 
          rowsCount += _writeExcelTab(exportDataInfo.getExportData());
 
@@ -96,7 +95,7 @@ public class DataExportExcelWriter
 
          if(prefs.isExcelExportSQLStatementInAdditionalSheet())
          {
-            ExcelSQLStatementSheet.createSqlStatementSheet(exportDataInfo, _workbook);
+            ExcelSQLStatementSheet.createSqlStatementSheet(exportDataInfo, _workbook, prefs);
          }
       }
       _fileExportService.progress(s_stringMgr.getString("DataExportExcelWriter.finishedLoading", NumberFormat.getInstance().format(rowsCount)));
@@ -280,20 +279,28 @@ public class DataExportExcelWriter
 
    private void beforeWorking()
    {
+      _workbook = ExcelSheetReplaceUtil.getExistingWorkBookOrNull(_fileExportService);
+
+      if(null != _workbook)
+      {
+         return;
+      }
+
+
       if (_fileExportService.getPrefs().isFormatXLSOld())
       {
-         this._workbook = new HSSFWorkbook(); // See https://gist.github.com/madan712/3912272
+         _workbook = new HSSFWorkbook(); // See https://gist.github.com/madan712/3912272
       }
       else
       {
          if(_fileExportService.getPrefs().isUseColoring())
          {
             // See class ExcelCellColorer on how this will take care the Excel gets colored.
-            this._workbook = new XSSFWorkbook();
+            _workbook = new XSSFWorkbook();
          }
          else
          {
-            this._workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+            _workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
          }
       }
    }

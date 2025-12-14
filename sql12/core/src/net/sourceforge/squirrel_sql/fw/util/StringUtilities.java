@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.fw.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
@@ -326,6 +325,16 @@ public class StringUtilities
 
    public static String fileNameNormalize(String text)
    {
+      return fileNameNormalize(text, false);
+   }
+
+   public static String fileNameNormalize(String text, boolean respectNull)
+   {
+      if(respectNull && null == text)
+      {
+         return null;
+      }
+
       StringBuilder buf = new StringBuilder(text.length());
 
       for(int i=0; i < text.length(); ++i)

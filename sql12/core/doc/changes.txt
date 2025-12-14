@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/79
+  MS Excel file export: The MS Excel section of the file export dialog offers two new options:
+  1. Option to define the name of the Excel sheet tab that is created inside the Excel file.
+  2. Option to replace Excel sheet tabs in existing Excel files.
+  Note that those two (as several other) options will apply to automated exports, too.
+  To learn about automated exports see the link at the bottom of the file export dialog.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/76
   Cell data popup and cell detail display now offer right mouse menus to
   Base64/Base32/Hex-decode selected text. The decoded text is written to the message panel.

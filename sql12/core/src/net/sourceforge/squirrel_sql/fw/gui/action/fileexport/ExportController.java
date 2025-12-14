@@ -1,5 +1,16 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -7,18 +18,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
 
 public class ExportController
 {
@@ -190,8 +189,11 @@ public class ExportController
          _dlg.btnChooseExcelFont.setEnabled(false);
          _dlg.btnChooseExcelHeaderFont.setEnabled(false);
          _dlg.lblExcelFontName.setEnabled(false);
+         _dlg.lblExcelSheetName.setEnabled(false);
+         _dlg.txtExcelSheetName.setEnabled(false);
          _dlg.lblExcelHeaderFontName.setEnabled(false);
          _dlg.chkExcelExportSQLStatementInAdditionalSheet.setEnabled(false);
+         _dlg.chkExcelReplaceSheets.setEnabled(false);
 
 
          if(_dlg.chkSeparatorTab.isSelected())
@@ -231,7 +233,10 @@ public class ExportController
          _dlg.btnChooseExcelHeaderFont.setEnabled(true);
          _dlg.lblExcelFontName.setEnabled(true);
          _dlg.lblExcelHeaderFontName.setEnabled(true);
+         _dlg.lblExcelSheetName.setEnabled(true);
+         _dlg.txtExcelSheetName.setEnabled(true);
          _dlg.chkExcelExportSQLStatementInAdditionalSheet.setEnabled(true);
+         _dlg.chkExcelReplaceSheets.setEnabled(true);
 
          if(replaceEnding)
          {
@@ -258,7 +263,10 @@ public class ExportController
          _dlg.btnChooseExcelHeaderFont.setEnabled(false);
          _dlg.lblExcelFontName.setEnabled(false);
          _dlg.lblExcelHeaderFontName.setEnabled(false);
+         _dlg.lblExcelSheetName.setEnabled(false);
+         _dlg.txtExcelSheetName.setEnabled(false);
          _dlg.chkExcelExportSQLStatementInAdditionalSheet.setEnabled(false);
+         _dlg.chkExcelReplaceSheets.setEnabled(false);
 
 
          if(replaceEnding)
@@ -444,8 +452,12 @@ public class ExportController
           && false == isExportingMultipleFiles() // For now in case of multiple export files these files will be replaced silently.
         )
       {
-         // i18n[TableExportCsvController.replaceFile=The export file already exisits. Would you like to replace it?]
          String msg = s_stringMgr.getString("TableExportCsvController.replaceFile");
+         if(isExcelWithReplaceSheets())
+         {
+            msg = s_stringMgr.getString("TableExportCsvController.add.or.replace.excel.sheet");
+         }
+
          if(JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(_dlg, msg))
          {
             return;
@@ -458,6 +470,11 @@ public class ExportController
 
       _ok = true;
       closeDlg();
+   }
+
+   private boolean isExcelWithReplaceSheets()
+   {
+      return (_dlg.radFormatXLSX.isSelected() || _dlg.radFormatXLS.isSelected()) && _dlg.chkExcelReplaceSheets.isSelected();
    }
 
    private boolean isExportingMultipleFiles()
@@ -503,7 +520,9 @@ public class ExportController
       prefs.setExcelFirstRowFrozen(_dlg.chkExcelFirstRowFrozen.isSelected());
       prefs.setExcelFirstRowCentered(_dlg.chkExcelFirstRowCentered.isSelected());
       prefs.setExcelFirstRowBold(_dlg.chkExcelFirstRowBold.isSelected());
+      prefs.setExcelSheetNameFileNormalized(StringUtilities.fileNameNormalize(StringUtilities.emptyToNull(_dlg.txtExcelSheetName.getText()), true));
       prefs.setExcelExportSQLStatementInAdditionalSheet(_dlg.chkExcelExportSQLStatementInAdditionalSheet.isSelected());
+      prefs.setExcelReplaceSheets(_dlg.chkExcelReplaceSheets.isSelected());
       _excelFontCtrl.writeToPrefs(prefs);
 
 
@@ -545,7 +564,9 @@ public class ExportController
       _dlg.chkExcelFirstRowFrozen.setSelected(prefs.isExcelFirstRowFrozen());
       _dlg.chkExcelFirstRowCentered.setSelected(prefs.isExcelFirstRowCentered());
       _dlg.chkExcelFirstRowBold.setSelected(prefs.isExcelFirstRowBold());
+      _dlg.txtExcelSheetName.setText(prefs.getExcelSheetNameFileNormalized());
       _dlg.chkExcelExportSQLStatementInAdditionalSheet.setSelected(prefs.isExcelExportSQLStatementInAdditionalSheet());
+      _dlg.chkExcelReplaceSheets.setSelected(prefs.isExcelReplaceSheets());
 
 
       _dlg.cboCharsets.setSelectedItem(prefs.getEncoding());

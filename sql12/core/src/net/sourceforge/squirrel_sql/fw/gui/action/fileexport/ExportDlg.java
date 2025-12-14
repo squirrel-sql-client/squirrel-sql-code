@@ -1,14 +1,16 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
-import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.nio.charset.Charset;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -21,17 +23,13 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.nio.charset.Charset;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ExportDlg extends JDialog
 {
@@ -57,7 +55,11 @@ public class ExportDlg extends JDialog
    JButton btnChooseExcelHeaderFont;
    MultipleLineLabel lblExcelHeaderFontName;
 
+   JLabel lblExcelSheetName;
+   JTextField txtExcelSheetName;
+
    JCheckBox chkExcelExportSQLStatementInAdditionalSheet;
+   JCheckBox chkExcelReplaceSheets;
 
    JRadioButton radFormatXML;
    JRadioButton radFormatJSON;
@@ -245,21 +247,53 @@ public class ExportDlg extends JDialog
       gbc = new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 3, 3, 0), 0, 0);
       ret.add(createFontPanel(), gbc);
 
-      gbc = new GridBagConstraints(0, 2, GridBagConstraints.REMAINDER, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 3, 3, 0), 0, 0);
-      ret.add(createSQLStatementInAdditionalSheetPanel(), gbc);
+      gbc = new GridBagConstraints(0, 2, GridBagConstraints.REMAINDER, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 3, 3, 0), 0, 0);
+      ret.add(createSheetNamePanel(), gbc);
+
+      gbc = new GridBagConstraints(0, 3, GridBagConstraints.REMAINDER, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 3, 3, 0), 0, 0);
+      ret.add(createExcelSectionLowerCheckboxes(), gbc);
 
       return ret;
    }
 
-   private JPanel createSQLStatementInAdditionalSheetPanel()
+   private JPanel createSheetNamePanel()
    {
-      JPanel ret = new JPanel(new BorderLayout());
+      JPanel ret = new JPanel(new GridBagLayout());
 
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      lblExcelSheetName = new JLabel(s_stringMgr.getString("TableExportCsvDlg.lbl.sheet.name"));
+      ret.add(lblExcelSheetName, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,60), 0,0);
+      txtExcelSheetName = new JTextField();
+      ret.add(txtExcelSheetName, gbc);
+
+      return ret;
+   }
+
+   private JPanel createExcelSectionLowerCheckboxes()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       chkExcelExportSQLStatementInAdditionalSheet = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.excel.SQL.in.extra.sheet"));
-      ret.add(chkExcelExportSQLStatementInAdditionalSheet, BorderLayout.CENTER);
+      ret.add(chkExcelExportSQLStatementInAdditionalSheet, gbc);
 
-      SmallToolTipInfoButton btnInfo = new SmallToolTipInfoButton(s_stringMgr.getString("TableExportCsvDlg.excel.SQL.in.extra.sheet.infoButton"));
-      ret.add(btnInfo.getButton(), BorderLayout.EAST);
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      SmallToolTipInfoButton btnInfoSql = new SmallToolTipInfoButton(s_stringMgr.getString("TableExportCsvDlg.excel.SQL.in.extra.sheet.infoButton"));
+      ret.add(btnInfoSql.getButton(), gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,20,0,0), 0,0);
+      chkExcelReplaceSheets = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.excel.replace.sheets"));
+      ret.add(chkExcelReplaceSheets, gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      SmallToolTipInfoButton btnInfoReplace = new SmallToolTipInfoButton(s_stringMgr.getString("TableExportCsvDlg.excel.replace.sheets.infoButton"));
+      ret.add(btnInfoReplace.getButton(), gbc);
 
       return ret;
    }
