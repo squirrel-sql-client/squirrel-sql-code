@@ -213,9 +213,9 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _copyQuotedSqlsToClip;
 
-	private boolean _allowRunAllSQLsInEditor = true;
+	private boolean _allowRunAllSQLsInEditor = false;
 
-   private boolean _allowRunSqlInAllSessions = true;
+   private boolean _allowRunSqlInAllSessions = false;
 
    /** Show tooltips for controls. */
 	private boolean _showToolTips = true;

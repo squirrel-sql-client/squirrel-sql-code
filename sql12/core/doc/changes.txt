@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/75
+  The options "Allow to run all SQLs in editor" and "Allow to run a SQL in all open Sessions"
+  are now switched off by default. See menu File --> Global Preferences tab SQL.
+  Note: This change applies only to SQuirreL user directories that did not already
+  contain these options in their prefs.xml file. The path to SQuirreL's user directory is displayed
+  in SQuirrel's window title.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/79
   MS Excel file export: The MS Excel section of the file export dialog offers two new options:
   1. Option to define the name of the Excel sheet tab that is created inside the Excel file.
