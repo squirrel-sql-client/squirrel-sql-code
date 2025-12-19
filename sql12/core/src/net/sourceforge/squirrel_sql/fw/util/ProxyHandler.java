@@ -43,10 +43,6 @@ public class ProxyHandler
 	public void apply(IProxySettings proxy)
 	{
 		Properties props = System.getProperties();
-		if (proxy == null)
-		{
-			throw new IllegalArgumentException("ProxySettings == null");
-		}
 
 		final boolean http = proxy.getHttpUseProxy();
 		if (http)
