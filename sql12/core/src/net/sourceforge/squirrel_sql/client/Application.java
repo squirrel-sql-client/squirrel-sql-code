@@ -23,7 +23,6 @@ package net.sourceforge.squirrel_sql.client;
  */
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -267,13 +266,7 @@ public class Application implements IApplication
       _desktopStyle = new DesktopStyle(_globalPreferences);
 
 		preferencesHaveChanged(null);
-		_globalPreferences.addPropertyChangeListener(new PropertyChangeListener()
-		{
-			public void propertyChange(PropertyChangeEvent evt)
-			{
-				preferencesHaveChanged(evt);
-			}
-		});
+		_globalPreferences.addPropertyChangeListener(evt -> preferencesHaveChanged(evt));
 
 		SquirrelSplashScreen splash = null;
 		if (args.getShowSplashScreen())

@@ -17,10 +17,10 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Properties;
-
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -42,11 +42,7 @@ public class ProxyHandler
 
 	public void apply(IProxySettings proxy)
 	{
-		apply(proxy, System.getProperties());
-	}
-
-	public void apply(IProxySettings proxy, Properties props)
-	{
+		Properties props = System.getProperties();
 		if (proxy == null)
 		{
 			throw new IllegalArgumentException("ProxySettings == null");
