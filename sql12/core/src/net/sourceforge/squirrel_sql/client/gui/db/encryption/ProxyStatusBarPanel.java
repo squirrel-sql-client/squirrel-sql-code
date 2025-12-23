@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.ProxyPreferenceTabComponent;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -21,6 +22,7 @@ public class ProxyStatusBarPanel extends JPanel
    private final JLabel _lblProxy;
    private final Timer _proxyChangeIndicatingTimer;
    private Color _originalLabelBackground;
+   private String _changeCheckJson;
 
    public ProxyStatusBarPanel()
    {
@@ -46,10 +48,34 @@ public class ProxyStatusBarPanel extends JPanel
 
    public void updatePanel(ProxySettings currentProxySettings)
    {
+      if(false == isChanged(currentProxySettings))
+      {
+         return;
+      }
+
       _lblProxy.setText(getProxySettingsName(currentProxySettings));
       _lblProxy.setToolTipText(getLabelToolTip(currentProxySettings));
       _lblProxy.setBackground(Color.yellow);
       _proxyChangeIndicatingTimer.restart();
+   }
+
+   private boolean isChanged(ProxySettings currentProxySettings)
+   {
+      String buf = JsonMarshalUtil.toJsonString(currentProxySettings);
+
+      if(StringUtils.isBlank(_changeCheckJson))
+      {
+         _changeCheckJson = buf;
+         return true;
+      }
+
+      if(false == StringUtils.equals(_changeCheckJson, buf))
+      {
+         _changeCheckJson = buf;
+         return true;
+      }
+
+      return false;
    }
 
    private String getLabelToolTip(ProxySettings currentProxySettings)

@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
@@ -206,17 +207,15 @@ public final class ProxyPreferenceTabComponent extends JPanel
    private void applyChangesToCurrentSettings()
    {
       _currentSettings.setHttpUseProxy(_pnl.httpUseProxyChk.isSelected());
-      _currentSettings.setHttpProxyServer(_pnl.httpProxyServer.getText());
-      _currentSettings.setHttpProxyPort(_pnl.httpProxyPort.getText());
-      _currentSettings.setHttpNonProxyHosts(_pnl.httpNonProxyHosts.getText());
-      _currentSettings.setHttpProxyUser(_pnl.httpProxyUser.getText());
-
-      String password = new String(_pnl.httpProxyPassword.getPassword());
-      _currentSettings.setHttpProxyPassword(password);
+      _currentSettings.setHttpProxyServer(StringUtilities.emptyToNull(_pnl.httpProxyServer.getText()));
+      _currentSettings.setHttpProxyPort(StringUtilities.emptyToNull(_pnl.httpProxyPort.getText()));
+      _currentSettings.setHttpNonProxyHosts(StringUtilities.emptyToNull(_pnl.httpNonProxyHosts.getText()));
+      _currentSettings.setHttpProxyUser(StringUtilities.emptyToNull(_pnl.httpProxyUser.getText()));
+      _currentSettings.setHttpProxyPassword(StringUtilities.emptyToNull(new String(_pnl.httpProxyPassword.getPassword())));
 
       _currentSettings.setSocksUseProxy(_pnl.socksUseProxyChk.isSelected());
-      _currentSettings.setSocksProxyServer(_pnl.socksProxyServer.getText());
-      _currentSettings.setSocksProxyPort(_pnl.socksProxyPort.getText());
+      _currentSettings.setSocksProxyServer(StringUtilities.emptyToNull(_pnl.socksProxyServer.getText()));
+      _currentSettings.setSocksProxyPort(StringUtilities.emptyToNull(_pnl.socksProxyPort.getText()));
    }
 
    private void updateEnabled()
