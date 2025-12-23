@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/82
+  SQuirreL allows multiple proxy settings which can be assigned to Aliases.
+  At menu File --> Global Preferences --> tab Proxy,
+  besides the default proxy settings additional settings can be defined.
+  The Aliases dialog offers a button (router icon) to choose a proxy setting.
+  The main frame's status bar has a new section displaying the currently used proxy.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/75
   The options "Allow to run all SQLs in editor" and "Allow to run a SQL in all open Sessions"
   are now switched off by default. See menu File --> Global Preferences tab SQL.
