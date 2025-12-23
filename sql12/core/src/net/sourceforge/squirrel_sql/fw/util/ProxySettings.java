@@ -25,8 +25,12 @@ import java.io.Serializable;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ProxySettings implements Cloneable, Serializable, IProxySettings
+public class ProxySettings implements Serializable
 {
+	/**
+	 * null, when it's the default settings
+	 */
+	private String _settingName;
 
 	/** If <TT>true</TT> use a HTTP proxy server. */
 	private boolean _httpUseProxy;
@@ -56,21 +60,6 @@ public class ProxySettings implements Cloneable, Serializable, IProxySettings
 
 	/** Port for SOCKS Proxy server. */
 	private String _socksProxyPort;
-
-	/**
-	 * Return a copy of this object.
-	 */
-	public Object clone()
-	{
-		try
-		{
-			return super.clone();
-		}
-		catch(CloneNotSupportedException ex)
-		{
-			throw Utilities.wrapRuntime(ex); // Impossible.
-		}
-	}
 
 	public boolean getHttpUseProxy()
 	{
@@ -160,5 +149,15 @@ public class ProxySettings implements Cloneable, Serializable, IProxySettings
 	public void setSocksProxyPort(String data)
 	{
 		_socksProxyPort = data;
+	}
+
+	public String getSettingName()
+	{
+		return _settingName;
+	}
+
+	public void setSettingName(String settingName)
+	{
+		_settingName = settingName;
 	}
 }

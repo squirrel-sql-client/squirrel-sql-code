@@ -29,6 +29,7 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.gui.db.mainframetitle.PositionInMainFrameTitle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
@@ -80,6 +81,7 @@ public class SquirrelPreferences implements Serializable
 		String PLUGIN_OBJECTS = "pluginObjects";
       String PLUGIN_STATUSES = "pluginStatuses";
       String PROXY = "proxyPerferences";
+		String PROXY_ADDITIONAL_NAMED_SETTINGS = "additionalNamedProxySettings";
       String UPDATE = "updatePreferences";
       String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
       String SESSION_PROPERTIES = "sessionProperties";
@@ -249,6 +251,8 @@ public class SquirrelPreferences implements Serializable
 
 	/** Proxy settings. */
 	private ProxySettings _proxySettings = new ProxySettings();
+
+	private ArrayList<ProxySettings> _additionalNamedProxySettings = new ArrayList<>();
 
 	/** Show loaded drivers only in the Drivers window. */
 	private boolean _showLoadedDriversOnly;
@@ -755,9 +759,8 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public ProxySettings getProxySettings()
 	{
-		return (ProxySettings)_proxySettings.clone();
+		return _proxySettings;
 	}
-
 
 	public synchronized void setProxySettings(ProxySettings data)
 	{
@@ -771,7 +774,17 @@ public class SquirrelPreferences implements Serializable
 											oldValue, _proxySettings);
 	}
 
-   /**
+	public ProxySettings[] getAdditionalNamedProxySettings()
+	{
+		return _additionalNamedProxySettings.toArray(new ProxySettings[0]);
+	}
+
+	public void setAdditionalNamedProxySettings(ProxySettings[] additionalNamedProxySettings)
+	{
+		_additionalNamedProxySettings = new ArrayList<>(List.of(additionalNamedProxySettings));
+	}
+
+	/**
 	 * @return	whether only the loaded JDBC drivers are displayed in the
 	 *			Drivers window.
 	 */

@@ -39,8 +39,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -69,11 +71,13 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
+import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
 /**
@@ -130,10 +134,16 @@ public class AliasInternalFrame extends DialogWidget
 
 	private JCheckBox _chkSavePasswordEncrypted = new JCheckBox(SQLAliasPropType.encryptPassword.getI18nString());
 
-	private JCheckBox _chkReadOnly = new JCheckBox(SQLAliasPropType.readOnly.getI18nString());
-
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _btnAliasProps = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
+
+	private final JButton _btnChooseNonDefaultProxySettings = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.PROXY));
+	private final JLabel _lblNonDefaultProxySettings = new JLabel();
+
+
+	private JCheckBox _chkReadOnly = new JCheckBox(SQLAliasPropType.readOnly.getI18nString());
+
+
 	private AliasSheetOkListener _aliasSheetOkListener;
 
 
@@ -220,7 +230,6 @@ public class AliasInternalFrame extends DialogWidget
 		_chkConnectAtStartup.setSelected(_sqlAlias.isConnectAtStartup());
 		_chkSavePasswordEncrypted.setSelected(_sqlAlias.isEncryptPassword());
 		_chkReadOnly.setSelected(_sqlAlias.isReadOnly());
-		//_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
 		if (_maintType != AliasMaintenanceType.NEW)
 		{
@@ -235,9 +244,14 @@ public class AliasInternalFrame extends DialogWidget
 				_txtUrl.setText(driver.getUrl());
 			}
 		}
+
+      if(Main.getApplication().getNonDefaultProxySwitcher().hasValidNonDefaultProxySettings(_sqlAlias))
+		{
+			_lblNonDefaultProxySettings.setText(_sqlAlias.getNonDefaultProxySettingsName());
+		}
 	}
 
-   private String loadPassword()
+	private String loadPassword()
    {
       String password = null;
       try
@@ -312,6 +326,7 @@ public class AliasInternalFrame extends DialogWidget
 
 		alias.setAutoLogon(_chkAutoLogon.isSelected());
 		alias.setConnectAtStartup(_chkConnectAtStartup.isSelected());
+		alias.setNonDefaultProxySettingsName(StringUtils.isBlank(_lblNonDefaultProxySettings.getText()) ? null : _lblNonDefaultProxySettings.getText());
 	}
 
 	private void showNewDriverDialog()
@@ -331,6 +346,35 @@ public class AliasInternalFrame extends DialogWidget
 			Main.getApplication().showErrorDialog(ex);
 		}
 	}
+
+	private void chooseNonDefaultProxySettings()
+	{
+		ProxySettings[] buf = Main.getApplication().getSquirrelPreferences().getAdditionalNamedProxySettings();
+		if(0 == buf.length)
+		{
+			JOptionPane.showMessageDialog(_btnChooseNonDefaultProxySettings, s_stringMgr.getString("AliasInternalFrame.no.non.default.proxy.setting.defined"));
+			return;
+		}
+
+		JPopupMenu mnuChooseProxy = new JPopupMenu();
+
+		JMenuItem menuItem;
+
+      menuItem = new JMenuItem(s_stringMgr.getString("AliasInternalFrame.no.non.default.proxy"));
+      menuItem.addActionListener(e -> _lblNonDefaultProxySettings.setText(null));
+		mnuChooseProxy.add(menuItem);
+
+      for(ProxySettings ps : buf)
+      {
+			menuItem = new JMenuItem(ps.getSettingName());
+			menuItem.addActionListener(e -> _lblNonDefaultProxySettings.setText(ps.getSettingName()));
+         mnuChooseProxy.add(menuItem);
+      }
+
+		mnuChooseProxy.show(_btnChooseNonDefaultProxySettings, 0,0);
+
+   }
+
 
 	/**
 	 * Create user interface for this sheet.
@@ -411,8 +455,6 @@ public class AliasInternalFrame extends DialogWidget
 
 	private JPanel createDataEntryPanel()
 	{
-		_btnAliasProps.addActionListener(evt -> showDriverPropertiesDialog());
-
 		JPanel pnl = new JPanel(new GridBagLayout());
 
 		GridBagConstraints gbc;
@@ -468,11 +510,10 @@ public class AliasInternalFrame extends DialogWidget
 		pnl.add(createPasswordEncryptedPanel(), gbc);
 
       gbc = new GridBagConstraints(0,7, GridBagConstraints.REMAINDER, 1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      _btnAliasProps.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
-      pnl.add(_btnAliasProps, gbc);
+      pnl.add(createAliasPropsAndNonDefaultProxyPanel(), gbc);
 
 		gbc = new GridBagConstraints(0,8,GridBagConstraints.REMAINDER,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(getReadOnlyPanel(), gbc);
+		pnl.add(createReadOnlyPanel(), gbc);
 
 
       // make it grow when added
@@ -482,7 +523,29 @@ public class AliasInternalFrame extends DialogWidget
 		return pnl;
 	}
 
-   private JPanel createPasswordEncryptedPanel()
+	private JPanel createAliasPropsAndNonDefaultProxyPanel()
+	{
+		JPanel ret = new JPanel(new GridBagLayout());
+
+		GridBagConstraints gbc;
+
+		gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+		_btnAliasProps.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
+		_btnAliasProps.addActionListener(evt -> showDriverPropertiesDialog());
+		ret.add(_btnAliasProps, gbc);
+
+		gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,10,0,0), 0,0);
+		_btnChooseNonDefaultProxySettings.setToolTipText(s_stringMgr.getString("AliasInternalFrame.choose.non.default.proxy.setting"));
+		_btnChooseNonDefaultProxySettings.addActionListener(e -> chooseNonDefaultProxySettings());
+		ret.add(GUIUtils.styleAsToolbarButton(_btnChooseNonDefaultProxySettings, false, false, _btnAliasProps.getPreferredSize().height), gbc);
+
+		gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
+		ret.add(_lblNonDefaultProxySettings, gbc);
+
+		return ret;
+	}
+
+	private JPanel createPasswordEncryptedPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -500,7 +563,7 @@ public class AliasInternalFrame extends DialogWidget
       return ret;
    }
 
-   private JPanel getReadOnlyPanel()
+   private JPanel createReadOnlyPanel()
 	{
 		JPanel ret = new JPanel(new GridBagLayout());
 

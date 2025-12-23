@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
+import net.sourceforge.squirrel_sql.client.gui.db.NonDefaultProxySwitcher;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordManager;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
@@ -309,4 +310,6 @@ public interface IApplication
 	SyntaxManager getSyntaxManager();
 
    AliasKeyPasswordManager getAliasKeyPasswordManager();
+
+	NonDefaultProxySwitcher getNonDefaultProxySwitcher();
 }

@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
@@ -17,8 +18,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.SwingUtilities;
 
 /**
  * Handler used for connection internal frame actions.
@@ -142,6 +141,7 @@ class ConnectionInternalFrameHandler
       {
          final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, _props);
 
+         Main.getApplication().getNonDefaultProxySwitcher().maybeApplyNonDefaultProxySettings(_alias);
          cmd.executeConnectAndWaitForResultInBackground(t -> afterExecuteFinished(sqlDriver, cmd, t));
 
       }
@@ -154,6 +154,7 @@ class ConnectionInternalFrameHandler
 
    private void afterExecuteFinished(ISQLDriver sqlDriver, OpenConnectionCommand cmd, Throwable t)
    {
+      ISession createdSession = null;
       try
       {
          if(null != t)
@@ -202,7 +203,7 @@ class ConnectionInternalFrameHandler
             _callback.connected(conn);
             if(_createSession)
             {
-               createSession(sqlDriver, conn);
+               createdSession = createSession(sqlDriver, conn);
             }
             else
             {
@@ -214,6 +215,20 @@ class ConnectionInternalFrameHandler
       {
          _connectionInternalFrame.finishedCreatingConnection(false);
          _callback.errorOccurred(th, _connectWasCanceled);
+      }
+      finally
+      {
+         if(null != createdSession)
+         {
+            if(null != Main.getApplication().getSessionManager().getActiveSession())
+            {
+               Main.getApplication().getNonDefaultProxySwitcher().maybeApplyNonDefaultProxySettings(Main.getApplication().getSessionManager().getActiveSession().getAlias());
+            }
+            else
+            {
+               Main.getApplication().getNonDefaultProxySwitcher().allSessionsClosed();
+            }
+         }
       }
    }
 

@@ -23,29 +23,17 @@ import java.net.PasswordAuthentication;
 import java.util.Properties;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-/**
- * This class will apply the settings from a <TT>ProxySettings</TT>
- * object to a <TT>Properties</TT> object.
- *
- * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- */
+
 public class ProxyHandler
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ProxyHandler.class);
+	private final static ILogger s_log = LoggerController.createLogger(ProxyHandler.class);
 
-	public ProxyHandler()
-	{
-		super();
-	}
 
-	public void apply(IProxySettings proxy)
+	public static void apply(ProxySettings proxy)
 	{
 		Properties props = System.getProperties();
 
-		final boolean http = proxy.getHttpUseProxy();
-		if (http)
+      if (proxy.getHttpUseProxy())
 		{
 			applySetting(props, "proxySet", "true");
 			applySetting(props, "http.proxyHost", proxy.getHttpProxyServer());
@@ -78,8 +66,7 @@ public class ProxyHandler
 			Authenticator.setDefault(null);
 		}
 
-		final boolean socks = proxy.getSocksUseProxy();
-		if (socks)
+      if (proxy.getSocksUseProxy())
 		{
 			applySetting(props, "socksProxyHost", proxy.getSocksProxyServer());
 			applySetting(props, "socksProxyPort", proxy.getSocksProxyPort());
@@ -91,7 +78,7 @@ public class ProxyHandler
 		}
 	}
 
-	private void applySetting(Properties props, String key, String value)
+	private static void applySetting(Properties props, String key, String value)
 	{
 		if (value != null && value.length() > 0)
 		{

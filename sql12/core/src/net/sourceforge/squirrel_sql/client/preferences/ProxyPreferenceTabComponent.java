@@ -1,23 +1,18 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
-import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import org.apache.commons.lang3.StringUtils;
 
 /**
 * Created with IntelliJ IDEA.
@@ -26,208 +21,223 @@ import java.awt.event.ActionListener;
 * Time: 16:13
 * To change this template use File | Settings | File Templates.
 */
-final class ProxyPreferenceTabComponent extends JPanel
+public final class ProxyPreferenceTabComponent extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ProxyPreferenceTabComponent.class);
 
+   public static final String DEFAULT_PROXY_SETTINGS_NAME = "<Default>";
 
-   private JCheckBox _httpUseProxyChk = new JCheckBox(s_stringMgr.getString("ProxyPreferencesPanel.useproxy"));
-   private JLabel _httpProxyServerLabel = new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT);
-   private JTextField _httpProxyServer = new JTextField();
-   private JLabel _httpProxyPortLabel =
-      new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT);
-   private JTextField _httpProxyPort = new JTextField();
-   private JLabel _httpProxyUserLabel =
-      new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.user"), JLabel.RIGHT);
-   private JTextField _httpProxyUser = new JTextField();
-   private JLabel _httpProxyPasswordLabel =
-      new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.password"), JLabel.RIGHT);
-   private JPasswordField _httpProxyPassword = new JPasswordField();
-   private JLabel _httpNonProxyHostsLabel =
-      new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.noproxyfor"), JLabel.RIGHT);
-   private JTextField _httpNonProxyHosts = new JTextField();
-   private JCheckBox _socksUseProxyChk = new JCheckBox(s_stringMgr.getString("ProxyPreferencesPanel.useproxy"));
-   private JLabel _socksProxyServerLabel =
-      new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT);
-   private JTextField _socksProxyServer = new JTextField();
-   private JLabel _socksProxyPortLabel =
-      new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT);
-   private JTextField _socksProxyPort = new JTextField();
+   private final ProxySettingsPanel _pnl = new ProxySettingsPanel();
+   private ArrayList<ProxySettings> _additionalNamedProxySettings;
+   private boolean _dontReactToAdditionalNamedProxySettingsChange;
+   private ProxySettings _defaultProxySettings;
 
+   private ProxySettings _currentSettings;
 
    ProxyPreferenceTabComponent()
    {
-      super(new GridBagLayout());
-      createUserInterface();
+      setLayout(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15,10,10,10), 0,0);
+      add(_pnl, gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+      add(new JPanel(), gbc);
+
+      _pnl.httpUseProxyChk.addActionListener(e -> updateEnabled());
+      _pnl.socksUseProxyChk.addActionListener(e -> updateEnabled());
+
+      _pnl.cboAdditionalSettingsNames.addActionListener(e -> onCboAdditionalSettingsNamesChanged());
+      _pnl.btnAddProxySetting.addActionListener(e -> onAddNewSetting());
+      _pnl.btnRemoveProxySetting.addActionListener(e -> onDeleteSetting());
    }
 
-   void loadData(IApplication app, SquirrelPreferences prefs)
+   private void onDeleteSetting()
    {
-      final IProxySettings proxySettings = prefs.getProxySettings();
-
-      _httpUseProxyChk.setSelected(proxySettings.getHttpUseProxy());
-      _httpProxyServer.setText(proxySettings.getHttpProxyServer());
-      _httpProxyPort.setText(proxySettings.getHttpProxyPort());
-      _httpNonProxyHosts.setText(proxySettings.getHttpNonProxyHosts());
-      _httpProxyUser.setText(proxySettings.getHttpProxyUser());
-      _httpProxyPassword.setText(proxySettings.getHttpProxyPassword());
-
-      _socksUseProxyChk.setSelected(proxySettings.getSocksUseProxy());
-      _socksProxyServer.setText(proxySettings.getSocksProxyServer());
-      _socksProxyPort.setText(proxySettings.getSocksProxyPort());
-
-      updateControlStatus();
-   }
-
-   void applyChanges(SquirrelPreferences prefs)
-   {
-      final ProxySettings proxySettings = new ProxySettings();
-
-      proxySettings.setHttpUseProxy(_httpUseProxyChk.isSelected());
-      proxySettings.setHttpProxyServer(_httpProxyServer.getText());
-      proxySettings.setHttpProxyPort(_httpProxyPort.getText());
-      proxySettings.setHttpNonProxyHosts(_httpNonProxyHosts.getText());
-      proxySettings.setHttpProxyUser(_httpProxyUser.getText());
-
-      String password = new String(_httpProxyPassword.getPassword());
-      proxySettings.setHttpProxyPassword(password);
-
-      proxySettings.setSocksUseProxy(_socksUseProxyChk.isSelected());
-      proxySettings.setSocksProxyServer(_socksProxyServer.getText());
-      proxySettings.setSocksProxyPort(_socksProxyPort.getText());
-
-      prefs.setProxySettings(proxySettings);
-   }
-
-   private void updateControlStatus()
-   {
-      final boolean http = _httpUseProxyChk.isSelected();
-      _httpProxyServerLabel.setEnabled(http);
-      _httpProxyServer.setEnabled(http);
-      _httpProxyPortLabel.setEnabled(http);
-      _httpProxyPort.setEnabled(http);
-      _httpNonProxyHostsLabel.setEnabled(http);
-      _httpNonProxyHosts.setEnabled(http);
-      _httpProxyUserLabel.setEnabled(http);
-      _httpProxyUser.setEnabled(http);
-      _httpProxyPasswordLabel.setEnabled(http);
-      _httpProxyPassword.setEnabled(http);
-
-      final boolean socks = _socksUseProxyChk.isSelected();
-      _socksProxyServerLabel.setEnabled(socks);
-      _socksProxyServer.setEnabled(socks);
-      _socksProxyPortLabel.setEnabled(socks);
-      _socksProxyPort.setEnabled(socks);
-   }
-
-   private void createUserInterface()
-   {
-      final GridBagConstraints gbc = new GridBagConstraints();
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.insets = new Insets(4, 4, 4, 4);
-      gbc.gridx = 0;
-      gbc.gridy = 0;
-      gbc.weightx = 1;
-      add(createHTTPPanel(), gbc);
-      ++gbc.gridy;
-      add(createSOCKSPanel(), gbc);
-
-      final ActionListener lis = new MyActionHandler();
-      _httpUseProxyChk.addActionListener(lis);
-      _socksUseProxyChk.addActionListener(lis);
-   }
-
-   private JPanel createHTTPPanel()
-   {
-
-      JPanel pnl = new JPanel(new GridBagLayout());
-      pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("ProxyPreferencesPanel.httpproxy")));
-
-      final GridBagConstraints gbc = new GridBagConstraints();
-      gbc.anchor = GridBagConstraints.WEST;
-      gbc.insets = new Insets(4, 4, 4, 4);
-      gbc.gridx = 0;
-      gbc.gridy = 0;
-      pnl.add(_httpUseProxyChk, gbc);
-
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      ++gbc.gridx;
-      pnl.add(_httpProxyServerLabel, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_httpProxyPortLabel, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_httpProxyUserLabel, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_httpProxyPasswordLabel, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_httpNonProxyHostsLabel, gbc);
-
-      ++gbc.gridy;
-      --gbc.gridx;
-      gbc.gridwidth = GridBagConstraints.REMAINDER;
-      pnl.add(new MultipleLineLabel(s_stringMgr.getString("ProxyPreferencesPane.notes")), gbc);
-      gbc.gridwidth = 1;
-      ++gbc.gridx;
-
-      ++gbc.gridx;
-      gbc.gridy = 0;
-      gbc.weightx = 1;
-      pnl.add(_httpProxyServer, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_httpProxyPort, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_httpProxyUser, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_httpProxyPassword, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_httpNonProxyHosts, gbc);
-
-      return pnl;
-   }
-
-   private JPanel createSOCKSPanel()
-   {
-      JPanel pnl = new JPanel(new GridBagLayout());
-      pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("ProxyPreferencesPanel.socksproxy")));
-
-      final GridBagConstraints gbc = new GridBagConstraints();
-      gbc.anchor = GridBagConstraints.WEST;
-      gbc.insets = new Insets(4, 4, 4, 4);
-      gbc.gridx = 0;
-      gbc.gridy = 0;
-      pnl.add(_socksUseProxyChk, gbc);
-
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      ++gbc.gridx;
-      pnl.add(_socksProxyServerLabel, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_socksProxyPortLabel, gbc);
-
-      ++gbc.gridx;
-      gbc.gridy = 0;
-      gbc.weightx = 1;
-      pnl.add(_socksProxyServer, gbc);
-
-      ++gbc.gridy;
-      pnl.add(_socksProxyPort, gbc);
-
-      return pnl;
-   }
-
-   private final class MyActionHandler implements ActionListener
-   {
-      public void actionPerformed(ActionEvent evt)
+      if(_currentSettings == _defaultProxySettings)
       {
-         updateControlStatus();
+         JOptionPane.showMessageDialog(this, s_stringMgr.getString("ProxyPreferenceTabComponent.cannot.delete.default.proxy.settings"));
+         return;
       }
+
+      int indexOfSettingToDelete = _additionalNamedProxySettings.indexOf(_currentSettings);
+
+      if(-1 == indexOfSettingToDelete)
+      {
+         throw new IllegalStateException("Must contain settings of name " + _currentSettings.getSettingName());
+      }
+
+      _pnl.cboAdditionalSettingsNames.removeItemAt(indexOfSettingToDelete + 1); // + 1 because of the default setting name
+
+      _additionalNamedProxySettings.remove(indexOfSettingToDelete);
+      if(indexOfSettingToDelete + 1 < _additionalNamedProxySettings.size())
+      {
+         _currentSettings = _additionalNamedProxySettings.get(indexOfSettingToDelete + 1);
+      }
+      else
+      {
+         _currentSettings = _additionalNamedProxySettings.get(indexOfSettingToDelete + 1 - 1);
+      }
+
+      try(AutoCloseable ignored = () -> _dontReactToAdditionalNamedProxySettingsChange = false)
+      {
+         _dontReactToAdditionalNamedProxySettingsChange = true;
+         _pnl.cboAdditionalSettingsNames.setSelectedItem(_currentSettings.getSettingName());
+      }
+      catch(Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+
+      applyCurrentSettingsToControls();
    }
+
+   private void onAddNewSetting()
+   {
+      ProxySettingsAddCtrl proxySettingsAddCtrl =
+            new ProxySettingsAddCtrl(
+                  _additionalNamedProxySettings.stream().map(ps -> ps.getSettingName()).toList(),
+                  GUIUtils.getOwningWindow(this));
+
+      if(false == proxySettingsAddCtrl.isOk())
+      {
+         return;
+      }
+
+      applyChangesToCurrentSettings();
+
+      _currentSettings = new ProxySettings();
+      _currentSettings.setSettingName(proxySettingsAddCtrl.getNewSettingsName());
+
+      _additionalNamedProxySettings.add(_currentSettings);
+
+      try(AutoCloseable ignored = () -> _dontReactToAdditionalNamedProxySettingsChange = false)
+      {
+         _dontReactToAdditionalNamedProxySettingsChange = true;
+         _pnl.cboAdditionalSettingsNames.addItem(_currentSettings.getSettingName());
+         _pnl.cboAdditionalSettingsNames.setSelectedItem(_currentSettings.getSettingName());
+      }
+      catch(Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+
+      applyCurrentSettingsToControls();
+   }
+
+   private void onCboAdditionalSettingsNamesChanged()
+   {
+      if(_dontReactToAdditionalNamedProxySettingsChange)
+      {
+         return;
+      }
+
+      applyChangesToCurrentSettings();
+
+      String newSelectedItem = (String) _pnl.cboAdditionalSettingsNames.getSelectedItem();
+
+      if(StringUtils.equals(DEFAULT_PROXY_SETTINGS_NAME, newSelectedItem))
+      {
+         _currentSettings = _defaultProxySettings;
+      }
+      else
+      {
+         _currentSettings =
+               _additionalNamedProxySettings.stream().filter(ps -> StringUtils.equals(ps.getSettingName(), newSelectedItem)).findFirst().orElseThrow();
+      }
+
+      applyCurrentSettingsToControls();
+   }
+
+   void loadData(SquirrelPreferences prefs)
+   {
+      _defaultProxySettings = Utilities.cloneObject(prefs.getProxySettings());
+      _currentSettings = _defaultProxySettings;
+
+      applyCurrentSettingsToControls();
+
+      _additionalNamedProxySettings = new ArrayList<>(List.of(Utilities.cloneObject(prefs.getAdditionalNamedProxySettings())));
+
+      try(AutoCloseable ignored = () -> _dontReactToAdditionalNamedProxySettingsChange = false)
+      {
+         _dontReactToAdditionalNamedProxySettingsChange = true;
+         _pnl.cboAdditionalSettingsNames.addItem(DEFAULT_PROXY_SETTINGS_NAME);
+         for(ProxySettings additionalNamedProxySetting : _additionalNamedProxySettings)
+         {
+            _pnl.cboAdditionalSettingsNames.addItem(additionalNamedProxySetting.getSettingName());
+         }
+
+         _pnl.cboAdditionalSettingsNames.setSelectedItem(DEFAULT_PROXY_SETTINGS_NAME);
+      }
+      catch(Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+
+      updateEnabled();
+   }
+
+   private void applyCurrentSettingsToControls()
+   {
+      _pnl.httpUseProxyChk.setSelected(_currentSettings.getHttpUseProxy());
+      _pnl.httpProxyServer.setText(_currentSettings.getHttpProxyServer());
+      _pnl.httpProxyPort.setText(_currentSettings.getHttpProxyPort());
+      _pnl.httpNonProxyHosts.setText(_currentSettings.getHttpNonProxyHosts());
+      _pnl.httpProxyUser.setText(_currentSettings.getHttpProxyUser());
+      _pnl.httpProxyPassword.setText(_currentSettings.getHttpProxyPassword());
+
+      _pnl.socksUseProxyChk.setSelected(_currentSettings.getSocksUseProxy());
+      _pnl.socksProxyServer.setText(_currentSettings.getSocksProxyServer());
+      _pnl.socksProxyPort.setText(_currentSettings.getSocksProxyPort());
+
+      updateEnabled();
+   }
+
+   void applyChangesToSquirrelPrefs(SquirrelPreferences prefs)
+   {
+      applyChangesToCurrentSettings();
+
+      prefs.setProxySettings(_defaultProxySettings);
+      prefs.setAdditionalNamedProxySettings(_additionalNamedProxySettings.toArray(new ProxySettings[0]));
+   }
+
+   private void applyChangesToCurrentSettings()
+   {
+      _currentSettings.setHttpUseProxy(_pnl.httpUseProxyChk.isSelected());
+      _currentSettings.setHttpProxyServer(_pnl.httpProxyServer.getText());
+      _currentSettings.setHttpProxyPort(_pnl.httpProxyPort.getText());
+      _currentSettings.setHttpNonProxyHosts(_pnl.httpNonProxyHosts.getText());
+      _currentSettings.setHttpProxyUser(_pnl.httpProxyUser.getText());
+
+      String password = new String(_pnl.httpProxyPassword.getPassword());
+      _currentSettings.setHttpProxyPassword(password);
+
+      _currentSettings.setSocksUseProxy(_pnl.socksUseProxyChk.isSelected());
+      _currentSettings.setSocksProxyServer(_pnl.socksProxyServer.getText());
+      _currentSettings.setSocksProxyPort(_pnl.socksProxyPort.getText());
+   }
+
+   private void updateEnabled()
+   {
+      final boolean http = _pnl.httpUseProxyChk.isSelected();
+      _pnl.httpProxyServerLabel.setEnabled(http);
+      _pnl.httpProxyServer.setEnabled(http);
+      _pnl.httpProxyPortLabel.setEnabled(http);
+      _pnl.httpProxyPort.setEnabled(http);
+      _pnl.httpNonProxyHostsLabel.setEnabled(http);
+      _pnl.httpNonProxyHosts.setEnabled(http);
+      _pnl.httpProxyUserLabel.setEnabled(http);
+      _pnl.httpProxyUser.setEnabled(http);
+      _pnl.httpProxyPasswordLabel.setEnabled(http);
+      _pnl.httpProxyPassword.setEnabled(http);
+
+      final boolean socks = _pnl.socksUseProxyChk.isSelected();
+      _pnl.socksProxyServerLabel.setEnabled(socks);
+      _pnl.socksProxyServer.setEnabled(socks);
+      _pnl.socksProxyPortLabel.setEnabled(socks);
+      _pnl.socksProxyPort.setEnabled(socks);
+   }
+
 }

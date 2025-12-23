@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.Serializable;
 import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -28,8 +29,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import java.io.Serializable;
 
 /**
  * This represents a Database alias which is a description of the means
@@ -88,6 +87,8 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
    private long _aliasVersionTimeMills = 0;
 
    private boolean _readOnly;
+
+   private String _nonDefaultProxySettingsName;
 
    public SQLAlias()
    {
@@ -161,6 +162,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
          setAutoLogon(sqlAlias.isAutoLogon());
          setUseDriverProperties(sqlAlias.getUseDriverProperties());
          setDriverProperties(sqlAlias.getDriverPropertiesClone());
+         setNonDefaultProxySettingsName(sqlAlias.getNonDefaultProxySettingsName());
          setAliasVersionTimeMills(sqlAlias.getAliasVersionTimeMills());
          _schemaProperties = Utilities.cloneObject(sqlAlias._schemaProperties, getClass().getClassLoader());
          _schemaProperties.acceptAliasVersioner(_versioner);
@@ -480,7 +482,7 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.client.gui.db.SQLAlias#setSchemaProperties(net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties)
+    * @see SQLAlias#setSchemaProperties(SQLAliasSchemaProperties)
     */
    public void setSchemaProperties(SQLAliasSchemaProperties schemaProperties)
    {
@@ -511,4 +513,14 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
 		_connectionProperties = connectionProperties;
       _connectionProperties.acceptAliasVersioner(_versioner);
 	}
+
+   public void setNonDefaultProxySettingsName(String nonDefaultProxySettingsName)
+   {
+      _nonDefaultProxySettingsName = nonDefaultProxySettingsName;
+   }
+
+   public String getNonDefaultProxySettingsName()
+   {
+      return _nonDefaultProxySettingsName;
+   }
 }

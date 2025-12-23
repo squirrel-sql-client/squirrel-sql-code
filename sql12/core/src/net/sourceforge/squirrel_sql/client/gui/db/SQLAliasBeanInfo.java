@@ -49,14 +49,9 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 		String SCHEMA_PROPERTIES = "schemaProperties";
 		String COLOR_PROPERTIES = "colorProperties";
 		String CONNECTION_PROPERTIES = "connectionProperties";
+		String NON_DEFAULT_PROXY_SETTINGS_NAME = "nonDefaultProxySettingsName";
 	}
 
-	/**
-	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
-	 * getPropertyDescriptors().
-	 * 
-	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
-	 */
 	@Override
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
@@ -79,7 +74,8 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 					new PropertyDescriptor(IPropertyNames.ALIAS_VERSION_TIME_MILLIS, SQLAlias.class, "getAliasVersionTimeMills", "setAliasVersionTimeMills"),
 					new PropertyDescriptor(IPropertyNames.SCHEMA_PROPERTIES, SQLAlias.class, "getSchemaProperties","setSchemaProperties"),
 					new PropertyDescriptor(IPropertyNames.COLOR_PROPERTIES, SQLAlias.class, "getColorProperties","setColorProperties"),
-					new PropertyDescriptor(IPropertyNames.CONNECTION_PROPERTIES, SQLAlias.class, "getConnectionProperties","setConnectionProperties")
+					new PropertyDescriptor(IPropertyNames.CONNECTION_PROPERTIES, SQLAlias.class, "getConnectionProperties","setConnectionProperties"),
+					new PropertyDescriptor(IPropertyNames.NON_DEFAULT_PROXY_SETTINGS_NAME, SQLAlias.class, "getNonDefaultProxySettingsName","setNonDefaultProxySettingsName")
 			};
 			return result;
 		}

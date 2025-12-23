@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.LogPanel;
 import net.sourceforge.squirrel_sql.client.gui.MemoryPanel;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordStatusBarPanel;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.ProxyStatusBarPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
 
@@ -43,6 +44,7 @@ public class MainFrameStatusBar extends JPanel
 	private final GridBagConstraints _gbc = new GridBagConstraints();
 	private JTextField _textLbl = new JTextField();
    private AliasKeyPasswordStatusBarPanel _aliasKeyPasswordStatusBarPanel;
+   private ProxyStatusBarPanel _proxyStatusBarPanel;
 
 
    public MainFrameStatusBar(IApplication app)
@@ -72,6 +74,8 @@ public class MainFrameStatusBar extends JPanel
 		_gbc.insets.left = 2;
 
 
+      _proxyStatusBarPanel = new ProxyStatusBarPanel();
+      addJComponent(_proxyStatusBarPanel);
       _aliasKeyPasswordStatusBarPanel = new AliasKeyPasswordStatusBarPanel();
       addJComponent(_aliasKeyPasswordStatusBarPanel);
 		addJComponent(new LogPanel(app));
@@ -115,5 +119,10 @@ public class MainFrameStatusBar extends JPanel
    public AliasKeyPasswordStatusBarPanel getAliasKeyPasswordStatusBarPanel()
    {
       return _aliasKeyPasswordStatusBarPanel;
+   }
+
+   public ProxyStatusBarPanel getProxyStatusBarPanel()
+   {
+      return _proxyStatusBarPanel;
    }
 }

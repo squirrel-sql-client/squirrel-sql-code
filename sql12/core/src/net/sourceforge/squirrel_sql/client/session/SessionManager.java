@@ -20,6 +20,17 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -38,18 +49,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.SwingUtilities;
-import javax.swing.event.EventListenerList;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This class manages sessions.
@@ -276,6 +275,11 @@ public class SessionManager
       finally
       {
          _inCloseSession.remove(session.getIdentifier());
+
+         if(null == _activeSession)
+         {
+            Main.getApplication().getNonDefaultProxySwitcher().allSessionsClosed();
+         }
       }
 
       return false;
@@ -397,14 +401,16 @@ public class SessionManager
    {
       Object[] listeners = listenerList.getListenerList();
       SessionEvent evt = null;
-      for (int i = listeners.length - 2; i >= 0; i -= 2)
+      for(int i = listeners.length - 2; i >= 0; i -= 2)
       {
-         if (listeners[i] == ISessionListener.class)
+         if(listeners[i] == ISessionListener.class)
          {
             // Lazily create the event:
-            if (evt == null)
+            if(evt == null)
+            {
                evt = new SessionEvent(session);
-            ((ISessionListener)listeners[i + 1]).sessionClosed(evt);
+            }
+            ((ISessionListener) listeners[i + 1]).sessionClosed(evt);
          }
       }
    }
@@ -466,6 +472,8 @@ public class SessionManager
             ((ISessionListener)listeners[i + 1]).sessionActivated(evt);
          }
       }
+
+      Main.getApplication().getNonDefaultProxySwitcher().maybeApplyNonDefaultProxySettings(session.getAlias());
    }
 
    /**

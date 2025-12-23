@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
+import net.sourceforge.squirrel_sql.client.gui.db.NonDefaultProxySwitcher;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordManager;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
@@ -106,7 +107,6 @@ import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -243,6 +243,9 @@ public class Application implements IApplication
 	private SyntaxManager _syntaxManager = new SyntaxManager();
 
    private AliasKeyPasswordManager _aliasKeyPasswordManager = new AliasKeyPasswordManager();
+
+	private NonDefaultProxySwitcher _nonDefaultProxySwitcher = new NonDefaultProxySwitcher();
+
 
    public Application()
 	{
@@ -1070,9 +1073,9 @@ public class Application implements IApplication
 			DriverManager.setLoginTimeout(_globalPreferences.getLoginTimeout());
 		}
 
-		if (propName == null || propName == SquirrelPreferences.IPropertyNames.PROXY)
+		if(propName == null || propName.equals(SquirrelPreferences.IPropertyNames.PROXY))
 		{
-			new ProxyHandler().apply(_globalPreferences.getProxySettings());
+			getNonDefaultProxySwitcher().updateDefaultProxyWhenItsDue();
 		}
 	}
 
@@ -1545,4 +1548,10 @@ public class Application implements IApplication
    {
       return _aliasKeyPasswordManager;
    }
+
+	@Override
+	public NonDefaultProxySwitcher getNonDefaultProxySwitcher()
+	{
+		return _nonDefaultProxySwitcher;
+	}
 }

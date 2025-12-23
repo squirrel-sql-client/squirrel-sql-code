@@ -18,11 +18,10 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Component;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.awt.Component;
 
 class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 {
@@ -53,7 +52,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 		_app = app;
 
-		((ProxyPreferenceTabComponent)getPanelComponent()).loadData(_app, _app.getSquirrelPreferences());
+		((ProxyPreferenceTabComponent)getPanelComponent()).loadData(_app.getSquirrelPreferences());
 	}
 
    public void uninitialize(IApplication app)
@@ -72,7 +71,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 	public void applyChanges()
 	{
-		_myPanel.applyChanges(_app.getSquirrelPreferences());
+		_myPanel.applyChangesToSquirrelPrefs(_app.getSquirrelPreferences());
 	}
 
 	public String getTitle()
