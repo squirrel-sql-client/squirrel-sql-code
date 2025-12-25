@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/81
+  Bookmarks Plugin: A bookmark's statement can be run from within the SQL editor use @runbookmark <bookmarkName>
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/75
   The options "Allow to run all SQLs in editor" and "Allow to run a SQL in all open Sessions"
   are now switched off by default. See menu File --> Global Preferences tab SQL.

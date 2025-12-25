@@ -43,13 +43,19 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Main entry into the SQL Bookmark plugin.
@@ -63,64 +69,40 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class SQLBookmarkPlugin extends DefaultSessionPlugin
 {
    private final static ILogger s_log = LoggerController.createLogger(SQLBookmarkPlugin.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLBookmarkPlugin.class);
 
-   private ArrayList<ISQLPanelAPI> _sqlPanelAPIsListeningForBookmarks = new ArrayList<>();
 
    private static final String BOOKMARKS_PROPS_FILE = "bookmarks.properties";
 
    static final String BOOKMARK_PROP_DEFAULT_MARKS_IN_POPUP = "squirrelMarksInPopup";
    static final String BOOKMARK_PROP_USE_CONTAINS_TO_FILTER_BOOKMARKS = "useContainsToFilterBookmarks";
 
-   private Properties _boomarkProps;
-
    private interface IMenuResourceKeys
    {
       String BOOKMARKS = "bookmarks";
    }
 
-   public static final String RESOURCE_PATH =
-      "net.sourceforge.squirrel_sql.plugins.sqlbookmark.sqlbookmark";
+   public static final String RESOURCE_PATH = "net.sourceforge.squirrel_sql.plugins.sqlbookmark.sqlbookmark";
 
-   private static ILogger logger =
-      LoggerController.createLogger(SQLBookmarkPlugin.class);
+   private Properties _bookmarkProps;
 
 	private IResources _resources;
 
-	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
-	/**
-	 * @param resourcesFactory the resourcesFactory to set
-	 */
-	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
-	{
-		_resourcesFactory = resourcesFactory;
-	}
+   private ArrayList<ISQLPanelAPI> _sqlPanelAPIsListeningForBookmarks = new ArrayList<>();
 
 
-   /**
-    * The bookmark menu
-    */
-   private JMenu menu;
+   private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
 
-   /**
-    * All the current bookmarkManager
-    */
-   private BookmarkManager bookmarkManager;
+   private JMenu _menu;
 
-   /**
-    * Returns the plugin version.
-    *
-    * @return the plugin version.
-    */
+   private BookmarkManager _bookmarkManager;
+
+
    public String getVersion()
    {
       return "2.0.1";
    }
 
-   /**
-    * Returns the authors name.
-    *
-    * @return the authors name.
-    */
    public String getAuthor()
    {
       return "Joseph Mocker";
@@ -131,99 +113,44 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       return "Gerd Wagner";
    }
 
-
-   /**
-    * Return the internal name of this plugin.
-    *
-    * @return the internal name of this plugin.
-    */
    public String getInternalName()
    {
       return "sqlbookmark";
    }
 
-   /**
-    * Return the descriptive name of this plugin.
-    *
-    * @return the descriptive name of this plugin.
-    */
    public String getDescriptiveName()
    {
       return "SQL Bookmark Plugin";
    }
 
-   /**
-    * Returns the name of the Help file for the plugin.
-    *
-    * @return the help file name.
-    */
    public String getHelpFileName()
    {
       return "doc/readme.html";
    }
 
-   /**
-    * Returns the name of the Help file for the plugin.
-    *
-    * @return the license file name.
-    */
    public String getLicenceFileName()
    {
       return "licence.txt";
    }
 
-   /**
-    * Returns the name of the change log for the plugin. This should
-    * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-    * directory.
-    *
-    * @return the changelog file name or <TT>null</TT> if plugin doesn't have
-    * a change log.
-    */
    public String getChangeLogFileName()
    {
       return "changes.txt";
    }
 
-   /**
-    * Return the plugin resources. Used by other classes.
-    *
-    * @return plugin resources.
-    */
-   protected IResources getResources()
+   IResources getResources()
    {
       return _resources;
    }
 
-   /**
-    * Get and return a string from the plugin resources.
-    *
-    * @param name name of the resource string to return.
-    * @return resource string.
-    */
-   protected String getResourceString(String name)
+   String getResourceString(String name)
    {
       return _resources.getString(name);
    }
 
-   /**
-    * Returns a handle to the current bookmark manager.
-    *
-    * @return the bookmark manager.
-    */
    BookmarkManager getBookmarkManager()
    {
-      return bookmarkManager;
-   }
-
-   /**
-    * Set the bookmark manager.
-    *
-    * @param bookmarks new manager to register.
-    */
-   protected void setBookmarkManager(BookmarkManager bookmarks)
-   {
-      this.bookmarkManager = bookmarks;
+      return _bookmarkManager;
    }
 
 
@@ -232,9 +159,6 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       return new BookmarksExternalServiceImpl(this);
    }
 
-   /**
-    * Initialize this plugin.
-    */
    public synchronized void initialize() throws PluginException
    {
       super.initialize();
@@ -244,17 +168,17 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       // Load resources such as menu items, etc...
       _resources = _resourcesFactory.createResource(RESOURCE_PATH, this);
 
-      bookmarkManager = new BookmarkManager(this);
+      _bookmarkManager = new BookmarkManager(this);
       // Load plugin preferences.
       try
       {
-         bookmarkManager.load();
+         _bookmarkManager.load();
       }
       catch (IOException e)
       {
          if (!(e instanceof FileNotFoundException))
          {
-            logger.error("Problem loading bookmarkManager", e);
+            s_log.error("Problem loading bookmarkManager", e);
          }
       }
 
@@ -330,6 +254,55 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       sqlPanelAPI.addToToolsPopUp("bookmarkadd", coll.get(AddBookmarkAction.class));
       sqlPanelAPI.addToToolsPopUp("bookmarkedit", coll.get(EditBookmarksAction.class));
       sqlPanelAPI.addToToolsPopUp("bookmarkselect", registerBookmarkSelectKeyStroke(sqlPanelAPI));
+
+      sqlPanelAPI.addSQLExecutionListener(new SQLExecutionAdapter(){
+         @Override
+         public String statementExecuting(String sql)
+         {
+            return onStatementExecuting(sql, sqlPanelAPI.getSession());
+         }
+      });
+   }
+
+   private String onStatementExecuting(String sql, ISession session)
+   {
+      if(false == RunBookmarkTagHandler.scriptContainsRunBookmarkTag(sql))
+      {
+         return sql;
+      }
+
+      IQueryTokenizer tokenizer = session.getNewQueryTokenizer();
+
+      tokenizer.setScriptToTokenize(sql);
+
+      StringBuilder sb = new StringBuilder();
+
+      boolean changed = false;
+      while(tokenizer.hasQuery())
+      {
+         QueryHolder query = tokenizer.nextQuery();
+         String trimmedSql = StringUtils.trim(query.getQuery());
+
+         if(RunBookmarkTagHandler.requiresToRunBookmark(trimmedSql))
+         {
+            sb.append(RunBookmarkTagHandler.toBookmarkSql(trimmedSql, _bookmarkManager)).append(tokenizer.getSQLStatementSeparator());
+            changed = true;
+         }
+         else
+         {
+            sb.append(query.getOriginalQuery()).append(tokenizer.getSQLStatementSeparator());
+         }
+      }
+
+
+      if(changed)
+      {
+         return sb.toString();
+      }
+      else
+      {
+         return sql;
+      }
    }
 
    private CompleteBookmarkAction registerBookmarkSelectKeyStroke(ISQLPanelAPI sqlPaneAPI)
@@ -350,12 +323,12 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
    {
       ActionCollection coll = getApplication().getActionCollection();
 
-      menu.removeAll();
-      _resources.addToMenu(coll.get(AddBookmarkAction.class), menu);
-      _resources.addToMenu(coll.get(EditBookmarksAction.class), menu);
-      menu.add(new JSeparator());
+      _menu.removeAll();
+      _resources.addToMenu(coll.get(AddBookmarkAction.class), _menu);
+      _resources.addToMenu(coll.get(EditBookmarksAction.class), _menu);
+      _menu.add(new JSeparator());
 
-      for (Iterator<Bookmark> i = bookmarkManager.iterator(); i.hasNext();)
+      for (Iterator<Bookmark> i = _bookmarkManager.iterator(); i.hasNext();)
       {
          Object o = i.next();
          Bookmark bookmark = (Bookmark) o;
@@ -388,9 +361,9 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
    {
       IApplication app = getApplication();
 
-      menu = _resources.createMenu(IMenuResourceKeys.BOOKMARKS);
+      _menu = _resources.createMenu(IMenuResourceKeys.BOOKMARKS);
 
-      app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+      app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _menu);
    }
 
    /**
@@ -406,7 +379,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       JMenuItem item = new JMenuItem(coll.get(RunBookmarkAction.class));
       item.setText(bookmark.getName());
 
-      menu.add(item);
+      _menu.add(item);
    }
 
    /**
@@ -450,23 +423,23 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       FileInputStream fis = null;
       try
       {
-         if(null == _boomarkProps)
+         if(null == _bookmarkProps)
          {
             FileWrapper usf = getPluginUserSettingsFolder();
             FileWrapper bookmarkPropsFile = fileWrapperFactory.create(usf, BOOKMARKS_PROPS_FILE);
 
             if(false == bookmarkPropsFile.exists())
             {
-               _boomarkProps = new Properties();
+               _bookmarkProps = new Properties();
             }
             else
             {
                fis = bookmarkPropsFile.getFileInputStream();
-               _boomarkProps = new Properties();
-               _boomarkProps.load(fis);
+               _bookmarkProps = new Properties();
+               _bookmarkProps.load(fis);
             }
          }
-         return _boomarkProps;
+         return _bookmarkProps;
       }
       catch (IOException e)
       {
@@ -488,7 +461,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
        FileOutputStream fos = null;
       try
       {
-         if(null == _boomarkProps)
+         if(null == _bookmarkProps)
          {
             return;
          }
@@ -496,7 +469,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
          FileWrapper usf = getPluginUserSettingsFolder();
          FileWrapper boomarkPropsFile = fileWrapperFactory.create(usf, BOOKMARKS_PROPS_FILE);
          fos = boomarkPropsFile.getFileOutputStream();
-         _boomarkProps.store(fos, "Bookmark properties");
+         _bookmarkProps.store(fos, "Bookmark properties");
       } catch (IOException e) {
           throw new RuntimeException(e);
       } finally {

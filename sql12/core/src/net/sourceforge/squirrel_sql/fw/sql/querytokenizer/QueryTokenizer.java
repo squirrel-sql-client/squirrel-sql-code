@@ -18,6 +18,12 @@ package net.sourceforge.squirrel_sql.fw.sql.querytokenizer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
@@ -28,13 +34,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class QueryTokenizer implements IQueryTokenizer
 {
@@ -166,8 +165,8 @@ public class QueryTokenizer implements IQueryTokenizer
 
        script = script.replace('\r', ' ');
 
-       StringBuffer curQuery = new StringBuffer();
-       StringBuffer curOriginalQuery = new StringBuffer();
+       StringBuilder curQuery = new StringBuilder();
+       StringBuilder curOriginalQuery = new StringBuilder();
 
        SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(script, _lineCommentBegin, _removeMultiLineComment, _removeLineComment);
        ChangeStatementSeparatorSupport changeStatementSeparatorSupport = new ChangeStatementSeparatorSupport(queryTokenizePurpose, script, _lineCommentBegin);

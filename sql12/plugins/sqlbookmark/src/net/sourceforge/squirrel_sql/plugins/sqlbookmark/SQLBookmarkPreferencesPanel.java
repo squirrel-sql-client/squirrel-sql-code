@@ -80,9 +80,10 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       pnlSouth.add(createViewAsTreePanel(), gbc);
 
-      gbc = new GridBagConstraints(1,0,1,3,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
-      pnlSouth.add(new JPanel(), gbc);
-
+      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      JLabel lblRunBookmark = new JLabel(s_stringMgr.getString("sqlbookmark.note.runbookmark"));
+      lblRunBookmark.setToolTipText(s_stringMgr.getString("sqlbookmark.note.runbookmark.tooltipp"));
+      pnlSouth.add(lblRunBookmark, gbc);
 
       return pnlSouth;
    }
