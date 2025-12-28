@@ -23,6 +23,21 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
@@ -35,7 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Cl
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindResultColumnAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.ReRunChooserCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
@@ -64,22 +79,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 {
@@ -139,6 +138,10 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private List<ResultTabCloseListener> _resultTabCloseListenerList = new ArrayList<>();
 
+   private ReRunChooserCtrl _reRunChooserCtrl;
+
+   private RerunWithTimerRepeatsManager _rerunWithTimerRepeatsManager;
+
    /**
     * Ctor.
     *
@@ -158,6 +161,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    {
       _resultTabListener = resultTabListener;
       _session = session;
+      _reRunChooserCtrl = new ReRunChooserCtrl(session);
+      _rerunWithTimerRepeatsManager = new RerunWithTimerRepeatsManager();
 
       _queryInfoPanel = new QueryInfoPanel(_session);
       _sqlResultExecuterPanelFacade = sqlResultExecuterPanelFacade;
@@ -381,6 +386,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _resultTabCloseListenerList.add(l);
    }
 
+   @Override
+   public void removeResultTabCloseListener(ResultTabCloseListener l)
+   {
+      _resultTabCloseListenerList.remove(l);
+   }
+
    public void disposeTab()
    {
       if (_metaDataDataSetViewerFindHandler != null)
@@ -438,10 +449,22 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
     */
    public void reRunSQL()
    {
-      _resultTabListener.rerunSQL(_exInfo.getQueryHolder().getOriginalQuery(), ResultTab.this);
+      reRunSQLIntern();
    }
-    
-	/**
+
+   @Override
+   public void reRunSqlWithTimerRepeats(int repeatSeconds)
+   {
+      _rerunWithTimerRepeatsManager.startTimerRepeats(repeatSeconds, this, _reRunChooserCtrl);
+   }
+
+   void reRunSQLIntern()
+   {
+      _resultTabListener.rerunSQL(_exInfo.getQueryHolder().getOriginalQuery(), this);
+   }
+
+
+   /**
 	 * Session properties have changed so update GUI if required.
 	 *
 	 * @param	propertyName	Name of property that has changed.
@@ -600,7 +623,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       ret.add(_readMoreResultsHandler.getLoadingLabel(),gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,10,0,0), 0,0);
-      ret.add(new TabButton(getRerunCurrentSQLResultTabAction()), gbc);
+      ret.add(_reRunChooserCtrl.getComponent(), gbc);
 
       _showCellDetailCtrl = new ShowCellDetailCtrl(this);
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2,2,0,0), 0,0);
@@ -632,16 +655,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       return ret;
    }
 
-   private RerunCurrentSQLResultTabAction getRerunCurrentSQLResultTabAction()
-   {
-	   RerunCurrentSQLResultTabAction rtn = new RerunCurrentSQLResultTabAction(this);
-	   
-	   rtn.setSQLPanel( _session.getSQLPanelAPIOfActiveSessionWindow() );
- 
-	   return rtn;
-   }
-
-
    @Override
    public void toggleShowFindPanel()
    {
@@ -666,8 +679,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       setSQLResultTabSelected();
       return _resultDataSetViewerFindHandler.getDataSetViewerFindRemoteControlOrNull();
    }
-
-
 
    @Override
    public void findColumn()
@@ -811,5 +822,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          Main.getApplication().getSessionManager().fireResultTabOfOpenSessionFinalized(_session.getIdentifier());
 
       }
+   }
+
+   @Override
+   public void wasReplacedBy(ResultTab newResultTab)
+   {
+      newResultTab._rerunWithTimerRepeatsManager = _rerunWithTimerRepeatsManager;
+      _rerunWithTimerRepeatsManager.resultWasTabReplaced(newResultTab, newResultTab._reRunChooserCtrl);
    }
 }

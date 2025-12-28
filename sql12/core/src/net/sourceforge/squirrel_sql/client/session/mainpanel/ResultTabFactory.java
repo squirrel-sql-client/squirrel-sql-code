@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.util.ArrayList;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -7,8 +8,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableMode
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-
-import java.util.ArrayList;
 
 public class ResultTabFactory
 {
@@ -24,8 +23,7 @@ public class ResultTabFactory
 
    public ResultTab createResultTab(SQLExecutionInfo exInfo, IDataSetUpdateableTableModel dataSetUpdateableTableModel, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds) throws DataSetException
    {
-      final ResultTabListener resultTabListener = (sql, resultTab) -> _sqlResultExecuterPanelFacade.rerunSQL(sql, resultTab);
-
+      final ResultTabListener resultTabListener = (sql, resultTabToReplace) -> _sqlResultExecuterPanelFacade.rerunSQL(sql, resultTabToReplace);
 
       ResultTab tab = new ResultTab(_session, _sqlResultExecuterPanelFacade, _idFactory.createIdentifier(), exInfo, dataSetUpdateableTableModel, resultTabListener);
       tab.showResults(rsds, mdds);

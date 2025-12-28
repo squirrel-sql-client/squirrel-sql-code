@@ -1,18 +1,19 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
-import javax.swing.*;
 
 public class TabButton extends JButton
 {
-   TabButton(Action action)
+   public TabButton(Action action)
    {
       super(action);
       GUIUtils.styleAsTabButton(this);
    }
 
-   TabButton()
+   public TabButton()
    {
       this((Action) null);
    }

@@ -18,6 +18,22 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -48,23 +64,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is the panel where SQL scripts are executed and results presented.
@@ -144,9 +143,9 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
          }
 
          @Override
-         public void rerunSQL(String sql, IResultTab resultTab)
+         public void rerunSQL(String sql, IResultTab resultTabToReplace)
          {
-            SQLResultExecutorPanel.this.rerunSQL(sql, resultTab);
+            SQLResultExecutorPanel.this.rerunSQL(sql, resultTabToReplace);
          }
 
          @Override
@@ -786,13 +785,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
          _resultTabClosing.closeTabAt(indexToReplace);
          _tabAdder.insert(getTabHeaderTitle(tab), tabIcon, tab, tab.getViewableSqlString(), indexToReplace);
-
-         //final JLabel tabComponent = new JLabel(getTabHeaderTitle(tab));
-         //_tabbedExecutionsPanel.setTabComponentAt(_tabbedExecutionsPanel.indexOfComponent(tab), tabComponent);
-         //if(null != tabIcon)
-         //{
-         //   _tabAdder.setIconAt(indexToReplace, tabIcon);
-         //}
+         resultTabToReplace.wasReplacedBy(tab);
       }
 	}
 

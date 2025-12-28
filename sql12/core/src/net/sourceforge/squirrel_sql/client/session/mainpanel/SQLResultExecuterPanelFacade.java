@@ -8,7 +8,7 @@ public interface SQLResultExecuterPanelFacade
 
    void createSQLResultFrame(IResultTab resultTab);
 
-   void rerunSQL(String sql, IResultTab resultTab);
+   void rerunSQL(String sql, IResultTab resultTabToReplace);
 
    void removeErrorPanel(ErrorPanel errorPanel);
 }

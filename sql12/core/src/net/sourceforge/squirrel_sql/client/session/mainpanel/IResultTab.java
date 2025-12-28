@@ -18,17 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import javax.swing.JComponent;
+import javax.swing.JTabbedPane;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
-
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
 
 public interface IResultTab
 {
@@ -51,6 +50,8 @@ public interface IResultTab
    void disposeTab();
 
    void addResultTabCloseListener(ResultTabCloseListener l);
+   void removeResultTabCloseListener(ResultTabCloseListener l);
+
 
    void returnToTabbedPane();
 
@@ -70,6 +71,7 @@ public interface IResultTab
 
 
    void reRunSQL();
+   void reRunSqlWithTimerRepeats(int repeatSeconds);
 
    TableState getResultSortableTableState();
 
@@ -106,4 +108,6 @@ public interface IResultTab
    void setSQLResultTabSelected();
 
    GlobalFindRemoteControl getDataSetViewerFindRemoteControlOfSQLQueryResultTabOrNull();
+
+   void wasReplacedBy(ResultTab tab);
 }
