@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.stream.Stream;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import net.sourceforge.squirrel_sql.client.Main;
@@ -19,6 +23,9 @@ public class ReRunChooserCtrl
    private final ISession _session;
    private final RerunCurrentSQLResultTabAction _actionDefault;
    private final RerunCurrentSQLResultTabAction _actionTimerRepeats;
+   private final TabButton _btnReRunDefault;
+   private final TabButton _btnReRunTimerRepeats;
+   private final TabButton _btnReRunTimerRepeatsStop;
    private ButtonChooser _btnChooser;
 
 
@@ -29,23 +36,24 @@ public class ReRunChooserCtrl
       _actionDefault = createDefaultReRunAction();
       _actionTimerRepeats = createTimerRepeatsReRunAction();
 
-      TabButton btnDefault = new TabButton(_actionDefault);
-      TabButton btnTimerRepeats = new TabButton(_actionTimerRepeats);
+      _btnReRunDefault = new TabButton(_actionDefault);
+      _btnReRunTimerRepeats = new TabButton(_actionTimerRepeats);
+      _btnReRunTimerRepeatsStop = new TabButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RUN_TIMER_STOP));
 
-      _btnChooser.addButton(btnDefault);
-      _btnChooser.addButton(btnTimerRepeats);
+      _btnChooser.addButton(_btnReRunDefault);
+      _btnChooser.addButton(_btnReRunTimerRepeats);
 
       if(RerunResultTabMode.getCurrentMode() == RerunResultTabMode.DEFAULT)
       {
-         _btnChooser.setSelectedButton(btnDefault);
+         _btnChooser.setSelectedButton(_btnReRunDefault);
       }
       else
       {
-         _btnChooser.setSelectedButton(btnTimerRepeats);
+         _btnChooser.setSelectedButton(_btnReRunTimerRepeats);
       }
 
       _btnChooser.setButtonSelectedListener(
-            (btnNew, btnOld) -> RerunResultTabMode.setCurrentMode(btnNew == btnDefault ? RerunResultTabMode.DEFAULT : RerunResultTabMode.TIMER_REPEATS));
+            (btnNew, btnOld) -> RerunResultTabMode.setCurrentMode(btnNew == _btnReRunDefault ? RerunResultTabMode.DEFAULT : RerunResultTabMode.TIMER_REPEATS));
    }
 
    private RerunCurrentSQLResultTabAction createTimerRepeatsReRunAction()
@@ -76,5 +84,25 @@ public class ReRunChooserCtrl
    {
       _actionDefault.setResultTab(resultTab);
       _actionTimerRepeats.setResultTab(resultTab);
+   }
+
+   public void switchToStopButton(ActionListener stopListener)
+   {
+      cleanUp();
+      _btnReRunTimerRepeatsStop.addActionListener(e -> onStopRepeats(stopListener, e));
+      _btnReRunTimerRepeatsStop.setToolTipText(s_stringMgr.getString("ReRunChooserCtrl.rerun.timered.stop"));
+      _btnChooser.replaceButtonsBy(List.of(_btnReRunTimerRepeatsStop));
+   }
+
+   private void onStopRepeats(ActionListener stopListener, ActionEvent e)
+   {
+      stopListener.actionPerformed(e);
+      cleanUp();
+      _btnChooser.replaceButtonsBy(List.of(_btnReRunDefault, _btnReRunTimerRepeats));
+   }
+
+   public void cleanUp()
+   {
+      Stream.of(_btnReRunTimerRepeatsStop.getActionListeners()).forEach(al -> _btnReRunTimerRepeatsStop.removeActionListener(al));
    }
 }

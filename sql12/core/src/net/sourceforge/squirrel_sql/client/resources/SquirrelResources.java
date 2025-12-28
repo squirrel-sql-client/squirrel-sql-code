@@ -233,6 +233,7 @@ public class SquirrelResources extends Resources
       String PASSWORD_12X12 = "password12x12";
 
 		String RUN_TIMER = "runTimer";
+		String RUN_TIMER_STOP = "runTimerStop";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

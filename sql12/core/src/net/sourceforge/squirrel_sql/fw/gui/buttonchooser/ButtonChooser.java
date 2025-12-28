@@ -1,9 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.gui.buttonchooser;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -13,13 +16,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 /**
  * Behaves like a ComboBox with buttons in it.
@@ -276,5 +275,17 @@ public class ButtonChooser
    public void setPreferredHeight(int height)
    {
       GUIUtils.setPreferredHeight(_container, height);
+   }
+
+   public void replaceButtonsBy(List<AbstractButton> newButtons)
+   {
+      if(newButtons.isEmpty())
+      {
+         throw new IllegalStateException("newButtons cannot be empty");
+      }
+
+      _buttons.clear();
+      newButtons.forEach(b -> addButton(b));
+      setSelectedButton(newButtons.get(newButtons.size() - 1));
    }
 }

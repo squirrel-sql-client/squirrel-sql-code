@@ -20,8 +20,6 @@ public class RerunWithTimerRepeatsManager
       _timer.setRepeats(true);
       _timer.start();
       onTimerTriggered();
-
-      //reRunChooserCtrl.showStopButton();
    }
 
    private void onTimerTriggered()
@@ -46,8 +44,14 @@ public class RerunWithTimerRepeatsManager
 
    private void initNewResultTabData(ResultTab resultTab, ReRunChooserCtrl reRunChooserCtrl)
    {
+      if(null != _currentResultTabData)
+      {
+         _currentResultTabData.reRunChooserCtrl.cleanUp();
+      }
+
       _currentResultTabData = new ResultTabData(resultTab, reRunChooserCtrl);
       _currentResultTabData.reRunChooserCtrl.setResultTab(resultTab);
+      _currentResultTabData.reRunChooserCtrl.switchToStopButton(e -> _timer.stop());
       _newResultTabData = true;
    }
 
