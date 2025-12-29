@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/80
+  SQL results can be rerun automatically after a configurable number of seconds.
+  To give access to this function the SQL result's rerun button was made switchable.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/81
   Bookmarks Plugin: A bookmark's statement can be run from within the SQL editor use @runbookmark <bookmarkName>
 

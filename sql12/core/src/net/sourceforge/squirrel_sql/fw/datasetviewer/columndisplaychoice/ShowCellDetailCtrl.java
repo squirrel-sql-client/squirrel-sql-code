@@ -1,14 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
+import javax.swing.JToggleButton;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.ResultTabProvider;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JToggleButton;
 
 public class ShowCellDetailCtrl
 {
@@ -60,11 +60,21 @@ public class ShowCellDetailCtrl
 
    public void finishedCreatingResultTab()
    {
-      ResultDataSetAndCellDetailDisplayHandler selectedTabsDisplayHandler = _resultTabProvider.getResultTab().getSelectedResultTabsDisplayHandler();
-      if(null != selectedTabsDisplayHandler)
+      IResultTab resultTab = _resultTabProvider.getResultTab();
+
+      if(null == resultTab)
       {
-         selectedTabsDisplayHandler.setCloseListener(() -> onClosedByPanelButton());
+         return;
       }
+
+      ResultDataSetAndCellDetailDisplayHandler selectedResultTabsDisplayHandler = resultTab.getSelectedResultTabsDisplayHandler();
+
+      if(null == selectedResultTabsDisplayHandler)
+      {
+         return;
+      }
+
+      selectedResultTabsDisplayHandler.setCloseListener(() -> onClosedByPanelButton());
    }
 
    private void onClosedByPanelButton()

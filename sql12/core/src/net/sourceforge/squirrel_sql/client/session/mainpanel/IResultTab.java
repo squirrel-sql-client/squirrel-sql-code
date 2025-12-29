@@ -109,5 +109,10 @@ public interface IResultTab
 
    GlobalFindRemoteControl getDataSetViewerFindRemoteControlOfSQLQueryResultTabOrNull();
 
-   void wasReplacedBy(ResultTab tab);
+   /**
+    * Is called before the {@link ResultTabCloseListener] of the previous {@link ResultTab} is fired.
+    */
+   void aboutToBeReplacedBy(ResultTab tab);
+
+   void prepareBeingMovedToResultFrame();
 }

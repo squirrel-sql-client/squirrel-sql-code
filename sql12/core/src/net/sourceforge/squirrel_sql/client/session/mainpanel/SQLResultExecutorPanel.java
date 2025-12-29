@@ -782,10 +782,11 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       }
       else
       {
+         // We need to make sure this is fired before the ResultTabCloseListener of resultTabToReplace is fired.
+         resultTabToReplace.aboutToBeReplacedBy(tab);
 
          _resultTabClosing.closeTabAt(indexToReplace);
          _tabAdder.insert(getTabHeaderTitle(tab), tabIcon, tab, tab.getViewableSqlString(), indexToReplace);
-         resultTabToReplace.wasReplacedBy(tab);
       }
 	}
 

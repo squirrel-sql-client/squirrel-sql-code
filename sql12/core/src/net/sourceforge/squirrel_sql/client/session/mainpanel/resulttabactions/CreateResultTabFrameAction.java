@@ -1,12 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions;
 
+import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
-
-import java.awt.event.ActionEvent;
 
 public class CreateResultTabFrameAction extends SquirrelAction  implements ISQLPanelAction
 {
@@ -36,6 +35,7 @@ public class CreateResultTabFrameAction extends SquirrelAction  implements ISQLP
    {
       if(_resultTabProvider.hasResultTab())
       {
+         _resultTabProvider.getResultTab().prepareBeingMovedToResultFrame();
          _resultTabProvider.getResultTab().getSQLResultExecuterPanelFacade().createSQLResultFrame(_resultTabProvider.getResultTab());
       }
    }
