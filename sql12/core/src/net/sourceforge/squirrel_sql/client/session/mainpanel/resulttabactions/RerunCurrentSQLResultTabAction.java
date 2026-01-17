@@ -26,8 +26,14 @@ public class RerunCurrentSQLResultTabAction extends SquirrelAction implements IS
 
 	public void setSQLPanel(ISQLPanelAPI panel)
 	{
-      setEnabled(_resultTabProvider.setSQLPanelAPI(panel));
+      _resultTabProvider.setSQLPanelAPI(panel);
+      doEnable();
 	}
+
+   private void doEnable()
+   {
+      setEnabled(_resultTabProvider.hasResultTab());
+   }
 
    public void actionPerformed(ActionEvent evt)
    {
@@ -85,6 +91,7 @@ public class RerunCurrentSQLResultTabAction extends SquirrelAction implements IS
    public void setResultTab(ResultTab resultTab)
    {
       _resultTabProvider.setResultTab(resultTab);
+      doEnable();
    }
 }
 

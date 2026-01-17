@@ -8,7 +8,7 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.TabButton;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
@@ -20,7 +20,6 @@ public class ReRunChooserCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ReRunChooserCtrl.class);
 
-   private final ISession _session;
    private final RerunCurrentSQLResultTabAction _actionDefault;
    private final RerunCurrentSQLResultTabAction _actionTimerRepeats;
    private final TabButton _btnReRunDefault;
@@ -29,12 +28,11 @@ public class ReRunChooserCtrl
    private ButtonChooser _btnChooser;
 
 
-   public ReRunChooserCtrl(ISession session)
+   public ReRunChooserCtrl(IResultTab resultTab)
    {
       _btnChooser = new ButtonChooser();
-      _session = session;
-      _actionDefault = createDefaultReRunAction();
-      _actionTimerRepeats = createTimerRepeatsReRunAction();
+      _actionDefault = createDefaultReRunAction(resultTab);
+      _actionTimerRepeats = createTimerRepeatsReRunAction(resultTab);
 
       _btnReRunDefault = new TabButton(_actionDefault);
       _btnReRunTimerRepeats = new TabButton(_actionTimerRepeats);
@@ -56,9 +54,9 @@ public class ReRunChooserCtrl
             (btnNew, btnOld) -> RerunResultTabMode.setCurrentMode(btnNew == _btnReRunDefault ? RerunResultTabMode.DEFAULT : RerunResultTabMode.TIMER_REPEATS));
    }
 
-   private RerunCurrentSQLResultTabAction createTimerRepeatsReRunAction()
+   private static RerunCurrentSQLResultTabAction createTimerRepeatsReRunAction(IResultTab resultTab)
    {
-      RerunCurrentSQLResultTabAction ret = createDefaultReRunAction();
+      RerunCurrentSQLResultTabAction ret = createDefaultReRunAction(resultTab);
 
       ret.putValue(Action.SMALL_ICON, Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RUN_TIMER));
       String description = s_stringMgr.getString("ReRunChooserCtrl.rerun.timered", ShortcutUtil.getKeystrokeString(ret.getKeyStroke()));
@@ -68,10 +66,10 @@ public class ReRunChooserCtrl
       return ret;
    }
 
-   private RerunCurrentSQLResultTabAction createDefaultReRunAction()
+   private static RerunCurrentSQLResultTabAction createDefaultReRunAction(IResultTab resultTab)
    {
       RerunCurrentSQLResultTabAction ret = new RerunCurrentSQLResultTabAction();
-      ret.setSQLPanel(_session.getSQLPanelAPIOfActiveSessionWindow());
+      ret.setResultTab((ResultTab) resultTab);
       return ret;
    }
 

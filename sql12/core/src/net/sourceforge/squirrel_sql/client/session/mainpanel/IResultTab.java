@@ -22,6 +22,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.ReRunChooserCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
@@ -115,5 +116,15 @@ public interface IResultTab
     */
    void aboutToBeReplacedBy(ResultTab tab);
 
+   /**
+    * Is called before the {@link ResultTabCloseListener] of the previous {@link ResultTab} is fired.
+    */
+   void aboutToBeReplacedBy(ResultTab newResultTab, ReRunChooserCtrl reRunChooserCtrl);
+
    void prepareBeingMovedToResultFrame();
+
+   /**
+    * @return The previous {@link ResultTabListener}
+    */
+   ResultTabListener replaceResultTabListener(ResultTabListener resultTabListener);
 }

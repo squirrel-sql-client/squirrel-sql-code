@@ -160,7 +160,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    {
       _resultTabListener = resultTabListener;
       _session = session;
-      _reRunChooserCtrl = new ReRunChooserCtrl(session);
+      _reRunChooserCtrl = new ReRunChooserCtrl(this);
 
       _queryInfoPanel = new QueryInfoPanel(_session);
       _sqlResultExecuterPanelFacade = sqlResultExecuterPanelFacade;
@@ -829,13 +829,33 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    @Override
    public void aboutToBeReplacedBy(ResultTab newResultTab)
    {
+      aboutToBeReplacedBy(newResultTab, newResultTab._reRunChooserCtrl);
+   }
+
+   /**
+    * Is called before the {@link ResultTabCloseListener] of the previous {@link ResultTab} is fired.
+    */
+   @Override
+   public void aboutToBeReplacedBy(ResultTab newResultTab, ReRunChooserCtrl reRunChooserCtrl)
+   {
       newResultTab._rerunWithTimerRepeatsManager = _rerunWithTimerRepeatsManager;
-      _rerunWithTimerRepeatsManager.aboutToBeReplacedBy(newResultTab, newResultTab._reRunChooserCtrl);
+      _rerunWithTimerRepeatsManager.aboutToBeReplacedBy(newResultTab, reRunChooserCtrl);
    }
 
    @Override
    public void prepareBeingMovedToResultFrame()
    {
       _rerunWithTimerRepeatsManager.disposeTimer();
+   }
+
+   /**
+    * @return The previous {@link ResultTabListener}
+    */
+   @Override
+   public ResultTabListener replaceResultTabListener(ResultTabListener resultTabListener)
+   {
+      ResultTabListener previous = _resultTabListener;
+      _resultTabListener = resultTabListener;
+      return previous;
    }
 }

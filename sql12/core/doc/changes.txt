@@ -7,6 +7,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 Enhancements:
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/80
+  SQL results displayed in their own window can be rerun automatically, too.
+  The UI behavior of SQL results displayed in their own window was improved.
+
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/80
   SQL results can be rerun automatically after a configurable number of seconds.
   To give access to this function the SQL result's rerun button was made switchable.
 
