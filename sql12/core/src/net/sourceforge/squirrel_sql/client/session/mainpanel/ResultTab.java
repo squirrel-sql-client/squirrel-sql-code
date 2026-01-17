@@ -731,6 +731,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       return _resultDataSetViewerFindHandler.getDataSetViewer().getResultSortableTableState();
    }
 
+   @Override
    public void applyResultSortableTableState(TableState sortableTableState)
    {
       _resultDataSetViewerFindHandler.getDataSetViewer().applyResultSortableTableState(sortableTableState);

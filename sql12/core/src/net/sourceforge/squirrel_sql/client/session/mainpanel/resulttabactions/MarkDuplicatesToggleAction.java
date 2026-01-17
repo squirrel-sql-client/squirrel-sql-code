@@ -1,12 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions;
 
+import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
-
-import java.awt.event.ActionEvent;
 
 public class MarkDuplicatesToggleAction extends SquirrelAction implements ISQLPanelAction
 {
@@ -31,6 +30,18 @@ public class MarkDuplicatesToggleAction extends SquirrelAction implements ISQLPa
    public void setSQLPanel(ISQLPanelAPI panel)
    {
       _resultTabProvider.setSQLPanelAPI(panel);
+      doEnable();
+   }
+
+   public void setResultTab(IResultTab resultTab)
+   {
+      _resultTabProvider.setResultTab(resultTab);
+      doEnable();
+   }
+
+   private void doEnable()
+   {
+      setEnabled(_resultTabProvider.hasResultTab());
    }
 
    public void actionPerformed(ActionEvent evt)
@@ -39,6 +50,5 @@ public class MarkDuplicatesToggleAction extends SquirrelAction implements ISQLPa
       {
          _resultTabProvider.getResultTab().markDuplicates(evt);
       }
-
    }
 }

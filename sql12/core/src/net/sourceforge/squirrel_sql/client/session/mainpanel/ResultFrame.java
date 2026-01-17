@@ -20,6 +20,20 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
@@ -33,15 +47,13 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowCol
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * JASON: Rename to ResultInternalFrame
@@ -69,22 +81,6 @@ public class ResultFrame extends SessionDialogWidget
    private JPanel _centerPanel;
    private RowColAndSumController _rowColAndSumController = new RowColAndSumController();
 
-   /**
-    * Ctor.
-    *
-    *
-    *
-    *
-    *
-    * @param	session		Current session.
-    * @param	resultTab			SQL results tab.
-    *
-    * @param resultTabFactory
-    * @param resultFrameListener
-    *@param isOnRerun  @throws	IllegalArgumentException
-    * 			If a <TT>null</TT> <TT>ISession</TT> or
-    *			<TT>ResultTab</TT> passed.
-    */
    public ResultFrame(final ISession session, IResultTab resultTab, ResultTabFactory resultTabFactory, ResultFrameListener resultFrameListener, boolean checkStayOnTop, boolean isOnRerun)
    {
       super(getFrameTitle(session, resultTab), true, true, true, true, session);
@@ -189,7 +185,7 @@ public class ResultFrame extends SessionDialogWidget
          public void run()
          {
             _centerPanel.removeAll();
-            _centerPanel.add(cancelPanelCtrl.getPanel(), BorderLayout.CENTER);
+            _centerPanel.add(cancelPanelCtrl.getPanel());
          }
       });
    }
@@ -211,13 +207,26 @@ public class ResultFrame extends SessionDialogWidget
       try
       {
          _centerPanel.removeAll();
-         ResultTab tab = _resultTabFactory.createResultTab(info, creator, rsds, rsmdds);
-         ResultFrame frame = new ResultFrame(_session, tab, _resultTabFactory, _resultFrameListener, _chkOnTop.isSelected(), true);
-         showFrame(frame, true);
-         setVisible(false);
-         dispose();
 
-         _resultFrameListener.frameReplaced(ResultFrame.this, frame);
+         TableState tableState = null;
+
+         if(null != _resultTab)
+         {
+            tableState = _resultTab.getResultSortableTableState();
+         }
+
+         _resultTab = _resultTabFactory.createResultTab(info, creator, rsds, rsmdds);
+         JTabbedPane tabbedPaneOfResultTabs = _resultTab.getTabbedPaneOfResultTabs();
+         GUIUtils.unconventionallyAddToParentWithRepaint(_centerPanel, tabbedPaneOfResultTabs);
+         _markDuplicatesChooserController.init(_resultTab);
+
+         if(null != tableState)
+         {
+            _resultTab.applyResultSortableTableState(tableState);
+         }
+
+         _btnReturnToTab.setEnabled(true);
+         _btnReRun.setEnabled(true);
       }
       catch (Throwable t)
       {

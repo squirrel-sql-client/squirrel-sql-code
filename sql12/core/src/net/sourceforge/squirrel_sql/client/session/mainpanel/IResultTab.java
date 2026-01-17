@@ -74,6 +74,7 @@ public interface IResultTab
    void reRunSqlWithTimerRepeats(int repeatSeconds);
 
    TableState getResultSortableTableState();
+   void applyResultSortableTableState(TableState tableState);
 
    void toggleShowFindPanel();
 
