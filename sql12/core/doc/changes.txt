@@ -74,6 +74,10 @@ DB2 Plugin: The table details in the Object tree has a new tab
 
 Bug fixes:
 
+Deleting or editing SQL table results or Object tree "Content"-tables rose NullPointerException when
+  a table had one or more columns of type LONGVARCHAR and LONGVARCHAR types were chosen to be left out of generated WHERE clauses.
+  See menu File --> Global Preferences --> tab "Data type controls" --> section "CHAR, VARCHAR, LONGVARCHAR"
+
 Alias find dialog (ctrl+alt+shift+g or ctrl+alt+shift+f):
   Modifying an Alias folder raised NullPointerException.
 

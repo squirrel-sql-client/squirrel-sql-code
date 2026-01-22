@@ -1,5 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOnlySessionCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -21,15 +30,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JOptionPane;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
 
 
 public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableModel
@@ -646,29 +646,37 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                // the user has restricted the set of columns to use.
                // If this name is NOT in the list, then skip it; otherwise we fall through
                // and use the column in the WHERE clause
-               if (colNames.get(colDefs[i].getColumnName()) == null)
+               if( colNames.get(colDefs[i].getColumnName()) == null )
+               {
                   continue;   // go on to the next item
+               }
             }
 
             // for the column that is being changed, use the value
             // passed in by the caller (which may be either the
             // current value or the new replacement value)
             Object value = values[i];
-            if (i == col)
+            if( i == col )
+            {
                value = colValue;
+            }
 
-            // convert user representation of null into an actual null
-            if (value != null && value.toString().equals(StringUtilities.NULL_AS_STRING))
+            if( value != null && value.toString().equals(StringUtilities.NULL_AS_STRING) )
+            {
+               // convert user representation of null into an actual null
                value = null;
+            }
 
             // do different things depending on data type
             ISQLDatabaseMetaData md = _session.getMetaData();
             IWhereClausePart clausePart = CellComponentFactory.getWhereClauseValue(colDefs[i], value, md);
 
 
-            if (clausePart.shouldBeUsed())
-               // Now we know that the part should not we ignoredshould
+            if( null != clausePart && clausePart.shouldBeUsed() )
+            {
+               // Now we know that the part should not be ignored
                clauseParts.add(clausePart);
+            }
          }
 
          return clauseParts;
@@ -676,7 +684,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (Exception e)
       {
-         throw new RuntimeException(e);
+         throw Utilities.wrapRuntime(e);
       }
    }
 

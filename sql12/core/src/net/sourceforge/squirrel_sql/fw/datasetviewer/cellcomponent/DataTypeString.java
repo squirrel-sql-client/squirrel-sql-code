@@ -18,32 +18,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.JTextComponent;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -60,6 +34,32 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Iterator;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 
 /**
@@ -123,7 +123,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * otherwise do not include it.
 	 * Oracle does not allow that type to be used in a WHERE clause
 	 */
-	private static boolean _useLongInWhere = true;
+	private static boolean _useLongVarcharInWhere = true;
 
 
 	/**
@@ -163,10 +163,10 @@ public class DataTypeString extends BaseDataTypeComponent
 			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
 				_makeNewlinesVisibleInCell = false;
 
-			_useLongInWhere = true;	// set to the default
+			_useLongVarcharInWhere = true;	// set to the default
 			String useLongInWhereString = DataTypeProps.getProperty(DataTypeString.class.getName(), "useLongInWhere");
 			if (useLongInWhereString != null && useLongInWhereString.equals("false"))
-				_useLongInWhere = false;
+				_useLongVarcharInWhere = false;
 
 			LimitReadLengthFeatureUnstable._limitRead = false;	// set to default
 			String limitReadString = DataTypeProps.getProperty(DataTypeString.class.getName(), "limitRead");
@@ -542,27 +542,32 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * or whatever is appropriate for this column in the database.
 	 */
 	@Override
-	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+	{
 		// first do special check to see if we should use LONGVARCHAR
 		// in the WHERE clause.
 		// (Oracle does not allow this.)
-		if (_colDef.getSqlType() == Types.LONGVARCHAR &&
-			_useLongInWhere == false)
-			return null;	// this column cannot be used in a WHERE clause
+		if( _colDef.getSqlType() == Types.LONGVARCHAR && _useLongVarcharInWhere == false )
+		{
+			return null;   // this column cannot be used in a WHERE clause
+		}
 
-		if (value == null || value.toString() == null )
+		if( value == null || value.toString() == null )
+		{
 			return new IsNullWhereClausePart(_colDef);
-		else {
+		}
+		else
+		{
 			// We cannot use this data in the WHERE clause if it has been truncated.
 			// Since being truncated is the same as needing to re-read,
 			// only use this in the WHERE clause if we do not need to re-read
-			if ( ! needToReRead(value))
+			if( !needToReRead(value) )
 			{
 				return new ParameterWhereClausePart(_colDef, value, this);
 			}
-			else 
-			{ 
-				return new EmptyWhereClausePart();	// value is truncated, so do not use in WHERE clause
+			else
+			{
+				return new EmptyWhereClausePart();   // value is truncated, so do not use in WHERE clause
 			}
 		}
 	}
@@ -842,7 +847,7 @@ public class DataTypeString extends BaseDataTypeComponent
 			_makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
 
 			// checkbox for using LONG in WHERE clause
-			_useLongInWhereChk.setSelected(_useLongInWhere);
+			_useLongInWhereChk.setSelected(_useLongVarcharInWhere);
 
 			// checkbox for limit/no-limit on data read during initial table load
 			_limitReadChk.setSelected(LimitReadLengthFeatureUnstable._limitRead);
@@ -979,8 +984,8 @@ public class DataTypeString extends BaseDataTypeComponent
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
 			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
 
-			_useLongInWhere = _useLongInWhereChk.isSelected();
-			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "useLongInWhere", Boolean.valueOf(_useLongInWhere).toString());
+			_useLongVarcharInWhere = _useLongInWhereChk.isSelected();
+			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "useLongInWhere", Boolean.valueOf(_useLongVarcharInWhere).toString());
 
 			LimitReadLengthFeatureUnstable._limitRead = _limitReadChk.isSelected();
 			DataTypeProps.putDataTypeProperty(DataTypeString.class.getName(), "limitRead", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitRead).toString());
