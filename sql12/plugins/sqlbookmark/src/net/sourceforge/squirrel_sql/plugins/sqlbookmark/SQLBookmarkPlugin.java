@@ -193,7 +193,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
    public boolean allowsSessionStartedInBackground()
    {
-      return true;
+      return false;
    }
 
    public PluginSessionCallback sessionStarted(final ISession session)

@@ -18,8 +18,9 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.IOException;
 
+import java.io.IOException;
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -32,8 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The plugin class.
@@ -169,7 +169,8 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 		try
 		{
 			_cache = new AliasScriptCache(this);
-		} catch (IOException ex)
+		}
+		catch(IOException ex)
 		{
 			throw new PluginException(ex);
 		}
@@ -189,17 +190,22 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 		super.unload();
 	}
 
+	@Override
+	public int getSessionStartedCallRank()
+	{
+		// Call this Plugin's sessionStarted method last.
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		boolean rc = false;
-
 		AliasScript script = _cache.get(session.getAlias());
 		if (script != null)
 		{
 			final String sql = script.getSQL();
-			if (sql != null && sql.length() > 0)
+			if (false == StringUtils.isBlank(sql))
 			{
-				rc = true;
 				final ISQLPanelAPI api = session.getSessionInternalFrame().getMainSQLPanelAPI();
 
 				SwingUtilities.invokeLater(new Runnable()
@@ -211,11 +217,6 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 					}
 				});
 			}
-		}
-
-		if (false == rc)
-		{
-			return null;
 		}
 		return new PluginSessionCallbackAdaptor();
 	}

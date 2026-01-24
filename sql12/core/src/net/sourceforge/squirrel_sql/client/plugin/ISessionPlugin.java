@@ -19,11 +19,11 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 /**
  * Base interface for all plugins associated with a session.
  */
@@ -60,6 +60,13 @@ public interface ISessionPlugin extends IPlugin
     *
 	 */
 	PluginSessionCallback sessionStarted(ISession session);
+
+	/**
+	 * Allows to influence the order in which {@link #sessionStarted(ISession)} is called with respect to other SessionPlugins.
+	 * Safely influencing the order is possible only when {@link #allowsSessionStartedInBackground()} returns false.
+	 */
+	int getSessionStartedCallRank();
+
 
 	/**
 	 * Called when a session shutdown.

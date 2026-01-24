@@ -21,6 +21,20 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -44,21 +58,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Manages plugins for the application.
@@ -178,41 +177,46 @@ public class PluginManager implements IPluginManager
 		final List<SessionPluginInfo> plugins = new ArrayList<SessionPluginInfo>();
 		_activeSessions.put(session.getIdentifier(), plugins);
 
-		ArrayList<SessionPluginInfo> startInFG = new ArrayList<SessionPluginInfo>();
-		final ArrayList<SessionPluginInfo> startInBG = new ArrayList<SessionPluginInfo>();
+		ArrayList<SessionPluginInfo> startInFG = new ArrayList<>();
+		final ArrayList<SessionPluginInfo> startInBG = new ArrayList<>();
 		for (Iterator<SessionPluginInfo> it = _sessionPlugins.iterator(); it.hasNext();)
 		{
 			SessionPluginInfo spi = it.next();
-			if (spi.getSessionPlugin().allowsSessionStartedInBackground())
+			if(spi.getSessionPlugin().allowsSessionStartedInBackground())
 			{
 				startInBG.add(spi);
-			} else
+			}
+			else
 			{
 				startInFG.add(spi);
 			}
-
 		}
 		session.setPluginsfinishedLoading(true);
 
-		for (Iterator<SessionPluginInfo> it = startInFG.iterator(); it.hasNext();)
-		{
-			SessionPluginInfo spi = it.next();
-			sendSessionStarted(session, spi, plugins);
-		}
+
+		startInFG.sort((spi1, spi2) -> compareBySessionStartedCallRank(spi1, spi2));
+      for(SessionPluginInfo spi : startInFG)
+      {
+         sendSessionStarted(session, spi, plugins);
+      }
 
 		session.getApplication().getThreadPool().addTask(new Runnable()
 		{
 			public void run()
 			{
-				for (Iterator<SessionPluginInfo> it = startInBG.iterator(); it.hasNext();)
-				{
-					SessionPluginInfo spi = it.next();
-					sendSessionStarted(session, spi, plugins);
-				}
+            for(SessionPluginInfo spi : startInBG)
+            {
+               sendSessionStarted(session, spi, plugins);
+            }
 				session.setPluginsfinishedLoading(true);
 			}
 		});
 	}
+
+   private int compareBySessionStartedCallRank(SessionPluginInfo spi1, SessionPluginInfo spi2)
+   {
+		return Integer.compare(spi1.getSessionPlugin().getSessionStartedCallRank(), spi2.getSessionPlugin().getSessionStartedCallRank());
+   }
 
 	private void sendSessionStarted(ISession session, SessionPluginInfo spi, List<SessionPluginInfo> plugins)
 	{
@@ -222,30 +226,17 @@ public class PluginManager implements IPluginManager
 
 			if (null != pluginSessionCallback)
 			{
-				List<PluginSessionCallback> list =
-					_pluginSessionCallbacksBySessionID.get(session.getIdentifier());
-				if (null == list)
-				{
-					list = new ArrayList<PluginSessionCallback>();
-					_pluginSessionCallbacksBySessionID.put(session.getIdentifier(), list);
-				}
-				list.add(pluginSessionCallback);
-
+            List<PluginSessionCallback> list = _pluginSessionCallbacksBySessionID.computeIfAbsent(session.getIdentifier(), k -> new ArrayList<>());
+            list.add(pluginSessionCallback);
 				plugins.add(spi);
 			}
-		} catch (final Throwable th)
+		}
+		catch(final Throwable th)
 		{
-			final String msg =
-				s_stringMgr.getString("PluginManager.error.sessionstarted", spi.getPlugin().getDescriptiveName());
-			s_log.error(msg, th);
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					_app.showErrorDialog(msg, th);
-				}
-			});
+			final String msg =s_stringMgr.getString("PluginManager.error.sessionstarted", spi.getPlugin().getDescriptiveName());
 
+			s_log.error(msg, th);
+			GUIUtils.processOnSwingEventThread(() -> _app.showErrorDialog(msg, th));
 		}
 	}
 

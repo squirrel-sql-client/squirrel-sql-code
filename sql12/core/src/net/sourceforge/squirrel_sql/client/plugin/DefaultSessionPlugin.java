@@ -20,14 +20,13 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JMenu;
 
+import javax.swing.JMenu;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -57,6 +56,12 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISes
 	public boolean allowsSessionStartedInBackground()
 	{
 		return false;
+	}
+
+	@Override
+	public int getSessionStartedCallRank()
+	{
+		return 0;
 	}
 
 	/**

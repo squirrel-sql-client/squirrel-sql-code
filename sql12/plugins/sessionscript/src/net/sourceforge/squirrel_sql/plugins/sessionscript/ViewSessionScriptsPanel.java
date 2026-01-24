@@ -18,17 +18,21 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ViewSessionScriptsPanel extends JPanel
 {
@@ -37,25 +41,18 @@ public class ViewSessionScriptsPanel extends JPanel
 
 
 	private SessionScriptPlugin _plugin;
-	private IApplication _app;
 	private SQLALiasesCombo _aliasesCmb = new SQLALiasesCombo();
 	private JTextArea _sqlEntry = new JTextArea();
 	private JButton _saveBtn;
 
-	ViewSessionScriptsPanel(SessionScriptPlugin plugin, IApplication app)
+	ViewSessionScriptsPanel(SessionScriptPlugin plugin)
 	{
-		super();
 		if (plugin == null)
 		{
 			throw new IllegalArgumentException("SessionScriptPlugin == null");
 		}
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
 
 		_plugin = plugin;
-		_app = app;
 
 		createUserInterface();
 		refreshScript();
@@ -86,7 +83,7 @@ public class ViewSessionScriptsPanel extends JPanel
 	{
 		setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
-		_aliasesCmb.load(_app);
+		_aliasesCmb.load(_plugin.getScriptsCache());
 		_aliasesCmb.addActionListener(new AliasesComboListener(this));
 
 		_sqlEntry.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));

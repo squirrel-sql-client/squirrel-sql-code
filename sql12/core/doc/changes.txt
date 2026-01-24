@@ -6,6 +6,14 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/81
+  Session Scripts Plugin: Session startup scripts now support running bookmarks
+  by @runbookmark <bookmarkNameInSingleQuotes> the same way the SQL editor does.
+
+Session Scripts Plugin: Aliases combo box of the Session startup scripts frame now
+  sorts Aliases alphabetically and puts the ones on top which have Session startup scripts defined.
+  See menu Plugins --> Session Scripts ...
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/80
   SQL results displayed in their own window can be rerun automatically, too.
   The UI behavior of SQL results displayed in their own window was improved.
@@ -15,7 +23,7 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/80
   To give access to this function the SQL result's rerun button was made switchable.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/81
-  Bookmarks Plugin: A bookmark's statement can be run from within the SQL editor use @runbookmark <bookmarkName>
+  Bookmarks Plugin: A bookmark's statement can be run from within the SQL editor use @runbookmark <bookmarkNameInSingleQuotes>
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/75
   The options "Allow to run all SQLs in editor" and "Allow to run a SQL in all open Sessions"

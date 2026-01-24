@@ -18,11 +18,13 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JComboBox;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.*;
-import java.util.Iterator;
 /**
  * This <TT>JComboBox</TT> will display all aliases.
  *
@@ -46,22 +48,30 @@ public class SQLALiasesCombo extends JComboBox
 
 	/**
 	 * Load control with all the aliases in the system.
-	 *
-	 * @param	conn	<TT>app</TT> Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
-	 *
-	 * @throws	BaseSQLException
-	 * 			Thrown if an SQL exception occurs.
 	 */
-	public void load(IApplication app)
+	public void load(AliasScriptCache scriptsCache)
 	{
 		removeAllItems();
-		for (Iterator<? extends SQLAlias> it = app.getAliasesAndDriversManager().aliases(); it.hasNext();)
-		{
-			SQLAlias alias = it.next();
-			addItem(alias);
-		}
+
+		List<SQLAlias> aliasListClone= new ArrayList<>(Main.getApplication().getAliasesAndDriversManager().getAliasList());
+
+		aliasListClone.sort((a1, a2) -> compareAliases(scriptsCache, a1, a2));
+
+		aliasListClone.forEach(a -> addItem(a));
 	}
+
+   private int compareAliases(AliasScriptCache scriptsCache, SQLAlias a1, SQLAlias a2)
+   {
+		if(false == StringUtils.isBlank(scriptsCache.get(a1).getSQL()) && StringUtils.isBlank(scriptsCache.get(a2).getSQL()))
+		{
+			return -1;
+		}
+		else if(StringUtils.isBlank(scriptsCache.get(a1).getSQL()) && false == StringUtils.isBlank(scriptsCache.get(a2).getSQL()))
+		{
+			return 1;
+		}
+
+		return StringUtils.compareIgnoreCase(a1.getName(), a2.getName());
+
+   }
 }

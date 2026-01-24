@@ -18,44 +18,34 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import javax.swing.WindowConstants;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.awt.*;
 
 class ScriptsSheet extends DialogWidget
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ScriptsSheet.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ScriptsSheet.class);
 	
-
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ScriptsSheet.class);
-
 	/** Singleton instance of this class. */
 	private static ScriptsSheet s_instance;
 
-	/** Plugin. */
 	private SessionScriptPlugin _plugin;
 
-	/** Application API. */
-	private IApplication _app;
 
 	/** Main panel. */
 	private ViewSessionScriptsPanel _mainPnl;
 
-	private ScriptsSheet(SessionScriptPlugin plugin, IApplication app)
+	private ScriptsSheet(SessionScriptPlugin plugin)
 	{
 		// i18n[sessionscript.startupScripts=Startup Scripts]
-		super(s_stringMgr.getString("sessionscript.startupScripts"), true, true, true, true);
+		super(s_stringMgr.getString("sessionscript.startupScripts"), true, true, true, true, Main.getApplication().getMainFrame());
 		_plugin = plugin;
-		_app = app;
 
 		createUserInterface();
 	}
@@ -74,9 +64,10 @@ class ScriptsSheet extends DialogWidget
 	{
 		if (s_instance == null)
 		{
-			s_instance = new ScriptsSheet(plugin, app);
+			s_instance = new ScriptsSheet(plugin);
 			app.getMainFrame().addWidget(s_instance);
 		}
+		DialogWidget.centerWithinDesktop(s_instance);
 		s_instance.setVisible(true);
 	}
 
@@ -94,7 +85,7 @@ class ScriptsSheet extends DialogWidget
 
 		makeToolWindow(true);
 
-		_mainPnl = new ViewSessionScriptsPanel(_plugin, _app);
+		_mainPnl = new ViewSessionScriptsPanel(_plugin);
 
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());

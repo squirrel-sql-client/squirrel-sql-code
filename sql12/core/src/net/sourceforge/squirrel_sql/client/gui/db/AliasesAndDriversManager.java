@@ -18,6 +18,14 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.listholder.AliasListHolder;
 import net.sourceforge.squirrel_sql.client.gui.db.listholder.DriverListHolder;
@@ -28,19 +36,14 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class AliasesAndDriversManager
 {
@@ -248,12 +251,12 @@ public class AliasesAndDriversManager
       return _aliasListHolder.get(id);
    }
 
-   public Iterator<? extends SQLAlias> aliases()
+   public Iterator<SQLAlias> aliases()
    {
       return _aliasListHolder.getAll().iterator();
    }
 
-   public List<? extends SQLAlias> getAliasList()
+   public List<SQLAlias> getAliasList()
    {
       return _aliasListHolder.getAll();
    }
