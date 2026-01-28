@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>PluginInfo</CODE>.
@@ -32,7 +34,7 @@ public final class PluginInfoBeanInfo extends SimpleBeanInfo
 
 	private interface IPropNames extends PluginInfo.IPropertyNames
 	{
-		// Empty body, purely to shorten the interface name for convienience.
+		// Empty body, purely to shorten the interface name for convenience.
 	}
 
 	/**
@@ -46,22 +48,17 @@ public final class PluginInfoBeanInfo extends SimpleBeanInfo
 	{
 		try
 		{
-			PropertyDescriptor[] s_descr = new PropertyDescriptor[8];
+			List<PropertyDescriptor> s_descr = new ArrayList<>();
 
-			s_descr[0] =
-				new PropertyDescriptor(IPropNames.PLUGIN_CLASS_NAME, PluginInfo.class, "getPluginClassName", null);
-			s_descr[1] = new PropertyDescriptor(IPropNames.IS_LOADED, PluginInfo.class, "isLoaded", null);
-			s_descr[2] =
-				new PropertyDescriptor(IPropNames.INTERNAL_NAME, PluginInfo.class, "getInternalName", null);
-			s_descr[3] =
-				new PropertyDescriptor(IPropNames.DESCRIPTIVE_NAME, PluginInfo.class, "getDescriptiveName", null);
-			s_descr[4] = new PropertyDescriptor(IPropNames.AUTHOR, PluginInfo.class, "getAuthor", null);
-			s_descr[5] =
-				new PropertyDescriptor(IPropNames.CONTRIBUTORS, PluginInfo.class, "getContributors", null);
-			s_descr[6] = new PropertyDescriptor(IPropNames.WEB_SITE, PluginInfo.class, "getWebSite", null);
-			s_descr[7] = new PropertyDescriptor(IPropNames.VERSION, PluginInfo.class, "getVersion", null);
+			s_descr.add(new PropertyDescriptor(IPropNames.PLUGIN_CLASS_NAME, PluginInfo.class, "getPluginClassName", null));
+			s_descr.add(new PropertyDescriptor(IPropNames.IS_LOADED, PluginInfo.class, "isLoaded", null));
+			s_descr.add(new PropertyDescriptor(IPropNames.INTERNAL_NAME, PluginInfo.class, "getInternalName", null));
+			s_descr.add(new PropertyDescriptor(IPropNames.DESCRIPTIVE_NAME, PluginInfo.class, "getDescriptiveName", null));
+			s_descr.add(new PropertyDescriptor(IPropNames.AUTHOR, PluginInfo.class, "getAuthor", null));
+			s_descr.add(new PropertyDescriptor(IPropNames.CONTRIBUTORS, PluginInfo.class, "getContributors", null));
+			s_descr.add(new PropertyDescriptor(IPropNames.VERSION, PluginInfo.class, "getVersion", null));
 
-			return s_descr;
+			return s_descr.toArray(new PropertyDescriptor[0]);
 		}
 		catch (IntrospectionException e)
 		{

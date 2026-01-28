@@ -34,7 +34,6 @@ public class PluginInfo
 		String IS_LOADED = "isLoaded";
 		String PLUGIN_CLASS_NAME = "pluginClassName";
 		String VERSION = "version";
-		String WEB_SITE = "webSite";
 	}
 
 	private String _pluginClassName;
