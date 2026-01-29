@@ -1,5 +1,18 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -7,33 +20,23 @@ import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoBu
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
 public class CopySeparatedByDlg extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CopySeparatedByDlg.class);
 
+   JLabel lblCellSeparator = new JLabel(s_stringMgr.getString("CopySeparatedByDlg.cell.separator"));
    JTextField txtCellSeparator = new JTextField();
+   JCheckBox chkJustConcatCells = new JCheckBox(s_stringMgr.getString("CopySeparatedByDlg.justConcat.cells"));
+
    JTextField txtCellDelimiter = new JTextField();
 
    JCheckBox chkIncludeHeaders = new JCheckBox(s_stringMgr.getString("CopySeparatedByDlg.include.column.headers"));
 
-   JLabel _lblRowSeparator = new JLabel(s_stringMgr.getString("CopySeparatedByDlg.row.separator"));
+   JLabel lblRowSeparator = new JLabel(s_stringMgr.getString("CopySeparatedByDlg.row.separator"));
    JTextField txtRowSeparator = new JTextField();
 
    JLabel lblPreferredLineLength = new JLabel(s_stringMgr.getString("CopySeparatedByDlg.prefered.line.length"));
-   IntegerField txtLineLength = new IntegerField(6);
+   IntegerField txtLineLength = new IntegerField(8);
 
    JButton btnOk = new JButton(s_stringMgr.getString("CopySeparatedByDlg.cell.ok"));
    JButton btnCancel = new JButton(s_stringMgr.getString("CopySeparatedByDlg.cell.cancel"));
@@ -87,40 +90,44 @@ public class CopySeparatedByDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0, 0 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      ret.add(new JLabel(s_stringMgr.getString("CopySeparatedByDlg.cell.separator")), gbc);
+      gbc = new GridBagConstraints(0, 0 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      ret.add(lblCellSeparator, gbc);
 
-      gbc = new GridBagConstraints(1, 0 , 1, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-      //txtCellSeparator.setPreferredSize(new Dimension(70, txtCellSeparator.getPreferredSize().height));
+      gbc = new GridBagConstraints(1, 0 , 1, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
       ret.add(txtCellSeparator, gbc);
 
-      gbc = new GridBagConstraints(0, 1 , 1, 1, 0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0, 1 , 2, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,20,0,0), 0,0);
+      ret.add(chkJustConcatCells, gbc);
+
+
+      gbc = new GridBagConstraints(0, 2 , 1, 1, 0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(15,5,0,5), 0,0);
       ret.add(createCellDelimiterLabelPanel(), gbc);
 
-      gbc = new GridBagConstraints(1, 1 , 1, 1, 1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1, 2 , 1, 1, 1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(15,5,0,5), 0,0);
       ret.add(txtCellDelimiter, gbc);
 
-      gbc = new GridBagConstraints(0, 2 , 2, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15,5,0,5), 0,0);
+
+      gbc = new GridBagConstraints(0, 3 , 2, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15,5,0,5), 0,0);
       ret.add(GUIUtils.createHorizontalSeparatorPanel(), gbc);
 
 
-      gbc = new GridBagConstraints(0, 3 , 2, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0, 4 , 2, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
       ret.add(chkIncludeHeaders, gbc);
 
 
-      gbc = new GridBagConstraints(0, 4 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      ret.add(_lblRowSeparator, gbc);
+      gbc = new GridBagConstraints(0, 5 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      ret.add(lblRowSeparator, gbc);
 
-      gbc = new GridBagConstraints(1, 4 , 1, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1, 5 , 1, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
       //txtRowSeparator.setPreferredSize(new Dimension(70, txtRowSeparator.getPreferredSize().height));
       ret.add(txtRowSeparator, gbc);
 
 
-      gbc = new GridBagConstraints(0, 5 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      ret.add(lblPreferredLineLength, gbc);
+      gbc = new GridBagConstraints(0, 6 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      ret.add(createPreferredLineLengthLabelPanel(), gbc);
 
-      gbc = new GridBagConstraints(1, 5 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      txtLineLength.setPreferredSize(new Dimension(70, txtLineLength.getPreferredSize().height));
+      gbc = new GridBagConstraints(1, 6 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+      txtLineLength.setPreferredSize(new Dimension(100, txtLineLength.getPreferredSize().height));
       ret.add(txtLineLength, gbc);
 
 
@@ -139,6 +146,14 @@ public class CopySeparatedByDlg extends JDialog
       ret.add(lbl, BorderLayout.CENTER);
       ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("CopySeparatedByDlg.cell.delimiter.info")).getButton(), BorderLayout.EAST);
 
+      return ret;
+   }
+
+   private JPanel createPreferredLineLengthLabelPanel()
+   {
+      JPanel ret = new JPanel(new BorderLayout());
+      ret.add(lblPreferredLineLength, BorderLayout.CENTER);
+      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("CopySeparatedByDlg.preferred.line.length.info")).getButton(), BorderLayout.EAST);
       return ret;
    }
 }

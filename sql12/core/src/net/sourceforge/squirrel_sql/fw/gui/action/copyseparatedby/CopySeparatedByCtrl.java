@@ -1,27 +1,32 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby;
 
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JOptionPane;
+import org.apache.commons.lang3.StringUtils;
 
 public class CopySeparatedByCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CopySeparatedByCtrl.class);
 
+   public static final String DEFAULT_CELL_SEPARATOR = ",";
+
    private static final String PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR = "Squirrel.copyseparatedbyctrl.cell.separator";
+   private static final String PREF_KEY_JUST_CONCAT_CELLS = "Squirrel.copyseparatedbyctrl.just.concat.cells";
    private static final String PREF_KEY_COPYSEPARATEDBYCTRL_CELL_DELIMITER = "Squirrel.copyseparatedbyctrl.cell.delimiter";
    private static final String PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS = "Squirrel.copyseparatedbyctrl.include.headers";
    private static final String PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR = "Squirrel.copyseparatedbyctrl.row.separator";
    private static final String PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN = "Squirrel.copyseparatedbyctrl.prefered.line.len";
 
 
-   private CopySeparatedByDlg _copySeparatedByDlg;
+   private CopySeparatedByDlg _dlg;
    private boolean _enableRowSeparator;
    private String _cellSeparator = "";
+   private boolean _justConcatCells;
    private String _cellDelimiter = "";
    private boolean _includeHeaders;
    private String _rowSeparator = "";
@@ -30,97 +35,103 @@ public class CopySeparatedByCtrl
 
    public CopySeparatedByCtrl(DataSetViewerTable table, boolean enableRowSeparator)
    {
-      _copySeparatedByDlg = new CopySeparatedByDlg(GUIUtils.getOwningFrame(table));
+      _dlg = new CopySeparatedByDlg(GUIUtils.getOwningFrame(table));
       _enableRowSeparator = enableRowSeparator;
 
-      _copySeparatedByDlg.txtCellSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, ","));
-      _copySeparatedByDlg.txtCellDelimiter.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_DELIMITER, ""));
+      _dlg.txtCellSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, DEFAULT_CELL_SEPARATOR));
+      _dlg.txtCellDelimiter.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_DELIMITER, ""));
 
-      _copySeparatedByDlg.txtLineLength.setInt(Props.getInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, 100));
-      _copySeparatedByDlg.txtRowSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, "\\n"));
+      _dlg.txtLineLength.setInt(Props.getInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, 100));
+      _dlg.txtRowSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, "\\n"));
 
-      _copySeparatedByDlg.chkIncludeHeaders.setSelected(Props.getBoolean(PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS, false));
+      _dlg.chkIncludeHeaders.setSelected(Props.getBoolean(PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS, false));
+      _dlg.chkIncludeHeaders.addActionListener(e -> updateEnabled());
 
-      _copySeparatedByDlg.chkIncludeHeaders.addActionListener(e -> updateEnabled());
+      _dlg.chkJustConcatCells.setSelected(Props.getBoolean(PREF_KEY_JUST_CONCAT_CELLS, false));
+      _dlg.chkJustConcatCells.addActionListener(e -> updateEnabled());
+
       updateEnabled();
 
-      _copySeparatedByDlg.btnOk.addActionListener(e -> onOk());
-      _copySeparatedByDlg.btnCancel.addActionListener(e -> onCancel());
+      _dlg.btnOk.addActionListener(e -> onOk());
+      _dlg.btnCancel.addActionListener(e -> onCancel());
 
-      GUIUtils.forceFocus(_copySeparatedByDlg.txtCellSeparator);
+      GUIUtils.forceFocus(_dlg.txtCellSeparator);
 
-      _copySeparatedByDlg.setVisible(true);
+      _dlg.setVisible(true);
 
    }
 
    private void updateEnabled()
    {
-      _copySeparatedByDlg.txtRowSeparator.setEnabled(true);
-      _copySeparatedByDlg._lblRowSeparator.setEnabled(true);
+      _dlg.txtCellSeparator.setEnabled(!_dlg.chkJustConcatCells.isSelected());
+      _dlg.lblCellSeparator.setEnabled(!_dlg.chkJustConcatCells.isSelected());
 
-      _copySeparatedByDlg.txtLineLength.setEnabled(true);
-      _copySeparatedByDlg.lblPreferredLineLength.setEnabled(true);
+      _dlg.txtRowSeparator.setEnabled(true);
+      _dlg.lblRowSeparator.setEnabled(true);
+
+      _dlg.txtLineLength.setEnabled(true);
+      _dlg.lblPreferredLineLength.setEnabled(true);
 
 
-      if(false == _enableRowSeparator || _copySeparatedByDlg.chkIncludeHeaders.isSelected())
+      if(false == _enableRowSeparator || _dlg.chkIncludeHeaders.isSelected())
       {
-         _copySeparatedByDlg.txtRowSeparator.setEnabled(false);
-         _copySeparatedByDlg._lblRowSeparator.setEnabled(false);
+         _dlg.txtRowSeparator.setEnabled(false);
+         _dlg.lblRowSeparator.setEnabled(false);
          //_copySeparatedByDlg.txtRowSeparator.setText(null);
       }
 
-      if(_copySeparatedByDlg.chkIncludeHeaders.isSelected())
+      if( _dlg.chkIncludeHeaders.isSelected())
       {
-         _copySeparatedByDlg.txtLineLength.setEnabled(false);
-         _copySeparatedByDlg.lblPreferredLineLength.setEnabled(false);
+         _dlg.txtLineLength.setEnabled(false);
+         _dlg.lblPreferredLineLength.setEnabled(false);
       }
    }
 
    private void onCancel()
    {
-      _copySeparatedByDlg.setVisible(false);
-      _copySeparatedByDlg.dispose();
+      _dlg.setVisible(false);
+      _dlg.dispose();
    }
 
    private void onOk()
    {
-      if(0 >= _copySeparatedByDlg.txtLineLength.getInt())
+      if( 0 > _dlg.txtLineLength.getInt())
       {
-         JOptionPane.showConfirmDialog(_copySeparatedByDlg, s_stringMgr.getString("CopySeparatedByCtrl.invalid.line.length"));
+         JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("CopySeparatedByCtrl.invalid.line.length"));
          return;
       }
 
-
-      String text = "";
-      if (null != _copySeparatedByDlg.txtCellSeparator.getText())
+      String text = DEFAULT_CELL_SEPARATOR;
+      if ( null != _dlg.txtCellSeparator.getText())
       {
-         text = _copySeparatedByDlg.txtCellSeparator.getText();
+         text = _dlg.txtCellSeparator.getText();
       }
       Props.putString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, text);
       _cellSeparator = doReplacements(text);
 
+      Props.putBoolean(PREF_KEY_JUST_CONCAT_CELLS, _dlg.chkJustConcatCells.isSelected());
+      _justConcatCells = _dlg.chkJustConcatCells.isSelected();
 
       String cellDelim = "";
-      if (null != _copySeparatedByDlg.txtCellDelimiter.getText())
+      if(false == StringUtils.isBlank(_dlg.txtCellDelimiter.getText()))
       {
-         cellDelim = _copySeparatedByDlg.txtCellDelimiter.getText();
+         cellDelim = _dlg.txtCellDelimiter.getText();
       }
       Props.putString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_DELIMITER, cellDelim);
       _cellDelimiter = cellDelim;
 
+      Props.putBoolean(PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS, _dlg.chkIncludeHeaders.isSelected());
+      _includeHeaders = _dlg.chkIncludeHeaders.isSelected();
 
-      Props.putBoolean(PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS, _copySeparatedByDlg.chkIncludeHeaders.isSelected());
-      _includeHeaders = _copySeparatedByDlg.chkIncludeHeaders.isSelected();
+      Props.putInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, _dlg.txtLineLength.getInt());
+      _preferredLineLength = _dlg.txtLineLength.getInt();
 
-      Props.putInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, _copySeparatedByDlg.txtLineLength.getInt());
-      _preferredLineLength = _copySeparatedByDlg.txtLineLength.getInt();
-
-      if(_enableRowSeparator && null != _copySeparatedByDlg.txtRowSeparator.getText())
+      if(_enableRowSeparator && null != _dlg.txtRowSeparator.getText())
       {
          text = "\\n";
-         if (null != _copySeparatedByDlg.txtRowSeparator.getText())
+         if ( null != _dlg.txtRowSeparator.getText())
          {
-            text = _copySeparatedByDlg.txtRowSeparator.getText();
+            text = _dlg.txtRowSeparator.getText();
          }
          Props.putString(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, text);
 
@@ -130,8 +141,8 @@ public class CopySeparatedByCtrl
       _isOk = true;
 
 
-      _copySeparatedByDlg.setVisible(false);
-      _copySeparatedByDlg.dispose();
+      _dlg.setVisible(false);
+      _dlg.dispose();
    }
 
    private String doReplacements(String text)
@@ -145,6 +156,10 @@ public class CopySeparatedByCtrl
       return _cellSeparator;
    }
 
+   public boolean isJustConcatCells()
+   {
+      return _justConcatCells;
+   }
 
    public String getRowSeparator()
    {

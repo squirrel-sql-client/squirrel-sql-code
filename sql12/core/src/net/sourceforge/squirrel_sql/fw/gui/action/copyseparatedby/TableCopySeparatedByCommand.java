@@ -32,6 +32,11 @@ public class TableCopySeparatedByCommand
 
 
       String cellSeparator = copySeparatedByCtrl.getCellSeparator();
+      if(copySeparatedByCtrl.isJustConcatCells())
+      {
+         cellSeparator = "";
+      }
+
 
       String rowSeparator = "\n";
       if(false == copySeparatedByCtrl.isIncludeHeaders())
@@ -45,8 +50,6 @@ public class TableCopySeparatedByCommand
       }
 
       int preferredLineLength = copySeparatedByCtrl.getPreferredLineLength();
-
-
 
 
       int nbrSelRows = _table.getSelectedRowCount();
@@ -93,7 +96,9 @@ public class TableCopySeparatedByCommand
                {
                   sb.append(cellSeparator);
 
-                  if(false == copySeparatedByCtrl.isIncludeHeaders() && preferredLineLength < getDistToLastNewLine(sb))
+                  if(   false == copySeparatedByCtrl.isIncludeHeaders()
+                     && 0 < preferredLineLength
+                     && preferredLineLength < getDistToLastNewLine(sb))
                   {
                      sb.append("\n");
                   }
@@ -107,10 +112,13 @@ public class TableCopySeparatedByCommand
                }
             }
 
-            if(cellObj instanceof String && -1 < ((String)cellObj).indexOf('\n'))
+            if(   false == copySeparatedByCtrl.isJustConcatCells()
+               && cellObj instanceof String cellStr
+               && -1 < indexOfFirstLineBreakChar(cellStr) )
             {
-               int lineBreakPos = ((String)cellObj).indexOf('\n');
-               sb.append(wrapCellDelimiter(cellObj, copySeparatedByCtrl.getCellDelimiter()), 0, lineBreakPos);
+               int lineBreakPos = indexOfFirstLineBreakChar(cellStr);
+               cellStr = cellStr.substring(0, lineBreakPos);
+               sb.append(wrapCellDelimiter(cellStr, copySeparatedByCtrl.getCellDelimiter()));
             }
             else if(null == cellObj)
             {
@@ -124,6 +132,27 @@ public class TableCopySeparatedByCommand
       }
 
       ClipboardUtil.copyToClip(sb);
+   }
+
+   private static int indexOfFirstLineBreakChar(String cellStr)
+   {
+      int indexOfNewLine = cellStr.indexOf('\n');
+      int indexOfCarriageReturn = cellStr.indexOf('\r');
+
+      if(-1 == indexOfNewLine  && -1 == indexOfCarriageReturn)
+      {
+         return -1;
+      }
+      else if(-1 == indexOfNewLine)
+      {
+         return indexOfCarriageReturn;
+      }
+      else if(-1 == indexOfCarriageReturn)
+      {
+         return indexOfNewLine;
+      }
+
+      return Math.min(indexOfCarriageReturn, indexOfNewLine);
    }
 
    private String wrapCellDelimiter(Object cellContent, String cellDelimiter)

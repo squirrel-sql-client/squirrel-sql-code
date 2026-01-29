@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The UI table's "Copy separated by ..." right mouse menu function now allows
+  to concatenate cell values without separator.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/81
   Session Scripts Plugin: Session startup scripts now support running bookmarks
   by @runbookmark <bookmarkNameInSingleQuotes> the same way the SQL editor does.
