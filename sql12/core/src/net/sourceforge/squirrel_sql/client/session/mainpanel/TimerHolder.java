@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import javax.swing.JCheckBox;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.FinishedNotificationSoundHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 
 /**
@@ -32,14 +31,7 @@ public class TimerHolder
       _txtExecTimeCounter = txtExecTimeCounter;
       _txtNumberOfRowsRead = txtNumberOfRowsRead;
 
-      _timer = new Timer(300, new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onUpdateExecutionTime();
-         }
-      });
+      _timer = new Timer(300, e -> onUpdateExecutionTime());
       _timer.setRepeats(true);
       _timer.start();
 

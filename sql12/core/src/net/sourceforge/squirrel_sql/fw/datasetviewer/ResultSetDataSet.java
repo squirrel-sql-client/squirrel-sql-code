@@ -21,6 +21,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
@@ -29,10 +36,6 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ResultSetDataSet implements IDataSet
 {
@@ -47,7 +50,7 @@ public class ResultSetDataSet implements IDataSet
 
    private DataSetDefinition _dataSetDefinition;
 
-   private List<Object[]> _alData;
+   private List<Object[]> _allData;
 
    /**
     * If <TT>true</TT> cancel has been requested.
@@ -161,7 +164,7 @@ public class ResultSetDataSet implements IDataSet
       }
 
       _iCurrent = -1;
-      _alData = new ArrayList<>();
+      _allData = new ArrayList<>();
 
       if (rs == null)
       {
@@ -193,7 +196,7 @@ public class ResultSetDataSet implements IDataSet
          {
             if (_cancel)
             {
-               return _alData.size();
+               return _allData.size();
             }
 
             Object[] row = createRow(columnIndices, useColumnDefs, colDefs, BlockMode.FIRST_BLOCK);
@@ -204,11 +207,11 @@ public class ResultSetDataSet implements IDataSet
             }
             else
             {
-               _alData.add(row);
+               _allData.add(row);
             }
          }
 
-         return _alData.size();
+         return _allData.size();
 
          // ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md,
          // columnIndices, computeWidths);
@@ -282,9 +285,9 @@ public class ResultSetDataSet implements IDataSet
          throws DataSetException
    {
       // TODO: This should be handled with an Iterator
-      if (++_iCurrent < _alData.size())
+      if (++_iCurrent < _allData.size())
       {
-         _currentRow = _alData.get(_iCurrent);
+         _currentRow = _allData.get(_iCurrent);
          return true;
       }
       return false;
@@ -327,9 +330,9 @@ public class ResultSetDataSet implements IDataSet
       if (computeWidths)
       {
          colWidths = new int[_columnCount];
-         for (int i = 0; i < _alData.size(); i++)
+         for (int i = 0; i < _allData.size(); i++)
          {
-            Object[] row = _alData.get(i);
+            Object[] row = _allData.get(i);
             for (int col = 0; i < _columnCount; i++)
             {
                if (row[col] != null)
@@ -569,7 +572,7 @@ public class ResultSetDataSet implements IDataSet
       _currentRow = null;
       _columnCount = 0;
       _dataSetDefinition = null;
-      _alData = null;
+      _allData = null;
    }
 
    public void resetCursor()
@@ -587,9 +590,9 @@ public class ResultSetDataSet implements IDataSet
     */
    public Object removeRow(int index)
    {
-      if (_alData.size() > index)
+      if (_allData.size() > index)
       {
-         return _alData.remove(index);
+         return _allData.remove(index);
       }
       else
       {
@@ -617,7 +620,7 @@ public class ResultSetDataSet implements IDataSet
       }
 
 
-      for (Object[] row : _alData)
+      for (Object[] row : _allData)
       {
          for (Object rowItem : row)
          {
@@ -639,7 +642,7 @@ public class ResultSetDataSet implements IDataSet
 
    public List<Object[]> getAllDataForReadOnly()
    {
-      return _alData;
+      return _allData;
    }
 
    public void readMoreResults()
@@ -655,7 +658,7 @@ public class ResultSetDataSet implements IDataSet
             }
             else
             {
-               _alData.add(row);
+               _allData.add(row);
             }
          }
 
@@ -670,7 +673,7 @@ public class ResultSetDataSet implements IDataSet
 
    public int currentRowCount()
    {
-      return _alData.size();
+      return _allData.size();
    }
 
    public boolean isAllResultsRead()
@@ -696,6 +699,6 @@ public class ResultSetDataSet implements IDataSet
    public void replaceDataOnUserEdits(ArrayList<Object[]> updatedRows)
    {
       resetCursor();
-      _alData = updatedRows;
+      _allData = updatedRows;
    }
 }
