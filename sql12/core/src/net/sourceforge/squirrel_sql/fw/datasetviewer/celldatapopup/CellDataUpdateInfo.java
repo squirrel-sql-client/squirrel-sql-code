@@ -4,48 +4,44 @@ import javax.swing.JTable;
 
 public class CellDataUpdateInfo
 {
-   private final int _row;
-   private final int _col;
-   private JTable _table;
-   private CellDataDialog _parentDialog;
+   private CellDataDialogState _cellDataDialogState;
+   private CellDataDialog _parentCellDataDialog;
 
-   public CellDataUpdateInfo(int row, int col, JTable table, CellDataDialog parentDialog)
+   public CellDataUpdateInfo(CellDataDialogState cellDataDialogState, CellDataDialog parentCellDataDialog)
    {
-      _row = row;
-      _col = col;
-      _table = table;
-      _parentDialog = parentDialog;
+      _cellDataDialogState = cellDataDialogState;
+      _parentCellDataDialog = parentCellDataDialog;
    }
 
    public int getRow()
    {
-      return _row;
+      return _cellDataDialogState.getEditableState().getRowIx();
    }
 
    public int getCol()
    {
-      return _col;
+      return _cellDataDialogState.getEditableState().getColIx();
    }
 
    public JTable getTable()
    {
-      return _table;
+      return _cellDataDialogState.getEditableState().getDatasetViewerTable();
    }
 
    public void closeParentDialog()
    {
-      if(null == _parentDialog)
+      if(null == _parentCellDataDialog)
       {
          return;
       }
 
-      _parentDialog.setVisible(false);
-      _parentDialog.dispose();
+      _parentCellDataDialog.setVisible(false);
+      _parentCellDataDialog.dispose();
    }
 
    public void cleanUp()
    {
-      _parentDialog = null;
-      _table = null;
+      _parentCellDataDialog = null;
+      _cellDataDialogState = null;
    }
 }

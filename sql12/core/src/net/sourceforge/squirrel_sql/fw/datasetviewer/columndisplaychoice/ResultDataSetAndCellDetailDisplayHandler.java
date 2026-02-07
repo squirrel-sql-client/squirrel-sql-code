@@ -1,22 +1,22 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.beans.PropertyChangeEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataColumnDataPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataUpdateInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.BorderFactory;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.beans.PropertyChangeEvent;
 
 public class ResultDataSetAndCellDetailDisplayHandler
 {
@@ -137,20 +137,19 @@ public class ResultDataSetAndCellDetailDisplayHandler
          _rightCellDisplayPanel.setCurrentColumnDisplayDefinition(column.getColumnDisplayDefinition());
 
          CellDisplayPanelContent pnlToDisplay;
+
+         CellDataDialogState cellDataDialogState = new CellDataDialogState(column.getColumnDisplayDefinition().getColumnName(), column.getColumnDisplayDefinition(), value, false, dataSetViewer.isTableEditable(), dataSetViewer.getTable(),
+                                                                           rowLeadSelectionIndex,
+                                                                           colLeadSelectionIndex
+         );
          if(DisplayMode.IMAGE == _rightCellDisplayPanel.getDisplayMode())
          {
-            pnlToDisplay = new ResultImageDisplayPanel(column.getColumnDisplayDefinition(),
-                                                       value,
-                                                       dataSetViewer.isTableEditable(),
-                                                       rowLeadSelectionIndex,
-                                                       colLeadSelectionIndex,
-                                                       () -> _rightCellDisplayPanel.getContentComponent().castToComponent().getSize(),
-                                                       dataSetViewer.getTable());
+            pnlToDisplay = new ResultImageDisplayPanel(cellDataDialogState, () -> _rightCellDisplayPanel.getContentComponent().castToComponent().getSize());
          }
          else
          {
             CellDataColumnDataPanel panel = new CellDataColumnDataPanel(value, column.getColumnDisplayDefinition(), dataSetViewer.isTableEditable());
-            panel.setCellDataUpdateInfo(new CellDataUpdateInfo(rowLeadSelectionIndex, colLeadSelectionIndex, dataSetViewer.getTable(), null));
+            panel.setCellDataUpdateInfo(new CellDataUpdateInfo(cellDataDialogState, null));
             pnlToDisplay = panel;
          }
 

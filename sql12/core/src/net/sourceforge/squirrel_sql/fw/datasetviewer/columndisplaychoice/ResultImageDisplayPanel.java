@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -33,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BlobDescripto
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlobProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClobProperties;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogState;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -52,23 +52,17 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
    private BufferedImage _image;
 
 
-   public ResultImageDisplayPanel(ColumnDisplayDefinition cdd,
-                                  Object valueToDisplay,
-                                  boolean tableEditable,
-                                  int selRow,
-                                  int selCol,
-                                  ImageContainerSizeProvider imageContainerSizeProvider,
-                                  DataSetViewerTable table)
+   public ResultImageDisplayPanel(CellDataDialogState cellDataDialogState, ImageContainerSizeProvider imageContainerSizeProvider)
    {
       _imageContainerSizeProvider = imageContainerSizeProvider;
       setLayout(new BorderLayout(3,3));
       add(_scrImage, BorderLayout.CENTER);
 
-      updateImageDisplay(cdd, valueToDisplay);
+      updateImageDisplay(cellDataDialogState.getColDispDef(), cellDataDialogState.getValueToDisplay());
 
-      if(tableEditable)
+      if(cellDataDialogState.isEditable())
       {
-         add(createUpdatePanel(selRow, selCol, table, cdd), BorderLayout.SOUTH);
+         add(createUpdatePanel(cellDataDialogState), BorderLayout.SOUTH);
       }
    }
 
@@ -77,7 +71,7 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
       _scrImage.setViewportView(getDisplayComponent(cdd, valueToDisplay));
    }
 
-   private JPanel createUpdatePanel(int selRow, int selCol, DataSetViewerTable table, ColumnDisplayDefinition cdd)
+   private JPanel createUpdatePanel(CellDataDialogState state)
    {
       JPanel ret = new JPanel(new BorderLayout(0,3));
 
@@ -89,7 +83,11 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
          @Override
          public void drop(DropTargetDropEvent dtde)
          {
-            onDrop(dtde, selRow, selCol, table, cdd);
+            onDrop(dtde,
+                   state.getEditableState().getRowIx(),
+                   state.getEditableState().getColIx(),
+                   state.getEditableState().getDatasetViewerTable(),
+                   state.getColDispDef());
          }
       });
 
@@ -103,7 +101,12 @@ public class ResultImageDisplayPanel extends JPanel implements CellDisplayPanelC
 
       JButton btnDel = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DELETE));
       btnDel.setToolTipText(s_stringMgr.getString("ResultImageDisplayPanel.delete.image.from.database.tooltip"));
-      btnDel.addActionListener(e -> onDelete(selRow, selCol, table, cdd));
+
+      btnDel.addActionListener(e -> onDelete(state.getEditableState().getRowIx(),
+                                                        state.getEditableState().getColIx(),
+                                                        state.getEditableState().getDatasetViewerTable(),
+                                                        state.getColDispDef()));
+
       ret.add(GUIUtils.styleAsToolbarButton(btnDel), BorderLayout.EAST);
       return ret;
    }

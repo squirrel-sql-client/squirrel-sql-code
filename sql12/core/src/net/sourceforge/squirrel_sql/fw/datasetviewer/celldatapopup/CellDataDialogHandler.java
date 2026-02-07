@@ -18,18 +18,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.CellEditor;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.table.TableColumn;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -38,6 +26,17 @@ import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.CellEditor;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.TableColumn;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * Generate a popup window to display and manipulate the
@@ -116,7 +115,10 @@ public class CellDataDialogHandler
       Object obj = table.getValueAt(selectedRow, selectedColumn);
       ColumnDisplayDefinition colDef = ((ExtTableColumn) column).getColumnDisplayDefinition();
 
-      pinnedCellDataDialog.initCellDisplayPanel(table, table.getColumnName(selectedColumn), selectedRow, selectedColumn, colDef, obj, isModelEditable, true);
+      CellDataDialogState cellDataDialogState =
+            new CellDataDialogState(table.getColumnName(selectedColumn), colDef, obj, true, isModelEditable, table, selectedRow, selectedColumn);
+
+      pinnedCellDataDialog.initCellDisplayPanel(cellDataDialogState);
    }
 
 
@@ -130,7 +132,21 @@ public class CellDataDialogHandler
                                                    boolean isModelEditable,
                                                    MouseEvent evt)
    {
-      CellDataDialog cellDataDialog = new CellDataDialog(parentTable, columnName, rowIx, colIx, colDef, objectToDisplay, isModelEditable);
+      CellDataDialogState cellDataDialogState =
+            new CellDataDialogState(columnName, colDef, objectToDisplay, false, isModelEditable, parentTable, rowIx, colIx);
+
+      createAndShowCellDataDialog(cellDataDialogState, SwingUtilities.windowForComponent(parentTable), evt);
+   }
+
+   public static void createAndShowCellDataDialog(CellDataDialogState cellDataDialogState, Window parentWindow)
+   {
+      createAndShowCellDataDialog(cellDataDialogState, parentWindow, null);
+   }
+
+
+   public static void createAndShowCellDataDialog(CellDataDialogState cellDataDialogState, Window parentWindow, MouseEvent mouseEvent)
+   {
+      CellDataDialog cellDataDialog = new CellDataDialog(cellDataDialogState, parentWindow);
 
       cellDataDialog.pack();
 
@@ -162,16 +178,21 @@ public class CellDataDialogHandler
          }
       }
 
-      Window parentWindow = SwingUtilities.windowForComponent(parentTable);
-      Point dialogPos = parentWindow.getLocation();
+      if(null != mouseEvent)
+      {
+         Point dialogPos = parentWindow.getLocation();
+         dialogPos.x += SwingUtilities.convertPoint((Component) mouseEvent.getSource(), mouseEvent.getPoint(), parentWindow).x;
+         dialogPos.y += SwingUtilities.convertPoint((Component) mouseEvent.getSource(), mouseEvent.getPoint(), parentWindow).y;
 
-      dialogPos.x += SwingUtilities.convertPoint((Component) evt.getSource(), evt.getPoint(), parentWindow).x;
-      dialogPos.y += SwingUtilities.convertPoint((Component) evt.getSource(), evt.getPoint(), parentWindow).y;
+         Rectangle dialogRect = GUIUtils.ensureBoundsOnOneScreen(new Rectangle(dialogPos.x, dialogPos.y, dim.width, dim.height));
 
-      Rectangle dialogRect = GUIUtils.ensureBoundsOnOneScreen(new Rectangle(dialogPos.x, dialogPos.y, dim.width, dim.height));
-
-
-      cellDataDialog.setBounds(dialogRect);
+         cellDataDialog.setBounds(dialogRect);
+      }
+      else
+      {
+         cellDataDialog.setSize(dim);
+         GUIUtils.centerWithinParent(cellDataDialog);
+      }
 
       cellDataDialog.addWindowListener(new WindowAdapter()
       {

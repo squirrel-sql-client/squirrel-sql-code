@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,7 +11,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -40,6 +38,7 @@ public class CopySeparatedByDlg extends JDialog
 
    JButton btnOk = new JButton(s_stringMgr.getString("CopySeparatedByDlg.cell.ok"));
    JButton btnCancel = new JButton(s_stringMgr.getString("CopySeparatedByDlg.cell.cancel"));
+   JButton btnInCellDataPopup = new JButton(s_stringMgr.getString("CopySeparatedByDlg.cell.show.in.cell.data.popup"));
 
 
    public CopySeparatedByDlg(Frame owningFrame)
@@ -56,8 +55,8 @@ public class CopySeparatedByDlg extends JDialog
       gbc = new GridBagConstraints(0, 1 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5), 0,0);
       getContentPane().add(createControlsPanel(), gbc);
 
-      gbc = new GridBagConstraints(0, 2 , 1, 1, 0,1, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
-      getContentPane().add(createButtoPanel(), gbc);
+      gbc = new GridBagConstraints(0, 2 , 1, 1, 0,1, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5), 0,0);
+      getContentPane().add(createButtonPanel(), gbc);
 
       setSize(350, 350);
 
@@ -68,7 +67,7 @@ public class CopySeparatedByDlg extends JDialog
       getRootPane().setDefaultButton(btnOk);
    }
 
-   private JPanel createButtoPanel()
+   private JPanel createButtonPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -80,6 +79,11 @@ public class CopySeparatedByDlg extends JDialog
       gbc = new GridBagConstraints(1, 0 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       ret.add(btnCancel, gbc);
 
+      gbc = new GridBagConstraints(2, 0 , 1, 1, 1,0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(5,0,5,5), 0,0);
+      ret.add(new JPanel(), gbc);
+
+      gbc = new GridBagConstraints(3, 0 , 1, 1, 0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5,0,5,5), 0,0);
+      ret.add(btnInCellDataPopup, gbc);
 
       return ret;
    }
@@ -127,7 +131,8 @@ public class CopySeparatedByDlg extends JDialog
       ret.add(createPreferredLineLengthLabelPanel(), gbc);
 
       gbc = new GridBagConstraints(1, 6 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-      txtLineLength.setPreferredSize(new Dimension(100, txtLineLength.getPreferredSize().height));
+      GUIUtils.setPreferredWidth(txtLineLength, 100);
+      GUIUtils.setMinimumWidth(txtLineLength, 100);
       ret.add(txtLineLength, gbc);
 
 

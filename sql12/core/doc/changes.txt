@@ -6,7 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
-The UI table's "Copy separated by ..." right mouse menu function now allows
+The UI-table's "Copy separated by ..." right mouse menu function now allows
+  to display the copy result in a cell data dialog.
+
+The UI-table's "Copy separated by ..." right mouse menu function now allows
   to concatenate cell values without separator.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/81

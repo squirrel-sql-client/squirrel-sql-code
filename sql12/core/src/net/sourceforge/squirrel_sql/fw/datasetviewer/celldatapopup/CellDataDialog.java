@@ -1,22 +1,17 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanelContent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.DisplayMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.DisplayPanelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultImageDisplayPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
-import net.sourceforge.squirrel_sql.fw.gui.CloseByEscapeListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -27,27 +22,14 @@ public class CellDataDialog extends JDialog
 
    private CellDisplayPanel _cellDisplayPanel;
 
-   public CellDataDialog(JTable parentTable,
-                         String columnName,
-                         int rowIx,
-                         int colIx,
-                         ColumnDisplayDefinition colDef,
-                         Object objectToDisplay,
-                         boolean isModelEditable)
+   public CellDataDialog(CellDataDialogState cellDataDialogState, Window parentWindow)
    {
-      super(SwingUtilities.windowForComponent(parentTable));
+      super(parentWindow);
       getContentPane().setLayout(new GridLayout(1,1));
 
-      initCellDisplayPanel(parentTable, columnName, rowIx, colIx, colDef, objectToDisplay, isModelEditable,false);
+      initCellDisplayPanel(cellDataDialogState);
 
-      GUIUtils.enableCloseByEscape(this, new CloseByEscapeListener()
-      {
-         @Override
-         public void willCloseByEscape(JDialog dialog)
-         {
-            cleanUp();
-         }
-      });
+      GUIUtils.enableCloseByEscape(this, dialog -> cleanUp());
 
       addWindowListener(new WindowAdapter()
       {
@@ -70,15 +52,10 @@ public class CellDataDialog extends JDialog
       _cellDisplayPanel.cleanUp();
    }
 
-   public void initCellDisplayPanel(JTable table,
-                                    String columnName,
-                                    int rowIx,
-                                    int colIx,
-                                    ColumnDisplayDefinition colDef,
-                                    Object value,
-                                    boolean isModelEditable,
-                                    boolean pinned)
+   public void initCellDisplayPanel(CellDataDialogState cellDataDialogState)
    {
+
+
       if(null != _cellDisplayPanel)
       {
          getContentPane().remove(_cellDisplayPanel);
@@ -86,14 +63,14 @@ public class CellDataDialog extends JDialog
          _cellDisplayPanel = null;
       }
 
-      setTitle(s_stringMgr.getString("cellDataPopup.valueofColumn", columnName));
+      setTitle(s_stringMgr.getString("cellDataPopup.valueofColumn", cellDataDialogState.getCellName()));
 
       DisplayPanelListener displayPanelListener = new DisplayPanelListener()
       {
          @Override
          public void displayModeChanged()
          {
-            onDisplayModeChanged(colDef, value, rowIx, colIx, isModelEditable, table);
+            onDisplayModeChanged(cellDataDialogState);
          }
 
          @Override
@@ -103,12 +80,12 @@ public class CellDataDialog extends JDialog
          }
       };
 
-      _cellDisplayPanel =new CellDisplayPanel(displayPanelListener,sticky -> onToggleSticky(sticky), pinned);
+      _cellDisplayPanel =new CellDisplayPanel(displayPanelListener,sticky -> onToggleSticky(sticky), cellDataDialogState.isPinned());
 
-      _cellDisplayPanel.setCurrentColumnDisplayDefinition(colDef);
+      _cellDisplayPanel.setCurrentColumnDisplayDefinition(cellDataDialogState.getColDispDef());
       getContentPane().add(_cellDisplayPanel);
 
-      onDisplayModeChanged(colDef, value, rowIx, colIx, isModelEditable, table);
+      onDisplayModeChanged(cellDataDialogState);
    }
 
    private void onScaleImageToPanelSize()
@@ -132,28 +109,24 @@ public class CellDataDialog extends JDialog
       }
    }
 
-   private void onDisplayModeChanged(ColumnDisplayDefinition colDef, Object value, int row, int col, boolean isModelEditable, JTable table)
+   private void onDisplayModeChanged(CellDataDialogState cellDataDialogState)
    {
       CellDisplayPanelContent pnlToDisplay;
       if(DisplayMode.IMAGE == _cellDisplayPanel.getDisplayMode())
       {
-         pnlToDisplay = new ResultImageDisplayPanel(colDef,
-                                                    value,
-                                                    isModelEditable,
-                                                    row,
-                                                    col,
-                                                    () -> _cellDisplayPanel.getContentComponent().castToComponent().getSize(),
-                                                    (DataSetViewerTable) table);
+         pnlToDisplay = new ResultImageDisplayPanel(cellDataDialogState,
+                                                    () -> _cellDisplayPanel.getContentComponent().castToComponent().getSize()
+                                                    );
       }
       else
       {
-         CellDataColumnDataPanel cellDataPanel = new CellDataColumnDataPanel(value, colDef, isModelEditable);
-         cellDataPanel.setCellDataUpdateInfo(new CellDataUpdateInfo(row, col, table, this));
+         CellDataColumnDataPanel cellDataPanel = new CellDataColumnDataPanel(cellDataDialogState.getValueToDisplay(), cellDataDialogState.getColDispDef(), cellDataDialogState.isEditable());
+         cellDataPanel.setCellDataUpdateInfo(new CellDataUpdateInfo(cellDataDialogState, this));
 
          pnlToDisplay = cellDataPanel;
       }
 
-      _cellDisplayPanel.setCurrentColumnDisplayDefinition(colDef);
+      _cellDisplayPanel.setCurrentColumnDisplayDefinition(cellDataDialogState.getColDispDef());
       _cellDisplayPanel.setContentComponent(pnlToDisplay);
 
       _cellDisplayPanel.revalidate();

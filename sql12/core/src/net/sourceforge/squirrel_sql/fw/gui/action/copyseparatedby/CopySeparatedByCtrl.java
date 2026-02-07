@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby;
 
 import javax.swing.JOptionPane;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -32,6 +31,7 @@ public class CopySeparatedByCtrl
    private String _rowSeparator = "";
    private int _preferredLineLength;
    private boolean _isOk;
+   private boolean _inCellDataPopup;
 
    public CopySeparatedByCtrl(DataSetViewerTable table, boolean enableRowSeparator)
    {
@@ -54,6 +54,7 @@ public class CopySeparatedByCtrl
 
       _dlg.btnOk.addActionListener(e -> onOk());
       _dlg.btnCancel.addActionListener(e -> onCancel());
+      _dlg.btnInCellDataPopup.addActionListener(e -> onInCellDataPopup());
 
       GUIUtils.forceFocus(_dlg.txtCellSeparator);
 
@@ -92,6 +93,18 @@ public class CopySeparatedByCtrl
       _dlg.setVisible(false);
       _dlg.dispose();
    }
+
+   private void onInCellDataPopup()
+   {
+      onOk();
+
+      if(_isOk)
+      {
+         _inCellDataPopup = true;
+      }
+   }
+
+
 
    private void onOk()
    {
@@ -184,5 +197,10 @@ public class CopySeparatedByCtrl
    public boolean isOk()
    {
       return _isOk;
+   }
+
+   public boolean isInCellDataPopup()
+   {
+      return _inCellDataPopup;
    }
 }

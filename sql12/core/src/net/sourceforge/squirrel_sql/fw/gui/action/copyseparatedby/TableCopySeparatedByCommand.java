@@ -2,7 +2,10 @@ package net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogState;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -131,7 +134,17 @@ public class TableCopySeparatedByCommand
          }
       }
 
-      ClipboardUtil.copyToClip(sb);
+      if(copySeparatedByCtrl.isInCellDataPopup())
+      {
+         CellDataDialogState cellDataDialogState =
+               new CellDataDialogState(s_stringMgr.getString("TableCopySeparatedByCommand.cell.data.dialog.title"), sb.toString());
+
+         CellDataDialogHandler.createAndShowCellDataDialog(cellDataDialogState, GUIUtils.getOwningWindow(_table));
+      }
+      else
+      {
+         ClipboardUtil.copyToClip(sb);
+      }
    }
 
    private static int indexOfFirstLineBreakChar(String cellStr)
