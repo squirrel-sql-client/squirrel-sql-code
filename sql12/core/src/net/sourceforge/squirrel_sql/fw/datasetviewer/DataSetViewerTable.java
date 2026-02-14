@@ -1,5 +1,17 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumnModel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellRenderer;
@@ -14,19 +26,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumnModel;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /*
  * The JTable used for displaying all DB ResultSet info.
@@ -51,6 +50,7 @@ public final class DataSetViewerTable extends JTable
 
 
    private ColoringService _coloringService;
+   private FontService _fontService;
 
 
    DataSetViewerTable(DataSetViewerTablePanel dataSetViewerTablePanel, IDataSetViewAccess dataSetViewAccess, IDataSetUpdateableModel dataSetUpdateableModel, int listSelectionMode, ISession session)
@@ -80,6 +80,7 @@ public final class DataSetViewerTable extends JTable
 
       // Do in the end of constructor as we pass this as parameter.
       _coloringService = new ColoringService(this);
+      _fontService = new FontService(this);
    }
 
 
@@ -283,6 +284,8 @@ public final class DataSetViewerTable extends JTable
 
          CellRenderer tableCellRenderer = CellComponentFactory.getTableCellRenderer(colDefs[i]);
          tableCellRenderer.setColoringService(_coloringService);
+         tableCellRenderer.setFontService(_fontService);
+
 
          ExtTableColumn col = new ExtTableColumn(i, colWidth, tableCellRenderer, null);
 
@@ -409,6 +412,11 @@ public final class DataSetViewerTable extends JTable
    public ColoringService getColoringService()
    {
       return _coloringService;
+   }
+
+   public FontService getFontService()
+   {
+      return _fontService;
    }
 
    public void scrollToVisible(int viewRow, int viewCol)

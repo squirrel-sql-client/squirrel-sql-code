@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
-
+import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.Component;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.FontService;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
 
 /**
  * The base component of a DefaultTableCellRenderer is a JLabel.
@@ -16,6 +16,7 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
 {
    private final IDataTypeComponent _dataTypeObject;
    private ColoringService _coloringService;
+   private FontService _fontService;
 
    CellRenderer(IDataTypeComponent dataTypeObject)
    {
@@ -48,6 +49,13 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
       if (null != _coloringService)
       {
          _coloringService.colorCell(this, _dataTypeObject, table, value, isSelected, hasFocus, row, column);
+      }
+
+      if (null != _fontService)
+      {
+
+
+         _fontService.initCellFont(this, column);
       }
 
       BlobClobLoadCheck.check(_dataTypeObject, table, value, isSelected, hasFocus, row, column);
@@ -85,5 +93,10 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
    public void setColoringService(ColoringService coloringService)
    {
       _coloringService = coloringService;
+   }
+
+   public void setFontService(FontService fontService)
+   {
+      _fontService = fontService;
    }
 }

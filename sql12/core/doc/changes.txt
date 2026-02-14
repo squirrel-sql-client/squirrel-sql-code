@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/87
+  The right mouse menu of UI-tables now offers to toggle columns between a monospaced font and the default font.
+  See the right mouse menu entry named "Toggle selected columns monospaced".
+
 The UI-table's "Copy separated by ..." right mouse menu function now allows
   to display the copy result in a cell data dialog.
 

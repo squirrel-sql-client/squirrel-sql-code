@@ -10,7 +10,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Ma
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.table.ButtonTableHeaderDraggedColumnListener;
+import net.sourceforge.squirrel_sql.fw.gui.table.ButtonTableHeaderColumnDragListener;
 import net.sourceforge.squirrel_sql.fw.gui.table.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.table.SortingListener;
 
@@ -18,7 +18,7 @@ public class MarkDuplicatesStateHandler
 {
    private final ActionListener _noResultTabFallBackActionListener;
    private final SortingListener _tableSortingListener;
-   private final ButtonTableHeaderDraggedColumnListener _buttonTableHeaderDraggedColumnListener;
+   private final ButtonTableHeaderColumnDragListener _buttonTableHeaderColumnDragListener;
    private Action _actionProxy;
 
    private IDataSetViewer _sqlResultDataSetViewer;
@@ -27,11 +27,11 @@ public class MarkDuplicatesStateHandler
 
    public MarkDuplicatesStateHandler(ActionListener noResultTabFallBackActionListener,
                                      SortingListener tableSortingListener,
-                                     ButtonTableHeaderDraggedColumnListener buttonTableHeaderDraggedColumnListener)
+                                     ButtonTableHeaderColumnDragListener buttonTableHeaderColumnDragListener)
    {
       _noResultTabFallBackActionListener = noResultTabFallBackActionListener;
       _tableSortingListener = tableSortingListener;
-      _buttonTableHeaderDraggedColumnListener = buttonTableHeaderDraggedColumnListener;
+      _buttonTableHeaderColumnDragListener = buttonTableHeaderColumnDragListener;
 
       _actionProxy = new AbstractAction()
       {
@@ -81,7 +81,7 @@ public class MarkDuplicatesStateHandler
 
       if(_sqlResultDataSetViewer instanceof DataSetViewerTablePanel)
       {
-         ((DataSetViewerTablePanel) _sqlResultDataSetViewer).getTable().getButtonTableHeader().setDraggedColumnListener(_buttonTableHeaderDraggedColumnListener);
+         ((DataSetViewerTablePanel) _sqlResultDataSetViewer).getTable().getButtonTableHeader().addColumnDragListener(_buttonTableHeaderColumnDragListener);
       }
    }
 

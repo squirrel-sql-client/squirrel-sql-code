@@ -18,6 +18,22 @@ package net.sourceforge.squirrel_sql.fw.gui.table;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.FontMetrics;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
@@ -25,18 +41,6 @@ import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Rectangle2D;
 
 public class ButtonTableHeader extends JTableHeader
 {
@@ -54,7 +58,7 @@ public class ButtonTableHeader extends JTableHeader
 
    private TableAccessForHeader _tableAccess;
 
-   private ButtonTableHeaderDraggedColumnListener _buttonTableHeaderDraggedColumnListener;
+   private java.util.List<ButtonTableHeaderColumnDragListener> _buttonTableHeaderDragListeners = new ArrayList<>();
 
    /**
     * Constructor for ButtonTableHeader.
@@ -284,9 +288,15 @@ public class ButtonTableHeader extends JTableHeader
    }
 
 
-   public void setDraggedColumnListener(ButtonTableHeaderDraggedColumnListener buttonTableHeaderDraggedColumnListener)
+   public void addColumnDragListener(ButtonTableHeaderColumnDragListener buttonTableHeaderColumnDragListener)
    {
-      _buttonTableHeaderDraggedColumnListener = buttonTableHeaderDraggedColumnListener;
+      _buttonTableHeaderDragListeners.remove(buttonTableHeaderColumnDragListener);
+      _buttonTableHeaderDragListeners.add(buttonTableHeaderColumnDragListener);
+   }
+
+   public void removeColumnDragListener(ButtonTableHeaderColumnDragListener buttonTableHeaderColumnDragListener)
+   {
+      _buttonTableHeaderDragListeners.remove(buttonTableHeaderColumnDragListener);
    }
 
    class HeaderListener extends MouseAdapter implements MouseMotionListener
@@ -376,9 +386,9 @@ public class ButtonTableHeader extends JTableHeader
          }
          else
          {
-            if(null != _buttonTableHeaderDraggedColumnListener)
+            for(ButtonTableHeaderColumnDragListener l : _buttonTableHeaderDragListeners.toArray(new ButtonTableHeaderColumnDragListener[0]))
             {
-               _buttonTableHeaderDraggedColumnListener.columnDragged();
+               l.columnDragged();
             }
          }
          _mouseState.setDragged(false);

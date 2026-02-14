@@ -18,6 +18,17 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.print.PrinterJob;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
@@ -60,18 +71,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.time.StopWatch;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.print.PrinterJob;
-
 
 public class TablePopupMenu extends BasePopupMenu
 {
@@ -105,6 +104,8 @@ public class TablePopupMenu extends BasePopupMenu
 	private ColorSelectedCellsAction _colorSelectedCells = new ColorSelectedCellsAction();
 	private GotoColorMenuController _gotoColorMenuController = new GotoColorMenuController();
 	private CopyColoredRowsToNewWindowAction _copyColoredRowsToNewWindow = new CopyColoredRowsToNewWindowAction();
+
+	private ToggleColumnsMonospacedAction _toggleColumnsMonospaced = new ToggleColumnsMonospacedAction();
 
 	private ExportAction _export;
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
@@ -189,6 +190,8 @@ public class TablePopupMenu extends BasePopupMenu
 		add(_gotoColorMenuController.getParentMenu());
 
 		add(_copyColoredRowsToNewWindow);
+		addSeparator();
+		add(_toggleColumnsMonospaced);
 		addSeparator();
 
       _export = new ExportAction(DataSetViewerTablePanel.getDataModelImplementationDetails().getSQLExecutionInfo());
@@ -608,6 +611,19 @@ public class TablePopupMenu extends BasePopupMenu
       public void actionPerformed(ActionEvent evt)
       {
          new CopyColoredRowsToNewWindowCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
+      }
+   }
+
+   private class ToggleColumnsMonospacedAction extends BaseAction
+   {
+		ToggleColumnsMonospacedAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.ToggleColumnsMonospaced"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         new ColumnsMonospacedCommand(_dataSetViewerTablePanel.getTable()).execute();
       }
    }
 
