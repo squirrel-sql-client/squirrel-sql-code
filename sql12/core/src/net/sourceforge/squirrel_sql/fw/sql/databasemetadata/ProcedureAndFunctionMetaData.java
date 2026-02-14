@@ -1,18 +1,21 @@
 package net.sourceforge.squirrel_sql.fw.sql.databasemetadata;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.*;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class ProcedureAndFunctionMetaData
 {
@@ -30,7 +33,7 @@ public class ProcedureAndFunctionMetaData
       int count = 0;
       try
       {
-         final int[] cols = new int[]
+         final int[] columnsToReadFomMetaDataResult = new int[]
                {
                      1, // PROCEDURE_CAT
                      2, // PROCEDURE_SCHEM
@@ -40,7 +43,7 @@ public class ProcedureAndFunctionMetaData
                };
 
          DialectType dialectType = DialectFactory.getDialectType(md);
-         final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
+         final ResultSetReader rdr = new ResultSetReader(rs, columnsToReadFomMetaDataResult, dialectType);
          Object[] row;
          while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
          {
