@@ -28,7 +28,8 @@ final class GeneralPreferencesGUI extends JPanel
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GeneralPreferencesGUI.class);
 
    private JRadioButton _tabbedStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.tabbedStyle"));
-   private JRadioButton _internalFrameStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.internalFrameStyle"));
+    private JRadioButton _internalFrameStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.internalFrameStyle"));
+   private JRadioButton _useNewFramePerConnection = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.useNewFramePerConnection"));
    private JCheckBox _useScrollableTabbedPanesForSessionTabs = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.useScrollableTabbedPanesForSessionTabs"));
    private JCheckBox _showContents = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showwindowcontents"));
    private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
@@ -82,9 +83,18 @@ final class GeneralPreferencesGUI extends JPanel
 
    void loadData(SquirrelPreferences prefs)
    {
-      _tabbedStyle.setSelected(prefs.getTabbedStyle());
+       if (prefs.getUseNewFramePerConnection())
+       {
+           _useNewFramePerConnection.setSelected(true);
+           _tabbedStyle.setSelected(false);
+           _internalFrameStyle.setSelected(false);
+       }
+       else {
+           _tabbedStyle.setSelected(prefs.getTabbedStyle());
+           _internalFrameStyle.setSelected(!prefs.getTabbedStyle());
+           _useNewFramePerConnection.setSelected(false);
+       }
       _useScrollableTabbedPanesForSessionTabs.setSelected(prefs.getUseScrollableTabbedPanesForSessionTabs());
-      _internalFrameStyle.setSelected(!prefs.getTabbedStyle());
       onStyleChanged();
       _showTabbedStyleHint.setSelected(prefs.getShowTabbedStyleHint());
 
@@ -122,8 +132,8 @@ final class GeneralPreferencesGUI extends JPanel
       LocaleWrapper.setSelectedLocalePrefsString(_localeChooser, prefs.getPreferredLocale());
 
       _tabbedStyle.addActionListener(e -> onStyleChanged());
-
       _internalFrameStyle.addActionListener(e -> onStyleChanged());
+      _useNewFramePerConnection.addActionListener(e -> onStyleChanged());
 
       _messagePrefsCtrl.loadData(prefs);
 
@@ -142,7 +152,13 @@ final class GeneralPreferencesGUI extends JPanel
 
    void applyChanges(SquirrelPreferences prefs)
    {
-      prefs.setTabbedStyle(_tabbedStyle.isSelected());
+       if (_useNewFramePerConnection.isSelected()) {
+           prefs.setUseNewFramePerConnection(true);
+           prefs.setTabbedStyle(true);
+       } else {
+           prefs.setUseNewFramePerConnection(false);
+           prefs.setTabbedStyle(_tabbedStyle.isSelected());
+       }
       prefs.setUseScrollableTabbedPanesForSessionTabs(_useScrollableTabbedPanesForSessionTabs.isSelected());
       prefs.setShowContentsWhenDragging(_showContents.isSelected());
       prefs.setShowTabbedStyleHint(_showTabbedStyleHint.isSelected());
@@ -211,6 +227,7 @@ final class GeneralPreferencesGUI extends JPanel
 
       g.add(_tabbedStyle);
       g.add(_internalFrameStyle);
+      g.add(_useNewFramePerConnection);
       final GridBagConstraints gbc = new GridBagConstraints();
       gbc.fill = GridBagConstraints.HORIZONTAL;
       gbc.insets = new Insets(2, 4, 2, 4);
@@ -224,6 +241,9 @@ final class GeneralPreferencesGUI extends JPanel
       ++gbc.gridy;
       _internalFrameStyle.setName("internalFrameStyleRadioButton");
       pnl.add(_internalFrameStyle, gbc);
+      ++gbc.gridy;
+      _useNewFramePerConnection.setName("useNewFramePerConnectionRadioButton");
+      pnl.add(_useNewFramePerConnection, gbc);
       ++gbc.gridy;
 
       _useScrollableTabbedPanesForSessionTabs.setName("useScrollableTabbedPanes");
