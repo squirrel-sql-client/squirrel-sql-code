@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
@@ -296,13 +297,25 @@ public class Utilities
             oOut.close();
             ByteArrayInputStream bIn = new ByteArrayInputStream(bOut.toByteArray());
             bOut.close();
-            ObjectInputStream oIn = new ObjectInputStream(bIn)
-            {
-               protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
-               {
-            	   return Class.forName(desc.getName(), false, classLoader);
+            ObjectInputStream oIn = new ObjectInputStream(bIn) {
+               @Override
+               protected Class<?> resolveClass(ObjectStreamClass desc)
+                  throws IOException, ClassNotFoundException {
+
+                  Class<?> clazz = Class.forName(desc.getName(), false, classLoader);
+
+                  if (!clazz.isAssignableFrom(toClone.getClass())
+                        && !toClone.getClass().isAssignableFrom(clazz)) {
+                        throw new InvalidClassException(
+                           "Unauthorized deserialization attempt",
+                           desc.getName()
+                        );
+                  }
+
+                  return clazz;
                }
             };
+
             bIn.close();
             Object copy = oIn.readObject();
             oIn.close();
