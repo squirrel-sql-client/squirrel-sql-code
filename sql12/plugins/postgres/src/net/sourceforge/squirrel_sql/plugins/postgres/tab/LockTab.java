@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.plugins.postgres.tab;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -62,7 +61,7 @@ public class LockTab extends BaseDataSetTab {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(QUERY);
             ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs, DialectType.POSTGRES);
+            rsds.readDataFromJdbcResultSetForGeneralPurpose(rs, DialectType.POSTGRES);
             return rsds;
         }
         catch (SQLException ex)
