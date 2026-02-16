@@ -16,6 +16,10 @@
 
 package net.sourceforge.squirrel_sql.plugins.vertica.tab;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.BaseTableTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
@@ -27,10 +31,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * This tab shows the primary key info for the currently selected table.
@@ -99,7 +99,7 @@ public class ProjectionTab extends BaseTableTab
 			pstmt.setString(2, ti.getSimpleName());
 			rs = pstmt.executeQuery();
 			ResultSetDataSet rsds = new ResultSetDataSet(md.getColumnInfo(ti));
-			rsds.setResultSet(rs, DialectFactory.getDialectType(md));
+			rsds.readDataFromJdbcResultSetForGeneralPurpose(rs, DialectFactory.getDialectType(md));
 			return rsds;
 
 		}

@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
@@ -38,12 +37,11 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class ContentPlusTab extends ContentsTab {
 	
@@ -237,9 +235,9 @@ public class ContentPlusTab extends ContentsTab {
                 // distinguish this table from other tables in the DB.
                 // We also include the URL used to connect to the DB so that
                 // the same table/DB on different machines is treated differently.
-                rsds.setContentsTabResultSet(rs,
-                                             _dataSetUpdateableTableModel.getFullTableName(),
-                                             DialectFactory.getDialectType(md));
+                rsds.readDataFromJdbcResultSetForObjectTreeContentTabs(rs,
+                                                                       _dataSetUpdateableTableModel.getFullTableName(),
+                                                                       DialectFactory.getDialectType(md));
                 if (rs != null) {
                     try { rs.close(); } catch (SQLException e) {}
                 }

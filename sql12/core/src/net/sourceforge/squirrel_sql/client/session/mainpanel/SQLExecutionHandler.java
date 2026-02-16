@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.sql.SQLWarning;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -24,11 +29,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.sql.SQLWarning;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class is the handler for the execution of sql against the SQLExecuterPanel
@@ -396,7 +396,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 
          // rsds.setContentsTabResultSet() reads the result set. So results processing on the DB is over
          // and this time is measured. None is interested in the time that it takes us to render Swing tables ...
-         info.resultsProcessingComplete(_rsds.setSqlExecutionTabResultSet(rs, null, dialectType));
+         info.resultsProcessingComplete(_rsds.readDataFromJdbcResultSetForSqlExecution(rs, null, dialectType));
 
          _executionHandlerListener.addResultsTab(info, _rsds, rsmdds, model, _resultTabToReplace);
 

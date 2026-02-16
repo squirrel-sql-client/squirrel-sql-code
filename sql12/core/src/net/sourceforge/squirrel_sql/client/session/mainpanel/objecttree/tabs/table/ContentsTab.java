@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JTable;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
@@ -287,7 +288,7 @@ public class ContentsTab extends BaseTableTab
             // distinguish this table from other tables in the DB.
             // We also include the URL used to connect to the DB so that
             // the same table/DB on different machines is treated differently.
-            rsds.setContentsTabResultSet(rs, _dataSetUpdateableTableModel.getFullTableName(), DialectFactory.getDialectType(md));
+            rsds.readDataFromJdbcResultSetForObjectTreeContentTabs(rs, _dataSetUpdateableTableModel.getFullTableName(), DialectFactory.getDialectType(md));
             SQLUtilities.closeResultSet(rs);
 
 

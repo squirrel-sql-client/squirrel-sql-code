@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
@@ -91,19 +92,6 @@ public class ResultSetDataSet implements IDataSet
    }
 
    /**
-    * Form used by Tabs other than ContentsTab
-    *
-    * @param rs          the ResultSet to set.
-    * @param dialectType the type of dialect in use.
-    * @throws DataSetException
-    */
-   public int setResultSet(ResultSet rs, DialectType dialectType) throws DataSetException
-   {
-      return _setResultSet(new ResultSetWrapper(rs), null, null, false, false, dialectType);
-   }
-
-
-   /**
     * Content Tab may wish to limit data read for big columns.
     *
     * @param limitDataRead
@@ -113,34 +101,26 @@ public class ResultSetDataSet implements IDataSet
       this._limitDataRead = limitDataRead;
    }
 
-   /**
-    * Form used by ContentsTab, and for SQL results
-    *
-    * @param rs            the ResultSet to set.
-    * @param fullTableName the fully-qualified table name
-    * @param dialectType   the type of dialect in use.
-    * @throws DataSetException
-    */
-   public int setContentsTabResultSet(ResultSet rs, String fullTableName, DialectType dialectType) throws DataSetException
+   public int readDataFromJdbcResultSetForObjectTreeContentTabs(ResultSet rs, String fullTableName, DialectType dialectType) throws DataSetException
    {
-      return _setResultSet(new ResultSetWrapper(rs), fullTableName, null, false, true, dialectType);
+      return _readDataFromJdbcResultSet(new ResultSetWrapper(rs), fullTableName, null, false, true, dialectType);
    }
 
-   public int setSqlExecutionTabResultSet(ResultSetWrapper rs, String fullTableName, DialectType dialectType) throws DataSetException
+   public int readDataFromJdbcResultSetForSqlExecution(ResultSetWrapper rs, String fullTableName, DialectType dialectType) throws DataSetException
    {
-      return _setResultSet(rs, fullTableName, null, false, true, dialectType);
+      return _readDataFromJdbcResultSet(rs, fullTableName, null, false, true, dialectType);
    }
 
-
-   /**
-    * External method to read the contents of a ResultSet that is used by all
-    * Tab classes except ContentsTab. This tunrs all the data into strings for
-    * simplicity of operation.
-    */
-   public int setResultSet(ResultSet rs, int[] columnIndices, boolean computeWidths, DialectType dialectType) throws DataSetException
+   public int readDataFromJdbcResultSetForDatabaseMetaData(ResultSet rs, int[] columnIndices, boolean computeWidths, DialectType dialectType) throws DataSetException
    {
-      return _setResultSet(new ResultSetWrapper(rs), null, columnIndices, computeWidths, false, dialectType);
+      return _readDataFromJdbcResultSet(new ResultSetWrapper(rs), null, columnIndices, computeWidths, false, dialectType);
    }
+
+   public int readDataFromJdbcResultSetForGeneralPurpose(ResultSet rs, DialectType dialectType) throws DataSetException
+   {
+      return _readDataFromJdbcResultSet(new ResultSetWrapper(rs), null, null, false, false, dialectType);
+   }
+
 
    /**
     * Internal method to read the contents of a ResultSet that is used by all
@@ -148,12 +128,12 @@ public class ResultSetDataSet implements IDataSet
     *
     * @return The number of rows read from the ResultSet
     */
-   private int _setResultSet(ResultSetWrapper rs,
-                             String fullTableName,
-                             int[] columnIndices,
-                             boolean computeWidths,
-                             boolean useColumnDefs,
-                             DialectType dialectType) throws DataSetException
+   private int _readDataFromJdbcResultSet(ResultSetWrapper rs,
+                                          String fullTableName,
+                                          int[] columnIndices,
+                                          boolean computeWidths,
+                                          boolean useColumnDefs,
+                                          DialectType dialectType) throws DataSetException
    {
       reset();
       _dialectType = dialectType;

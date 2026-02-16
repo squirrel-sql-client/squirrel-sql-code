@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
 import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -1232,7 +1233,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 			rs = md.getColumnPrivileges(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), columns);
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForDatabaseMetaData(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
 			return rsds;
 		}
 		catch (SQLException e)
@@ -1267,7 +1268,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(), ti.getSchemaName(),
 					ti.getSimpleName());
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, null, true, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForDatabaseMetaData(rs, null, true, DialectFactory.getDialectType(this));
 			return rsds;
 		}
 		catch (SQLException e)
@@ -1326,7 +1327,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
 			rs = privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, null, true, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForDatabaseMetaData(rs, null, true, DialectFactory.getDialectType(this));
 			return rsds;
 		}
 		catch (SQLException e)
@@ -1438,7 +1439,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
 			rs = _getIndexInfo(ti);
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForDatabaseMetaData(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
 			return rsds;
 		}
 		catch (SQLException e)
@@ -1518,7 +1519,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				privateGetJDBCMetaData().getPrimaryKeys(ti.getCatalogName(), ti.getSchemaName(),
 					ti.getSimpleName());
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForDatabaseMetaData(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
 			return rsds;
 		}
 		catch (SQLException e)
@@ -1584,7 +1585,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			DatabaseMetaData md = privateGetJDBCMetaData();
 			rs = md.getProcedureColumns(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), "%");
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForGeneralPurpose(rs, DialectFactory.getDialectType(this));
 			return rsds;
 		}
 		catch (SQLException e)
@@ -1623,7 +1624,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			DatabaseMetaData md = privateGetJDBCMetaData();
 			rs = md.getTablePrivileges(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForDatabaseMetaData(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
 			return rsds;
 		}
 		catch (SQLException e)
@@ -1660,7 +1661,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			DatabaseMetaData md = privateGetJDBCMetaData();
 			rs = md.getVersionColumns(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForGeneralPurpose(rs, DialectFactory.getDialectType(this));
 			return rsds;
 		}
 		catch (SQLException e)
@@ -1704,7 +1705,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
 			rs = getColumns(ti);
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
+			rsds.readDataFromJdbcResultSetForDatabaseMetaData(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
 
 			// Workaround for DB2/AIX64 driver: COLUMN_SIZE is not CHAR_OCTET_LENGTH for double-bytes datatypes GRAPHIC/VARGRAPHIC
 			result = rsds;

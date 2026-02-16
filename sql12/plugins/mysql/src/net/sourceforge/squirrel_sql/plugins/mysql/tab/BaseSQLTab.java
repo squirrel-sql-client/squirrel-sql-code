@@ -18,6 +18,13 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Component;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -30,13 +37,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.awt.Component;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 
 abstract class BaseSQLTab extends BaseObjectTab
 {
@@ -159,7 +159,7 @@ abstract class BaseSQLTab extends BaseObjectTab
 		throws DataSetException
 	{
 		final ResultSetDataSet rsds = new ResultSetDataSet();
-		rsds.setResultSet(rs, DialectType.MYSQL);
+		rsds.readDataFromJdbcResultSetForGeneralPurpose(rs, DialectType.MYSQL);
 		if (!_firstRowOnly)
 		{
 			return rsds;

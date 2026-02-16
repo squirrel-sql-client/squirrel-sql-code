@@ -1,5 +1,13 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
@@ -10,14 +18,6 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
 {
@@ -124,7 +124,7 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
             DialectFactory.getDialectType(_cliSession.getMetaData());
 
 
-      rsds.setSqlExecutionTabResultSet(rst, null, dialectType);
+      rsds.readDataFromJdbcResultSetForSqlExecution(rst, null, dialectType);
 
 
       ResultAsText resultAsText = new ResultAsText(rsds.getDataSetDefinition().getColumnDefinitions(), true, line -> onAddLine(line));

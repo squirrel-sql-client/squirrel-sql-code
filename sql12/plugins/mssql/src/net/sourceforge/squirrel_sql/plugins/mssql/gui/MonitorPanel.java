@@ -27,7 +27,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -168,11 +167,11 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
       {
          _refreshDate = new Date();
          rs = _whoStmt.executeQuery();
-         _whoDataSet.setResultSet(rs, DialectType.MSSQL);
+         _whoDataSet.readDataFromJdbcResultSetForGeneralPurpose(rs, DialectType.MSSQL);
          _whoViewer.show(_whoDataSet);
 
          rs = _perfStmt.executeQuery();
-         _perfDataSet.setResultSet(rs, DialectType.MSSQL);
+         _perfDataSet.readDataFromJdbcResultSetForGeneralPurpose(rs, DialectType.MSSQL);
          _perfViewer.show(_perfDataSet);
       }
       catch (java.sql.SQLException ex)
