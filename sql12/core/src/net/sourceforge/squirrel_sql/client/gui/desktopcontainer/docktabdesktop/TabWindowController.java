@@ -35,13 +35,16 @@ public class TabWindowController implements DockTabDesktopPaneHolder
    private IApplication _app;
    private final JMenu _mnuSession;
    private final JFrame _tabWindowFrame;
+   String _title;
 
    private static class MoveTabBackToMainWinMarker {}
 
-   public TabWindowController(Point locationOnScreen, Dimension size, final IApplication app)
+   public TabWindowController(String title, Point locationOnScreen, Dimension size, final IApplication app)
    {
+       // Kind of a hack, would be better if the title code was refactored
+       _title = title.replaceAll("^[0-9]* - ", "");
       _app = app;
-      _tabWindowFrame = new JFrame(_app.getMainFrame().getTitle() + " " +s_stringMgr.getString("docktabdesktop.TabWindowController.titlePostFix"));
+      _tabWindowFrame = new JFrame(title);
 
       _tabWindowFrame.setLocation(locationOnScreen);
       _tabWindowFrame.setSize(size);
