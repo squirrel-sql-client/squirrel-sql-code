@@ -41,32 +41,20 @@
 	<tr>
       <td class="body_left_border">&nbsp;</td>
       <td width='100%' class="body" bgcolor="white" valign="top">
-         <h3 class="body"><A name="newfeatures">Feature highlights of 5.0.0:</A></h3>
+         <h3 class="body"><A name="newfeatures">Feature highlights of 5.1.0:</A></h3>
 		 <ul>
-             <li>The Object tree's root node has a new detail tab named "Client Properties"</li>
-             <li>The Object tree didn't show tables when the JDBC driver didn't provide table types</li>
-             <li>Support for Java 25</li>
-             <li>SQL result table search now highlights results in cell detail display, too</li>
-             <li>Cell data image display offers to scale images to fit the display size</li>
-             <li>MS Excel exports offer to create tabs containing the exports' SQL statements</li>
-             <li>Improved memory footprint</li>
-             <li>Enhanced 'Copy separated by ...' function</li>
-             <li>Searching all open SQL results and cell data dialogs</li>
-             <li>Code completion for JOIN ON clauses</li>
-             <li>Cell data display highlights JSON and XML after reformatting</li>
-             <li>Choosing fonts for MS-Excel export</li>
-             <li>Aliases can be made read-only</li>
-             <li>SQL result tabs that match the current SQL in the editor are marked</li>
-             <li>SQL result's find function now offers to narrow the columns to search</li>
-             <li>SQL result's detail data display now allows to automatically reformat XML or Json</li>
-             <li>Numeric values can be right aligned</li>
-             <li>Export to MS-Excel allows to configure auto filtering</li>
-             <li>Header rows of MS-Excel exports can be made bold/centered/frozen</li>
-             <li>Option to change the statement separator during SQL execution using --#SET TERMINATOR &lt;separator&gt;</li>
-             <li>Besides sums, means and deviations can now be displayed for selections in numerical columns</li>
-             <li>New Alias tree icons which for FlatLaf Look and Feels show if top level folders are expanded or collapsed </li>
+			 <li>Table columns can be toggled between a monospaced font and default font</li>
+			 <li>Table cell contents can be concatenated without separator</li>
+			 <li>SQL results can be rerun automatically after a configurable number of seconds</li>
+			 <li>The SQL editor allows to run bookmarks by the syntax @runbookmark &lt;bookmarkNameInSingleQuotes&gt;</li>
+			 <li>MS Excel file export allows to add or replace sheet-tabs in an MS Excel file</li>
+			 <li>Option to execute SQL in multiple Sessions</li>
+			 <li>Single click connect to multiple Aliases</li>
+			 <li>Enhanced security for encrypting Alias passwords</li>
+			 <li>"Copy as WIKI Table" - function of tables now supports copying the Jira/Cloud table format</li>
+			 <li>User Bookmarks can be displayed as tree</li>
          </ul>
-		 All new features and bug fixes of the 5.0.0 release can be found in our change log at
+		 All new features and bug fixes of the 5.1.0 release can be found in our change log at
 			  <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
 			  or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.
 
@@ -119,6 +107,21 @@
 
 			<center>
 				<h3 class="body">
+					<font size="+2">SQuirreL 5.1.0 is released (03/26/2026).</font><br>
+					The list of feature highlights is rather long and can be found above.<br>
+					For all new features and bug fixes see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
+					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
+					<b>Note that SQuirreL 5.1.0 requires at least Java 17.</b><br>
+					<br>
+					5.1.0 releases on SourceForge:<br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/5.1.0/squirrel-sql-5.1.0-standard.jar/download">Download installer for Windows/Linux/others</a><br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/5.1.0/squirrel-sql-5.1.0-MACOSX-install.jar/download">Download installer for Mac OS </a><br><br>
+					5.1.0 releases on GitHub:<br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/5.1.0-installer/squirrel-sql-5.1.0-standard.jar">Download installer for Windows/Linux/others</a><br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/5.1.0-installer/squirrel-sql-5.1.0-MACOSX-install.jar">Download installer for Mac OS </a><br>
+				</h3>
+				<div style="border-top: 3px solid grey"></div>
+				<h3 class="body">
 					The latest snapshot-20260215_1841 is a release candidate for the 5.1.0 release.<br>
 					Changes since the 5.0.0 release are<br><br>
 					<table>
@@ -153,49 +156,6 @@
 					for the latest snapshots regularly.<br>
 				</h3>
 				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-                    <font size="+2">SQuirreL 5.0.0 is released (09/18/2025).</font><br>
-                    The list of feature highlights is rather long and can be found above.<br>
-                    For all new features and bug fixes see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-                    or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
-                    <b>Note that SQuirreL 5.0.0 requires at least Java 17.</b><br>
-                    <br>
-                    5.0.0 releases on SourceForge:<br>
-                    <A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0/squirrel-sql-5.0.0-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-                    <A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0/squirrel-sql-5.0.0-MACOSX-install.jar/download">Download installer for Mac OS </a><br><br>
-                    5.0.0 releases on GitHub:<br>
-                    <A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/v5000/squirrel-sql-5.0.0-standard.jar">Download installer for Windows/Linux/others</a><br>
-                    <A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/v5000/squirrel-sql-5.0.0-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-                </h3>
-                <div style="border-top: 3px solid grey"></div>
-                <h3 class="body">
-					The latest snapshot-20250824_2124 is one more candidate for the 5.0.0 release.<br>
-					Latest changes are<br>
-					<table>
-						<tr><td><b>&rArr; the Object tree's root node has new detail tab named "Client Properties"</b></td></tr>
-						<tr><td><b>&rArr; the Object tree didn't show tables when the JDBC driver didn't provide table types</b></td></tr>
-						<tr><td><b>&rArr; support for the upcoming Java 25 release</b></td></tr>
-					</table>
-					Please give it a try.<br><br>
-					The minimum required Java version for this snapshot is 17.x.<br>
-					<br>
-					For all new features and bug fixes see our change log at
-					<a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br><br>
-					snapshot-20250824_2124 releases on SourceForge are:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20250824_2124/squirrel-sql-snapshot-20250824_2124-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20250824_2124/squirrel-sql-snapshot-20250824_2124-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
-					snapshot-20250824_2124 releases on GitHub are:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20250824_2124/squirrel-sql-snapshot-20250824_2124-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20250824_2124/squirrel-sql-snapshot-20250824_2124-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-				</h3>
-                <h3 class="body">
-					Note: We don't announce every snapshot release here. If you are interested please check<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases">https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases</A><br>
-					or<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots">https://sourceforge.net/projects/squirrel-sql/files/3-snapshots</A><br>
-					for the latest snapshots regularly.<br>
-				</h3>
 			</center>
 		</td>
 		<td class="body_right_border">&nbsp;</td>
@@ -269,19 +229,19 @@
 				<tr>
 					<td>
 						<UL>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0/squirrel-sql-5.0.0-standard.jar/download">Install jar of SQuirreL 5.0.0 for Windows/Linux/others</a></B></LI>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0/squirrel-sql-5.0.0-MACOSX-install.jar/download">Install jar of SQuirreL 5.0.0 for MacOS X</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.1.0/squirrel-sql-5.1.0-standard.jar/download">Install jar of SQuirreL 5.1.0 for Windows/Linux/others</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.1.0/squirrel-sql-5.1.0-MACOSX-install.jar/download">Install jar of SQuirreL 5.1.0 for MacOS X</a></B></LI>
 							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/3-snapshots/">Install jars of latest snapshots</a></B></LI>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.0.0-plainzip/">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/5.1.0-plainzip/">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
 							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/">Overview of all available downloads</a></B></LI>
 						</UL>
 					</td>
 					<td>
 						<UL>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/v5000/squirrel-sql-5.0.0-standard.jar">Install jar of SQuirreL 5.0.0 for Windows/Linux/others</a></B></LI>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/v5000/squirrel-sql-5.0.0-MACOSX-install.jar">Install jar of SQuirreL 5.0.0 for MacOS X</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/5.1.0-installer/squirrel-sql-5.1.0-standard.jar">Install jar of SQuirreL 5.1.0 for Windows/Linux/others</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/5.1.0-installer/squirrel-sql-5.1.0-MACOSX-install.jar">Install jar of SQuirreL 5.1.0 for MacOS X</a></B></LI>
 							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases">Install jars of latest snapshots</a></B></LI>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/tag/v500">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/tag/5.1.0-installer">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
 							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases">Overview of all stable releases</a></B></LI>
 						</UL>
 					</td>
