@@ -1,5 +1,14 @@
 package net.sourceforge.squirrel_sql.client.preferences.shortcut;
 
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.shortcut.Shortcut;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
@@ -10,16 +19,7 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 
 public class ShortcutPrefsCtrl
@@ -30,10 +30,12 @@ public class ShortcutPrefsCtrl
    private static final String PREF_KEY_ACTION_NAME_COL_WIDTH = "ShortcutPrefsCtrl.column.actionName.width";
    private static final String PREF_KEY_VALID_SHORTCUT_COL_WIDTH = "ShortcutPrefsCtrl.column.validShortcut.width";
    private static final String PREF_KEY_DEFAULT_SHORTCUT_COL_WIDTH = "ShortcutPrefsCtrl.column.defaultShortcut.width";
+   private static final String PREF_KEY_ACTION_DESCRIPTION_COL_WIDTH = "ShortcutPrefsCtrl.column.actionDescription.width";
 
    public static final String COL_HEADER_ACTION_NAME = s_stringMgr.getString("ShortcutPrefsCtrl.column.actionName");
    public static final String COL_HEADER_VALID_SHORTCUT = s_stringMgr.getString("ShortcutPrefsCtrl.column.validKeyStroke");
    public static final String COL_HEADER_DEFAULT_SHORTCUT = s_stringMgr.getString("ShortcutPrefsCtrl.column.defaultKeyStroke");
+   public static final String COL_HEADER_ACTION_DESCRIPTION = s_stringMgr.getString("ShortcutPrefsCtrl.column.description");
 
    private ShortcutPrefsPanel _shortcutPrefsPanel = new ShortcutPrefsPanel();
    private KeyStroke _currentKeyStroke;
@@ -46,7 +48,7 @@ public class ShortcutPrefsCtrl
       Props.putInt(PREF_KEY_ACTION_NAME_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_ACTION_NAME));
       Props.putInt(PREF_KEY_VALID_SHORTCUT_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_VALID_SHORTCUT));
       Props.putInt(PREF_KEY_DEFAULT_SHORTCUT_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_DEFAULT_SHORTCUT));
-
+      Props.putInt(PREF_KEY_ACTION_DESCRIPTION_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_ACTION_DESCRIPTION));
 
       Main.getApplication().getShortcutManager().save();
 
@@ -60,16 +62,21 @@ public class ShortcutPrefsCtrl
       _shortcutDataSet = new JavabeanArrayDataSet(Shortcut.class);
 
       _shortcutDataSet.setColHeader("actionName", COL_HEADER_ACTION_NAME);
-      _shortcutDataSet.setColPos("actionName", 1);
+      _shortcutDataSet.setColPos("actionName", 0);
       _shortcutDataSet.setAbsoluteWidht("actionName", Props.getInt(PREF_KEY_ACTION_NAME_COL_WIDTH, 200));
 
       _shortcutDataSet.setColHeader("validKeyStroke", COL_HEADER_VALID_SHORTCUT);
-      _shortcutDataSet.setColPos("validKeyStroke", 2);
+      _shortcutDataSet.setColPos("validKeyStroke", 1);
       _shortcutDataSet.setAbsoluteWidht("validKeyStroke", Props.getInt(PREF_KEY_VALID_SHORTCUT_COL_WIDTH, 200));
 
       _shortcutDataSet.setColHeader("defaultKeyStroke", COL_HEADER_DEFAULT_SHORTCUT);
       _shortcutDataSet.setColPos("defaultKeyStroke", 2);
       _shortcutDataSet.setAbsoluteWidht("defaultKeyStroke", Props.getInt(PREF_KEY_DEFAULT_SHORTCUT_COL_WIDTH, 200));
+
+      _shortcutDataSet.setColHeader("actionDescription", COL_HEADER_ACTION_DESCRIPTION);
+      _shortcutDataSet.setColPos("actionDescription", 3);
+      _shortcutDataSet.setAbsoluteWidht("actionDescription", Props.getInt(PREF_KEY_ACTION_DESCRIPTION_COL_WIDTH, 200));
+
 
       _shortcutDataSet.setIgnoreProperty("userKeyStroke");
 
@@ -108,7 +115,7 @@ public class ShortcutPrefsCtrl
    {
       int modelColumn = _shortcutPrefsPanel.tblShortcuts.getTable().getColumnModel().getColumn(column).getModelIndex();
 
-      if(2 != modelColumn)
+      if(1 != modelColumn)
       {
          return null;
       }
@@ -156,15 +163,20 @@ public class ShortcutPrefsCtrl
 
       if(0 == _shortcutPrefsPanel.tblShortcuts.getSelectedModelRows().length)
       {
-         _shortcutPrefsPanel.txtSelectedShortcut.setText(s_stringMgr.getString("ShortcutPrefsPanel.txt.shortcut.formated", "<No selection>", "<No selection"));
+         _shortcutPrefsPanel.txtSelectedShortcut.setText(s_stringMgr.getString("ShortcutPrefsPanel.txt.shortcut.formated_extended", "<No selection>", "<No selection>", "<No selection>"));
          return;
-
       }
-
 
       Shortcut selectedShortcut = getSelectedShortcut();
 
-      _shortcutPrefsPanel.txtSelectedShortcut.setText(s_stringMgr.getString("ShortcutPrefsPanel.txt.shortcut.formated", selectedShortcut.getActionName(), selectedShortcut.getDefaultKeyStroke()));
+      _shortcutPrefsPanel.txtSelectedShortcut.setText(s_stringMgr.getString("ShortcutPrefsPanel.txt.shortcut.formated_extended", selectedShortcut.getActionName(), selectedShortcut.getDefaultKeyStroke(), getDescription(selectedShortcut)));
+
+      _shortcutPrefsPanel.txtSelectedShortcut.setCaretPosition(0);
+   }
+
+   private String getDescription(Shortcut selectedShortcut)
+   {
+      return StringUtils.isBlank(selectedShortcut.getActionDescription()) ? "<Empty>" : selectedShortcut.getActionDescription();
    }
 
    private void displayShortcuts()

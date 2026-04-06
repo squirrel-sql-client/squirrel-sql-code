@@ -19,6 +19,16 @@ package net.sourceforge.squirrel_sql.fw.resources;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.net.URL;
+import java.util.MissingResourceException;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortCutReader;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -28,10 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.net.URL;
-import java.util.MissingResourceException;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class Resources implements IResources
 {
@@ -303,6 +310,30 @@ public abstract class Resources implements IResources
 	{
 		return getResourceString(getActionKey(actionClass), ActionProperties.NAME);
 	}
+
+	public String getTooltipFromResource(Class<? extends Action> actionClass)
+	{
+		String ret = getResourceString(getActionKey(actionClass), ActionProperties.TOOLTIP);
+		if(false == StringUtils.isBlank(ret))
+		{
+			return ret;
+		}
+
+		return null;
+	}
+
+	public String getTooltipFromResource(String fullResourceString)
+	{
+		String ret = getResourceString(fullResourceString, ActionProperties.TOOLTIP);
+
+		if(false == StringUtils.isBlank(ret))
+		{
+			return ret;
+		}
+
+		return null;
+	}
+
 
 	private String getActionKey(Class<? extends Action> actionClass)
 	{

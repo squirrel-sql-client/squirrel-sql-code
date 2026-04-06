@@ -1,13 +1,12 @@
 package net.sourceforge.squirrel_sql.client.shortcut;
 
+import java.util.MissingResourceException;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.fw.resources.ResourceBundleHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.Action;
-import javax.swing.KeyStroke;
-import java.util.MissingResourceException;
 
 public class ShortCutReader
 {
@@ -63,7 +62,7 @@ public class ShortCutReader
       if (false == defaultShortCut && false == StringUtilities.isEmpty(actionName, true))
       {
          // Possibly replace the standard shortcut with the user defined one.
-         ret = Main.getApplication().getShortcutManager().registerAccelerator(actionName, KeyStroke.getKeyStroke(ret));
+         ret = Main.getApplication().getShortcutManager().registerAccelerator(actionName, KeyStroke.getKeyStroke(ret), ShortCutDescriptionReader.of(action, fullResourceKey, _bundleHandler));
       }
 
       return ret;

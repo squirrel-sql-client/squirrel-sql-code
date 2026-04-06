@@ -5,15 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.SimpleType;
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.Action;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,6 +13,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import javax.swing.Action;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class ShortcutManager
 {
@@ -71,14 +69,14 @@ public class ShortcutManager
       return new ArrayList<>(_shortcuts);
    }
 
-   public KeyStroke setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, Action action)
+   public KeyStroke setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, Action action, ShortCutDescriptionReader descReader)
    {
-      return setAccelerator(item, defaultKeyStroke, (String) action.getValue(Action.NAME));
+      return setAccelerator(item, defaultKeyStroke, (String) action.getValue(Action.NAME), descReader);
    }
 
-   public KeyStroke setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, String actionName)
+   public KeyStroke setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, String actionName, ShortCutDescriptionReader descReader)
    {
-      Shortcut shortcut = _registerAccelerator(actionName, defaultKeyStroke);
+      Shortcut shortcut = _registerAccelerator(actionName, defaultKeyStroke, descReader);
 
       item.setAccelerator(shortcut.validKeyStroke());
 
@@ -86,33 +84,28 @@ public class ShortcutManager
    }
 
 
-   public void registerAccelerator(Class<? extends Action> actionClass)
-   {
-      registerAccelerator(actionClass, Main.getApplication().getResources());
-   }
-
-   public String registerAccelerator(Class<? extends Action> actionClass, Resources resources)
+   public String registerAccelerator(Class<? extends Action> actionClass, Resources resources, ShortCutDescriptionReader descReader)
    {
       String actionName = resources.getActionName(actionClass);
       KeyStroke defaultKeyStroke = resources.getShortCutReader().getDefaultShortcutAsKeyStroke(resources.getFullMenuItemKey(actionClass), actionName);
 
-      return _registerAccelerator(actionName, defaultKeyStroke).getValidKeyStroke();
+      return _registerAccelerator(actionName, defaultKeyStroke, descReader).getValidKeyStroke();
    }
 
 
-   public String registerAccelerator(String actionName, KeyStroke defaultKeyStroke)
+   public String registerAccelerator(String actionName, KeyStroke defaultKeyStroke, ShortCutDescriptionReader descReader)
    {
-      return _registerAccelerator(actionName, defaultKeyStroke).getValidKeyStroke();
+      return _registerAccelerator(actionName, defaultKeyStroke, descReader).getValidKeyStroke();
    }
 
-   private Shortcut _registerAccelerator(String actionName, KeyStroke defaultKeyStroke)
+   private Shortcut _registerAccelerator(String actionName, KeyStroke defaultKeyStroke, ShortCutDescriptionReader descReader)
    {
       if(StringUtilities.isEmpty(actionName, true))
       {
-         return new Shortcut(actionName, defaultKeyStroke);
+         return new Shortcut(actionName, defaultKeyStroke, descReader.getDescription());
       }
 
-      Shortcut ret = new Shortcut(actionName, defaultKeyStroke);
+      Shortcut ret = new Shortcut(actionName, defaultKeyStroke, descReader.getDescription());
 
       String userShortCutString = _shortcutsJsonBeanLoadedAtStartUp.getShortcutByKey().get(ret.generateKey());
 

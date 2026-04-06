@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomR
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabAdder;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabComponent;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortCutDescriptionReader;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
@@ -933,7 +934,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       Action action = _session.getApplication().getActionCollection().get(actionClass);
 
       String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
-      Main.getApplication().getShortcutManager().setAccelerator(mnuItem, KeyStroke.getKeyStroke(accel), action);
+      Main.getApplication().getShortcutManager().setAccelerator(mnuItem, KeyStroke.getKeyStroke(accel), action, ShortCutDescriptionReader.of(action, mnuItem));
    }
 
    public JTabbedPane getTabbedPane()

@@ -18,10 +18,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.util.EmptyIterator;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -35,6 +31,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import net.sourceforge.squirrel_sql.fw.util.EmptyIterator;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class JavabeanArrayDataSet implements IDataSet
 {
@@ -48,10 +47,10 @@ public class JavabeanArrayDataSet implements IDataSet
    private Class _beanClass;
    private BeanPorpertyColumnDisplayDefinition[] _beanPorpertyColumnDisplayDefinitions;
 
-   private HashMap<String, String> _headers = new HashMap<String, String>();
-   private HashMap<String, Integer> _positions = new HashMap<String, Integer>();
-   private HashMap<String, Integer> _absoluteWidths = new HashMap<String, Integer>();
-   private HashSet<String> _ignoreProperties = new HashSet<String>();
+   private HashMap<String, String> _headers = new HashMap<>();
+   private HashMap<String, Integer> _positions = new HashMap<>();
+   private HashMap<String, Integer> _absoluteWidths = new HashMap<>();
+   private HashSet<String> _ignoreProperties = new HashSet<>();
 
 
    /**

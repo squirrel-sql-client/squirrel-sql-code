@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.gui.stdtextpopup;
 
-import net.sourceforge.squirrel_sql.client.Main;
-
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortCutDescriptionReader;
 
 public class TextActionHelper
 {
@@ -36,6 +36,6 @@ public class TextActionHelper
 
    public static KeyStroke getKeyStroke(String defaultEditorKitActionName, KeyStroke defaultKeyStroke)
    {
-      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(defaultEditorKitActionName, defaultKeyStroke));
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(defaultEditorKitActionName, defaultKeyStroke, ShortCutDescriptionReader.of()));
    }
 }

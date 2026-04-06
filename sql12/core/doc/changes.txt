@@ -1,6 +1,20 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository, snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
+The keyboard short cuts tab now contains the action's description (tooltip).
+
+
+Bug fixes:
+
+Oracle Plugin: Fixed typo, DB Ouptut --> DB Output
+
+
 5.1.0 (03/26/2026)
 ==================
 

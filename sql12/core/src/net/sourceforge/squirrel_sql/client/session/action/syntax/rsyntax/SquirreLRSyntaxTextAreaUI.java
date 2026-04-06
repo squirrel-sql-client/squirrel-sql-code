@@ -1,7 +1,19 @@
 package net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.Action;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.plaf.InputMapUIResource;
+import javax.swing.text.EditorKit;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.TextAction;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortCutDescriptionReader;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextActionUtil;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextBeginAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextBeginLineAction;
@@ -16,18 +28,6 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaUI;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextAreaEditorKit;
-
-import javax.swing.Action;
-import javax.swing.InputMap;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.plaf.InputMapUIResource;
-import javax.swing.text.EditorKit;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.TextAction;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
 public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 {
@@ -192,26 +192,37 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 
    public static KeyStroke getToUpperCaseKeyStroke()
    {
-      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaUpperSelectionCaseAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_TO_UPPER_CASE));
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaUpperSelectionCaseAction,
+                                                                                                   SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_TO_UPPER_CASE,
+                                                                                                   ShortCutDescriptionReader.of()));
    }
 
    public static KeyStroke getToLowerCaseKeyStroke()
    {
-      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLowerSelectionCaseAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_TO_LOWER_CASE));
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLowerSelectionCaseAction,
+                                                                                                   SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_TO_LOWER_CASE,
+                                                                                                   ShortCutDescriptionReader.of()));
    }
 
    public static KeyStroke getLineUpKeyStroke()
    {
-      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLineUpAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_LINE_UP));
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLineUpAction,
+                                                                                                   SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_LINE_UP,
+                                                                                                   ShortCutDescriptionReader.of()));
+
    }
 
    public static KeyStroke getLineDownKeyStroke()
    {
-      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLineDownAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_LINE_DOWN));
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLineDownAction,
+                                                                                                   SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_LINE_DOWN,
+                                                                                                   ShortCutDescriptionReader.of()));
    }
    public static KeyStroke getSelectWordStroke()
    {
-      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.selectWordAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_SELECT_WORD));
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.selectWordAction,
+                                                                                                   SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_SELECT_WORD,
+                                                                                                   ShortCutDescriptionReader.of()));
    }
 
    @Override

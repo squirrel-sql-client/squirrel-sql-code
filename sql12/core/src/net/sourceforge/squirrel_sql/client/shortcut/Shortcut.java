@@ -1,20 +1,21 @@
 package net.sourceforge.squirrel_sql.client.shortcut;
 
-import org.jfree.chart.util.ObjectUtils;
-
 import javax.swing.KeyStroke;
+import org.jfree.chart.util.ObjectUtils;
 
 public class Shortcut
 {
    private final String _actionName;
+   private final String _actionDescription;
    private final KeyStroke _defaultKeyStroke;
    private KeyStroke _userKeyStroke;
    private boolean _userKeyStrokeEmpty;
 
-   public Shortcut(String actionName, KeyStroke defaultKeyStroke)
+   public Shortcut(String actionName, KeyStroke defaultKeyStroke, String actionDescription)
    {
       _actionName = actionName;
       _defaultKeyStroke = defaultKeyStroke;
+      _actionDescription = actionDescription;
    }
 
    /**
@@ -57,6 +58,13 @@ public class Shortcut
       return _defaultKeyStroke;
    }
 
+   /**
+    * Used via reflection by JavabeanArrayDataSet
+    */
+   public String getActionDescription()
+   {
+      return _actionDescription;
+   }
 
    public void setUserKeyStroke(KeyStroke userKeyStroke)
    {

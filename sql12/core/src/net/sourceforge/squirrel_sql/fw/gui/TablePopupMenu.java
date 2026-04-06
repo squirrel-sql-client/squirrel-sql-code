@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.TableSelectionDiff;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortCutDescriptionReader;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
@@ -248,7 +249,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private void addMenuItem(JMenuItem menuItem)
 	{
 		String actionName = menuItem.getText();
-		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(menuItem, null, actionName);
+		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(menuItem, null, actionName, ShortCutDescriptionReader.of(menuItem));
 		add(menuItem);
 
 		if (null != validKeyStroke)
@@ -275,7 +276,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private void addAction(Action action, KeyStroke defaultKeyStroke)
 	{
 		JMenuItem mnuAdded = add(action);
-		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(mnuAdded, defaultKeyStroke, action);
+		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(mnuAdded, defaultKeyStroke, action, ShortCutDescriptionReader.of(action));
 		ResourceUtil.trySetToolTip(mnuAdded, action);
 
 		if (null != validKeyStroke)
