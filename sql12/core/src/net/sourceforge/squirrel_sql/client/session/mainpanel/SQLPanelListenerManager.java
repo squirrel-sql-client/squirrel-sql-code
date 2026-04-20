@@ -1,12 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SQLPanelListenerManager
 {
@@ -45,18 +44,16 @@ public class SQLPanelListenerManager
       _sqlResultExecuterTabListener.remove(lis);
    }
 
-   public void fireSQLEntryAreaInstalled()
+   public void fireSQLEntryAreaInstalled(SQLPanelEvent evt)
    {
-      SQLPanelEvent evt = new SQLPanelEvent();
       for (ISQLPanelListener isqlPanelListener : _sqlPanelListener.toArray(new ISQLPanelListener[0]))
       {
          isqlPanelListener.sqlEntryAreaInstalled(evt);
       }
    }
 
-   public void fireSQLEntryAreaClosed()
+   public void fireSQLEntryAreaClosed(SQLPanelEvent evt)
    {
-      SQLPanelEvent evt = new SQLPanelEvent();
       for (ISQLPanelListener isqlPanelListener : _sqlPanelListener.toArray(new ISQLPanelListener[0]))
       {
          isqlPanelListener.sqlEntryAreaClosed(evt);

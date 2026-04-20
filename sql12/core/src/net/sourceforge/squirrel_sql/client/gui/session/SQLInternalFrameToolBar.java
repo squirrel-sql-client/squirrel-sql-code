@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMenuFactory;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxMenuFactory;
+import net.sourceforge.squirrel_sql.client.session.editexternal.FileEditExternalAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -58,6 +59,7 @@ class SQLInternalFrameToolBar extends ToolBar
       add(actions.get(FileCloseAction.class));
       add(actions.get(FilePrintAction.class));
       add(actions.get(FileReloadAction.class));
+      add(actions.get(FileEditExternalAction.class));
 
       add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class), session).getComponent());
       addSeparator();

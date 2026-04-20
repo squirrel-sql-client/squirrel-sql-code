@@ -1,22 +1,30 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
 import java.io.File;
+import org.apache.commons.lang3.ObjectUtils;
 
 public class FileReloadInfo
 {
    public static final FileReloadInfo USER_REQUEST_RELOAD_INFO = new FileReloadInfo();
 
    private File _file;
+   private boolean _displayReloadMessageBox;
 
-   public FileReloadInfo(File file)
-   {
-      _file = file;
-   }
-
+   /**
+    * For {@link #USER_REQUEST_RELOAD_INFO} only.
+    */
    private FileReloadInfo()
    {
-      this(null);
    }
+
+   public FileReloadInfo(File file, boolean displayReloadMessageBox)
+   {
+      ObjectUtils.requireNonEmpty(file, "file parameter must not be empty.");
+
+      _file = file;
+      _displayReloadMessageBox = displayReloadMessageBox;
+   }
+
 
    public File getFile()
    {
@@ -25,12 +33,11 @@ public class FileReloadInfo
 
    public boolean isByUserRequest()
    {
-      return null == _file;
+      return this == USER_REQUEST_RELOAD_INFO;
    }
 
-   public boolean isByFileWatcher()
+   public boolean isDisplayReloadMessageBox()
    {
-      return null == _file;
+      return _displayReloadMessageBox;
    }
-
 }

@@ -21,23 +21,18 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JFrame;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JFrame;
-import java.util.ArrayList;
-import java.util.List;
-
 public class TaskThreadPool
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(TaskThreadPool.class);
+	private static ILogger s_log = LoggerController.createLogger(TaskThreadPool.class);
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(TaskThreadPool.class);
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TaskThreadPool.class);
     
 	// Count of available or free threads.
 	private int _iFree;
@@ -95,7 +90,8 @@ public class TaskThreadPool
 		if (_iFree == 0)
 		{
 			Thread th = new Thread(new TaskExecuter(_callback));
-			if (taskName != null) {
+			if(taskName != null)
+			{
 				th.setName(taskName);
 			}
 			th.setPriority(Thread.MIN_PRIORITY); //??

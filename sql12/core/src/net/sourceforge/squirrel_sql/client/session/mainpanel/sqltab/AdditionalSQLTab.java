@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab;
 
+import java.awt.Component;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandlerUtil;
@@ -12,9 +16,6 @@ import net.sourceforge.squirrel_sql.fw.gui.ResizableTextEditDialog;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class AdditionalSQLTab extends BaseSQLTab
 {
@@ -132,7 +133,7 @@ public class AdditionalSQLTab extends BaseSQLTab
          getSession().getSessionPanel().removeMainTab(this);
       }
 
-      getSQLPanel().sessionWorksheetOrTabClosing();
+      getSQLPanel().sessionOrSqlWorksheetOrSqlTabClosing();
    }
 
 

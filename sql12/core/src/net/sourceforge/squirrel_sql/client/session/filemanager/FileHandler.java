@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
+import java.io.File;
+import javax.swing.JFrame;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
@@ -12,11 +16,6 @@ import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.*;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
-import java.io.File;
 
 public class FileHandler
 {
@@ -36,9 +35,9 @@ public class FileHandler
       _fileManagementCore = new FileManagementCore(fileEditorAPI, titleFileHandler);
       _fileEditorAPI = fileEditorAPI;
 
-      final FileNotifierListener fileNotifierListener = file -> fileReload(new FileReloadInfo(file));
-      Main.getApplication().getFileNotifier().addFileNotifierListener(fileNotifierListener);
-      _fileEditorAPI.getSession().addSimpleSessionListener(() -> Main.getApplication().getFileNotifier().removeFileNotifierListener(fileNotifierListener));
+      final FileNotifierListener fileNotifierListener = file -> fileReload(new FileReloadInfo(file, true));
+      Main.getApplication().getFileNotifier().addDefaultFileNotifierListener(fileNotifierListener);
+      _fileEditorAPI.getSession().addSimpleSessionListener(() -> Main.getApplication().getFileNotifier().removeDefaultFileNotifierListener(fileNotifierListener));
    }
 
    public IFileEditorAPI getFileEditorAPI()
@@ -85,41 +84,43 @@ public class FileHandler
 
    public void fileReload(FileReloadInfo info)
    {
-      File file = _fileManagementCore.getFile();
+      File thisHandlersFile = _fileManagementCore.getFile();
 
       if(info.isByUserRequest())
       {
-         if (null == file)
+         if (null == thisHandlersFile)
          {
             Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelAPI.nofileToRelaod"));
             return;
          }
       }
-      else // if(info.isByFileWatcher())
+      else
       {
-         if (false == Utilities.equalsRespectNull(info.getFile(), file))
+         if (false == Utilities.equalsRespectNull(info.getFile(), thisHandlersFile))
          {
             return;
          }
 
-         DontShowAgainDialog reloadReqDlg = new DontShowAgainDialog(
-               _fileEditorAPI.getOwningFrame(),
-               s_stringMgr.getString("FileHandler.fileChangeDetected.ReloadRequest", file.getAbsolutePath()),
-               s_stringMgr.getString("FileHandler.fileChangeDetected.switchBackOnHint"));
-
-         DontShowAgainResult reloadReqRes = reloadReqDlg.showAndGetResult("FileHandler.fileChangeDetected", 470, 200);
-
-         if(reloadReqRes.isDontShowAgain())
+         if(info.isDisplayReloadMessageBox())
          {
-            Main.getApplication().getFileNotifier().setNotifyExternalFileChanges(false);
-         }
+            DontShowAgainDialog reloadReqDlg = new DontShowAgainDialog(
+                  _fileEditorAPI.getOwningFrame(),
+                  s_stringMgr.getString("FileHandler.fileChangeDetected.ReloadRequest", thisHandlersFile.getAbsolutePath()),
+                  s_stringMgr.getString("FileHandler.fileChangeDetected.switchBackOnHint"));
 
-         if(false == reloadReqRes.isYes())
-         {
-            return;
+            DontShowAgainResult reloadReqRes = reloadReqDlg.showAndGetResult("FileHandler.fileChangeDetected", 470, 200);
+
+            if(reloadReqRes.isDontShowAgain())
+            {
+               Main.getApplication().getFileNotifier().setNotifyDefaultExternalFileChanges(false);
+            }
+
+            if(false == reloadReqRes.isYes())
+            {
+               return;
+            }
          }
       }
-
 
       int caretPosition = _fileEditorAPI.getCaretPosition();
 
@@ -128,7 +129,7 @@ public class FileHandler
          return;
       }
 
-      fileOpen(file);
+      fileOpen(thisHandlersFile);
 
       _fileEditorAPI.setCaretPosition(Math.min(_fileEditorAPI.getText().length(), caretPosition));
       fireFileHandlerListener();
@@ -432,5 +433,10 @@ public class FileHandler
    public byte[] getBytesForSave()
    {
       return _fileManagementCore.getBytesForSave();
+   }
+
+   public void dispose()
+   {
+      _fileManagementCore.dispose();
    }
 }

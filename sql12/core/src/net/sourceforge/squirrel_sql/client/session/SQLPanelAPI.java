@@ -549,7 +549,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_panel.getSQLExecPanel().closeAllToResultTabs(left);
    }
 
-   public void closeCurrentResultTab()
+	public void closeCurrentResultTab()
    {
       _panel.getSQLExecPanel().closeCurrentResultTab();
    }
@@ -754,5 +754,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public void activateLastMarkedResultTabHeader()
 	{
 		_panel.activateLastMarkedResultTabHeader();
+	}
+
+	public void dispose()
+	{
+		closeAllSQLResultTabs();
+		_fileHandler.dispose();
 	}
 }

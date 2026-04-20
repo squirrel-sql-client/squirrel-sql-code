@@ -20,6 +20,14 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeListener;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -38,13 +46,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 /**
  * This tabbed panel is the main panel within the session window.
  *
@@ -346,7 +347,7 @@ public class MainPanel extends JPanel
    {
 		for (SQLPanel sqlPanel : getAllSQLPanels())
 		{
-			sqlPanel.sessionWorksheetOrTabClosing();
+			sqlPanel.sessionOrSqlWorksheetOrSqlTabClosing();
 		}
 
 		getObjectTreePanel().sessionWindowClosing();

@@ -6,7 +6,7 @@ public enum SQLogLevel
 {
    ERROR(4), WARN(2), INFO(1), DEBUG(0);
 
-   private int _height;
+   private final int _height;
 
    SQLogLevel(int height)
    {

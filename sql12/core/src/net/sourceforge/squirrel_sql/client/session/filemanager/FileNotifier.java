@@ -1,13 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.Timer;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 
 /**
@@ -15,126 +13,143 @@ import java.util.HashSet;
  */
 public class FileNotifier
 {
-   private static ILogger s_log = LoggerController.createLogger(FileNotifier.class);
+   private final Map<File, FileNotifierImpl> _defaultFileNotifierImpls = new HashMap<>();;
+   private final Map<File, FileNotifierImpl> _customFileNotifierImpls = new HashMap<>();
 
-   private ArrayList<FileNotifierListener> _fileNotifierListeners = new ArrayList<>();
-
-   private final Timer _swingTimer;
-   private HashSet<File> _filesBeingWritten = new HashSet<>();
-
-   private HashSet<FileWatch> _fileWatches = new HashSet<>();
-   private boolean _inOnTimerTriggered;
+   private final FileNotifierListener _internalDefaultFileNotifierListener = file -> onDefaultFileChanged(file);
+   private List<FileNotifierListener> _externalDefaultFileNotifierListeners = new ArrayList<>();
 
    public FileNotifier()
    {
-      _swingTimer = new Timer(2000, e -> onTimerTriggered());
-      _swingTimer.setRepeats(true);
-      _swingTimer.start();
    }
 
-   private void onTimerTriggered()
+   private void onDefaultFileChanged(File file)
    {
-      if (false == Main.getApplication().getSquirrelPreferences().isNotifyExternalFileChanges())
+      FileNotifierListener[] listeners = _externalDefaultFileNotifierListeners.toArray(new FileNotifierListener[0]);
+      Stream.of(listeners).forEach(l -> l.fileChanged(file));
+   }
+
+   public void watchFileDefaultIfNotAlreadyWatchedCustom(File file)
+   {
+      if(_defaultFileNotifierImpls.containsKey(file))
       {
-         _swingTimer.stop();
+         // Already being watched
          return;
       }
 
+      if(_customFileNotifierImpls.containsKey(file))
+      {
+         // Is already being watched custom
+         return;
+      }
 
-      if(_inOnTimerTriggered)
+      FileNotifierImpl removed = _customFileNotifierImpls.remove(file);
+      if(null != removed)
+      {
+         removed.dispose();
+      }
+
+
+      FileNotifierImpl notifier = new FileNotifierImpl(true, FileNotifierImpl.DEFAULT_DELAY, _internalDefaultFileNotifierListener);
+      _defaultFileNotifierImpls.put(file, notifier);
+      notifier.watchFile(file);
+   }
+
+   public void unwatchFileDefault(File file)
+   {
+      FileNotifierImpl fileNotifier = _defaultFileNotifierImpls.remove(file);
+      if(null == fileNotifier)
       {
          return;
       }
 
-      try
+      fileNotifier.dispose();
+   }
+
+   public void watchFileCustom(File file, int delay, FileNotifierListener listener)
+   {
+      if(_customFileNotifierImpls.containsKey(file))
       {
-         _inOnTimerTriggered = true;
-         FileNotifierListener[] listeners = null;
-
-         HashSet<FileWatch> updatedWatches = new HashSet<>();
-
-         final FileWatch[] fileWatches = _fileWatches.toArray(new FileWatch[0]);
-
-         for (FileWatch fileWatch : fileWatches)
-         {
-            if( false == fileWatch.changedExternally() || _filesBeingWritten.contains(fileWatch.getFile()))
-            {
-               continue;
-            }
-
-            if (null == listeners)
-            {
-               listeners = _fileNotifierListeners.toArray(new FileNotifierListener[0]);
-            }
-
-            for (FileNotifierListener listener : listeners)
-            {
-               try
-               {
-                  listener.fileChanged(fileWatch.getFile());
-               }
-               catch (Exception e)
-               {
-                  s_log.error(e);
-               }
-            }
-            updatedWatches.add(new FileWatch(fileWatch.getFile())); // We fire a detected change only once.
-         }
-
-         _fileWatches.removeAll(updatedWatches); // Due to implementation of HastSet.add(...) and FileWatch.hashCode()/equals()
-         _fileWatches.addAll(updatedWatches);
-      }
-      finally
-      {
-         _inOnTimerTriggered = false;
-      }
-   }
-
-   public void watchFile(File file)
-   {
-      _fileWatches.remove(new FileWatch(file)); // Due to implementation of HastSet.add(...) and FileWatch.hashCode()/equals()
-      _fileWatches.add(new FileWatch(file));
-   }
-
-   public void unwatchFile(File file)
-   {
-      _fileWatches.remove(new FileWatch(file));
-   }
-
-   public void addFileNotifierListener(FileNotifierListener fileNotifierListener)
-   {
-      removeFileNotifierListener(fileNotifierListener);
-      _fileNotifierListeners.add(fileNotifierListener);
-   }
-
-   public void removeFileNotifierListener(FileNotifierListener fileNotifierListener)
-   {
-      _fileNotifierListeners.remove(fileNotifierListener);
-   }
-
-
-
-   public void setNotifyExternalFileChanges(boolean b)
-   {
-      if (false == b)
-      {
-         _swingTimer.stop();
+         // Already being watched
+         return;
       }
 
-      Main.getApplication().getSquirrelPreferences().setNotifyExternalFileChanges(b);
+      FileNotifierImpl removed = _defaultFileNotifierImpls.remove(file);
+      if(null != removed)
+      {
+         removed.dispose();
+      }
+
+
+      FileNotifierImpl customFileNotifier = new FileNotifierImpl(false, delay, listener);
+      _customFileNotifierImpls.put(file, customFileNotifier);
+      customFileNotifier.watchFile(file);
+   }
+
+
+   public void unwatchFileCustom(File file)
+   {
+      FileNotifierImpl notifier = _customFileNotifierImpls.remove(file);
+
+      if(null == notifier)
+      {
+         // Not being watched
+         return;
+      }
+
+      notifier.dispose();
+
+      FileNotifierImpl defaultFileNotifier = new FileNotifierImpl(true, FileNotifierImpl.DEFAULT_DELAY, _internalDefaultFileNotifierListener);
+      defaultFileNotifier.watchFile(file);
+      _defaultFileNotifierImpls.put(file, defaultFileNotifier);
+   }
+
+
+   public void addDefaultFileNotifierListener(FileNotifierListener fileNotifierListener)
+   {
+      _externalDefaultFileNotifierListeners.remove(fileNotifierListener);
+      _externalDefaultFileNotifierListeners.add(fileNotifierListener);
+   }
+
+   public void removeDefaultFileNotifierListener(FileNotifierListener fileNotifierListener)
+   {
+      _externalDefaultFileNotifierListeners.remove(fileNotifierListener);
+   }
+
+   public void setNotifyDefaultExternalFileChanges(boolean b)
+   {
+      _defaultFileNotifierImpls.values().forEach(n -> n.setNotifyExternalFileChanges(b));
    }
 
    public void beginFileWrite(File file)
    {
-      _filesBeingWritten.add(file);
+      FileNotifierImpl fileNotifier = _defaultFileNotifierImpls.get(file);
+
+      if(null == fileNotifier)
+      {
+         fileNotifier = _customFileNotifierImpls.get(file);
+      }
+
+      if(null != fileNotifier)
+      {
+         fileNotifier.beginFileWrite(file);
+      }
+
    }
 
    public void endFileWrite(File file)
    {
-      // This makes file unchanged.
-      _fileWatches.remove(new FileWatch(file));
-      _fileWatches.add(new FileWatch(file)); // Due to implementation of HastSet.add(...) and FileWatch.hashCode()/equals()
+      FileNotifierImpl fileNotifier = _defaultFileNotifierImpls.get(file);
 
-      _filesBeingWritten.remove(file);
+      if(null == fileNotifier)
+      {
+         fileNotifier = _customFileNotifierImpls.get(file);
+      }
+
+
+      if(null != fileNotifier)
+      {
+         fileNotifier.endFileWrite(file);
+      }
    }
 }

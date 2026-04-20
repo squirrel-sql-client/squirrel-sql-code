@@ -149,6 +149,7 @@ import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.Squirre
 import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
+import net.sourceforge.squirrel_sql.client.session.editexternal.FileEditExternalAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.QuitSoundAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
@@ -196,6 +197,8 @@ public class ActionRegistry
       toolsPopupController.addAction("fileclose", ac.get(FileCloseAction.class));
       toolsPopupController.addAction("fileprint", ac.get(FilePrintAction.class));
       toolsPopupController.addAction("filereload", ac.get(FileReloadAction.class));
+      toolsPopupController.addAction("fileeditexternal", ac.get(FileEditExternalAction.class));
+
 
       toolsPopupController.addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
       toolsPopupController.addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
@@ -339,6 +342,7 @@ public class ActionRegistry
       actionCollection.add(new FileCloseAction(app));
       actionCollection.add(new FilePrintAction(app));
       actionCollection.add(new FileReloadAction(app));
+      actionCollection.add(new FileEditExternalAction());
       actionCollection.add(new ChangeTrackAction(app));
 
       actionCollection.add(new SessionSaveAction(app));

@@ -21,6 +21,11 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
@@ -36,12 +41,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.ReadOn
 import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
 
 public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFrame
 {
@@ -115,7 +114,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 					}
 				}
 
-				_sqlPanel.sessionWorksheetOrTabClosing();
+				_sqlPanel.sessionOrSqlWorksheetOrSqlTabClosing();
             return true;
          }
 		});

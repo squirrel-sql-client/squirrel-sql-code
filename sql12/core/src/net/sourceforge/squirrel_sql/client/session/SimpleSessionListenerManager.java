@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import java.util.ArrayList;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
-
-import java.util.ArrayList;
 
 public class SimpleSessionListenerManager
 {
@@ -45,6 +44,8 @@ public class SimpleSessionListenerManager
       {
          simpleSessionListener.sessionClosed();
       }
+
+      _listeners.clear();
 
       _app.getSessionManager().removeSessionListener(_sessionAdapter);
    }

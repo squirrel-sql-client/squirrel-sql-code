@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 
 /**
@@ -30,4 +29,15 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
  */
 public class SQLPanelEvent
 {
+   private final SQLPanel _sourceSqlPanel;
+
+   public SQLPanelEvent(SQLPanel sourceSqlPanel)
+   {
+      _sourceSqlPanel = sourceSqlPanel;
+   }
+
+   public SQLPanel getSourceSqlPanel()
+   {
+      return _sourceSqlPanel;
+   }
 }

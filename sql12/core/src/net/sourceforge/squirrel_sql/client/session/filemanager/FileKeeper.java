@@ -1,9 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
+import java.io.File;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import java.io.File;
 
 public class FileKeeper
 {
@@ -16,18 +15,22 @@ public class FileKeeper
 
    public void set(File file)
    {
-      if (false == Utilities.equalsRespectNull(file, _file))
+      if (Utilities.equalsRespectNull(file, _file))
       {
-         if (null != _file)
-         {
-            Main.getApplication().getFileNotifier().unwatchFile(_file);
-         }
+         return;
+      }
 
-         _file = file;
-         if (null != _file)
-         {
-            Main.getApplication().getFileNotifier().watchFile(_file);
-         }
+      if (null != _file)
+      {
+         // Note: FileHandler.fileReload(...) temporarily sets the file to null.
+         // This is why we do not call FileNotifier.unwatchFileCustom(...) here.
+         Main.getApplication().getFileNotifier().unwatchFileDefault(_file);
+      }
+
+      _file = file;
+      if (null != _file)
+      {
+         Main.getApplication().getFileNotifier().watchFileDefaultIfNotAlreadyWatchedCustom(_file);
       }
    }
 }

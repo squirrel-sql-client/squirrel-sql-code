@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptMen
 import net.sourceforge.squirrel_sql.client.session.action.syntax.ConfigureAutoCorrectAction;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.FindAction;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.ReplaceAction;
+import net.sourceforge.squirrel_sql.client.session.editexternal.FileEditExternalAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
@@ -93,6 +94,7 @@ class SessionPanelToolBar extends ToolBar
       add(actions.get(FileCloseAction.class));
       add(actions.get(FilePrintAction.class));
       add(actions.get(FileReloadAction.class));
+      add(actions.get(FileEditExternalAction.class));
 
       add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class), session).getComponent());
       addSeparator();

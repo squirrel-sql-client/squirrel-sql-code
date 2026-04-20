@@ -1,21 +1,27 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
+import java.awt.Frame;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.InvalidPathException;
 
 
 public class FileManagementCore
@@ -27,7 +33,7 @@ public class FileManagementCore
    private IFileEditorAPI _fileEditorAPI;
    private TitleFilePathHandler _titleFilePathHandler;
 
-   private FileKeeper _toSaveTo = new FileKeeper();
+   private FileKeeper _fileKeeper = new FileKeeper();
 
    private FileChooserManager _fileChooserManager = new FileChooserManager();
 
@@ -199,8 +205,8 @@ public class FileManagementCore
 
       if (toNewFile)
       {
-         toSaveToBuf = _toSaveTo.get();
-         _toSaveTo.set(null);
+         toSaveToBuf = _fileKeeper.get();
+         _fileKeeper.set(null);
          chooser.setSelectedFile(toSaveToBuf);
       }
 
@@ -208,7 +214,7 @@ public class FileManagementCore
 
       for (; ;)
       {
-         if (null == _toSaveTo.get())
+         if (null == _fileKeeper.get())
          {
             if (prefs.isFileOpenInPreviousDir())
             {
@@ -230,9 +236,9 @@ public class FileManagementCore
 
          _fileEditorAPI.selectWidgetOrTab();
 
-         if (null != _toSaveTo.get())
+         if (null != _fileKeeper.get())
          {
-            if (saveScript(frame, _toSaveTo.get(), false))
+            if (saveScript(frame, _fileKeeper.get(), false))
             {
                result.setSuccess(true);
             }
@@ -242,26 +248,26 @@ public class FileManagementCore
          if (chooser.showSaveDialog() == JFileChooser.APPROVE_OPTION)
          {
             _fileChooserManager.saveWasApproved();
-            _toSaveTo.set(chooser.getSelectedFile());
+            _fileKeeper.set(chooser.getSelectedFile());
 
-            if (!_toSaveTo.get().exists() && null != _fileChooserManager.getSelectedFileEnding())
+            if (!_fileKeeper.get().exists() && null != _fileChooserManager.getSelectedFileEnding())
             {
-               if (!_toSaveTo.get().getAbsolutePath().endsWith(_fileChooserManager.getSelectedFileEnding()))
+               if (!_fileKeeper.get().getAbsolutePath().endsWith(_fileChooserManager.getSelectedFileEnding()))
                {
-                  _toSaveTo.set(new File(_toSaveTo.get().getAbsolutePath() + _fileChooserManager.getSelectedFileEnding()));
+                  _fileKeeper.set(new File(_fileKeeper.get().getAbsolutePath() + _fileChooserManager.getSelectedFileEnding()));
                }
             }
 
-            if (saveScript(frame, _toSaveTo.get(), true))
+            if (saveScript(frame, _fileKeeper.get(), true))
             {
                result.setSuccess(true);
                wasSavedToNewFile = true;
-               result.setSavedToNewFile(toSaveToBuf, _toSaveTo.get(), chooser.isMoveFile());
+               result.setSavedToNewFile(toSaveToBuf, _fileKeeper.get(), chooser.isMoveFile());
                break;
             }
             else
             {
-               _toSaveTo.set(null);
+               _fileKeeper.set(null);
                result.setSuccess(false);
                break;
             }
@@ -275,7 +281,7 @@ public class FileManagementCore
 
       if(false == wasSavedToNewFile && null != toSaveToBuf)
       {
-         _toSaveTo.set(toSaveToBuf);
+         _fileKeeper.set(toSaveToBuf);
       }
 
       return result;
@@ -424,19 +430,19 @@ public class FileManagementCore
 
    private void setFile(File file)
    {
-      _toSaveTo.set(file);
+      _fileKeeper.set(file);
       _titleFilePathHandler.setSqlFile(file);
    }
 
    public File getFile()
    {
-      return _toSaveTo.get();
+      return _fileKeeper.get();
    }
 
 
    public void clearCurrentFile()
    {
-      _toSaveTo.set(null);
+      _fileKeeper.set(null);
    }
 
    public void clearSqlFile()
@@ -460,5 +466,10 @@ public class FileManagementCore
    {
       String sScript = getEntireSQLScriptWithPlatformEolChar();
       return sScript.getBytes();
+   }
+
+   public void dispose()
+   {
+      _fileKeeper.set(null);
    }
 }

@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.EventListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+
 /**
  * This listener is called whenever an event occurs in the SQL panel.
  *
@@ -35,12 +37,23 @@ public interface ISQLPanelListener extends EventListener
 	 */
 	void sqlEntryAreaInstalled(SQLPanelEvent evt);
 
+	/**
+	 * Warning:
+	 * This method is mostly redundant to {{@link #panelParentClosing(SQLPanelEvent)}}.
+	 * I.e. the only caller of both methods is {@link SQLPanel#sessionOrSqlWorksheetOrSqlTabClosing()}
+	 */
    void sqlEntryAreaClosed(SQLPanelEvent evt);
 
 	/**
-	 * Fired when a Session main tab {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#MAIN_TAB_IN_SESSION_WINDOW}
+	 * Fired when
+	 * a Session main tab {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#MAIN_TAB_IN_SESSION_WINDOW}
 	 * or a SQL Worksheet {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#IN_SQL_WORKSHEET}
-	 * or a SQL tab {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#ADDITIONAL_TAB_IN_SESSION_WINDOW} closes.
+	 * or a SQL tab {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#ADDITIONAL_TAB_IN_SESSION_WINDOW}
+	 * closes.
+	 * <p>
+	 * Warning:
+	 * This method is mostly redundant to {{@link #sqlEntryAreaClosed(SQLPanelEvent)}}.
+	 * I.e. the only caller of both methods is {@link SQLPanel#sessionOrSqlWorksheetOrSqlTabClosing()}
 	 */
 	void panelParentClosing();
 }

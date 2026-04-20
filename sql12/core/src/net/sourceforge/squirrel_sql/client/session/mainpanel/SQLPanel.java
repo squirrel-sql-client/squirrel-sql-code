@@ -58,6 +58,7 @@ import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabMatchingCurrentSqlHandler;
@@ -126,7 +127,7 @@ public class SQLPanel extends JPanel
 
 	private SQLResultExecutorPanel _sqlExecPanel;
 
-	private ISQLPanelAPI _panelAPI;
+	private SQLPanelAPI _panelAPI;
 
 
    private UndoHandlerImpl _undoHandler;
@@ -375,10 +376,10 @@ public class SQLPanel extends JPanel
 
 	}
 
-   public void sessionWorksheetOrTabClosing()
+   public void sessionOrSqlWorksheetOrSqlTabClosing()
    {
 
-		_sqlPanelListenerManager.fireSQLEntryAreaClosed();
+		_sqlPanelListenerManager.fireSQLEntryAreaClosed(new SQLPanelEvent(this));
 
 		_sqlPanelSplitter.sessionWindowClosing();
 
@@ -397,7 +398,7 @@ public class SQLPanel extends JPanel
 
 		_sqlPanelListenerManager.fireSQLPanelParentClosing();
 
-		_panelAPI.closeAllSQLResultTabs();
+		_panelAPI.dispose();
    }
 
 
@@ -423,7 +424,7 @@ public class SQLPanel extends JPanel
 
       new PasteFromHistoryAttach(_sqlEntry);
 
-		_sqlPanelListenerManager.fireSQLEntryAreaInstalled();
+		_sqlPanelListenerManager.fireSQLEntryAreaInstalled(new SQLPanelEvent(this));
 	}
 
    public void storeSplitPanePositionOnSessionClose(boolean value)

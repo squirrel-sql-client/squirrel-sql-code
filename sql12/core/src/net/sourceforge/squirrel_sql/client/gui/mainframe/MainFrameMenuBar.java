@@ -176,6 +176,7 @@ import net.sourceforge.squirrel_sql.client.session.action.syntax.UncommentAction
 import net.sourceforge.squirrel_sql.client.session.action.syntax.UncommentActionAltAccelerator;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.UnmarkAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
+import net.sourceforge.squirrel_sql.client.session.editexternal.FileEditExternalAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindResultColumnAction;
@@ -654,6 +655,7 @@ final class MainFrameMenuBar extends JMenuBar
       addToMenu(rsrc, FileAppendAction.class, menu);
       addToMenu(rsrc, FilePrintAction.class, menu);
       addToMenu(rsrc, FileReloadAction.class, menu);
+      addToMenu(rsrc, FileEditExternalAction.class, menu);
       addToMenu(rsrc, ChangeTrackAction.class, menu);
       return menu;
    }
