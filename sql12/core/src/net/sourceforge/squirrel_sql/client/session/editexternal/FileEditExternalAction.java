@@ -65,10 +65,14 @@ public class FileEditExternalAction extends SquirrelAction implements ISQLPanelA
 
          String cliCommand = ctrl.getCliCommand();
 
-         cliCommand= StringUtils.replaceAll(cliCommand, "@line", "" + currentSQLPanelAPI.getSQLEntryPanel().getCaretLineNumber());
-         cliCommand= StringUtils.replaceAll(cliCommand, "@col", "" + currentSQLPanelAPI.getSQLEntryPanel().getCaretLinePosition());
-         cliCommand= StringUtils.replaceAll(cliCommand, "@pos", "" + currentSQLPanelAPI.getSQLEntryPanel().getCaretPosition());
-         cliCommand= StringUtils.replaceAll(cliCommand, "@file", fileToEditExternally.getAbsolutePath());
+         int caretLineNumber = currentSQLPanelAPI.getSQLEntryPanel().getCaretLineNumber() + (ctrl.isLineNumberingStartsAtZero() ? 0 : 1);
+         int caretLinePosition = currentSQLPanelAPI.getSQLEntryPanel().getCaretLinePosition() + (ctrl.isLineNumberingStartsAtZero() ? 0 : 1);
+         int caretPosition = currentSQLPanelAPI.getSQLEntryPanel().getCaretPosition() + (ctrl.isLineNumberingStartsAtZero() ? 0 : 1);
+
+         cliCommand= StringUtils.replace(cliCommand, "@line", "" + caretLineNumber);
+         cliCommand= StringUtils.replace(cliCommand, "@col", "" + caretLinePosition);
+         cliCommand= StringUtils.replace(cliCommand, "@pos", "" + caretPosition);
+         cliCommand= StringUtils.replace(cliCommand, "@file", fileToEditExternally.getAbsolutePath());
 
          Date externalEditingStart = new Date();
          String editExternalStartMsg = s_stringMgr.getString("FileEditExternalAction.start.watching.external.editing",
@@ -138,8 +142,7 @@ public class FileEditExternalAction extends SquirrelAction implements ISQLPanelA
                                                        try
                                                        {
                                                           //ProcessBuilder pb = new ProcessBuilder(cliCommand);
-                                                          ProcessBuilder pb = new ProcessBuilder(ProcessBuilderCommandLineUtil.splitCommandLine(cliCommand));
-                                                          Process process = pb.start();
+                                                          Process process = Runtime.getRuntime().exec(cliCommand);;
 
                                                           process.waitFor(); // blocks until process exits
 

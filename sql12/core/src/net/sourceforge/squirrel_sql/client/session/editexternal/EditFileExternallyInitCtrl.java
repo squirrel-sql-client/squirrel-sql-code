@@ -14,6 +14,7 @@ public class EditFileExternallyInitCtrl
 
    public static final String PREF_KEY_MILLIS = "EditFileExternallyInitCtrl.millis";
    public static final String PREF_KEY_COMMAND = "EditFileExternallyInitCtrl.command";
+   public static final String PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO = "EditFileExternallyInitCtrl.line.numbering.starts.at.zero";
 
    private static StringManager s_stringMgr = StringManagerFactory.getStringManager(EditFileExternallyInitCtrl.class);
 
@@ -30,6 +31,9 @@ public class EditFileExternallyInitCtrl
 
       _dlg.txtMillis.setInt(Props.getInt(PREF_KEY_MILLIS, 500));
       _dlg.txtCommand.setText(Props.getString(PREF_KEY_COMMAND, "emacs +@line:@col @file"));
+
+      _dlg.radStartsAtZero.setSelected(Props.getBoolean(PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO, true));
+
 
       _dlg.btnOk.addActionListener(e -> onOk());
       _dlg.btnCancel.addActionListener(e -> close());
@@ -49,6 +53,7 @@ public class EditFileExternallyInitCtrl
 
       Props.putInt(PREF_KEY_MILLIS, _dlg.txtMillis.getInt());
       Props.putString(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
+      Props.putBoolean(PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO, _dlg.radStartsAtZero.isSelected());
 
       _ok = true;
       close();
@@ -74,5 +79,10 @@ public class EditFileExternallyInitCtrl
    public int getDelay()
    {
       return _dlg.txtMillis.getInt();
+   }
+
+   public boolean isLineNumberingStartsAtZero()
+   {
+      return _dlg.radStartsAtZero.isSelected();
    }
 }
