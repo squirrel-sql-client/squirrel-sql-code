@@ -142,7 +142,7 @@ public class FileEditExternalAction extends SquirrelAction implements ISQLPanelA
                                                        try
                                                        {
                                                           //ProcessBuilder pb = new ProcessBuilder(cliCommand);
-                                                          Process process = Runtime.getRuntime().exec(cliCommand);;
+                                                          Process process = Runtime.getRuntime().exec(cliCommand);
 
                                                           process.waitFor(); // blocks until process exits
 
