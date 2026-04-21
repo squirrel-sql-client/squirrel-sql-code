@@ -32,7 +32,9 @@ public class EditFileExternallyInitCtrl
       _dlg.txtMillis.setInt(Props.getInt(PREF_KEY_MILLIS, 500));
       _dlg.txtCommand.setText(Props.getString(PREF_KEY_COMMAND, "emacs +@line:@col @file"));
 
-      _dlg.radStartsAtZero.setSelected(Props.getBoolean(PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO, true));
+      boolean zeroOrOne = Props.getBoolean(PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO, true);
+      _dlg.radStartsAtZero.setSelected(zeroOrOne);
+      _dlg.radStartsAtOne.setSelected(!zeroOrOne);
 
 
       _dlg.btnOk.addActionListener(e -> onOk());
