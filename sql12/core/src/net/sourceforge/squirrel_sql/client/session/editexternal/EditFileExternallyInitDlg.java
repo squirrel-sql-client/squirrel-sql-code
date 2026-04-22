@@ -40,7 +40,7 @@ public class EditFileExternallyInitDlg extends JDialog
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
       getContentPane().add(new JLabel(s_stringMgr.getString("EditFileExternallyInitDlg.editor.refresh.millis")), gbc);
 
-      gbc = new GridBagConstraints(1,0,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,40), 0,0);
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,60), 0,0);
       getContentPane().add(txtMillis, gbc);
 
 

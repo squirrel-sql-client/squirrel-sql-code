@@ -26,7 +26,7 @@ public class EditFileExternallyInitCtrl
    {
       _dlg = new EditFileExternallyInitDlg(owningFrame);
 
-      GUIUtils.initLocation(_dlg, 500, 200);
+      GUIUtils.initLocation(_dlg, 600, 220);
       GUIUtils.enableCloseByEscape(_dlg);
 
       _dlg.txtMillis.setInt(Props.getInt(PREF_KEY_MILLIS, 500));

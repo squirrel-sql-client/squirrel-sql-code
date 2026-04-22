@@ -7,6 +7,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 Enhancements:
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
+  New SQL editor function that supports editing files in an external editor.
+  The function allows to execute an configurable CLI command to start the external editors.
+  Users can specify a reload rate for SQuirreL's editor while the external editor process is running.
+  See menu Session --> File --> "Edit externally ..." or Session toolbar or keyboard shortcut ctrl shift E.
+
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
   The keyboard short cuts tab now contains the action's description (tooltip).
   See menu File --> Global Preferences --> tab "Keyboard shortcuts"
 
