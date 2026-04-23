@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Introduced Java 26 compatibility.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
   New SQL editor function that supports editing files in an external editor.
   The function allows to execute an configurable CLI command to start the external editors.
