@@ -1,15 +1,15 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.KeyStroke;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 public class DataSetViewerTableCopyAction extends BaseAction
 {
@@ -21,6 +21,8 @@ public class DataSetViewerTableCopyAction extends BaseAction
    DataSetViewerTableCopyAction(DataSetViewerTable dataSetViewerTable)
    {
       super(getTableCopyActionName());
+      super.putValue(Action.SHORT_DESCRIPTION, s_stringMgr.getString("TablePopupMenu.copy.short.description"));
+      super.putValue(Action.LONG_DESCRIPTION, s_stringMgr.getString("TablePopupMenu.copy.long.description"));
       _dataSetViewerTable = dataSetViewerTable;
    }
 

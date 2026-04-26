@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.List;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
@@ -23,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextEndAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextEndLineAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPasteAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextSelectAllAction;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaDefaultInputMap;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaUI;
@@ -38,6 +42,8 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
    private static final KeyStroke RS_KEY_STROKE_LINE_DOWN = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 
    private static final KeyStroke RS_KEY_STROKE_SELECT_WORD = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK);
+
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SquirreLRSyntaxTextAreaUI.class);
 
    private static final EditorKit _squirrel_defaultKit =
       new RSyntaxTextAreaEditorKit()
@@ -147,6 +153,35 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       sharedIM.put(TextBeginAction.getKeyStroke(), RTextAreaEditorKit.beginAction);
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK));
       sharedIM.put(TextEndAction.getKeyStroke(), RTextAreaEditorKit.endAction);
+
+      completeAccelerators(sharedIM);
+   }
+
+   /**
+    * Note that
+    * {@link net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager#registerAccelerator(String, KeyStroke, ShortCutDescriptionReader)}
+    * does not renew already existing registrations.
+    */
+   private static void completeAccelerators(InputMap sharedIM)
+   {
+      for(KeyStroke keyStroke : sharedIM.allKeys())
+      {
+         HashSet<String> actionMapKeysToExclude = new HashSet<>();
+         actionMapKeysToExclude.addAll(
+               List.of(RSyntaxTextAreaEditorKit.rstaCollapseAllFoldsAction, RSyntaxTextAreaEditorKit.rstaExpandAllFoldsAction,
+                       RSyntaxTextAreaEditorKit.rstaExpandFoldAction, RSyntaxTextAreaEditorKit.rtaNextBookmarkAction,
+                       RSyntaxTextAreaEditorKit.rtaPrevBookmarkAction, RSyntaxTextAreaEditorKit.rtaToggleBookmarkAction)
+         );
+
+         Object actionMapKey = sharedIM.get(keyStroke);
+         if(null != actionMapKey && false == actionMapKeysToExclude.contains(actionMapKey))
+         {
+            KeyStroke keyStroke1 = KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator("" + actionMapKey,
+                                                                                                                         keyStroke,
+                                                                                                                         ShortCutDescriptionReader.of(s_stringMgr.getString("SquirreLRSyntaxTextAreaUI.editor.shortcut"))));
+            sharedIM.put(keyStroke1, actionMapKey);
+         }
+      }
    }
 
    public IUndoHandler createUndoHandler()

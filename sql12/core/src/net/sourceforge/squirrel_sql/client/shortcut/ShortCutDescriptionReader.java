@@ -14,41 +14,47 @@ public record ShortCutDescriptionReader(Action action,
                                         JMenuItem mnuItem,
                                         Resources resources,
                                         ResourceBundleHandler bundleHandler,
-                                        String fullResourceKey)
+                                        String fullResourceKey,
+                                        String callerProvidedText)
 {
    public static ShortCutDescriptionReader of(Action action)
    {
-      return new ShortCutDescriptionReader(action, null, null, null, null, null);
+      return new ShortCutDescriptionReader(action, null, null, null, null, null, null);
    }
 
    public static ShortCutDescriptionReader of(Action action, JMenuItem mnuItem)
    {
-      return new ShortCutDescriptionReader(action, null, mnuItem, null, null, null);
+      return new ShortCutDescriptionReader(action, null, mnuItem, null, null, null, null);
    }
 
    public static ShortCutDescriptionReader of(JMenuItem menuItem)
    {
-      return new ShortCutDescriptionReader(null, null, menuItem, null, null, null);
+      return new ShortCutDescriptionReader(null, null, menuItem, null, null, null, null);
    }
 
    public static ShortCutDescriptionReader of(Resources resources, Class<? extends Action> actionClass)
    {
-      return new ShortCutDescriptionReader(null, actionClass, null, resources, null, null);
+      return new ShortCutDescriptionReader(null, actionClass, null, resources, null, null, null);
    }
 
    public static ShortCutDescriptionReader of(Action action, String fullResourceKey, ResourceBundleHandler bundleHandler)
    {
-      return new ShortCutDescriptionReader(action, null, null, null, bundleHandler, fullResourceKey);
+      return new ShortCutDescriptionReader(action, null, null, null, bundleHandler, fullResourceKey, null);
    }
 
    public static ShortCutDescriptionReader of()
    {
-      return new ShortCutDescriptionReader(null, null, null, null, null, null);
+      return new ShortCutDescriptionReader(null, null, null, null, null, null, null);
+   }
+
+   public static ShortCutDescriptionReader of(String callerProvidedText)
+   {
+      return new ShortCutDescriptionReader(null, null, null, null, null, null, callerProvidedText);
    }
 
    public String getDescription()
    {
-      String description = null;
+      String description = callerProvidedText;
 
       Class<? extends Action> actCls = actionClass;
 
@@ -58,7 +64,7 @@ public record ShortCutDescriptionReader(Action action,
       }
 
 
-      if(null != resources && null != actCls)
+      if(StringUtils.isBlank(description) && null != resources && null != actCls)
       {
          description = resources.getTooltipFromResource(actCls);
       }

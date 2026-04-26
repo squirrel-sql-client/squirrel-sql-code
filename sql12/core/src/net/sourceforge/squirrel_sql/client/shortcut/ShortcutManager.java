@@ -118,6 +118,8 @@ public class ShortcutManager
          ret.setUserKeyStrokeEmpty();
       }
 
+      // This means existing registrations remain unchanged.
+      // This behavior could be important to net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.SquirreLRSyntaxTextAreaUI.completeAccelerators(...)
       if (false == _shortcuts.contains(ret))
       {
          _shortcuts.add(ret);

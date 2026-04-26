@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
+  Several more editor shortcuts are available to be configured in SQuirreL's global prefrences.
+  See menu File --> Global Prefrences --> tab "Keyboard shortcuts".
+  Note: These shortcuts only appear in the global prefrences after a Session was opened.
+
 Upgraded to RSyntax libs to RText version 6.1.0.
 
 Introduced Java 26 compatibility.
