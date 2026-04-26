@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Upgraded to RSyntax libs to RText version 6.1.0.
+
 Introduced Java 26 compatibility.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
