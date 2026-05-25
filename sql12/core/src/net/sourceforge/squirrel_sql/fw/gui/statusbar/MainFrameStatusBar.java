@@ -43,9 +43,10 @@ public class MainFrameStatusBar extends JPanel
 	private final GridBagConstraints _gbc = new GridBagConstraints();
 	private JTextField _textLbl = new JTextField();
    private AliasKeyPasswordStatusBarPanel _aliasKeyPasswordStatusBarPanel;
+	private MemoryPanel _memoryPanel;
 
 
-   public MainFrameStatusBar(IApplication app)
+	public MainFrameStatusBar(IApplication app)
 	{
 		super(new GridBagLayout());
 		createGUI(app);
@@ -75,7 +76,10 @@ public class MainFrameStatusBar extends JPanel
       _aliasKeyPasswordStatusBarPanel = new AliasKeyPasswordStatusBarPanel();
       addJComponent(_aliasKeyPasswordStatusBarPanel);
 		addJComponent(new LogPanel(app));
-		addJComponent(new MemoryPanel(app));
+
+		_memoryPanel = new MemoryPanel(app);
+		addJComponent(_memoryPanel);
+
 		addJComponent(new TimePanel());
 	}
 
@@ -116,4 +120,9 @@ public class MainFrameStatusBar extends JPanel
    {
       return _aliasKeyPasswordStatusBarPanel;
    }
+
+	public MemoryPanel getMemoryPanel()
+	{
+		return _memoryPanel;
+	}
 }

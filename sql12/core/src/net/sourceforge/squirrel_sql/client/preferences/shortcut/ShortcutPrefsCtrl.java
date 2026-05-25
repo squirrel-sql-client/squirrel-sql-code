@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Objects;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -19,11 +21,15 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
 
 
 public class ShortcutPrefsCtrl
 {
+   public final static ILogger s_log = LoggerController.createLogger(ShortcutPrefsCtrl.class);
+
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ShortcutPrefsCtrl.class);
 
 
@@ -102,6 +108,10 @@ public class ShortcutPrefsCtrl
       _shortcutPrefsPanel.btnRestoreDefault.addActionListener(e -> onRestore());
 
       _shortcutPrefsPanel.btnRestoreAll.addActionListener(e -> onRestoreAll());
+
+      _shortcutPrefsPanel.cboShortCutTemplates.setModel(new DefaultComboBoxModel<>(ShortCutTemplate.values()));
+      _shortcutPrefsPanel.cboShortCutTemplates.setSelectedIndex(0);
+      _shortcutPrefsPanel.btnMimicShortcuts.addActionListener(e -> onApplyShortcuts());
 
 
       _shortcutPrefsPanel.tblShortcuts.getTable().getColoringService().setColoringCallback((row, column, isSelected) -> onGetCellColor(row, column, isSelected));
@@ -190,9 +200,7 @@ public class ShortcutPrefsCtrl
          _shortcutPrefsPanel.tblShortcuts.show(_shortcutDataSet);
          _shortcutPrefsPanel.tblShortcuts.applyResultSortableTableState(tableState);
 
-         Runnable runnable = () -> handleSelectAfterUpdateEvenWhenValidShortcutIsSorted(selectedModelRows);
-
-         SwingUtilities.invokeLater(runnable);
+         SwingUtilities.invokeLater(() -> handleSelectAfterUpdateEvenWhenValidShortcutIsSorted(selectedModelRows));
       }
       catch (DataSetException e)
       {
@@ -262,6 +270,58 @@ public class ShortcutPrefsCtrl
 
       displayShortcuts();
    }
+
+   private void onApplyShortcuts()
+   {
+      ShortCutTemplate selectedTemplate = (ShortCutTemplate) _shortcutPrefsPanel.cboShortCutTemplates.getSelectedItem();
+
+      if(false == Main.getApplication().getMainFrame().getMainFrameStatusBar().getMemoryPanel().sessionsWhereOpened())
+      {
+         JOptionPane.showMessageDialog(_shortcutPrefsPanel, s_stringMgr.getString("ShortcutPrefsCtrl.open.session.to.load.all.shortcuts", selectedTemplate));
+         return;
+      }
+
+
+      if(JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_shortcutPrefsPanel, s_stringMgr.getString("ShortcutPrefsCtrl.apply.template", selectedTemplate)))
+      {
+         return;
+      }
+
+      for(TemplateKeyStroke templateKeyStroke : selectedTemplate.getTemplateKeyStrokes())
+      {
+         boolean found = false;
+         for(Shortcut shortcut : _shortcuts)
+         {
+            if(StringUtils.equals(shortcut.getActionName(), templateKeyStroke.getActionName()))
+            {
+               // Removes conflicting shortcuts
+               for(Shortcut scToRemoveCandidate : _shortcuts)
+               {
+                  if(null != scToRemoveCandidate.validKeyStroke() && Objects.equals(scToRemoveCandidate.validKeyStroke(), templateKeyStroke.getKeyStroke()))
+                  {
+                     scToRemoveCandidate.setUserKeyStrokeEmpty();
+                  }
+               }
+               shortcut.setUserKeyStroke(templateKeyStroke.getKeyStroke());
+
+               found = true;
+               break;
+            }
+         }
+
+         if(found == false)
+         {
+            s_log.error("""
+                        Failed to apply template shortcut: The template's "%s" action name "%s" was not found in SQuirreL's shortcut.
+                        Perhaps the user didn't open a Session before applying the template.
+                        """.formatted(selectedTemplate.toString(), templateKeyStroke.getActionName()));
+         }
+      }
+
+      displayShortcuts();
+
+   }
+
 
 
    private Shortcut getSelectedShortcut()

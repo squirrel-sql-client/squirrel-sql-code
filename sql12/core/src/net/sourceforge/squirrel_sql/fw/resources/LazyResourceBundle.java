@@ -1,9 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.resources;
 
-import net.sourceforge.squirrel_sql.client.Application;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
+import net.sourceforge.squirrel_sql.client.Application;
 
 /**
  * Needed in StringManager, which is usually used as a static member, to load the bundle late enough
@@ -31,7 +30,7 @@ public class LazyResourceBundle
    {
       if(false == _localeInitialized)
       {
-         throw new IllegalStateException("Must not create bundle before locale was initalized.");
+         throw new IllegalStateException("Must not create bundle before locale was initialized.");
       }
 
       if (null == _bundle)

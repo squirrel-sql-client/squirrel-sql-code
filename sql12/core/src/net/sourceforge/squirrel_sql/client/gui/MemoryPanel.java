@@ -17,22 +17,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -44,6 +28,21 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.Timer;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class MemoryPanel extends JPanel
 {
@@ -53,7 +52,7 @@ public class MemoryPanel extends JPanel
 	private JButton _btnGarbage;
 	private JButton _btnSessionGCStatus;
 	transient private IApplication _app;
-	private HashMap<IIdentifier, MemorySessionInfo> _sessionInfosBySessionIDs =  new HashMap<IIdentifier, MemorySessionInfo>();
+	private HashMap<IIdentifier, MemorySessionInfo> _sessionInfosBySessionIDs = new HashMap<>();
 
 	public MemoryPanel(IApplication app)
 	{
@@ -274,25 +273,18 @@ public class MemoryPanel extends JPanel
 			}
 		}
 
-
-		// i18n [MemoryPanel.gcStatus={0}\n\n
-		//Sessions waiting for garbage collection:\n
-		//==================================================\n
-		//{1}\n
-		//Sessions open:\n
-		//==================================================\n
-		//{2}\n
-		//Sessions garbage collected:\n
-		//==================================================\n
-		//{3}\n]
 		String msg = s_stringMgr.getString("MemoryPanel.gcStatus", (Object[])params);
 		ErrorDialog errorDialog = new ErrorDialog(_app.getMainFrame(), msg);
 
 
-		// i18n[MemoryPanel.statusDialogTitle=Session garbage collection status]
 		errorDialog.setTitle(s_stringMgr.getString("MemoryPanel.statusDialogTitle"));
 		errorDialog.setVisible(true);
 	}
+
+   public boolean sessionsWhereOpened()
+   {
+      return !_sessionInfosBySessionIDs.isEmpty();
+   }
 
 
 	private static class SessionGCStatus

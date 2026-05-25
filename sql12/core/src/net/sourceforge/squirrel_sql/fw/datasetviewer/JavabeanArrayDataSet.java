@@ -113,7 +113,7 @@ public class JavabeanArrayDataSet implements IDataSet
 
    public void setJavaBeanList(List list)
    {
-      setJavaBeanArray(list.toArray(new Object[list.size()]));
+      setJavaBeanArray(list.toArray(new Object[0]));
    }
 
 	public void setJavaBeanArray(Object[] beans)
@@ -162,7 +162,7 @@ public class JavabeanArrayDataSet implements IDataSet
 			}
 		}
 
-   	_data.add(line.toArray(new Object[line.size()]));
+   	_data.add(line.toArray(new Object[0]));
 	}
 
    private void initializeCols(BeanInfo info)

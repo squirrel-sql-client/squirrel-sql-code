@@ -1,20 +1,21 @@
 package net.sourceforge.squirrel_sql.client.preferences.shortcut;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 public class ShortcutPrefsPanel extends JPanel
 {
@@ -27,6 +28,8 @@ public class ShortcutPrefsPanel extends JPanel
    JButton btnRemove = new JButton(s_stringMgr.getString("ShortcutPrefsPanel.btn.remove"));
    JButton btnRestoreDefault = new JButton(s_stringMgr.getString("ShortcutPrefsPanel.btn.restore.default"));;
    JButton btnRestoreAll = new JButton(s_stringMgr.getString("ShortcutPrefsPanel.btn.restore.all"));;
+   JButton btnMimicShortcuts = new JButton(s_stringMgr.getString("ShortcutPrefsPanel.btn.mimic.shortcuts"));
+   JComboBox<ShortCutTemplate> cboShortCutTemplates = new JComboBox<>();
 
    DataSetViewerTablePanel tblShortcuts = new DataSetViewerTablePanel();
 
@@ -80,9 +83,21 @@ public class ShortcutPrefsPanel extends JPanel
       gbc = new GridBagConstraints(1,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       ret.add(btnRestoreAll, gbc);
 
-      gbc = new GridBagConstraints(0,5,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1,5,GridBagConstraints.REMAINDER, 1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      ret.add(createMimicShortcutsPanel(), gbc);
+
+      gbc = new GridBagConstraints(0,6,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       ret.add(new MultipleLineLabel(s_stringMgr.getString("ShortcutPrefsPanel.notes")), gbc);
 
+
+      return ret;
+   }
+
+   private JPanel createMimicShortcutsPanel()
+   {
+      JPanel ret = new JPanel(new BorderLayout(5,0));
+      ret.add(btnMimicShortcuts, BorderLayout.WEST);
+      ret.add(GUIUtils.setMinimumWidth(cboShortCutTemplates, 200), BorderLayout.CENTER);
 
       return ret;
    }

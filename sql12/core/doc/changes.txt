@@ -7,6 +7,15 @@ Not yet released, available in our GIT repository, snapshots and future releases
 Enhancements:
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
+  The "Keyboard shortcuts" tab in Global Preferences now allows to adjust several keyboard shortcuts
+  to make the editor's shortcuts closer to the Emacs editor.
+  See menu File --> Global Preferences --> tab "Keyboard shortcuts".
+  Hints:
+  1. A Session must have been opened before the Emacs shortcuts can be applied.
+  2. SQuirreL must be restarted for shortcut changes to take effect.
+  All of those hints are given in or by the Global Preferences UI.
+
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
   Several more editor shortcuts are available to be configured in SQuirreL's global preferences.
   See menu File --> Global Preferences --> tab "Keyboard shortcuts".
   Note: These shortcuts only appear in the global preferences after a Session was opened.
