@@ -6,6 +6,15 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/89
+  The SQLAliases23.xml file in SQuirreL's home directory could be unecessarily big (bloated)
+  because it contained unnecessary, i.e. unspecified, JDBC driver properties.
+  These properties are not saved anymore which, depending on the JDBC drivers being used,
+  can reduce the size of SQLAliases23.xml significantly.
+  A backup of the SQLAliases23.xml from before the size reduction will be written to
+  sqlAliases23Backup/AliasesBeforeUnbloatBackupFile.xml in SQuirreL's home directory.
+
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
   The "Keyboard shortcuts" tab in Global Preferences now allows to adjust several keyboard shortcuts
   to make the editor's shortcuts closer to the Emacs editor.

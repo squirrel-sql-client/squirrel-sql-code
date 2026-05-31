@@ -70,7 +70,7 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 					new PropertyDescriptor(IPropertyNames.USER_NAME, SQLAlias.class, "getUserName", "setUserName"),
 					new PropertyDescriptor(IPropertyNames.DRIVER, SQLAlias.class, "getDriverIdentifier","setDriverIdentifier"),
 					new PropertyDescriptor(IPropertyNames.USE_DRIVER_PROPERTIES, SQLAlias.class,"getUseDriverProperties", "setUseDriverProperties"),
-					new PropertyDescriptor(IPropertyNames.DRIVER_PROPERTIES, SQLAlias.class,"getDriverPropertiesClone", "setDriverProperties"),
+					new PropertyDescriptor(IPropertyNames.DRIVER_PROPERTIES, SQLAlias.class,"getDriverPropertiesUnbloated", "setDriverProperties"),
 					new PropertyDescriptor(IPropertyNames.PASSWORD, SQLAlias.class, "getPassword", "setPassword"),
 					new PropertyDescriptor(IPropertyNames.ENCRYPT_PASSWORD, SQLAlias.class, "isEncryptPassword", "setEncryptPassword"), // Renamed from PasswordEncrypted because of bug #1409
 					new PropertyDescriptor(IPropertyNames.AUTO_LOGON, SQLAlias.class, "isAutoLogon", "setAutoLogon"),

@@ -18,12 +18,16 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.Serializable;
+import java.sql.DriverPropertyInfo;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasVersioner;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serializable;
-import java.sql.DriverPropertyInfo;
-import java.util.*;
 /**
  * A collection of <TT>SQLDriverDriverProperty</TT> objects.
  *
@@ -145,10 +149,11 @@ public class SQLDriverPropertyCollection implements Serializable
 		if (infoAr == null || infoAr.length == 0)
 		{
 			infoAr = new DriverPropertyInfo[1];
-            infoAr[0] = new DriverPropertyInfo("remarksReporting", "true");
-            infoAr[0].required = false;
-            infoAr[0].description = "Set to true in order to table/column comments";
+			infoAr[0] = new DriverPropertyInfo("remarksReporting", "true");
+			infoAr[0].required = false;
+			infoAr[0].description = "Set to true in order to table/column comments";
 		}
+
 		for (int i = 0; i < infoAr.length; ++i)
 		{
 			SQLDriverProperty sdp = _objectsIndexMap.get(infoAr[i].name);
@@ -170,5 +175,19 @@ public class SQLDriverPropertyCollection implements Serializable
 	public SQLAliasVersioner getVersioner()
 	{
 		return _versioner;
+	}
+
+	public SQLDriverPropertyCollection toSpecifiedOnly()
+	{
+		SQLDriverPropertyCollection ret = new SQLDriverPropertyCollection();
+		for(SQLDriverProperty sqlDriverProperty : _objectsList)
+		{
+			if(sqlDriverProperty.isSpecified())
+			{
+				ret.addDriverProperty(sqlDriverProperty);
+			}
+		}
+
+		return ret;
 	}
 }

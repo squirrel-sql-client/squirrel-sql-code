@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.Serializable;
 import net.sourceforge.squirrel_sql.client.gui.db.modifyaliases.SQLAliasPropType;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -28,8 +29,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import java.io.Serializable;
 
 /**
  * This represents a Database alias which is a description of the means
@@ -431,6 +430,16 @@ public class SQLAlias implements Serializable, Comparable<SQLAlias>, IHasIdentif
    public SQLDriverPropertyCollection getDriverPropertiesClone()
    {
       return getDriverPropertiesClone(false);
+   }
+
+   /**
+    * Used by serialization, see {@link SQLAliasBeanInfo}
+    */
+   public SQLDriverPropertyCollection getDriverPropertiesUnbloated()
+   {
+      SQLDriverPropertyCollection driverPropertiesClone = getDriverPropertiesClone();
+
+      return driverPropertiesClone.toSpecifiedOnly();
    }
 
    public SQLDriverPropertyCollection getDriverPropertiesClone(boolean includeVersioner)

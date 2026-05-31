@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasUnbloatBackup;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasKeyPasswordManager;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
@@ -501,6 +502,8 @@ public class Application implements IApplication
 	{
 		try
 		{
+			SQLAliasUnbloatBackup.createAliasesBackupBeforeUnbloat();
+
 			final File file = _appFiles.getDatabaseAliasesFile();
 			_aliasesAndDriversManager.saveAliases(file);
 			return file;
