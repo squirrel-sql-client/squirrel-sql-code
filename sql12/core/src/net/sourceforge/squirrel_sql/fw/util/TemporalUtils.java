@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.util;
 
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.Calendar;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTime;
@@ -8,10 +11,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.TemporalScrip
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.Calendar;
+import org.apache.commons.lang3.StringUtils;
 
 public class TemporalUtils
 {
@@ -227,7 +227,9 @@ public class TemporalUtils
          return "";
       }
 
-		String result = "" + ts.getNanos();
+      // Fixes https://sourceforge.net/p/squirrel-sql/feature-requests/623/
+		//String result = "" + ts.getNanos();
+		String result = createFullNanosString(ts);
 
       int timestampMaximumFractionalDigits = dialect.getTimestampMaximumFractionalDigits();
       if(result.length() >= timestampMaximumFractionalDigits)
@@ -236,4 +238,37 @@ public class TemporalUtils
       }
 		return result;
 	}
+
+   /**
+    * See the following test:
+    *
+    * <pre>
+    *    public static void main(String[] args)
+    *    {
+    *       out(1777460686038L);
+    *       out(1777460686380L);
+    *    }
+    *
+    *    private static void out(long time)
+    *    {
+    *       Timestamp ts = new Timestamp(time);
+    *       System.out.println("time = " + time);
+    *       System.out.println("  ts = " + ts);
+    *       System.out.println("  ts.getNanos() = " + ts.getNanos());
+    *       System.out.println("  createNanosString() = " + createNanosString(ts).subString(0,3);
+    *    }
+    *
+    *    private static String createNanosString(Timestamp ts)
+    *    {
+    *       String nanosString = "" + ts.getNanos();
+    *       nanosString = StringUtils.leftPad(nanosString, 9,"0");
+    *       return nanoString;
+    *    }
+    * </pre>
+    */
+   private static String createFullNanosString(Timestamp ts)
+   {
+      String nanosString = "" + ts.getNanos();
+      return StringUtils.leftPad(nanosString, 9, "0");
+   }
 }
