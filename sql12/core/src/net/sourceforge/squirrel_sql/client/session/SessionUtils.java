@@ -1,19 +1,23 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import java.awt.Frame;
+import java.beans.PropertyVetoException;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
-import net.sourceforge.squirrel_sql.client.gui.session.*;
+import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpUiHandle;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.awt.*;
-import java.beans.PropertyVetoException;
 
 public class SessionUtils
 {
@@ -139,13 +143,24 @@ public class SessionUtils
 
    public static AdditionalSQLTab createSQLTab(ISession session)
    {
-      AdditionalSQLTab additionalSQLTab = new AdditionalSQLTab(session);
+      return _createSqlTab(session, McpUiHandle.INACTIVE);
+   }
+
+   public static AdditionalSQLTab createMcpTab(ISession session, McpUiHandle mcpUiHandle)
+   {
+      return _createSqlTab(session, mcpUiHandle);
+   }
+
+   private static AdditionalSQLTab _createSqlTab(ISession session, McpUiHandle mcpUiHandle)
+   {
+      AdditionalSQLTab additionalSQLTab = new AdditionalSQLTab(session, mcpUiHandle);
       int tabIndex = session.getSessionPanel().addMainTab(additionalSQLTab);
       session.getSessionPanel().selectMainTab(tabIndex);
       Main.getApplication().getPluginManager().additionalSQLTabOpened(additionalSQLTab);
       session.getSessionInternalFrame().moveToFront();
       return additionalSQLTab;
    }
+
 
    public static void activateMainSqlTab(SessionInternalFrame sessionInternalFrame, int caretPosition, boolean shouldForceToFocusActiveSqlEditor)
    {

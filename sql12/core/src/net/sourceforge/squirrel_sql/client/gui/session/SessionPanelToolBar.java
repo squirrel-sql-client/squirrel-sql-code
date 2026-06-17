@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.editexternal.FileEditExternal
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerAction;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 
@@ -121,6 +122,10 @@ class SessionPanelToolBar extends ToolBar
       addSeparator();
 
       add(actions.get(ImportTableDataAction.class));
+
+      addSeparator();
+      add(actions.get(McpServerAction.class));
+
    }
 
    public CatalogsPanelController getCatalogsPanelController()

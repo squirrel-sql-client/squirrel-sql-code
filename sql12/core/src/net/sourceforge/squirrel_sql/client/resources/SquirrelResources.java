@@ -234,6 +234,8 @@ public class SquirrelResources extends Resources
 
 		String RUN_TIMER = "runTimer";
 		String RUN_TIMER_STOP = "runTimerStop";
+
+		String MCP = "mcp";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

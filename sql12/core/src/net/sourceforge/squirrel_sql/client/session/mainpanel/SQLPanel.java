@@ -63,6 +63,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeT
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabMatchingCurrentSqlHandler;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpUiHandle;
 import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
@@ -141,9 +142,14 @@ public class SQLPanel extends JPanel
 
 	public SQLPanel(ISession session, SQLPanelPosition sqlPanelPosition, TitleFilePathHandler titleFileHandler)
 	{
+		this(session, sqlPanelPosition, titleFileHandler, McpUiHandle.INACTIVE);
+	}
+
+	public SQLPanel(ISession session, SQLPanelPosition sqlPanelPosition, TitleFilePathHandler titleFileHandler, McpUiHandle mcpUiHandle)
+	{
 		_sqlPanelPosition = sqlPanelPosition;
 		setSession(session);
-		createGUI();
+		createGUI(mcpUiHandle);
 		propertiesHaveChanged(null);
 		_sqlExecPanel = new SQLResultExecutorPanel(session, true);
 
@@ -609,7 +615,7 @@ public class SQLPanel extends JPanel
 		_toggleResultMinimizeHandler.toggleMinimizeResults();
 	}
 
-	private void createGUI()
+	private void createGUI(McpUiHandle mcpUiHandle)
 	{
 		final IApplication app = _session.getApplication();
 		synchronized (getClass())
@@ -665,7 +671,15 @@ public class SQLPanel extends JPanel
       _executerPanleHolder.add(_simpleExecuterPanel);
       _splitPane.add(_executerPanleHolder, JSplitPane.RIGHT);
 
-		add(_splitPane, BorderLayout.CENTER);
+		if(mcpUiHandle.isActive())
+		{
+			add(mcpUiHandle.equipWithMcpConfigBar(_splitPane), BorderLayout.CENTER);
+		}
+		else
+		{
+			add(_splitPane, BorderLayout.CENTER);
+		}
+
 
 		_sqlHistoryComboBox.addActionListener(_sqlComboListener);
 

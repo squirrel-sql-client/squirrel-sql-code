@@ -158,6 +158,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Fi
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.MarkResultTabHeaderMatchingCurSqlAction;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerAction;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
@@ -266,6 +267,7 @@ public class ActionRegistry
 
       toolsPopupController.addAction("import", ac.get(ImportTableDataAction.class));
 
+      toolsPopupController.addAction("mcp", ac.get(McpServerAction.class));
 
       toolsPopupController.addAction(ToolsPopupHandler_I18n.FIND, ac.get(FindAction.class));
       toolsPopupController.addAction(ToolsPopupHandler_I18n.FIND_SELECTED , ac.get(FindSelectedAction.class));
@@ -472,6 +474,8 @@ public class ActionRegistry
       actionCollection.add(new SearchInResultsAction());
 
       actionCollection.add(new AliasKeyPasswordEncryptionAction());
+
+      actionCollection.add(new McpServerAction());
    }
 
    public ActionCollection getActionCollection()

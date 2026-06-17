@@ -183,6 +183,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Fi
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.MarkResultTabHeaderMatchingCurSqlAction;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerAction;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -503,6 +504,9 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.add(SQLScriptMenuFactory.getSessionMenu());
 		menu.addSeparator();
 		addToMenu(rsrc, ImportTableDataAction.class, menu);
+		menu.addSeparator();
+
+		addToMenu(rsrc, McpServerAction.class, menu);
 		menu.addSeparator();
 
 		menu.setEnabled(false);

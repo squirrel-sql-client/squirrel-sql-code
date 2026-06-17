@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpUiHandle;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ResizableTextEditDialog;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
@@ -21,36 +22,52 @@ public class AdditionalSQLTab extends BaseSQLTab
 {
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AdditionalSQLTab.class);
-   private final int _tabNumber;
+   private int _tabNumber;
    private final ButtonTabComponent _tabComponent;
+   private final McpUiHandle _mcpUiHandle;
 
    private TitleFilePathHandler _titleFileHandler;
    private String _titleWithoutFile;
 
 
-   public AdditionalSQLTab(ISession session)
+   public AdditionalSQLTab(ISession session, McpUiHandle mcpUiHandle)
    {
       super(session);
+      _mcpUiHandle = mcpUiHandle;
 
       session.addSimpleSessionListener(() -> onClose(false));
 
-      AdditionalSQLTabCounter additionalSQLTabCounter = (AdditionalSQLTabCounter) session.getSessionLocal(AdditionalSQLTabCounter.class);
-
-      if (null == additionalSQLTabCounter)
+      if(mcpUiHandle.isActive())
       {
-         additionalSQLTabCounter = new AdditionalSQLTabCounter();
-         session.putSessionLocal(AdditionalSQLTabCounter.class, additionalSQLTabCounter);
+         _titleWithoutFile = s_stringMgr.getString("McpServerTab.title");
+
+         // TODO: Get icon from McpServerAction and delete net.sourceforge.squirrel_sql.client.resources.SquirrelResources.IImageNames.MCP as well as mcp.image=mcp.png in squirrel.properties,
+         ImageIcon icon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.MCP);
+
+         _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile));
+
+         _tabComponent = new ButtonTabComponent(_titleWithoutFile, icon);
       }
+      else
+      {
+         AdditionalSQLTabCounter additionalSQLTabCounter = (AdditionalSQLTabCounter) session.getSessionLocal(AdditionalSQLTabCounter.class);
 
-      _tabNumber = additionalSQLTabCounter.nextNumber();
+         if (null == additionalSQLTabCounter)
+         {
+            additionalSQLTabCounter = new AdditionalSQLTabCounter();
+            session.putSessionLocal(AdditionalSQLTabCounter.class, additionalSQLTabCounter);
+         }
 
-      _titleWithoutFile = s_stringMgr.getString("AdditionalSQLTab.title", _tabNumber);
-      ImageIcon icon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ADD_TAB);
+         _tabNumber = additionalSQLTabCounter.nextNumber();
 
-      _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile));
+         _titleWithoutFile = s_stringMgr.getString("AdditionalSQLTab.title", _tabNumber);
+         ImageIcon icon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ADD_TAB);
 
-      //_tabComponent = new ButtonTabComponent(getSession().getSessionPanel().getTabbedPane(), _titleWithoutFile, icon);
-      _tabComponent = new ButtonTabComponent(_titleWithoutFile, icon);
+         _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile));
+
+         //_tabComponent = new ButtonTabComponent(getSession().getSessionPanel().getTabbedPane(), _titleWithoutFile, icon);
+         _tabComponent = new ButtonTabComponent(_titleWithoutFile, icon);
+      }
 
       _tabComponent.getClosebutton().addActionListener(e -> onClose(true));
       _tabComponent.getToWindowButton().setVisible(false);
@@ -60,7 +77,7 @@ public class AdditionalSQLTab extends BaseSQLTab
    @Override
    protected SQLPanel createSqlPanel()
    {
-      return new SQLPanel(getSession(), SQLPanelPosition.ADDITIONAL_TAB_IN_SESSION_WINDOW, _titleFileHandler);
+      return new SQLPanel(getSession(), SQLPanelPosition.ADDITIONAL_TAB_IN_SESSION_WINDOW, _titleFileHandler, _mcpUiHandle);
    }
 
    private void setTitle(String title)
