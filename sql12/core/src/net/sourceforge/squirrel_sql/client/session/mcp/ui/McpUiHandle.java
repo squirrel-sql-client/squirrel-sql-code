@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.ui;
 
 import java.awt.BorderLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -31,8 +30,10 @@ public class McpUiHandle
    {
       checkActive();
 
+
+
       JPanel ret = new JPanel(new BorderLayout());
-      ret.add(new JLabel("TODO MCP Config and run"), BorderLayout.NORTH);
+      ret.add(new McpBarCtrl().getMcpBarPanel(), BorderLayout.NORTH);
       ret.add(sqlPanelSplitPane, BorderLayout.CENTER);
 
       return ret;
