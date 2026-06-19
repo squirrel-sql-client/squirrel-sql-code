@@ -36,7 +36,21 @@ public class McpBarCtrl
       _panel.chkApproveAllAiCalls.addActionListener(e -> onConfigChanged());
       _panel.chkAllowAccessFormLocalhostOnly.addActionListener(e -> onConfigChanged());
 
+      _panel.btnStartStopMcpServer.addActionListener(e -> onStartStopMcpServer());
+
       updateEnabled();
+   }
+
+   private void onStartStopMcpServer()
+   {
+      if(_panel.btnStartStopMcpServer.isSelected())
+      {
+         // TODO assign port
+      }
+      else
+      {
+         // TODO
+      }
    }
 
    private void onConfigChanged()

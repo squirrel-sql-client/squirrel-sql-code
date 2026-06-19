@@ -6,19 +6,21 @@ import javax.swing.JSplitPane;
 
 public class McpUiHandle
 {
-   public static final McpUiHandle INACTIVE = new McpUiHandle();
-   private int _port;
-   private String _connectKey;
+   public static final McpUiHandle INACTIVE = new McpUiHandle(true);
 
-   private McpUiHandle()
+   private boolean _inactive;
+
+   /**
+    * For internal use only
+    */
+   private McpUiHandle(boolean inactive)
    {
-      // For internal use only
+      _inactive = inactive;
    }
 
-   public McpUiHandle(int port, String connectKey)
+   public McpUiHandle()
    {
-      _port = port;
-      _connectKey = connectKey;
+      this(false);
    }
 
    public boolean isActive()
@@ -29,8 +31,6 @@ public class McpUiHandle
    public JPanel equipWithMcpConfigBar(JSplitPane sqlPanelSplitPane)
    {
       checkActive();
-
-
 
       JPanel ret = new JPanel(new BorderLayout());
       ret.add(new McpBarCtrl().getMcpBarPanel(), BorderLayout.NORTH);

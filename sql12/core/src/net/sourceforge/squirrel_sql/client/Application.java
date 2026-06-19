@@ -81,6 +81,7 @@ import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.SessionMcpStateManager;
 import net.sourceforge.squirrel_sql.client.session.menuattic.PopupMenuAtticModel;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
@@ -244,6 +245,8 @@ public class Application implements IApplication
 	private SyntaxManager _syntaxManager = new SyntaxManager();
 
    private AliasKeyPasswordManager _aliasKeyPasswordManager = new AliasKeyPasswordManager();
+
+	private SessionMcpStateManager _sessionMcpStateManager = new SessionMcpStateManager();
 
    public Application()
 	{
@@ -1547,5 +1550,11 @@ public class Application implements IApplication
    public AliasKeyPasswordManager getAliasKeyPasswordManager()
    {
       return _aliasKeyPasswordManager;
+   }
+
+   @Override
+   public SessionMcpStateManager getSessionMcpStateManager()
+   {
+      return _sessionMcpStateManager;
    }
 }

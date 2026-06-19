@@ -49,6 +49,7 @@ import net.sourceforge.squirrel_sql.client.session.action.syntax.SyntaxSQLEntryP
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.SessionMcpStateManager;
 import net.sourceforge.squirrel_sql.client.session.menuattic.PopupMenuAtticModel;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeComponentFactoryRegistry;
@@ -309,4 +310,6 @@ public interface IApplication
 	SyntaxManager getSyntaxManager();
 
    AliasKeyPasswordManager getAliasKeyPasswordManager();
+
+	SessionMcpStateManager getSessionMcpStateManager();
 }
