@@ -18,16 +18,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 public class McpBarPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(McpBarPanel.class);
-   private final JRadioButton radAiQueryAsResTab;
-   private final JRadioButton radExecuteSqlViaDirectJdbcApi;
-   private final JCheckBox chkApplyAliasesReadOnlyRules;
-   private final JCheckBox chkAllowJdbcExecuteQueryOnly;
 
-   private final JCheckBox chkApproveAllAiCalls;
-   private final JCheckBox chkAllowAccessFormLocalhostOnly;
-   private final JToggleButton btnStartStopMcpServer;
-   private final JTextField txtMcpPort;
-   private final JButton btnCopyAiInfoPrompt;
+   final JRadioButton radAiQueryAsResTab;
+   final JRadioButton radExecuteSqlViaDirectJdbcApi;
+   final JCheckBox chkApplyAliasesReadOnlyRules;
+   final JCheckBox chkAllowJdbcExecuteQueryOnly;
+
+   final JCheckBox chkApproveAllAiCalls;
+   final JCheckBox chkAllowAccessFormLocalhostOnly;
+   final JToggleButton btnStartStopMcpServer;
+   final JTextField txtMcpPort;
+   final JButton btnCopyAiInfoPrompt;
 
    public McpBarPanel()
    {
