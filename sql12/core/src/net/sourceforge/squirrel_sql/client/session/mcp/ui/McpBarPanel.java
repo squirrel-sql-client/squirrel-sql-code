@@ -17,6 +17,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class McpBarPanel extends JPanel
 {
+   private static final String MCP_SERVER_START_I18N_KEY = "McpBarPanel.start.mcp.server";
+   private static final String MCP_SERVER_STOP_I18N_KEY = "McpBarPanel.stop.mcp.server";
+
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(McpBarPanel.class);
 
    final JRadioButton radAiQueryAsResTab;
@@ -29,6 +32,7 @@ public class McpBarPanel extends JPanel
    final JToggleButton btnStartStopMcpServer;
    final JTextField txtMcpPort;
    final JButton btnCopyAiInfoPrompt;
+   final JButton btnSaveAiConfigMd;
 
    public McpBarPanel()
    {
@@ -77,7 +81,7 @@ public class McpBarPanel extends JPanel
 
       // gridx=3
       gbc = new GridBagConstraints(3,0,1,2,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,15,5,0), 0,0);
-      btnStartStopMcpServer = new JToggleButton(s_stringMgr.getString("McpBarPanel.start.stop.mcp.server"));
+      btnStartStopMcpServer = new JToggleButton(getMcpServerToggleTextStart());
       btnStartStopMcpServer.setToolTipText(s_stringMgr.getString("McpBarPanel.start.stop.mcp.server.tooltip"));
       add(GUIUtils.setPreferredWidth(btnStartStopMcpServer, 180), gbc);
 
@@ -100,7 +104,7 @@ public class McpBarPanel extends JPanel
 
       // gridx=7
       gbc = new GridBagConstraints(7,0,1,2,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,15,5,0), 0,0);
-      JButton btnSaveAiConfigMd= new JButton(s_stringMgr.getString("McpBarPanel.save.ai.config.md"));
+      btnSaveAiConfigMd = new JButton(s_stringMgr.getString("McpBarPanel.save.ai.config.md"));
       btnSaveAiConfigMd.setToolTipText(s_stringMgr.getString("McpBarPanel.save.ai.config.md.tooltip"));
       add(btnSaveAiConfigMd, gbc);
 
@@ -111,5 +115,15 @@ public class McpBarPanel extends JPanel
 
 
 
+   }
+
+   public String getMcpServerToggleTextStart()
+   {
+      return s_stringMgr.getString(MCP_SERVER_START_I18N_KEY);
+   }
+
+   public String getMcpServerToggleTextStop()
+   {
+      return s_stringMgr.getString(MCP_SERVER_STOP_I18N_KEY);
    }
 }

@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.ui;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
@@ -10,6 +11,7 @@ public class SessionMcpState
    private final IIdentifier _sessionIdentifier;
    private AdditionalSQLTab _mcpSqlTab;
    private ISQLPanelAdapter _sqlPanelCloseListener;
+   private int _sessionsMcpPort = -1;
 
    public SessionMcpState(IIdentifier sessionIdentifier)
    {
@@ -43,5 +45,15 @@ public class SessionMcpState
    public AdditionalSQLTab getMcpSqlTab()
    {
       return _mcpSqlTab;
+   }
+
+   public int getSessionsMcpPort()
+   {
+      if(-1 == _sessionsMcpPort)
+      {
+         _sessionsMcpPort = Main.getApplication().getSessionMcpStateManager().getNextPort();
+      }
+
+      return _sessionsMcpPort;
    }
 }

@@ -21,7 +21,9 @@ public class McpServerAction extends SquirrelAction implements ISessionAction
 
       if(null == mcpSqlTab)
       {
-         mcpSqlTab = SessionUtils.createMcpTab(_session, new McpUiHandle());
+         McpUiHandle mcpUiHandle = new McpUiHandle(_session);
+         mcpSqlTab = SessionUtils.createMcpTab(_session, mcpUiHandle);
+         mcpUiHandle.setMcpSqlTab(mcpSqlTab);
          sessionMcpState.setMcpSqlTab(mcpSqlTab);
       }
       else
