@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.ServerInfo;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.ToolsListResult;
 import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Minimal MCP server over HTTP, using Jackson + records.
@@ -43,6 +45,8 @@ import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
  */
 public final class SquirrelMcpHttpServer
 {
+   private final static ILogger s_log = LoggerController.createLogger(SquirrelMcpHttpServer.class);
+
    /**
     * MCP protocol revision this server advertises in the {@code initialize}
     * result (MCP revisions are date-based, e.g. 2024-11-05 / 2025-03-26 /
@@ -167,8 +171,10 @@ public final class SquirrelMcpHttpServer
       {
          result = method.invoke(new SquirrelMcpToolsImpl(_mcpServerContext), argObject);
       }
-      catch( IllegalAccessException | InvocationTargetException e )
+      catch( Throwable e )
       {
+         s_log.error("Error calling SquirrelMcpTool", e);
+
          Throwable cause = e instanceof InvocationTargetException ite && ite.getCause() != null ? ite.getCause() : e;
          return new CallToolResult(List.of(new Content("text", "Tool '" + toolName + "' failed: " + cause.getMessage())), null, true);
       }

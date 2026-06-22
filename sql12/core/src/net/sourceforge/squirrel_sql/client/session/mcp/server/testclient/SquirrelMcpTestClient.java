@@ -55,6 +55,9 @@ public final class SquirrelMcpTestClient
       client.print("tools/call getDriverClassName", client.getDriverClassName());
       client.print("tools/call getSessionName", client.getSessionName());
       client.print("tools/call getJdbcUrl", client.getJdbcUrl());
+
+      GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
+      client.print("tools/call getTables", client.getTables(getTablesArgs));
    }
 
    private static void callMcpAdministrationMethods(SquirrelMcpTestClient client) throws IOException, InterruptedException
