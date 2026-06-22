@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.ServerCapabilities;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.ServerInfo;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.ToolsListResult;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.testclient.SquirrelMcpTestClient;
 
 /**
  * Minimal MCP server over HTTP, using Jackson + records.
@@ -51,24 +52,46 @@ public final class SquirrelMcpHttpServer
     * fall back to this otherwise.
     */
    private static final String PROTOCOL_VERSION = "2025-06-18";
+   private HttpServer _server;
+   private int _port = -1;
 
    public static void main(String[] args) throws IOException
    {
-      new SquirrelMcpHttpServer().start(SquirrelMcpConstants.PORT);
+      new SquirrelMcpHttpServer().start(SquirrelMcpTestClient.PORT);
    }
 
    public void start(int port) throws IOException
    {
+      // TODO implement McpBarPanel.chkAllowAccessFormLocalhostOnly
+
       // Bind to the wildcard address (0.0.0.0): reachable from other hosts on
       // the network, not just localhost. SECURITY: there is no authentication,
       // so anyone who can reach this port can invoke the tools — restrict via
       // firewall / network segmentation if the tools are not meant to be public.
-      HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-      server.createContext(SquirrelMcpConstants.ROOT_PATH, httpExchange -> handle(httpExchange));
+      _server = HttpServer.create(new InetSocketAddress(port), 0);
+      _port = port;
+
+      _server.createContext(SquirrelMcpConstants.ROOT_PATH, httpExchange -> handle(httpExchange));
       // Single worker => requests are serialized; one call blocks the next.
-      server.setExecutor(Executors.newSingleThreadExecutor());
-      server.start();
+      _server.setExecutor(Executors.newSingleThreadExecutor());
+      _server.start();
       System.out.println("hello-java-http MCP server listening on http://0.0.0.0:" + port + SquirrelMcpConstants.ROOT_PATH + " (all interfaces)");
+   }
+
+   public void stop()
+   {
+      if(null != _server)
+      {
+         try
+         {
+            _server.stop(0);
+         }
+         finally
+         {
+            _server = null;
+            _port = -1;
+         }
+      }
    }
 
    private void handle(HttpExchange httpExchange) throws IOException
@@ -160,5 +183,10 @@ public final class SquirrelMcpHttpServer
       {
          return String.valueOf(value);
       }
+   }
+
+   public int getPort()
+   {
+      return _port;
    }
 }

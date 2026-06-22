@@ -64,9 +64,11 @@ public interface IMessageHandler {
      */
     void showErrorMessage(String msg);
 
-    void showErrorMessage(String string, Throwable ex);
+    void showErrorMessage(String msg, Throwable ex);
 
     void showWarningMessage(String msg);
 
     void showWarningMessage(Throwable th, ExceptionFormatter formatter);
+
+    void showWarningMessage(String msg, Throwable ex);
 }

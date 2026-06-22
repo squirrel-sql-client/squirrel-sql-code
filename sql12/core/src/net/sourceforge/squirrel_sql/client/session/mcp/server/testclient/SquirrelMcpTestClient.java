@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTab
  */
 public final class SquirrelMcpTestClient
 {
+   public static final int PORT = 23368;
    private final ObjectMapper mapper = new ObjectMapper();
    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
    private final URI endpoint;
@@ -133,6 +134,6 @@ public final class SquirrelMcpTestClient
 
    private static URI defaultEndpoint()
    {
-      return URI.create("http://" + SquirrelMcpConstants.HOST + ":" + SquirrelMcpConstants.PORT + SquirrelMcpConstants.ROOT_PATH);
+      return URI.create("http://" + SquirrelMcpConstants.HOST + ":" + PORT + SquirrelMcpConstants.ROOT_PATH);
    }
 }

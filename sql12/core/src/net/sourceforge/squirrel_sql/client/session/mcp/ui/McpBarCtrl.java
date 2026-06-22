@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -34,6 +35,7 @@ public class McpBarCtrl
    private final McpBarPanel _panel;
    private ISQLPanelAdapter _mcpSqlTabListener;
    private boolean _inOnStartStopMcpServer = false;
+   private SquirrelMcpHttpServer _squirrelMcpHttpServer;
 
    public McpBarCtrl(ISession session)
    {
@@ -90,7 +92,8 @@ public class McpBarCtrl
             {
                int port = Main.getApplication().getSessionMcpStateManager().getSessionMcpState(_session).getSessionsMcpPort();
 
-               // TODO Start MCP-Server here
+               _squirrelMcpHttpServer = new SquirrelMcpHttpServer();
+               _squirrelMcpHttpServer.start(port);
 
                _panel.txtMcpPort.setText("" + port);
                _panel.btnStartStopMcpServer.setText(_panel.getMcpServerToggleTextStop());
@@ -103,6 +106,7 @@ public class McpBarCtrl
             }
             catch(Throwable e)
             {
+               stopHttpServer(true);
                String msg = s_stringMgr.getString("McpBarCtrl.message.mcp.start.failed.for.session", _session.getTitle());
                Main.getApplication().getMessageHandler().showErrorMessage(msg, e);
                s_log.error(msg, e);
@@ -118,8 +122,7 @@ public class McpBarCtrl
          {
             try
             {
-               // TODO Stop MCP-Server here
-
+               stopHttpServer(false);
                String msg = s_stringMgr.getString("McpBarCtrl.message.mcp.stopped.for.session", _panel.txtMcpPort.getText(), _session.getTitle());
                Main.getApplication().getMessageHandler().showMessage(msg);
                s_log.info(msg);
@@ -136,6 +139,25 @@ public class McpBarCtrl
       finally
       {
          _inOnStartStopMcpServer = false;
+      }
+   }
+
+   private void stopHttpServer(boolean silently)
+   {
+      if(null != _squirrelMcpHttpServer)
+      {
+         try
+         {
+            _squirrelMcpHttpServer.stop();
+         }
+         catch(Throwable e)
+         {
+            if(false == silently)
+            {
+               String msg = s_stringMgr.getString("McpBarCtrl.warn.mcp.server.stop.failed", _squirrelMcpHttpServer.getPort(), _session.getTitle());
+               Main.getApplication().getMessageHandler().showWarningMessage(msg, e);
+            }
+         }
       }
    }
 

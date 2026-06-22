@@ -254,6 +254,9 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		privateShowMessage(th, formatter, _saSetError);
 	}
 
+	/**
+	 * See also {@link #showWarningMessage(String, Throwable)}
+	 */
 	@Override
 	public void showErrorMessage(String msg, Throwable ex)
 	{
@@ -281,6 +284,14 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		privateShowMessage(th, formatter, _saSetWarning);
 	}
 
+	/**
+	 * See also {@link #showErrorMessage(String, Throwable)}
+	 */
+	@Override
+	public void showWarningMessage(String msg, Throwable ex)
+	{
+		addLineOnEDT(msg + " | " + Utilities.getExceptionStringSave(ex), _saSetWarning);
+	}
 
 
 	/**
