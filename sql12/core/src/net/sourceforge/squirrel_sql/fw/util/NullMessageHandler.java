@@ -77,4 +77,9 @@ public class NullMessageHandler implements IMessageHandler
 
    }
 
+	@Override
+	public void showWarningMessage(String string, Throwable ex)
+	{
+
+	}
 }

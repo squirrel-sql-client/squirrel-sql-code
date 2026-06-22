@@ -113,6 +113,13 @@ public class ListMessageHandler implements IMessageHandler
       _throwables.add(th);
    }
 
+   @Override
+   public void showWarningMessage(String string, Throwable ex)
+   {
+      _warningMsgs.add(string + " | " + Utilities.getExceptionStringSave(ex));
+   }
+
+
    /**
     * Return array of stored exceptions.
     *

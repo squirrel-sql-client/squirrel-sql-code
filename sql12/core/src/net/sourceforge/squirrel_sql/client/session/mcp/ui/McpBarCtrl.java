@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -15,19 +14,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class McpBarCtrl
 {
-   private static final String PREF_AI_QUERY_AS_RES_TAB = "McpBarCtrl.aiQueryAsResTab";
-   private static final String PREF_AI_QUERY_VIA_JDBC = "McpBarCtrl.executeSqlViaDirectJdbcApi";
-
-   private static final String PREF_APPLY_ALIASES_READ_ONLY_RULES = "McpBarCtrl.applyAliasesReadOnlyRules";
-   private static final String PREF_ALLOW_JDBC_EXECUTE_QUERY_ONLY = "McpBarCtrl.allowJdbcExecuteQueryOnly";
-
-   private static final String PREF_APPROVE_ALL_AI_CALLS = "McpBarCtrl.approveAllAiCalls";
-   private static final String PREF_ALLOW_ACCESS_FORM_LOCALHOST_ONLY = "McpBarCtrl.allowAccessFormLocalhostOnly";
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(McpBarCtrl.class);
    private final static ILogger s_log = LoggerController.createLogger(McpBarCtrl.class);
-
-
 
    private final ISession _session;
    private AdditionalSQLTab _mcpSqlTab;
@@ -42,14 +31,14 @@ public class McpBarCtrl
       _session = session;
       _panel = new McpBarPanel();
 
-      _panel.radAiQueryAsResTab.setSelected(Props.getBoolean(PREF_AI_QUERY_AS_RES_TAB, true));
-      _panel.radExecuteSqlViaDirectJdbcApi.setSelected(Props.getBoolean(PREF_AI_QUERY_VIA_JDBC, false));
+      _panel.radAiQueryAsResTab.setSelected(McpUiProps.isAiQueryAsResTab());
+      _panel.radExecuteSqlViaDirectJdbcApi.setSelected(McpUiProps.isExecuteSqlViaDirectJdbcApi());
 
-      _panel.chkApplyAliasesReadOnlyRules.setSelected(Props.getBoolean(PREF_APPLY_ALIASES_READ_ONLY_RULES, true));
-      _panel.chkAllowJdbcExecuteQueryOnly.setSelected(Props.getBoolean(PREF_ALLOW_JDBC_EXECUTE_QUERY_ONLY, true));
+      _panel.chkApplyAliasesReadOnlyRules.setSelected(McpUiProps.isApplyAliasesReadOnlyRules());
+      _panel.chkAllowJdbcExecuteQueryOnly.setSelected(McpUiProps.isAllowJdbcExecuteQueryOnly());
 
-      _panel.chkApproveAllAiCalls.setSelected(Props.getBoolean(PREF_APPROVE_ALL_AI_CALLS, true));
-      _panel.chkAllowAccessFormLocalhostOnly.setSelected(Props.getBoolean(PREF_ALLOW_ACCESS_FORM_LOCALHOST_ONLY, true));
+      _panel.chkApproveAllAiCalls.setSelected(McpUiProps.isApproveAllAiCalls());
+      _panel.chkAllowAccessFormLocalhostOnly.setSelected(McpUiProps.isAllowAccessFormLocalhostOnly());
 
       _panel.radAiQueryAsResTab.addActionListener(e -> onConfigChanged());
       _panel.radExecuteSqlViaDirectJdbcApi.addActionListener(e -> onConfigChanged());
@@ -93,7 +82,8 @@ public class McpBarCtrl
                int port = Main.getApplication().getSessionMcpStateManager().getSessionMcpState(_session).getSessionsMcpPort();
 
                _squirrelMcpHttpServer = new SquirrelMcpHttpServer();
-               _squirrelMcpHttpServer.start(port);
+
+               _squirrelMcpHttpServer.start(port, new McpServerContext(_session, _mcpSqlTab));
 
                _panel.txtMcpPort.setText("" + port);
                _panel.btnStartStopMcpServer.setText(_panel.getMcpServerToggleTextStop());
@@ -163,14 +153,14 @@ public class McpBarCtrl
 
    private void onConfigChanged()
    {
-      Props.putBoolean(PREF_AI_QUERY_AS_RES_TAB, _panel.radAiQueryAsResTab.isSelected());
-      Props.putBoolean(PREF_AI_QUERY_VIA_JDBC, _panel.radExecuteSqlViaDirectJdbcApi.isSelected());
+      McpUiProps.setAiQueryAsResTab(_panel.radAiQueryAsResTab.isSelected());
+      McpUiProps.setExecuteSqlViaDirectJdbcApi(_panel.radExecuteSqlViaDirectJdbcApi.isSelected());
 
-      Props.putBoolean(PREF_APPLY_ALIASES_READ_ONLY_RULES, _panel.chkApplyAliasesReadOnlyRules.isSelected());
-      Props.putBoolean(PREF_ALLOW_JDBC_EXECUTE_QUERY_ONLY, _panel.chkAllowJdbcExecuteQueryOnly.isSelected());
+      McpUiProps.setApplyAliasesReadOnlyRules(_panel.chkApplyAliasesReadOnlyRules.isSelected());
+      McpUiProps.setAllowJdbcExecuteQueryOnly(_panel.chkAllowJdbcExecuteQueryOnly.isSelected());
 
-      Props.putBoolean(PREF_APPROVE_ALL_AI_CALLS, _panel.chkApproveAllAiCalls.isSelected());
-      Props.putBoolean(PREF_ALLOW_ACCESS_FORM_LOCALHOST_ONLY, _panel.chkAllowAccessFormLocalhostOnly.isSelected());
+      McpUiProps.setApproveAllAiCalls(_panel.chkApproveAllAiCalls.isSelected());
+      McpUiProps.setAllowAccessFormLocalhostOnly(_panel.chkAllowAccessFormLocalhostOnly.isSelected());
 
       updateEnabled();
    }

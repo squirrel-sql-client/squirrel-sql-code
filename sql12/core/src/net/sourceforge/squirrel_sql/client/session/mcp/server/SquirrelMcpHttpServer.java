@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.ServerCapabilities;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.ServerInfo;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.ToolsListResult;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.testclient.SquirrelMcpTestClient;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
 
 /**
  * Minimal MCP server over HTTP, using Jackson + records.
@@ -54,13 +54,14 @@ public final class SquirrelMcpHttpServer
    private static final String PROTOCOL_VERSION = "2025-06-18";
    private HttpServer _server;
    private int _port = -1;
+   private McpServerContext _mcpServerContext;
 
    public static void main(String[] args) throws IOException
    {
-      new SquirrelMcpHttpServer().start(SquirrelMcpTestClient.PORT);
+      //new SquirrelMcpHttpServer().start(SquirrelMcpTestClient.PORT, new McpServerContext(_session, _mcpSqlTab));
    }
 
-   public void start(int port) throws IOException
+   public void start(int port, McpServerContext mcpServerContext) throws IOException
    {
       // TODO implement McpBarPanel.chkAllowAccessFormLocalhostOnly
 
@@ -70,6 +71,7 @@ public final class SquirrelMcpHttpServer
       // firewall / network segmentation if the tools are not meant to be public.
       _server = HttpServer.create(new InetSocketAddress(port), 0);
       _port = port;
+      _mcpServerContext = mcpServerContext;
 
       _server.createContext(SquirrelMcpConstants.ROOT_PATH, httpExchange -> handle(httpExchange));
       // Single worker => requests are serialized; one call blocks the next.
@@ -89,6 +91,7 @@ public final class SquirrelMcpHttpServer
          finally
          {
             _server = null;
+            _mcpServerContext = null;
             _port = -1;
          }
       }
@@ -162,7 +165,7 @@ public final class SquirrelMcpHttpServer
       Object result;
       try
       {
-         result = method.invoke(new SquirrelMcpToolsImpl(), argObject);
+         result = method.invoke(new SquirrelMcpToolsImpl(_mcpServerContext), argObject);
       }
       catch( IllegalAccessException | InvocationTargetException e )
       {

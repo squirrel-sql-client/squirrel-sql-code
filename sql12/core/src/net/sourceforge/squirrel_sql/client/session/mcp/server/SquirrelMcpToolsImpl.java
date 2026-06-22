@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.Result
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultMetaData;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultRow;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultSet;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
 
 /**
  * Default implementation of {@link SquirrelMcpTools}. Stateless and thread-safe.
@@ -20,6 +21,13 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.Result
  */
 public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
 {
+   private final McpServerContext _mcpServerContext;
+
+   public SquirrelMcpToolsImpl(McpServerContext mcpServerContext)
+   {
+      _mcpServerContext = mcpServerContext;
+   }
+
    @Override
    public ResultSet getTables(GetTablesArgs args)
    {
