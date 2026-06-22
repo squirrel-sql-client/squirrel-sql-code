@@ -14,6 +14,7 @@ import java.util.Map;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpConstants;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.NoArgs;
 
 /**
  * A tiny command-line client for {@link SquirrelMcpHttpServer}.
@@ -48,8 +49,12 @@ public final class SquirrelMcpTestClient
 
       // Representative getTables call: no catalog filter, schema PUBLIC, every
       // table name, restricted to base tables and views.
-      GetTablesArgs getTablesArgs = new GetTablesArgs(null, "PUBLIC", "%", new String[]{"TABLE", "VIEW"});
-      client.print("tools/call getTables", client.getTables(getTablesArgs));
+      //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "PUBLIC", "%", new String[]{"TABLE", "VIEW"});
+      //client.print("tools/call getTables", client.getTables(getTablesArgs));
+      System.out.println("##############################################");
+      client.print("tools/call getDriverClassName", client.getDriverClassName());
+      client.print("tools/call getSessionName", client.getSessionName());
+      client.print("tools/call getJdbcUrl", client.getJdbcUrl());
    }
 
    private static void callMcpAdministrationMethods(SquirrelMcpTestClient client) throws IOException, InterruptedException
@@ -85,6 +90,34 @@ public final class SquirrelMcpTestClient
             "arguments", args);
       return rpc("tools/call", params);
    }
+
+   public JsonNode getDriverClassName() throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getDriverClassName",
+            "arguments", new NoArgs());
+
+      return rpc("tools/call", params);
+   }
+
+   private JsonNode getJdbcUrl()  throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getJdbcUrl",
+            "arguments", new NoArgs());
+
+      return rpc("tools/call", params);
+   }
+
+   private JsonNode getSessionName()  throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getSessionName",
+            "arguments", new NoArgs());
+
+      return rpc("tools/call", params);
+   }
+
 
    /**
     * Sends one JSON-RPC request and returns the parsed response, or

@@ -4,10 +4,12 @@ import java.sql.Types;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.NoArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultCell;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultMetaData;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultRow;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultSet;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.SimpleString;
 import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
 
 /**
@@ -26,6 +28,24 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
    public SquirrelMcpToolsImpl(McpServerContext mcpServerContext)
    {
       _mcpServerContext = mcpServerContext;
+   }
+
+   @Override
+   public SimpleString getSessionName(NoArgs none)
+   {
+      return new SimpleString(_mcpServerContext.session().getTitle());
+   }
+
+   @Override
+   public SimpleString getDriverClassName(NoArgs none)
+   {
+      return new SimpleString(_mcpServerContext.session().getJdbcData().getDriverClassName());
+   }
+
+   @Override
+   public SimpleString getJdbcUrl(NoArgs none)
+   {
+      return new SimpleString(_mcpServerContext.session().getJdbcData().getUrl());
    }
 
    @Override
