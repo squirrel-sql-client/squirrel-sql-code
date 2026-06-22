@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTab
  */
 public final class SquirrelMcpTestClient
 {
-   public static final int PORT = 23368;
+   public static final int PORT = 23367;
    private final ObjectMapper mapper = new ObjectMapper();
    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
    private final URI endpoint;
