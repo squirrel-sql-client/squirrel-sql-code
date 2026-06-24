@@ -45,16 +45,16 @@ public final class SquirrelMcpTestClient
    public static void main(String[] args) throws IOException, InterruptedException
    {
       SquirrelMcpTestClient client = new SquirrelMcpTestClient(defaultEndpoint());
-      callMcpAdministrationMethods(client);
+      //callMcpAdministrationMethods(client);
 
       // Representative getTables call: no catalog filter, schema PUBLIC, every
       // table name, restricted to base tables and views.
       //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "PUBLIC", "%", new String[]{"TABLE", "VIEW"});
       //client.print("tools/call getTables", client.getTables(getTablesArgs));
       System.out.println("##############################################");
-      client.print("tools/call getDriverClassName", client.getDriverClassName());
-      client.print("tools/call getSessionName", client.getSessionName());
-      client.print("tools/call getJdbcUrl", client.getJdbcUrl());
+      //client.print("tools/call getDriverClassName", client.getDriverClassName());
+      //client.print("tools/call getSessionName", client.getSessionName());
+      //client.print("tools/call getJdbcUrl", client.getJdbcUrl());
 
       GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
       client.print("tools/call getTables", client.getTables(getTablesArgs));

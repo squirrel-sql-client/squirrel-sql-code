@@ -12,6 +12,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.Result
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultSet;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.SimpleString;
 import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -36,27 +37,49 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
    @Override
    public SimpleString getSessionName(NoArgs none)
    {
-      return new SimpleString(_mcpServerContext.session().getTitle());
+      return GUIUtils.callOnSwingEventThread(() -> new SimpleString(_mcpServerContext.session().getTitle()));
    }
 
    @Override
    public SimpleString getDriverClassName(NoArgs none)
    {
-      return new SimpleString(_mcpServerContext.session().getJdbcData().getDriverClassName());
+      return GUIUtils.callOnSwingEventThread(() -> new SimpleString(_mcpServerContext.session().getJdbcData().getDriverClassName()));
    }
 
    @Override
    public SimpleString getJdbcUrl(NoArgs none)
    {
-      return new SimpleString(_mcpServerContext.session().getJdbcData().getUrl());
+      return GUIUtils.callOnSwingEventThread(() -> new SimpleString(_mcpServerContext.session().getJdbcData().getUrl()));
    }
 
    @Override
    public ResultSet getTables(GetTablesArgs args)
    {
+      return GUIUtils.callOnSwingEventThread(() -> _getTables(args));
+   }
+
+   @Override
+   public ResultSet executeQuery(SimpleString sql)
+   {
+      return GUIUtils.callOnSwingEventThread(() -> _executeQuery(sql));
+   }
+
+   private ResultSet _executeQuery(SimpleString sql)
+   {
+      throw new UnsupportedOperationException("NYI");
+   }
+
+
+   private ResultSet _getTables(GetTablesArgs args)
+   {
       try
       {
-         ITableInfo[] tables = _mcpServerContext.session().getMetaData().getTables(args.catalog(), args.schemaPattern(), args.tableNamePattern(), args.types(), null);
+         // Citation from java.sql.DatabaseMetaData.getTables: "as it is stored in the database"
+         String catalogName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
+         String schemaName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveSchemaName(args.schemaPattern());
+         String tableName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveTableName(args.tableNamePattern());
+
+         ITableInfo[] tables = _mcpServerContext.session().getMetaData().getTables(catalogName, schemaName, tableName, args.types(), null);
 
          List<ResultMetaData> metaData = List.of(
                new ResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
@@ -86,8 +109,6 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
          throw Utilities.wrapRuntime(e);
       }
    }
-
-
 
 
    //@Override

@@ -81,7 +81,7 @@ public final class SquirrelMcpHttpServer
       // Single worker => requests are serialized; one call blocks the next.
       _server.setExecutor(Executors.newSingleThreadExecutor());
       _server.start();
-      System.out.println("hello-java-http MCP server listening on http://0.0.0.0:" + port + SquirrelMcpConstants.ROOT_PATH + " (all interfaces)");
+      //System.out.println("SQuirreL MCP server listening on http://0.0.0.0:" + port + SquirrelMcpConstants.ROOT_PATH + " (all interfaces)");
    }
 
    public void stop()

@@ -21,6 +21,16 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
@@ -32,18 +42,25 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBackAdaptor;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.UDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.DriverMatch;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.*;
+import org.apache.commons.lang3.StringUtils;
 
 public class SchemaInfo
 {
@@ -785,27 +802,64 @@ public class SchemaInfo
     * tableNamePattern - a table name pattern; must match the table name as it is stored in the database
     *
     *
-    * @param data The tables name in arbitrary case.
+    * @param caseInsensitiveTableName The tables name in arbitrary case.
     * @return the table name as it is stored in the database
     */
-   public String getCaseSensitiveTableName(String data)
+   public String getCaseSensitiveTableName(String caseInsensitiveTableName)
    {
-      if (!_loading && data != null)
+      if (!_loading && caseInsensitiveTableName != null)
       {
-         return _schemaInfoCache.getTableNamesForReadOnly().get(new CaseInsensitiveString(data));
+         String ret = _schemaInfoCache.getTableNamesForReadOnly().get(new CaseInsensitiveString(caseInsensitiveTableName));
+         if(null != ret)
+         {
+            return ret;
+         }
       }
-      return null;
+      return caseInsensitiveTableName;
    }
 
-   public String getCaseSensitiveProcedureName(String data)
+   public String getCaseSensitiveProcedureName(String caseInsensitiveProcedureName)
    {
-      if (!_loading && data != null)
+      if (!_loading && caseInsensitiveProcedureName != null)
       {
-         return _schemaInfoCache.getProcedureNamesForReadOnly().get(new CaseInsensitiveString(data));
+         String ret = _schemaInfoCache.getProcedureNamesForReadOnly().get(new CaseInsensitiveString(caseInsensitiveProcedureName));
+         if(null != ret)
+         {
+            return ret;
+         }
       }
-      return null;
+      return caseInsensitiveProcedureName;
    }
 
+   public String getCaseSensitiveSchemaName(String caseInSensitiveSchema)
+   {
+      if (!_loading && null != caseInSensitiveSchema)
+      {
+         for(String schema : _schemaInfoCache.getSchemasForReadOnly())
+         {
+            if(StringUtils.equalsIgnoreCase(schema, caseInSensitiveSchema))
+            {
+               return schema;
+            }
+         }
+      }
+      return caseInSensitiveSchema;
+   }
+
+   public String getCaseSensitiveCatalogName(String caseInInsensitiveCatalogName)
+   {
+      if (!_loading && null != caseInInsensitiveCatalogName)
+      {
+         for(String catalog : _schemaInfoCache.getCatalogsForReadOnly())
+         {
+            if(StringUtils.equalsIgnoreCase(catalog, caseInInsensitiveCatalogName))
+            {
+               return catalog;
+            }
+         }
+      }
+      return caseInInsensitiveCatalogName;
+   }
 
 
 

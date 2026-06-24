@@ -37,4 +37,5 @@ public interface SquirrelMcpTools
    @McpTool(description = "Lists database tables (JDBC DatabaseMetaData.getTables).")
    ResultSet getTables(GetTablesArgs args);
 
+   ResultSet executeQuery(SimpleString sql);
 }

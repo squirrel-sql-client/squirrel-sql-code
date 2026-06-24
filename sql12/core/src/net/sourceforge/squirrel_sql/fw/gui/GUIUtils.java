@@ -58,6 +58,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -414,6 +416,13 @@ public class GUIUtils
         return new Rectangle(x,y,w,h); 
 	}
 	
+	public static <T> T callOnSwingEventThread(Supplier<T> toCall)
+	{
+		AtomicReference<T> res = new AtomicReference<>();
+		processOnSwingEventThread(() -> res.set(toCall.get()), true);
+		return res.get();
+	}
+
 	public static void processOnSwingEventThread(Runnable todo)
 	{
 		processOnSwingEventThread(todo, false);
