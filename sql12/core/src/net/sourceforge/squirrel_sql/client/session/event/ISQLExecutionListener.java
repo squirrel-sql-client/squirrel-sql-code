@@ -49,7 +49,8 @@ public interface ISQLExecutionListener
    /**
 	 * Called after the statement was executed.
 	 *
-	 * @param	sql	The SQL that was executed.
+	 * @param dataSetUpdateableTableModel
+	 * @param   sql   The SQL that was executed.
 	 *
 	 */
    void statementExecuted(QueryHolder sql);

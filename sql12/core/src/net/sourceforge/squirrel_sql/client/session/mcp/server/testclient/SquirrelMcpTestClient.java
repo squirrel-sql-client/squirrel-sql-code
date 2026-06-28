@@ -14,7 +14,8 @@ import java.util.Map;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpConstants;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.NoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
 
 /**
  * A tiny command-line client for {@link SquirrelMcpHttpServer}.
@@ -56,8 +57,12 @@ public final class SquirrelMcpTestClient
       //client.print("tools/call getSessionName", client.getSessionName());
       //client.print("tools/call getJdbcUrl", client.getJdbcUrl());
 
-      GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
-      client.print("tools/call getTables", client.getTables(getTablesArgs));
+      //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
+      //client.print("tools/call getTables", client.getTables(getTablesArgs));
+      //McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
+      // McpSimpleString sql = new McpSimpleString("select * from articles ORDER BY id");
+      McpSimpleString sql = new McpSimpleString("SELECT * FROM receipts ORDER BY id");
+      client.print("tools/call executeQuery", client.executeQuery(sql));
    }
 
    private static void callMcpAdministrationMethods(SquirrelMcpTestClient client) throws IOException, InterruptedException
@@ -94,11 +99,20 @@ public final class SquirrelMcpTestClient
       return rpc("tools/call", params);
    }
 
+   private JsonNode executeQuery(McpSimpleString args) throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "executeQuery",
+            "arguments", args);
+      return rpc("tools/call", params);
+   }
+
+
    public JsonNode getDriverClassName() throws IOException, InterruptedException
    {
       Map<String, Object> params = Map.of(
             "name", "getDriverClassName",
-            "arguments", new NoArgs());
+            "arguments", new McpNoArgs());
 
       return rpc("tools/call", params);
    }
@@ -107,7 +121,7 @@ public final class SquirrelMcpTestClient
    {
       Map<String, Object> params = Map.of(
             "name", "getJdbcUrl",
-            "arguments", new NoArgs());
+            "arguments", new McpNoArgs());
 
       return rpc("tools/call", params);
    }
@@ -116,7 +130,7 @@ public final class SquirrelMcpTestClient
    {
       Map<String, Object> params = Map.of(
             "name", "getSessionName",
-            "arguments", new NoArgs());
+            "arguments", new McpNoArgs());
 
       return rpc("tools/call", params);
    }

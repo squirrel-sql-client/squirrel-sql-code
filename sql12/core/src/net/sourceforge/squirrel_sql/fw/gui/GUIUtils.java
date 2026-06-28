@@ -416,10 +416,10 @@ public class GUIUtils
         return new Rectangle(x,y,w,h); 
 	}
 	
-	public static <T> T callOnSwingEventThread(Supplier<T> toCall)
+	public static <T> T callOnSwingEventThread(Supplier<T> toCall, boolean wait)
 	{
 		AtomicReference<T> res = new AtomicReference<>();
-		processOnSwingEventThread(() -> res.set(toCall.get()), true);
+		processOnSwingEventThread(() -> res.set(toCall.get()), wait);
 		return res.get();
 	}
 

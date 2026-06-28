@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects;
 
+import java.util.Date;
+
 /**
  * A single cell value. Exactly one of the typed value fields is populated
  * (the rest are {@code null}, and are omitted from JSON by the
@@ -14,25 +16,47 @@ package net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects;
  * @param longValue   the value when a {@code long}, else {@code null}
  * @param boolValue   the value when a {@code boolean}, else {@code null}
  */
-public record ResultCell(boolean primitive, String stringValue, Integer intValue, Long longValue, Boolean boolValue)
+public record ResultCell(boolean primitive, String stringValue, Integer intValue, Long longValue, Boolean boolValue, Date dateValue, Double doubleValue)
 {
    public static ResultCell ofString(String value)
    {
-      return new ResultCell(false, value, null, null, null);
+      return new ResultCell(false, value, null, null, null, null, null);
    }
 
    public static ResultCell ofInt(Integer value)
    {
-      return new ResultCell(true, null, value, null, null);
+      return new ResultCell(true, null, value, null, null, null, null);
    }
 
    public static ResultCell ofLong(Long value)
    {
-      return new ResultCell(true, null, null, value, null);
+      return new ResultCell(true, null, null, value, null, null, null);
    }
 
-   public static ResultCell ofBool(Boolean value)
+   public static ResultCell ofBool(Object value)
    {
-      return new ResultCell(true, null, null, null, value);
+      if(null == value)
+      {
+         return new ResultCell(true, null, null, null, null, null, null);
+      }
+      else if(value instanceof Boolean boolValue)
+      {
+         return new ResultCell(true, null, null, null, boolValue, null, null);
+      }
+      else if(value instanceof Number numberValue)
+      {
+         return new ResultCell(true, null, null, null, 0 == numberValue.intValue(), null, null);
+      }
+      return ResultCell.ofString("" + value);
+   }
+
+   public static ResultCell ofDate(Date value)
+   {
+      return new ResultCell(false, null, null, null != value ? value.getTime() : null, null, value, null);
+   }
+
+   public static ResultCell ofDouble(Double value)
+   {
+      return new ResultCell(false, null, null, null, null, null, value);
    }
 }

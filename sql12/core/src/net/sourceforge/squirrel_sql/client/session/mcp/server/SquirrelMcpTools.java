@@ -2,9 +2,9 @@ package net.sourceforge.squirrel_sql.client.session.mcp.server;
 
 import net.sourceforge.squirrel_sql.client.session.mcp.server.annotations.McpTool;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.NoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultSet;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.SimpleString;
 
 /**
  * The functions this MCP server exposes — one Java method per MCP tool.
@@ -18,13 +18,13 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.Simple
 public interface SquirrelMcpTools
 {
    @McpTool(description = "SQuirreL Session name")
-   SimpleString getSessionName(NoArgs none);
+   McpSimpleString getSessionName(McpNoArgs none);
 
    @McpTool(description = "JDBC driver class name")
-   SimpleString getDriverClassName(NoArgs none);
+   McpSimpleString getDriverClassName(McpNoArgs none);
 
    @McpTool(description = "JDBC-URL")
-   SimpleString getJdbcUrl(NoArgs none);
+   McpSimpleString getJdbcUrl(McpNoArgs none);
 
 
    /**
@@ -37,5 +37,5 @@ public interface SquirrelMcpTools
    @McpTool(description = "Lists database tables (JDBC DatabaseMetaData.getTables).")
    ResultSet getTables(GetTablesArgs args);
 
-   ResultSet executeQuery(SimpleString sql);
+   ResultSet executeQuery(McpSimpleString sql);
 }

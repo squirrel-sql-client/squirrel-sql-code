@@ -197,7 +197,9 @@ public interface ISQLPanelAPI extends IFileEditorAPI
 
 	void executeAllSQLs();
 
-   void executeSQL(String sqlScriptToBeExecuted);
+	void executeSQL(String sqlScriptToBeExecuted);
+
+	void executeSQL(String sqlScriptToBeExecuted, SqlPanelExecutionFuture sqlPanelExecutionFuture);
 
    /**
 	 * Close all the SQL result tabs.

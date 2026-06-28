@@ -1,14 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SqlListenerService
 {

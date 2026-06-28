@@ -522,7 +522,13 @@ public class SQLPanelAPI implements ISQLPanelAPI
    @Override
    public void executeSQL(String sqlToBeExecuted)
    {
-      _panel.getSQLExecPanel().executeSQL(sqlToBeExecuted);
+      executeSQL(sqlToBeExecuted, SqlPanelExecutionFuture.EMPTY);
+   }
+
+	@Override
+   public void executeSQL(String sqlToBeExecuted, SqlPanelExecutionFuture sqlPanelExecutionFuture)
+   {
+      _panel.getSQLExecPanel().executeSQL(sqlToBeExecuted, sqlPanelExecutionFuture);
    }
 
    /**

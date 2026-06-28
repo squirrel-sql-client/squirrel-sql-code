@@ -311,7 +311,7 @@ public class SQLExecuterTask implements Runnable
              }
          }
 
-         SwingUtilities.invokeLater(() -> fireExecutionListenersFinshed());
+         SwingUtilities.invokeLater(() -> fireExecutionListenersFinished());
       }
    }
 
@@ -489,7 +489,7 @@ public class SQLExecuterTask implements Runnable
          inFirstLoop = false;
       }
 
-      SwingUtilities.invokeLater(() -> fireExecutionListeners(sql));
+      SwingUtilities.invokeLater(() -> fireExecutionListenersStatementExecuted(sql));
 
       if (_handler != null)
       {
@@ -528,7 +528,7 @@ public class SQLExecuterTask implements Runnable
    }
 
 
-   private void fireExecutionListeners(final QueryHolder sql)
+   private void fireExecutionListenersStatementExecuted(final QueryHolder sql)
    {
       for (ISQLExecutionListener executionListener : _executionListeners.toArray(new ISQLExecutionListener[0]))
       {
@@ -536,7 +536,7 @@ public class SQLExecuterTask implements Runnable
       }
    }
 
-   private void fireExecutionListenersFinshed()
+   private void fireExecutionListenersFinished()
    {
       for (ISQLExecutionListener executionListener : _executionListeners.toArray(new ISQLExecutionListener[0]))
       {

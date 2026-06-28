@@ -858,4 +858,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _resultTabListener = resultTabListener;
       return previous;
    }
+
+   public ResultSetDataSet getResultSetDataSetByReference()
+   {
+      return _rsds;
+   }
 }

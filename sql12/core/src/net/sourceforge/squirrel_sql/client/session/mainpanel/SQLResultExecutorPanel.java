@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.SqlPanelExecutionFuture;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsToLeftAction;
@@ -258,10 +259,20 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
    public void executeSQL(String sql)
 	{
-      executeSQL(sql, null);
+      executeSQL(sql, null, SqlPanelExecutionFuture.EMPTY);
+   }
+
+   public void executeSQL(String sql, SqlPanelExecutionFuture sqlPanelExecutionFuture)
+	{
+      executeSQL(sql, null, sqlPanelExecutionFuture);
    }
 
    public void executeSQL(String sql, String tableToBeEdited)
+	{
+      executeSQL(sql, tableToBeEdited, SqlPanelExecutionFuture.EMPTY);
+   }
+
+   public void executeSQL(String sql, String tableToBeEdited, SqlPanelExecutionFuture sqlPanelExecutionFuture)
 	{
       if (sql != null && sql.trim().length() > 0)
       {
@@ -275,19 +286,19 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
          // shouldn't be executed.
          if (sql == null)
          {
-            s_log.info(
-                  "executeSQL: An ISQLExecutionListener veto'd execution of " +
-                        "the following SQL: " + origSQL);
-            return;
+            String msg = "executeSQL: An ISQLExecutionListener veto'd execution of the following SQL: " + origSQL;
+            s_log.info(msg);
+            sqlPanelExecutionFuture.veto(msg);
          }
 
          ISQLExecutionListener[] executionListeners = _sqlExecutionListeners.toArray(new ISQLExecutionListener[0]);
 
-         new SQLExecutionHandler(null, _session, sql, createSQLExecutionHandlerListener(), executionListeners, tableToBeEdited);
+         new SQLExecutionHandler(null, _session, sql, createSQLExecutionHandlerListener(sqlPanelExecutionFuture), executionListeners, tableToBeEdited);
       }
+      sqlPanelExecutionFuture.emptySql();
    }
 
-   private ISQLExecutionHandlerListener createSQLExecutionHandlerListener()
+   private ISQLExecutionHandlerListener createSQLExecutionHandlerListener(SqlPanelExecutionFuture sqlPanelExecutionFuture)
    {
       return
          new ISQLExecutionHandlerListener()
@@ -295,7 +306,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
             @Override
             public void addResultsTab(SQLExecutionInfo info, ResultSetDataSet rsds, ResultSetMetaDataDataSet rsmdds, IDataSetUpdateableTableModel dataSetUpdateableTableModel, IResultTab resultTabToReplace)
             {
-               SwingUtilities.invokeLater(() -> onAddResultsTab(info, rsds, rsmdds, dataSetUpdateableTableModel, resultTabToReplace));
+               SwingUtilities.invokeLater(() -> onAddResultsTab(info, rsds, rsmdds, dataSetUpdateableTableModel, resultTabToReplace, sqlPanelExecutionFuture));
             }
 
             @Override
@@ -339,7 +350,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
    private void rerunSQL(String sql, IResultTab resultTabToReplace)
    {
-      new SQLExecutionHandler(resultTabToReplace, _session, sql, createSQLExecutionHandlerListener(), new ISQLExecutionListener[0]);
+      new SQLExecutionHandler(resultTabToReplace, _session, sql, createSQLExecutionHandlerListener(SqlPanelExecutionFuture.EMPTY), new ISQLExecutionListener[0]);
    }
 
 
@@ -671,13 +682,18 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
       _resultTabClosing.closeTab(customResultPanel);
    }
 
-   private void onAddResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, IDataSetUpdateableTableModel dataSetUpdateableTableModel, IResultTab resultTabToReplace)
+   private void onAddResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
+                                ResultSetMetaDataDataSet mdds,
+                                IDataSetUpdateableTableModel dataSetUpdateableTableModel,
+                                IResultTab resultTabToReplace,
+                                SqlPanelExecutionFuture sqlPanelExecutionFuture)
     {
        try
        {
           ResultTab tab = _resultTabFactory.createResultTab(exInfo, dataSetUpdateableTableModel, rsds, mdds);
           addResultsTab(tab, resultTabToReplace);
           _tabbedExecutionsPanel.setSelectedComponent(tab);
+          sqlPanelExecutionFuture.setAddedResultTab(tab);
        }
        catch (Throwable t)
        {
