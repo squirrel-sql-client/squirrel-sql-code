@@ -11,38 +11,39 @@ public class SqlPanelExecutionFuture
 
    public static final SqlPanelExecutionFuture EMPTY = new SqlPanelExecutionFuture();
 
-   private CompletableFuture<ResultTab> result = new CompletableFuture<>();
+   private CompletableFuture<ResultTab> _result = new CompletableFuture<>();
    private String _vetoMsg;
    private boolean _emptySql;
-
-   public String getVetoMsg()
-   {
-      return _vetoMsg;
-   }
-
-   public boolean isEmptySql()
-   {
-      return _emptySql;
-   }
+   private String _errorMsg;
+   private String _lastExecutedStatement;
 
    public SqlPanelExecutionResult waitForSqlResult()
    {
-      ResultTab sqlsResultTab = result.join();
-      return new SqlPanelExecutionResult(sqlsResultTab);
+      ResultTab sqlsResultTab = _result.join();
+      return new SqlPanelExecutionResult(sqlsResultTab, _vetoMsg, _emptySql, _errorMsg, _lastExecutedStatement);
    }
 
    public void setAddedResultTab(ResultTab tab)
    {
-      result.complete(tab);
+      _result.complete(tab);
    }
 
-   public void veto(String vetoMsg)
+   public void setVeto(String vetoMsg)
    {
       _vetoMsg = vetoMsg;
+      _result.complete(null);
    }
 
-   public void emptySql()
+   public void setSqlEmptyError()
    {
       _emptySql = true;
+      _result.complete(null);
+   }
+
+   public void setError(String errorMsg, String lastExecutedStatement)
+   {
+      _errorMsg = errorMsg;
+      _lastExecutedStatement = lastExecutedStatement;
+      _result.complete(null);
    }
 }

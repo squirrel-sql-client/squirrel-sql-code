@@ -288,14 +288,17 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
          {
             String msg = "executeSQL: An ISQLExecutionListener veto'd execution of the following SQL: " + origSQL;
             s_log.info(msg);
-            sqlPanelExecutionFuture.veto(msg);
+            sqlPanelExecutionFuture.setVeto(msg);
          }
 
          ISQLExecutionListener[] executionListeners = _sqlExecutionListeners.toArray(new ISQLExecutionListener[0]);
 
          new SQLExecutionHandler(null, _session, sql, createSQLExecutionHandlerListener(sqlPanelExecutionFuture), executionListeners, tableToBeEdited);
       }
-      sqlPanelExecutionFuture.emptySql();
+      else
+      {
+         sqlPanelExecutionFuture.setSqlEmptyError();
+      }
    }
 
    private ISQLExecutionHandlerListener createSQLExecutionHandlerListener(SqlPanelExecutionFuture sqlPanelExecutionFuture)
@@ -324,13 +327,14 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
             @Override
             public void displayErrors(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
             {
-               onDisplayErrors(sqlExecErrorMsgs, lastExecutedStatement);
+               onDisplayErrors(sqlExecErrorMsgs, lastExecutedStatement, sqlPanelExecutionFuture);
             }
          };
    }
 
-   private void onDisplayErrors(final ArrayList<String> sqlExecErrorMsgs, final String lastExecutedStatement)
+   private void onDisplayErrors(final ArrayList<String> sqlExecErrorMsgs, final String lastExecutedStatement, SqlPanelExecutionFuture sqlPanelExecutionFuture)
    {
+      sqlPanelExecutionFuture.setError(sqlExecErrorMsgs.get(sqlExecErrorMsgs.size() - 1), lastExecutedStatement);
       Runnable runnable = () -> showErrorPanel(sqlExecErrorMsgs, lastExecutedStatement);
       SwingUtilities.invokeLater(runnable);
    }

@@ -61,7 +61,7 @@ public final class SquirrelMcpTestClient
       //client.print("tools/call getTables", client.getTables(getTablesArgs));
       //McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
       // McpSimpleString sql = new McpSimpleString("select * from articles ORDER BY id");
-      McpSimpleString sql = new McpSimpleString("SELECT * FROM receipts ORDER BY id");
+      McpSimpleString sql = new McpSimpleString("SELECT * FROM receiptsw ORDER BY id");
       client.print("tools/call executeQuery", client.executeQuery(sql));
    }
 

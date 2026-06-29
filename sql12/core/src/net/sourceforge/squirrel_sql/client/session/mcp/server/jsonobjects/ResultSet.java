@@ -10,6 +10,21 @@ import java.util.List;
  * @param resultMetaData one entry per column, in column order
  * @param rows           the data rows; each row holds one cell per column
  */
-public record ResultSet(List<ResultMetaData> resultMetaData, List<ResultRow> rows)
+public record ResultSet(List<ResultMetaData> resultMetaData, List<ResultRow> rows, Integer rowsLimitedTo, String errorMessage)
 {
+   public static ResultSet ofResult(List<ResultMetaData> resultMetaData, List<ResultRow> rows, Integer rowsLimitedTo)
+   {
+      return new ResultSet(resultMetaData, rows, rowsLimitedTo, null);
+   }
+
+
+   public static ResultSet ofResult(List<ResultMetaData> resultMetaData, List<ResultRow> rows)
+   {
+      return ofResult(resultMetaData, rows, null);
+   }
+
+   public static ResultSet ofError(String errorMessage)
+   {
+      return new ResultSet(null, null, null, errorMessage);
+   }
 }

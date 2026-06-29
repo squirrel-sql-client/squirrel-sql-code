@@ -76,9 +76,14 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       GUIUtils.processOnSwingEventThread(() -> _mcpServerContext.mcpSqlTab().getSQLPanelAPI().executeSQL(sql.stringContent(), sqlPanelExecutionFuture), false);
       SqlPanelExecutionResult executionResult =  sqlPanelExecutionFuture.waitForSqlResult();
 
+      if(executionResult.hasError())
+      {
+         return ResultSet.ofError(executionResult.composeErrorMessage());
+      }
+
       //executionResult.getSqlsResultTab().setBorder(BorderFactory.createLineBorder(Color.red));
 
-      ResultSetDataSet resultSetData = executionResult.getSqlResultTab().getResultSetDataSetByReference();
+      ResultSetDataSet resultSetData = executionResult.sqlResultTab().getResultSetDataSetByReference();
 
       List<ResultMetaData> metaData = new ArrayList<>();
 
@@ -116,7 +121,7 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
          sqlRes.add(new ResultRow(cellsOfRow));
       }
 
-      return new ResultSet(metaData, sqlRes);
+      return ResultSet.ofResult(metaData, sqlRes, resultSetData.isResultLimitedByMaxRowsCount() ? resultSetData.currentRowCount(): null);
    }
 
    private static Double getDoubleValue(Object cell)
@@ -172,7 +177,7 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
             tablesRes.add(tableRow);
          }
 
-         return new ResultSet(metaData, tablesRes);
+         return ResultSet.ofResult(metaData, tablesRes);
       }
       catch(SQLException e)
       {
