@@ -3,11 +3,11 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 import org.apache.commons.lang3.StringUtils;
 
-public record SqlPanelExecutionResult(ResultTab sqlResultTab, String vetoMsg, boolean emptySql, String errorMsg, String lastExecutedStatement)
+public record SqlPanelExecutionResult(ResultTab sqlResultTab, String vetoMsg, boolean emptySql, String errorMsg, String lastExecutedStatement, boolean canceled)
 {
    public boolean hasError()
    {
-      return false == StringUtils.isBlank(errorMsg) || false == StringUtils.isBlank(vetoMsg) || emptySql;
+      return false == StringUtils.isBlank(errorMsg) || false == StringUtils.isBlank(vetoMsg) || emptySql || canceled;
    }
 
    public String composeErrorMessage()
@@ -27,6 +27,11 @@ public record SqlPanelExecutionResult(ResultTab sqlResultTab, String vetoMsg, bo
       if( false == StringUtils.isBlank(errorMsg))
       {
          ret += "Error message: " + errorMsg;
+      }
+
+      if( canceled )
+      {
+         ret += "Execution was canceled by SQuirreL user.";
       }
 
       return ret;

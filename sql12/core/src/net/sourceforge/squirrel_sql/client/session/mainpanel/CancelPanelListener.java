@@ -4,5 +4,5 @@ public interface CancelPanelListener
 {
    void cancelRequested();
 
-   void closeRquested();
+   void closeRequested();
 }

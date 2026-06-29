@@ -16,11 +16,12 @@ public class SqlPanelExecutionFuture
    private boolean _emptySql;
    private String _errorMsg;
    private String _lastExecutedStatement;
+   private boolean _canceled;
 
    public SqlPanelExecutionResult waitForSqlResult()
    {
       ResultTab sqlsResultTab = _result.join();
-      return new SqlPanelExecutionResult(sqlsResultTab, _vetoMsg, _emptySql, _errorMsg, _lastExecutedStatement);
+      return new SqlPanelExecutionResult(sqlsResultTab, _vetoMsg, _emptySql, _errorMsg, _lastExecutedStatement, _canceled);
    }
 
    public void setAddedResultTab(ResultTab tab)
@@ -44,6 +45,12 @@ public class SqlPanelExecutionFuture
    {
       _errorMsg = errorMsg;
       _lastExecutedStatement = lastExecutedStatement;
+      _result.complete(null);
+   }
+
+   public void setCanceled()
+   {
+      _canceled = true;
       _result.complete(null);
    }
 }

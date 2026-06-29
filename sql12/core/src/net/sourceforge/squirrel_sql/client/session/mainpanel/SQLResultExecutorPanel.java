@@ -321,7 +321,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
             @Override
             public void setCancelPanel(CancelPanelCtrl cancelPanelCtrl)
             {
-               onSetCancelPanel(cancelPanelCtrl);
+               onSetCancelPanel(cancelPanelCtrl, sqlPanelExecutionFuture);
             }
 
             @Override
@@ -727,8 +727,23 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
          cancelPanelCtrl.wasRemoved();
    }
 
-   private void onSetCancelPanel(final CancelPanelCtrl cancelPanelCtrl)
+   private void onSetCancelPanel(final CancelPanelCtrl cancelPanelCtrl, SqlPanelExecutionFuture sqlPanelExecutionFuture)
    {
+      CancelPanelListener cancelPanelListener = new CancelPanelListener()
+      {
+         @Override
+         public void cancelRequested()
+         {
+            sqlPanelExecutionFuture.setCanceled();
+         }
+
+         @Override
+         public void closeRequested()
+         {
+            sqlPanelExecutionFuture.setCanceled();
+         }
+      };
+
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
@@ -738,6 +753,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
                     cancelPanelCtrl.getPanel(),
                     s_stringMgr.getString("SQLResultExecuterPanel.cancelMsg"));
 
+            cancelPanelCtrl.addListener(cancelPanelListener);
             _tabbedExecutionsPanel.setSelectedComponent(cancelPanelCtrl.getPanel());
          }
       });

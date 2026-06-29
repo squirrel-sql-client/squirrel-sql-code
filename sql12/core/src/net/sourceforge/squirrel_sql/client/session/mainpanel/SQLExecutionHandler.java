@@ -101,13 +101,15 @@ class SQLExecutionHandler implements ISQLExecuterHandler
          }
 
          @Override
-         public void closeRquested()
+         public void closeRequested()
          {
             _executionHandlerListener.removeCancelPanel(_cancelPanelCtrl, null);
          }
       };
 
-      _cancelPanelCtrl = new CancelPanelCtrl(listener, session, finishedNotificationSoundHandler);
+      _cancelPanelCtrl = new CancelPanelCtrl(session, finishedNotificationSoundHandler);
+      _cancelPanelCtrl.addListener(listener);
+
       _executionHandlerListener.setCancelPanel(_cancelPanelCtrl);
 
       _session.getApplication().getThreadPool().addTask(_executer);

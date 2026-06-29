@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.FinishedNotificationSoundHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
@@ -9,11 +15,6 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import java.awt.Dimension;
 
 class CancelPanelCtrl
 {
@@ -32,13 +33,12 @@ class CancelPanelCtrl
     * Number of the query currently being executed (starts from 1).
     */
    private int _currentQueryIndex = 0;
-   private CancelPanelListener _listener;
+   private List<CancelPanelListener> _listeners = new ArrayList<>();
    private final TimerHolder _timer;
    private QueryHolder _currentSql;
 
-   CancelPanelCtrl(CancelPanelListener listener, ISession session, FinishedNotificationSoundHandler finishedNotificationSoundHandler)
+   CancelPanelCtrl(ISession session, FinishedNotificationSoundHandler finishedNotificationSoundHandler)
    {
-      _listener = listener;
       _panel = new CancelPanel(session);
       _finishedNotificationSoundHandler = finishedNotificationSoundHandler;
 
@@ -130,13 +130,21 @@ class CancelPanelCtrl
    private void onCancel()
    {
       _finishedNotificationSoundHandler.onPlayFinishedSoundChecked(false);
-      _listener.cancelRequested();
+
+      for(CancelPanelListener l : _listeners.toArray(new CancelPanelListener[0]))
+      {
+         l.cancelRequested();
+      }
    }
 
    private void onClose()
    {
       _panel.cancelBtn.doClick();
-      _listener.closeRquested();
+
+      for(CancelPanelListener l : _listeners.toArray(new CancelPanelListener[0]))
+      {
+         l.closeRequested();
+      }
    }
 
 
@@ -154,5 +162,16 @@ class CancelPanelCtrl
    public void setResultSetDataSetInProgress(ResultSetDataSet rsds)
    {
       _timer.setResultSetDataSetInProgress(rsds);
+   }
+
+   public void addListener(CancelPanelListener listener)
+   {
+      _listeners.remove(listener);
+      _listeners.add(listener);
+   }
+
+   public void removeListener(CancelPanelListener listener)
+   {
+      _listeners.remove(listener);
    }
 }
