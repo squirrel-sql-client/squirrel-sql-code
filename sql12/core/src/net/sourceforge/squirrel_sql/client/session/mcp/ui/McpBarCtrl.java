@@ -31,19 +31,12 @@ public class McpBarCtrl
       _session = session;
       _panel = new McpBarPanel();
 
-      _panel.radAiQueryAsResTab.setSelected(McpUiProps.isAiQueryAsResTab());
-      _panel.radExecuteSqlViaDirectJdbcApi.setSelected(McpUiProps.isExecuteSqlViaDirectJdbcApi());
-
       _panel.chkApplyAliasesReadOnlyRules.setSelected(McpUiProps.isApplyAliasesReadOnlyRules());
-      _panel.chkAllowJdbcExecuteQueryOnly.setSelected(McpUiProps.isAllowJdbcExecuteQueryOnly());
 
       _panel.chkApproveAllAiCalls.setSelected(McpUiProps.isApproveAllAiCalls());
       _panel.chkAllowAccessFormLocalhostOnly.setSelected(McpUiProps.isAllowAccessFormLocalhostOnly());
 
-      _panel.radAiQueryAsResTab.addActionListener(e -> onConfigChanged());
-      _panel.radExecuteSqlViaDirectJdbcApi.addActionListener(e -> onConfigChanged());
       _panel.chkApplyAliasesReadOnlyRules.addActionListener(e -> onConfigChanged());
-      _panel.chkAllowJdbcExecuteQueryOnly.addActionListener(e -> onConfigChanged());
       _panel.chkApproveAllAiCalls.addActionListener(e -> onConfigChanged());
       _panel.chkAllowAccessFormLocalhostOnly.addActionListener(e -> onConfigChanged());
 
@@ -153,12 +146,7 @@ public class McpBarCtrl
 
    private void onConfigChanged()
    {
-      McpUiProps.setAiQueryAsResTab(_panel.radAiQueryAsResTab.isSelected());
-      McpUiProps.setExecuteSqlViaDirectJdbcApi(_panel.radExecuteSqlViaDirectJdbcApi.isSelected());
-
       McpUiProps.setApplyAliasesReadOnlyRules(_panel.chkApplyAliasesReadOnlyRules.isSelected());
-      McpUiProps.setAllowJdbcExecuteQueryOnly(_panel.chkAllowJdbcExecuteQueryOnly.isSelected());
-
       McpUiProps.setApproveAllAiCalls(_panel.chkApproveAllAiCalls.isSelected());
       McpUiProps.setAllowAccessFormLocalhostOnly(_panel.chkAllowAccessFormLocalhostOnly.isSelected());
 
@@ -167,8 +155,6 @@ public class McpBarCtrl
 
    private void updateEnabled()
    {
-      _panel.chkApplyAliasesReadOnlyRules.setEnabled(_panel.radAiQueryAsResTab.isSelected());
-      _panel.chkAllowJdbcExecuteQueryOnly.setEnabled(_panel.radExecuteSqlViaDirectJdbcApi.isSelected());
       _panel.btnCopyAiInfoPrompt.setEnabled(_panel.btnStartStopMcpServer.isSelected());
    }
 

@@ -5,8 +5,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 
 public record McpServerContext(ISession session, AdditionalSQLTab mcpSqlTab)
 {
-
-
    //
    // Just delegates to methods of McpUiProps
    public static boolean isApproveAllAiCalls()
@@ -14,24 +12,8 @@ public record McpServerContext(ISession session, AdditionalSQLTab mcpSqlTab)
       return McpUiProps.isApproveAllAiCalls();
    }
 
-   public static boolean isAllowJdbcExecuteQueryOnly()
-   {
-      return McpUiProps.isAllowJdbcExecuteQueryOnly();
-   }
-
    public static boolean isApplyAliasesReadOnlyRules()
    {
       return McpUiProps.isApplyAliasesReadOnlyRules();
    }
-
-   public static boolean isExecuteSqlViaDirectJdbcApi()
-   {
-      return McpUiProps.isExecuteSqlViaDirectJdbcApi();
-   }
-
-   public static boolean isAiQueryAsResTab()
-   {
-      return McpUiProps.isAiQueryAsResTab();
-   }
-
 }
