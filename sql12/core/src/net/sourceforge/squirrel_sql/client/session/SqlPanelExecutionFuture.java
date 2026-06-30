@@ -18,7 +18,6 @@ public class SqlPanelExecutionFuture
    private String _lastExecutedStatement;
    private boolean _canceled;
    private String _updateMessage;
-   private boolean _touched;
 
    public SqlPanelExecutionResult waitForSqlResult()
    {
@@ -37,7 +36,6 @@ public class SqlPanelExecutionFuture
       {
          return;
       }
-      _touched = true;
 
       _result.complete(tab);
    }
@@ -48,7 +46,6 @@ public class SqlPanelExecutionFuture
       {
          return;
       }
-      _touched = true;
 
       _vetoMsg = vetoMsg;
       _result.complete(null);
@@ -60,7 +57,6 @@ public class SqlPanelExecutionFuture
       {
          return;
       }
-      _touched = true;
 
       _emptySql = true;
       _result.complete(null);
@@ -72,8 +68,6 @@ public class SqlPanelExecutionFuture
       {
          return;
       }
-      _touched = true;
-
 
       _errorMsg = errorMsg;
       _lastExecutedStatement = lastExecutedStatement;
@@ -86,8 +80,6 @@ public class SqlPanelExecutionFuture
       {
          return;
       }
-      _touched = true;
-
 
       _canceled = true;
       _result.complete(null);
@@ -99,8 +91,6 @@ public class SqlPanelExecutionFuture
       {
          return;
       }
-      _touched = true;
-
 
       _updateMessage = updateMessage;
       _result.complete(null);
@@ -118,7 +108,7 @@ public class SqlPanelExecutionFuture
          return;
       }
 
-      if(false == _touched)
+      if(false == _result.isDone())
       {
          // Last resort to keep the thread from getting stuck.
          _errorMsg = "INTERNAL ERROR: The execution lead to no result";

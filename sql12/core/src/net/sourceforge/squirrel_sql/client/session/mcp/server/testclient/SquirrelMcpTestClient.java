@@ -59,11 +59,11 @@ public final class SquirrelMcpTestClient
 
       //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
       //client.print("tools/call getTables", client.getTables(getTablesArgs));
-      //McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
+      McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
       //McpSimpleString sql = new McpSimpleString("select * from articles ORDER BY id");
       //McpSimpleString sql = new McpSimpleString("SELECT * FROM SaraErsteTabelle");
 
-      McpSimpleString sql = new McpSimpleString("INSERT INTO MCPTestTable(mcpid, mcpname) VALUES(2, 'Mcp2')");
+      //McpSimpleString sql = new McpSimpleString("INSERT INTO MCPTestTable(mcpid, mcpname) VALUES(2, 'Mcp2')");
 
       client.print("tools/call executeQuery", client.executeQuery(sql));
    }
