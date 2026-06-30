@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.util.ArrayList;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-
-import java.util.ArrayList;
 
 public interface ISQLExecutionHandlerListener
 {
@@ -21,4 +20,6 @@ public interface ISQLExecutionHandlerListener
    void setCancelPanel(CancelPanelCtrl cancelPanelCtrl);
 
    void displayErrors(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement);
+
+   void updateMessageDisplayed(String msg);
 }

@@ -366,6 +366,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
          return;
       }
       _session.showMessage(msg);
+      _executionHandlerListener.updateMessageDisplayed(msg);
    }
 
    public void sqlResultSetAvailable(ResultSetWrapper rs, SQLExecutionInfo info, IDataSetUpdateableTableModel model)

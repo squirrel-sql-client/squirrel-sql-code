@@ -163,6 +163,11 @@ public class ResultFrame extends SessionDialogWidget
          {
             onDisplayErrors(sqlExecErrorMsgs, lastExecutedStatement);
          }
+
+         @Override
+         public void updateMessageDisplayed(String msg)
+         {
+         }
       };
    }
 

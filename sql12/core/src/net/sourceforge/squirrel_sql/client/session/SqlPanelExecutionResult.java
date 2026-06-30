@@ -3,11 +3,22 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 import org.apache.commons.lang3.StringUtils;
 
-public record SqlPanelExecutionResult(ResultTab sqlResultTab, String vetoMsg, boolean emptySql, String errorMsg, String lastExecutedStatement, boolean canceled)
+public record SqlPanelExecutionResult(ResultTab sqlResultTab,
+                                      String vetoMsg,
+                                      boolean emptySql,
+                                      String errorMsg,
+                                      String lastExecutedStatement,
+                                      boolean canceled,
+                                      String updateMessage)
 {
    public boolean hasError()
    {
       return false == StringUtils.isBlank(errorMsg) || false == StringUtils.isBlank(vetoMsg) || emptySql || canceled;
+   }
+
+   public boolean hasUpdateMessage()
+   {
+      return false == hasError() && false == StringUtils.isBlank(updateMessage);
    }
 
    public String composeErrorMessage()

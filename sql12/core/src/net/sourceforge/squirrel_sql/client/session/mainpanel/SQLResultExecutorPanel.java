@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.Action;
@@ -48,6 +49,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultT
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabAnchoredAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabAdder;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabheader.ResultTabComponent;
@@ -259,7 +261,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
    public void executeSQL(String sql)
 	{
-      executeSQL(sql, null, SqlPanelExecutionFuture.EMPTY);
+      executeSQL(sql, null, SqlPanelExecutionFuture.NULL_FUTURE);
    }
 
    public void executeSQL(String sql, SqlPanelExecutionFuture sqlPanelExecutionFuture)
@@ -269,7 +271,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
    public void executeSQL(String sql, String tableToBeEdited)
 	{
-      executeSQL(sql, tableToBeEdited, SqlPanelExecutionFuture.EMPTY);
+      executeSQL(sql, tableToBeEdited, SqlPanelExecutionFuture.NULL_FUTURE);
    }
 
    public void executeSQL(String sql, String tableToBeEdited, SqlPanelExecutionFuture sqlPanelExecutionFuture)
@@ -292,6 +294,19 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
          }
 
          ISQLExecutionListener[] executionListeners = _sqlExecutionListeners.toArray(new ISQLExecutionListener[0]);
+
+         // Fallback to keep to future's thread (see sqlPanelExecutionFuture _result) from hanging.
+         if(false == sqlPanelExecutionFuture.isNullFuture())
+         {
+            executionListeners = Arrays.copyOf(executionListeners, executionListeners.length + 1);
+            executionListeners[executionListeners.length-1] = new SQLExecutionAdapter(){
+               @Override
+               public void executionFinished()
+               {
+                  sqlPanelExecutionFuture.sqlExecutionFinished();
+               }
+            };
+         }
 
          new SQLExecutionHandler(null, _session, sql, createSQLExecutionHandlerListener(sqlPanelExecutionFuture), executionListeners, tableToBeEdited);
       }
@@ -329,6 +344,12 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
             {
                onDisplayErrors(sqlExecErrorMsgs, lastExecutedStatement, sqlPanelExecutionFuture);
             }
+
+            @Override
+            public void updateMessageDisplayed(String msg)
+            {
+               sqlPanelExecutionFuture.setUpdateMessage(msg);
+            }
          };
    }
 
@@ -354,7 +375,7 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
 
    private void rerunSQL(String sql, IResultTab resultTabToReplace)
    {
-      new SQLExecutionHandler(resultTabToReplace, _session, sql, createSQLExecutionHandlerListener(SqlPanelExecutionFuture.EMPTY), new ISQLExecutionListener[0]);
+      new SQLExecutionHandler(resultTabToReplace, _session, sql, createSQLExecutionHandlerListener(SqlPanelExecutionFuture.NULL_FUTURE), new ISQLExecutionListener[0]);
    }
 
 

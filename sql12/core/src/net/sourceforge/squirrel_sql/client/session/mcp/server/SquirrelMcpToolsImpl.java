@@ -81,6 +81,11 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
          return ResultSet.ofError(executionResult.composeErrorMessage());
       }
 
+      if(executionResult.hasUpdateMessage())
+      {
+         return ResultSet.ofUpdateMessage(executionResult.updateMessage());
+      }
+
       //executionResult.getSqlsResultTab().setBorder(BorderFactory.createLineBorder(Color.red));
 
       ResultSetDataSet resultSetData = executionResult.sqlResultTab().getResultSetDataSetByReference();
