@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import net.sourceforge.squirrel_sql.client.session.SqlPanelExecutionFuture;
 import net.sourceforge.squirrel_sql.client.session.SqlPanelExecutionResult;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.SQLTypeCheck;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
@@ -14,6 +15,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.Result
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultMetaData;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultRow;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultSet;
+import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpCallApproveCtrl;
 import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
@@ -71,6 +73,25 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
 
    private ResultSet _executeQuery(McpSimpleString sql)
    {
+      if(_mcpServerContext.session().getAlias().isReadOnly())
+      {
+         return ResultSet.ofError("The Session's Alias allows to execute SELECT-Statements only.");
+      }
+      else if( McpServerContext.isApplyAliasesReadOnlyRules() && false == SQLTypeCheck.isSelectStatement(sql.stringContent()))
+      {
+         return ResultSet.ofError("AIs are allowed to execute SELECT-Statements only.");
+      }
+      else if( McpServerContext.isApproveAllAiCalls())
+      {
+         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(sql.stringContent());
+
+         if( false == mcpCallApproveCtrl.isApproved() )
+         {
+            return ResultSet.ofError("AI call was not approved by the SQuirreL user.");
+         }
+      }
+
+
       final SqlPanelExecutionFuture sqlPanelExecutionFuture = new SqlPanelExecutionFuture();
 
       GUIUtils.processOnSwingEventThread(() -> _mcpServerContext.mcpSqlTab().getSQLPanelAPI().executeSQL(sql.stringContent(), sqlPanelExecutionFuture), false);

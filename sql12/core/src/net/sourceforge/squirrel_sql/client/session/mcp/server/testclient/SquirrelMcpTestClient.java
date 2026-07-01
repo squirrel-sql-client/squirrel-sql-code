@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.server.testclient;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,6 +9,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpConstants;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
@@ -59,11 +60,11 @@ public final class SquirrelMcpTestClient
 
       //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
       //client.print("tools/call getTables", client.getTables(getTablesArgs));
-      McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
+      //McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
       //McpSimpleString sql = new McpSimpleString("select * from articles ORDER BY id");
       //McpSimpleString sql = new McpSimpleString("SELECT * FROM SaraErsteTabelle");
 
-      //McpSimpleString sql = new McpSimpleString("INSERT INTO MCPTestTable(mcpid, mcpname) VALUES(2, 'Mcp2')");
+      McpSimpleString sql = new McpSimpleString("INSERT INTO MCPTestTable(mcpid, mcpname) VALUES(2, 'Mcp2')");
 
       client.print("tools/call executeQuery", client.executeQuery(sql));
    }
