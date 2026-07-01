@@ -66,15 +66,9 @@ public class CopySeparatedByCtrl
    {
       _dlg.txtCellSeparator.setEnabled(!_dlg.chkJustConcatCells.isSelected());
       _dlg.lblCellSeparator.setEnabled(!_dlg.chkJustConcatCells.isSelected());
-      _dlg.txtCellSeparator.setEnabled(!_dlg.chkJustConcatCells.isSelected());
-
 
       _dlg.txtRowSeparator.setEnabled(true);
       _dlg.lblRowSeparator.setEnabled(true);
-
-      _dlg.txtPreferredLineLength.setEnabled(true);
-      _dlg.lblPreferredLineLength.setEnabled(true);
-
 
       if(false == _enableRowSeparator || _dlg.chkIncludeHeaders.isSelected())
       {
@@ -82,6 +76,9 @@ public class CopySeparatedByCtrl
          _dlg.lblRowSeparator.setEnabled(false);
          //_copySeparatedByDlg.txtRowSeparator.setText(null);
       }
+
+      _dlg.txtPreferredLineLength.setEnabled(true);
+      _dlg.lblPreferredLineLength.setEnabled(true);
 
       if( _dlg.chkIncludeHeaders.isSelected() || _dlg.chkJustConcatCells.isSelected())
       {
