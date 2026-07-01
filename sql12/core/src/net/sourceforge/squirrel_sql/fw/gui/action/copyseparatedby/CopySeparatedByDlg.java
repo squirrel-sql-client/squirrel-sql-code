@@ -34,7 +34,7 @@ public class CopySeparatedByDlg extends JDialog
    JTextField txtRowSeparator = new JTextField();
 
    JLabel lblPreferredLineLength = new JLabel(s_stringMgr.getString("CopySeparatedByDlg.prefered.line.length"));
-   IntegerField txtLineLength = new IntegerField(8);
+   IntegerField txtPreferredLineLength = new IntegerField(8);
 
    JButton btnOk = new JButton(s_stringMgr.getString("CopySeparatedByDlg.cell.ok"));
    JButton btnCancel = new JButton(s_stringMgr.getString("CopySeparatedByDlg.cell.cancel"));
@@ -131,9 +131,9 @@ public class CopySeparatedByDlg extends JDialog
       ret.add(createPreferredLineLengthLabelPanel(), gbc);
 
       gbc = new GridBagConstraints(1, 6 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
-      GUIUtils.setPreferredWidth(txtLineLength, 100);
-      GUIUtils.setMinimumWidth(txtLineLength, 100);
-      ret.add(txtLineLength, gbc);
+      GUIUtils.setPreferredWidth(txtPreferredLineLength, 100);
+      GUIUtils.setMinimumWidth(txtPreferredLineLength, 100);
+      ret.add(txtPreferredLineLength, gbc);
 
 
 //      gbc = new GridBagConstraints(2, 2 , 1, 1, 1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);

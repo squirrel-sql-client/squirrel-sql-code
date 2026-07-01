@@ -41,7 +41,7 @@ public class CopySeparatedByCtrl
       _dlg.txtCellSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, DEFAULT_CELL_SEPARATOR));
       _dlg.txtCellDelimiter.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_DELIMITER, ""));
 
-      _dlg.txtLineLength.setInt(Props.getInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, 100));
+      _dlg.txtPreferredLineLength.setInt(Props.getInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, 100));
       _dlg.txtRowSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, "\\n"));
 
       _dlg.chkIncludeHeaders.setSelected(Props.getBoolean(PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS, false));
@@ -70,10 +70,6 @@ public class CopySeparatedByCtrl
       _dlg.txtRowSeparator.setEnabled(true);
       _dlg.lblRowSeparator.setEnabled(true);
 
-      _dlg.txtLineLength.setEnabled(true);
-      _dlg.lblPreferredLineLength.setEnabled(true);
-
-
       if(false == _enableRowSeparator || _dlg.chkIncludeHeaders.isSelected())
       {
          _dlg.txtRowSeparator.setEnabled(false);
@@ -81,9 +77,12 @@ public class CopySeparatedByCtrl
          //_copySeparatedByDlg.txtRowSeparator.setText(null);
       }
 
-      if( _dlg.chkIncludeHeaders.isSelected())
+      _dlg.txtPreferredLineLength.setEnabled(true);
+      _dlg.lblPreferredLineLength.setEnabled(true);
+
+      if( _dlg.chkIncludeHeaders.isSelected() || _dlg.chkJustConcatCells.isSelected())
       {
-         _dlg.txtLineLength.setEnabled(false);
+         _dlg.txtPreferredLineLength.setEnabled(false);
          _dlg.lblPreferredLineLength.setEnabled(false);
       }
    }
@@ -108,7 +107,7 @@ public class CopySeparatedByCtrl
 
    private void onOk()
    {
-      if( 0 > _dlg.txtLineLength.getInt())
+      if( 0 > _dlg.txtPreferredLineLength.getInt())
       {
          JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("CopySeparatedByCtrl.invalid.line.length"));
          return;
@@ -136,8 +135,8 @@ public class CopySeparatedByCtrl
       Props.putBoolean(PREF_KEY_COPYSEPARATEDBYCTRL_INCLUDE_HEADERS, _dlg.chkIncludeHeaders.isSelected());
       _includeHeaders = _dlg.chkIncludeHeaders.isSelected();
 
-      Props.putInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, _dlg.txtLineLength.getInt());
-      _preferredLineLength = _dlg.txtLineLength.getInt();
+      Props.putInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, _dlg.txtPreferredLineLength.getInt());
+      _preferredLineLength = _dlg.txtPreferredLineLength.getInt();
 
       if(_enableRowSeparator && null != _dlg.txtRowSeparator.getText())
       {

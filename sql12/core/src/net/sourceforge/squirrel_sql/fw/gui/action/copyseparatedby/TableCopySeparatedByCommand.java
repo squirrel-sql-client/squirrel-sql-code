@@ -100,6 +100,7 @@ public class TableCopySeparatedByCommand
                   sb.append(cellSeparator);
 
                   if(   false == copySeparatedByCtrl.isIncludeHeaders()
+                     && false == copySeparatedByCtrl.isJustConcatCells()
                      && 0 < preferredLineLength
                      && preferredLineLength < getDistToLastNewLine(sb))
                   {
