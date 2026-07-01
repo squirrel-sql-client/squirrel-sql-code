@@ -46,11 +46,13 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
 
 Bug fixes:
 
+The UI-table's "Copy separated by ..." right mouse menu function didn't
+  ignore the preferred line length when the "Just concatenate cell values" option was selected.
+
 https://sourceforge.net/p/squirrel-sql/feature-requests/623/
   Error when SQuirreL created scripts contained time stamps and when standard JDBC escape formatting was used.
   I.e. the time stamp 2026-04-29 13:04:46.038 was scripted to
   {ts '2026-04-29 13:04:46.380'} instead of {ts '2026-04-29 13:04:46.038'}
-
 
 Oracle Plugin: Fixed typo, DB Ouptut --> DB Output
 
