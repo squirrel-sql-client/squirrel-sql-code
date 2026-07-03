@@ -672,7 +672,12 @@ public class SQLResultExecutorPanel extends JPanel implements ISQLResultExecutor
      */
     public IResultTab getSelectedResultTab()
     {
-        return (IResultTab)_tabbedExecutionsPanel.getSelectedComponent();
+       if(_tabbedExecutionsPanel.getSelectedComponent() instanceof IResultTab ret)
+       {
+          return ret;
+       }
+
+       return null;
     }
 
    @Override
