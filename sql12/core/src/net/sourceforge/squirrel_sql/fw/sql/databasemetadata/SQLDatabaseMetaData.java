@@ -196,6 +196,19 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return value;
 	}
 
+	@Override
+	public String getDriverVersion() throws SQLException
+	{
+		final String key = "getDriverName";
+		String value = (String) _cache.get(key);
+		if (value == null)
+		{
+			value = privateGetJDBCMetaData().getDriverVersion();
+			_cache.put(key, value);
+		}
+		return value;
+	}
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getJDBCVersion()
 	 */

@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.server.testclient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,12 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpConstants;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetTablesArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
 
@@ -95,7 +94,7 @@ public final class SquirrelMcpTestClient
       return rpc("tools/list", null);
    }
 
-   public JsonNode getTables(GetTablesArgs args) throws IOException, InterruptedException
+   public JsonNode getTables(McpGetTablesArgs args) throws IOException, InterruptedException
    {
       Map<String, Object> params = Map.of(
             "name", "getTables",

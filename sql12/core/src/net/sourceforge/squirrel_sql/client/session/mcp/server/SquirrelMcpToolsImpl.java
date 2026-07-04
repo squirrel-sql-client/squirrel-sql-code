@@ -3,22 +3,18 @@ package net.sourceforge.squirrel_sql.client.session.mcp.server;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import net.sourceforge.squirrel_sql.client.session.SqlPanelExecutionFuture;
-import net.sourceforge.squirrel_sql.client.session.SqlPanelExecutionResult;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.SQLTypeCheck;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetExportedKeysArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetImportedKeysArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetIndexInfoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetTablesArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultCell;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultMetaData;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultRow;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultSet;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultCell;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultMetaData;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultRow;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultSet;
-import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpCallApproveCtrl;
 import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -54,124 +50,38 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
    }
 
    @Override
-   public McpSimpleString getJdbcUrl(McpNoArgs none)
+   public McpSimpleString getDriverName(McpNoArgs none)
    {
-      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.session().getJdbcData().getUrl()), true);
+      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverName()), true);
    }
 
    @Override
-   public ResultSet getTables(GetTablesArgs args)
+   public McpSimpleString getDriverVersion(McpNoArgs none)
    {
-      return _getTables(args);
+      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverVersion()), true);
    }
 
    @Override
-   public ResultSet executeQuery(McpSimpleString sql)
+   public McpSimpleString getDatabaseProductName(McpNoArgs none)
    {
-      return _executeQuery(sql);
+      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductName()), true);
    }
 
-   private ResultSet _executeQuery(McpSimpleString sql)
+   @Override
+   public McpSimpleString getDatabaseProductVersion(McpNoArgs none)
    {
-      if(_mcpServerContext.session().getAlias().isReadOnly())
-      {
-         return ResultSet.ofError("The Session's Alias allows to execute SELECT-Statements only.");
-      }
-      else if( McpServerContext.isApplyAliasesReadOnlyRules() && false == SQLTypeCheck.isSelectStatement(sql.stringContent()))
-      {
-         return ResultSet.ofError("AIs are allowed to execute SELECT-Statements only.");
-      }
-      else if( McpServerContext.isApproveAllAiCalls())
-      {
-         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(sql.stringContent());
-
-         if( false == mcpCallApproveCtrl.isApproved() )
-         {
-            return ResultSet.ofError("AI call was not approved by the SQuirreL user.");
-         }
-      }
-
-
-      final SqlPanelExecutionFuture sqlPanelExecutionFuture = new SqlPanelExecutionFuture();
-
-      GUIUtils.processOnSwingEventThread(() -> _mcpServerContext.mcpSqlTab().getSQLPanelAPI().executeSQL(sql.stringContent(), sqlPanelExecutionFuture), false);
-      SqlPanelExecutionResult executionResult =  sqlPanelExecutionFuture.waitForSqlResult();
-
-      if(executionResult.hasError())
-      {
-         return ResultSet.ofError(executionResult.composeErrorMessage());
-      }
-
-      if(executionResult.hasUpdateMessage())
-      {
-         return ResultSet.ofUpdateMessage(executionResult.updateMessage());
-      }
-
-      //executionResult.getSqlsResultTab().setBorder(BorderFactory.createLineBorder(Color.red));
-
-      ResultSetDataSet resultSetData = executionResult.sqlResultTab().getResultSetDataSetByReference();
-
-      List<ResultMetaData> metaData = new ArrayList<>();
-
-      ColumnDisplayDefinition[] columnDefinitions = resultSetData.getDataSetDefinition().getColumnDefinitions();
-      for(int i = 0; i < columnDefinitions.length; i++)
-      {
-         metaData.add(new ResultMetaData(i+1, columnDefinitions[i].getColumnName(), columnDefinitions[i].getSqlType(), columnDefinitions[i].getSqlTypeName()));
-      }
-
-      List<ResultRow> sqlRes= new ArrayList<>();
-
-      for(Object[] row : resultSetData.getAllDataForReadOnly())
-      {
-         List<ResultCell> cellsOfRow = new ArrayList<>();
-
-         for(int i = 0; i < row.length; i++)
-         {
-            switch(metaData.get(i).sqlType())
-            {
-               case Types.INTEGER -> cellsOfRow.add(ResultCell.ofInt(getIntValue(row[i])));
-               case Types.BIGINT -> cellsOfRow.add(ResultCell.ofInt(getIntValue(row[i])));
-               case Types.SMALLINT -> cellsOfRow.add(ResultCell.ofInt(getIntValue(row[i])));
-               case Types.TINYINT -> cellsOfRow.add(ResultCell.ofInt(getIntValue(row[i])));
-               case Types.DOUBLE -> cellsOfRow.add(ResultCell.ofDouble(getDoubleValue(row[i])));
-               case Types.NUMERIC -> cellsOfRow.add(ResultCell.ofDouble(getDoubleValue(row[i])));
-               case Types.REAL -> cellsOfRow.add(ResultCell.ofDouble(getDoubleValue(row[i])));
-               case Types.DECIMAL -> cellsOfRow.add(ResultCell.ofDouble(getDoubleValue(row[i])));
-               case Types.BIT -> cellsOfRow.add(ResultCell.ofBool(row[i]));
-               case Types.DATE -> cellsOfRow.add(ResultCell.ofDate((Date) row[i]));
-               case Types.TIMESTAMP -> cellsOfRow.add(ResultCell.ofDate((Date) row[i]));
-               case Types.TIME -> cellsOfRow.add(ResultCell.ofDate((Date) row[i]));
-               default -> cellsOfRow.add(ResultCell.ofString("" + row[i]));
-            }
-         }
-         sqlRes.add(new ResultRow(cellsOfRow));
-      }
-
-      return ResultSet.ofResult(metaData, sqlRes, resultSetData.isResultLimitedByMaxRowsCount() ? resultSetData.currentRowCount(): null);
+      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductVersion()), true);
    }
 
-   private static Double getDoubleValue(Object cell)
+   @Override
+   public McpResultSet executeQuery(McpSimpleString sql)
    {
-      if(null == cell)
-      {
-         return null;
-      }
-
-      return ((Number) cell).doubleValue();
-   }
-
-   private static Integer getIntValue(Object cell)
-   {
-      if(null == cell)
-      {
-         return null;
-      }
-
-      return ((Number) cell).intValue();
+      return McpQueryExecuter.executeQuery(sql, _mcpServerContext);
    }
 
 
-   private ResultSet _getTables(GetTablesArgs args)
+   @Override
+   public McpResultSet getTables(McpGetTablesArgs args)
    {
       try
       {
@@ -182,28 +92,28 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
 
          ITableInfo[] tables = _mcpServerContext.session().getMetaData().getTables(catalogName, schemaName, tableName, args.types(), null);
 
-         List<ResultMetaData> metaData = List.of(
-               new ResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
-               new ResultMetaData(2, "TABLE_SCHEM", Types.VARCHAR, "VARCHAR"),
-               new ResultMetaData(3, "TABLE_NAME", Types.VARCHAR, "VARCHAR"),
-               new ResultMetaData(4, "TABLE_TYPE", Types.VARCHAR, "VARCHAR"),
-               new ResultMetaData(5, "REMARKS", Types.VARCHAR, "VARCHAR"));
+         List<McpResultMetaData> metaData = List.of(
+               new McpResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(2, "TABLE_SCHEM", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(3, "TABLE_NAME", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(4, "TABLE_TYPE", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(5, "REMARKS", Types.VARCHAR, "VARCHAR"));
 
 
-         List<ResultRow> tablesRes = new ArrayList<>();
+         List<McpResultRow> tablesRes = new ArrayList<>();
          for(ITableInfo table : tables)
          {
-            ResultRow tableRow = new ResultRow(List.of(
-                  ResultCell.ofString(table.getCatalogName()),
-                  ResultCell.ofString(table.getSchemaName()),
-                  ResultCell.ofString(table.getSimpleName()),
-                  ResultCell.ofString(table.getType()),
-                  ResultCell.ofString(table.getRemarks())));
+            McpResultRow tableRow = new McpResultRow(List.of(
+                  McpResultCell.ofString(table.getCatalogName()),
+                  McpResultCell.ofString(table.getSchemaName()),
+                  McpResultCell.ofString(table.getSimpleName()),
+                  McpResultCell.ofString(table.getType()),
+                  McpResultCell.ofString(table.getRemarks())));
 
             tablesRes.add(tableRow);
          }
 
-         return ResultSet.ofResult(metaData, tablesRes);
+         return McpResultSet.ofResult(metaData, tablesRes);
       }
       catch(SQLException e)
       {
@@ -211,25 +121,21 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       }
    }
 
+   @Override
+   public McpResultSet getImportedKeys(McpGetImportedKeysArgs args)
+   {
+      return null;
+   }
 
-   //@Override
-   //public ResultSet getTables(GetTablesArgs args)
-   //{
-   //   List<ResultMetaData> metaData = List.of(
-   //         new ResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
-   //         new ResultMetaData(2, "TABLE_SCHEM", Types.VARCHAR, "VARCHAR"),
-   //         new ResultMetaData(3, "TABLE_NAME", Types.VARCHAR, "VARCHAR"),
-   //         new ResultMetaData(4, "TABLE_TYPE", Types.VARCHAR, "VARCHAR"),
-   //         new ResultMetaData(5, "REMARKS", Types.VARCHAR, "VARCHAR"));
-   //
-   //   String tableName = args.tableNamePattern() == null ? "SAMPLE_TABLE" : args.tableNamePattern() + "_GERD_TABLE";
-   //   ResultRow sampleRow = new ResultRow(List.of(
-   //         ResultCell.ofString(args.catalog()),
-   //         ResultCell.ofString(args.schemaPattern()),
-   //         ResultCell.ofString(tableName),
-   //         ResultCell.ofString("TABLE"),
-   //         ResultCell.ofString("stub row — wire java.sql.DatabaseMetaData.getTables for real data")));
-   //
-   //   return new ResultSet(metaData, List.of(sampleRow));
-   //}
+   @Override
+   public McpResultSet getExportedKeys(McpGetExportedKeysArgs args)
+   {
+      return null;
+   }
+
+   @Override
+   public McpResultSet getIndexInfo(McpGetIndexInfoArgs args)
+   {
+      return null;
+   }
 }

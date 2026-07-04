@@ -13,7 +13,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.annotations.McpPro
  * @param types            table types to include (e.g. {@code "TABLE"}, {@code "VIEW"});
  *                         {@code null} = all types
  */
-public record GetTablesArgs(
+public record McpGetTablesArgs(
       @McpProp(description = "Catalog name; null = no catalog filter.") String catalog,
       @McpProp(description = "Schema name pattern; null = no schema filter.") String schemaPattern,
       @McpProp(description = "Table name pattern; null = all tables.") String tableNamePattern,

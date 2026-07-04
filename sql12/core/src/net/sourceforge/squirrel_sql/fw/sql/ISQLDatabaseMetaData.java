@@ -18,15 +18,14 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.List;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLSchema;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
-
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.List;
 
 /**
  * An interface that describes public API of SQLDatabaseMetaData.  
@@ -80,6 +79,8 @@ public interface ISQLDatabaseMetaData {
      * @throws  SQLException    Thrown if an SQL error occurs.
      */
     String getDriverName() throws SQLException;
+
+    String getDriverVersion()  throws SQLException;
 
     /**
      * Return the JDBC version of this driver. Cached on first call.

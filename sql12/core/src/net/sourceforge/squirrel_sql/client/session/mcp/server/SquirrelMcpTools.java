@@ -1,10 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.server;
 
+import net.sourceforge.squirrel_sql.client.session.mcp.server.annotations.McpProp;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.annotations.McpTool;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.GetTablesArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetExportedKeysArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetImportedKeysArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetIndexInfoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetTablesArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultSet;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
-import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.ResultSet;
 
 /**
  * The functions this MCP server exposes — one Java method per MCP tool.
@@ -23,19 +27,34 @@ public interface SquirrelMcpTools
    @McpTool(description = "JDBC driver class name")
    McpSimpleString getDriverClassName(McpNoArgs none);
 
-   @McpTool(description = "JDBC-URL")
-   McpSimpleString getJdbcUrl(McpNoArgs none);
+   @McpTool(description = "JDBC driver name")
+   McpSimpleString getDriverName(McpNoArgs none);
+
+   @McpTool(description = "Database product version")
+   McpSimpleString getDriverVersion(McpNoArgs none);
+
+   @McpTool(description = "Database product name")
+   McpSimpleString getDatabaseProductName(McpNoArgs none);
+
+   @McpTool(description = "Database product version")
+   McpSimpleString getDatabaseProductVersion(McpNoArgs none);
 
 
-   /**
-    * Tool {@code getTables}: lists database tables, mirroring
-    * {@link java.sql.DatabaseMetaData#getTables(String, String, String, String[])}.
-    *
-    * @param args catalog / schema / table-name patterns and table types to filter by
-    * @return the matching tables as a typed result set
-    */
    @McpTool(description = "Lists database tables (JDBC DatabaseMetaData.getTables).")
-   ResultSet getTables(GetTablesArgs args);
+   McpResultSet executeQuery(@McpProp(description = "SQL to execute") McpSimpleString sql);
 
-   ResultSet executeQuery(McpSimpleString sql);
+
+   @McpTool(description = "Lists database tables (JDBC DatabaseMetaData.getTables).")
+   McpResultSet getTables(McpGetTablesArgs args);
+
+   @McpTool(description = "Lists imported keys (JDBC DatabaseMetaData.getImportedKeys).")
+   McpResultSet getImportedKeys(McpGetImportedKeysArgs args);
+
+   @McpTool(description = "Lists exported keys (JDBC DatabaseMetaData.getExportedKeys).")
+   McpResultSet getExportedKeys(McpGetExportedKeysArgs args);
+
+   @McpTool(description = "Lists indexes (JDBC DatabaseMetaData.getIndexInfo).")
+   McpResultSet getIndexInfo(McpGetIndexInfoArgs args);
+
 }
+
