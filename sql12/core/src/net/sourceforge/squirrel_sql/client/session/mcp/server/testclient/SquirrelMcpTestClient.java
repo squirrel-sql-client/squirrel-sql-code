@@ -13,6 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpConstants;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetExportedKeysArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetImportedKeysArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetIndexInfoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetPrimaryKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetTablesArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
@@ -62,10 +66,21 @@ public final class SquirrelMcpTestClient
       //McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
       //McpSimpleString sql = new McpSimpleString("select * from articles ORDER BY id");
       //McpSimpleString sql = new McpSimpleString("SELECT * FROM SaraErsteTabelle");
+      //McpSimpleString sql = new McpSimpleString("INSERT INTO MCPTestTable(mcpid, mcpname) VALUES(2, 'Mcp2')");
+      //client.print("tools/call executeQuery", client.executeQuery(sql));
 
-      McpSimpleString sql = new McpSimpleString("INSERT INTO MCPTestTable(mcpid, mcpname) VALUES(2, 'Mcp2')");
+      //McpGetPrimaryKeysArgs primaryKeysArgs = new McpGetPrimaryKeysArgs(null, "public", "suppliers");
+      //client.print("tools/call getTables", client.getPrimaryKeys(primaryKeysArgs));
 
-      client.print("tools/call executeQuery", client.executeQuery(sql));
+      //McpGetIndexInfoArgs indexInfoArgs = new McpGetIndexInfoArgs(null, "public", "suppliers", false, false);
+      //client.print("tools/call getTables", client.getIndexInfo(indexInfoArgs));
+
+      //McpGetImportedKeysArgs importedKeysArgs = new McpGetImportedKeysArgs(null, "public", "articles");
+      //client.print("tools/call McpGetImportedKeysArgs", client.getImportedKeys(importedKeysArgs));
+
+      McpGetExportedKeysArgs exportedKeysArgs = new McpGetExportedKeysArgs(null, "public", "articles");
+      client.print("tools/call getExportedKeys", client.getExportedKeys(exportedKeysArgs));
+
    }
 
    private static void callMcpAdministrationMethods(SquirrelMcpTestClient client) throws IOException, InterruptedException
@@ -98,6 +113,38 @@ public final class SquirrelMcpTestClient
    {
       Map<String, Object> params = Map.of(
             "name", "getTables",
+            "arguments", args);
+      return rpc("tools/call", params);
+   }
+
+   public JsonNode getPrimaryKeys(McpGetPrimaryKeysArgs args) throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getPrimaryKeys",
+            "arguments", args);
+      return rpc("tools/call", params);
+   }
+
+   public JsonNode getIndexInfo(McpGetIndexInfoArgs args) throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getIndexInfo",
+            "arguments", args);
+      return rpc("tools/call", params);
+   }
+
+   public JsonNode getImportedKeys(McpGetImportedKeysArgs args) throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getImportedKeys",
+            "arguments", args);
+      return rpc("tools/call", params);
+   }
+
+   public JsonNode getExportedKeys(McpGetExportedKeysArgs args) throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getExportedKeys",
             "arguments", args);
       return rpc("tools/call", params);
    }

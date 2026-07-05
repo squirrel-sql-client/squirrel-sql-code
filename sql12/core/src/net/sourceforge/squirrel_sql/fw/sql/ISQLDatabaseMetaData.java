@@ -447,8 +447,10 @@ public interface ISQLDatabaseMetaData {
      * @return a list of IndexInfos
      * @throws SQLException
      */
-    public List<IndexInfo> getIndexInfo(ITableInfo ti) throws SQLException;
-    
+    List<IndexInfo> getIndexInfo(ITableInfo ti) throws SQLException;
+
+    List<IndexInfo> getIndexInfo(String catalogName, String schemaName, String tableName) throws SQLException;
+
     /**
      * 
      * @param ti

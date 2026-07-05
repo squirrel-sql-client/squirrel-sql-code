@@ -1450,7 +1450,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		ResultSet rs = null;
 		try
 		{
-			rs = _getIndexInfo(ti);
+			rs = _getIndexInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
 			ResultSetDataSet rsds = new ResultSetDataSet();
 			rsds.readDataFromJdbcResultSetForDatabaseMetaData(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
 			return rsds;
@@ -1465,9 +1465,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 	}
 
-	private ResultSet _getIndexInfo(ITableInfo ti) throws SQLException
+	private ResultSet _getIndexInfo(String catalogName, String schemaName, String tableName) throws SQLException
 	{
-		return privateGetJDBCMetaData().getIndexInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), false, true);
+		return privateGetJDBCMetaData().getIndexInfo(catalogName, schemaName, tableName, false, true);
 	}
 
 	/**
@@ -1480,9 +1480,14 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	public List<IndexInfo> getIndexInfo(ITableInfo ti) throws SQLException
 	{
+		return getIndexInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
+	}
+
+	public List<IndexInfo> getIndexInfo(String catalogName, String schemaName, String tableName) throws SQLException
+	{
 		List<IndexInfo> result = new ArrayList<>();
 
-		try(ResultSet rs = _getIndexInfo(ti))
+		try(ResultSet rs = _getIndexInfo(catalogName, schemaName, tableName))
 		{
 			if(null == rs)
 			{
@@ -1507,7 +1512,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 				IndexInfo indexInfo =
 					new IndexInfo(catalog, schema, indexName, table, column, nonunique, indexQualifier, indexType,
-						ordinalPosition, sortOrder, cardinality, pages, filterCondition, this);
+					              ordinalPosition, sortOrder, cardinality, pages, filterCondition, this);
 				result.add(indexInfo);
 			}
 		}

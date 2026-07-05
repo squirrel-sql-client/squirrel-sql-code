@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.annotations.McpToo
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetExportedKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetImportedKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetIndexInfoArgs;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetPrimaryKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetTablesArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultSet;
@@ -46,6 +47,9 @@ public interface SquirrelMcpTools
 
    @McpTool(description = "Lists database tables (JDBC DatabaseMetaData.getTables).")
    McpResultSet getTables(McpGetTablesArgs args);
+
+   @McpTool(description = "Lists primary keys (JDBC DatabaseMetaData.getPrimaryKeys).")
+   McpResultSet getPrimaryKeys(McpGetPrimaryKeysArgs args);
 
    @McpTool(description = "Lists imported keys (JDBC DatabaseMetaData.getImportedKeys).")
    McpResultSet getImportedKeys(McpGetImportedKeysArgs args);
