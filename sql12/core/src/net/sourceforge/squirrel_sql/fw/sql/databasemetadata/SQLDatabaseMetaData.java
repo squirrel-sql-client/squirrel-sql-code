@@ -199,7 +199,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	@Override
 	public String getDriverVersion() throws SQLException
 	{
-		final String key = "getDriverName";
+		final String key = "getDriverVersion";
 		String value = (String) _cache.get(key);
 		if (value == null)
 		{

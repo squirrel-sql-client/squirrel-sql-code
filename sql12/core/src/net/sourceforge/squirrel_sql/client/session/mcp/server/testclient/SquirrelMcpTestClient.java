@@ -59,7 +59,10 @@ public final class SquirrelMcpTestClient
       System.out.println("##############################################");
       //client.print("tools/call getDriverClassName", client.getDriverClassName());
       //client.print("tools/call getSessionName", client.getSessionName());
-      //client.print("tools/call getJdbcUrl", client.getJdbcUrl());
+      //client.print("tools/call getDriverName", client.getDriverName());
+      //client.print("tools/call getDriverVersion", client.getDriverVersion());
+      //client.print("tools/call getDatabaseProductName", client.getDatabaseProductName());
+      client.print("tools/call getDatabaseProductVersion", client.getDatabaseProductVersion());
 
       //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
       //client.print("tools/call getTables", client.getTables(getTablesArgs));
@@ -78,8 +81,8 @@ public final class SquirrelMcpTestClient
       //McpGetImportedKeysArgs importedKeysArgs = new McpGetImportedKeysArgs(null, "public", "articles");
       //client.print("tools/call McpGetImportedKeysArgs", client.getImportedKeys(importedKeysArgs));
 
-      McpGetExportedKeysArgs exportedKeysArgs = new McpGetExportedKeysArgs(null, "public", "articles");
-      client.print("tools/call getExportedKeys", client.getExportedKeys(exportedKeysArgs));
+      //McpGetExportedKeysArgs exportedKeysArgs = new McpGetExportedKeysArgs(null, "public", "articles");
+      //client.print("tools/call getExportedKeys", client.getExportedKeys(exportedKeysArgs));
 
    }
 
@@ -158,6 +161,15 @@ public final class SquirrelMcpTestClient
    }
 
 
+   private JsonNode getSessionName()  throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getSessionName",
+            "arguments", new McpNoArgs());
+
+      return rpc("tools/call", params);
+   }
+
    public JsonNode getDriverClassName() throws IOException, InterruptedException
    {
       Map<String, Object> params = Map.of(
@@ -167,23 +179,42 @@ public final class SquirrelMcpTestClient
       return rpc("tools/call", params);
    }
 
-   private JsonNode getJdbcUrl()  throws IOException, InterruptedException
+   public JsonNode getDriverName() throws IOException, InterruptedException
    {
       Map<String, Object> params = Map.of(
-            "name", "getJdbcUrl",
+            "name", "getDriverName",
             "arguments", new McpNoArgs());
 
       return rpc("tools/call", params);
    }
 
-   private JsonNode getSessionName()  throws IOException, InterruptedException
+   public JsonNode getDriverVersion() throws IOException, InterruptedException
    {
       Map<String, Object> params = Map.of(
-            "name", "getSessionName",
+            "name", "getDriverVersion",
             "arguments", new McpNoArgs());
 
       return rpc("tools/call", params);
    }
+
+   public JsonNode getDatabaseProductName() throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getDatabaseProductName",
+            "arguments", new McpNoArgs());
+
+      return rpc("tools/call", params);
+   }
+
+   public JsonNode getDatabaseProductVersion() throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getDatabaseProductVersion",
+            "arguments", new McpNoArgs());
+
+      return rpc("tools/call", params);
+   }
+
 
 
    /**
