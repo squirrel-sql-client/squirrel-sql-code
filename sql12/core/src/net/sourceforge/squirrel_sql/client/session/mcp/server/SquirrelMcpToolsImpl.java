@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  * {@link java.sql.DatabaseMetaData#getTables(String, String, String, String[])}
  * call once a database connection is available.
  */
+@SuppressWarnings("PointlessBooleanExpression")
 public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
 {
    private final McpServerContext _mcpServerContext;
@@ -45,57 +46,300 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
    @Override
    public McpSimpleString getSessionName(McpNoArgs none)
    {
-      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.session().getTitle()), true);
+      McpCall call = McpCall.getSessionName;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return call.createDisapprovedMsg();
+         }
+         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getSession().getTitle()), true);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    @Override
    public McpSimpleString getDriverClassName(McpNoArgs none)
    {
-      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.session().getJdbcData().getDriverClassName()), true);
+      McpCall call = McpCall.getDriverClassName;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return new McpSimpleString(McpCall.DISAPPROVED);
+         }
+
+         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getSession().getJdbcData().getDriverClassName()), true);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    @Override
    public McpSimpleString getDriverName(McpNoArgs none)
    {
-      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverName()), true);
+      McpCall call = McpCall.getDriverName;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return new McpSimpleString(McpCall.DISAPPROVED);
+         }
+
+         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverName()), true);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    @Override
    public McpSimpleString getDriverVersion(McpNoArgs none)
    {
-      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverVersion()), true);
+      McpCall call = McpCall.getDriverVersion;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return new McpSimpleString(McpCall.DISAPPROVED);
+         }
+
+         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverVersion()), true);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    @Override
    public McpSimpleString getDatabaseProductName(McpNoArgs none)
    {
-      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductName()), true);
+      McpCall call = McpCall.getDatabaseProductName;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return new McpSimpleString(McpCall.DISAPPROVED);
+         }
+
+         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductName()), true);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    @Override
    public McpSimpleString getDatabaseProductVersion(McpNoArgs none)
    {
-      return GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductVersion()), true);
+      McpCall call = McpCall.getDatabaseProductVersion;
+      try
+      {
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return new McpSimpleString(McpCall.DISAPPROVED);
+         }
+
+         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductVersion()), true);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    @Override
    public McpResultSet executeQuery(McpSimpleString sql)
    {
-      return McpQueryExecuter.executeQuery(sql, _mcpServerContext);
+      McpCall call = McpCall.executeQuery;
+      try
+      {
+
+         if(false == _mcpServerContext.callStart(call, sql))
+         {
+            return McpResultSet.ofError(McpCall.DISAPPROVED);
+         }
+
+         McpResultSet ret = McpQueryExecuter.executeQuery(sql, _mcpServerContext);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, sql, e);
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
 
    @Override
    public McpResultSet getTables(McpGetTablesArgs args)
    {
+      McpCall call = McpCall.getTables;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, args))
+         {
+            return McpResultSet.ofError(McpCall.DISAPPROVED);
+         }
+
+         McpResultSet ret = _getTables(args);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, args, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   @Override
+   public McpResultSet getPrimaryKeys(McpGetPrimaryKeysArgs args)
+   {
+      McpCall call = McpCall.getPrimaryKeys;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, args))
+         {
+            return McpResultSet.ofError(McpCall.DISAPPROVED);
+         }
+
+         McpResultSet ret = _getPrimaryKeys(args);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, args, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   @Override
+   public McpResultSet getImportedKeys(McpGetImportedKeysArgs args)
+   {
+      McpCall call = McpCall.getImportedKeys;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, args))
+         {
+            return McpResultSet.ofError(McpCall.DISAPPROVED);
+         }
+
+         McpResultSet ret = _getImportedKeys(args);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, args, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   @Override
+   public McpResultSet getExportedKeys(McpGetExportedKeysArgs args)
+   {
+      McpCall call = McpCall.getExportedKeys;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, args))
+         {
+            return call.createDisapprovedMsg();
+         }
+
+         McpResultSet ret = _getExportedKeys(args);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, args, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   @Override
+
+   public McpResultSet getIndexInfo(McpGetIndexInfoArgs args)
+   {
+      McpCall call = McpCall.getIndexInfo;
+      try
+      {
+         if( false == _mcpServerContext.callStart(call, args))
+         {
+            return McpResultSet.ofError(McpCall.DISAPPROVED);
+         }
+
+         McpResultSet ret = _getIndexInfo(args);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, args, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   private McpResultSet _getTables(McpGetTablesArgs args)
+   {
       try
       {
          // Citation from java.sql.DatabaseMetaData.getTables: "as it is stored in the database"
-         String catalogName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
-         String schemaName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveSchemaName(args.schemaPattern());
-         String tableName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveTableName(args.tableNamePattern());
+         String catalogName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
+         String schemaName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveSchemaName(args.schemaPattern());
+         String tableName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveTableName(args.tableNamePattern());
 
-         ITableInfo[] tables = _mcpServerContext.session().getMetaData().getTables(catalogName, schemaName, tableName, args.types(), null);
+         ITableInfo[] tables = _mcpServerContext.getSession().getMetaData().getTables(catalogName, schemaName, tableName, args.types(), null);
 
          List<McpResultMetaData> metaData = List.of(
                new McpResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
@@ -126,15 +370,14 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       }
    }
 
-   @Override
-   public McpResultSet getPrimaryKeys(McpGetPrimaryKeysArgs args)
+   private McpResultSet _getPrimaryKeys(McpGetPrimaryKeysArgs args)
    {
       try
       {
          // Citation from java.sql.DatabaseMetaData.getPrimaryKeys: "as it is stored in the database"
-         String catalogName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
-         String schemaName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
-         String tableName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveTableName(args.table());
+         String catalogName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
+         String schemaName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
+         String tableName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveTableName(args.table());
 
          List<McpResultMetaData> metaData = List.of(
                new McpResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
@@ -144,7 +387,7 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
                new McpResultMetaData(5, "KEY_SEQ", Types.VARCHAR, "INTEGER"),
                new McpResultMetaData(6, "PK_NAME", Types.VARCHAR, "VARCHAR"));
 
-         PrimaryKeyInfo[] primaryKeyInfos = _mcpServerContext.session().getMetaData().getPrimaryKey(catalogName, schemaName, tableName);
+         PrimaryKeyInfo[] primaryKeyInfos = _mcpServerContext.getSession().getMetaData().getPrimaryKey(catalogName, schemaName, tableName);
 
          List<McpResultRow> primaryKeyRes = new ArrayList<>();
          for(PrimaryKeyInfo primaryKeyInfo : primaryKeyInfos)
@@ -169,17 +412,16 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       }
    }
 
-   @Override
-   public McpResultSet getImportedKeys(McpGetImportedKeysArgs args)
+   private McpResultSet _getImportedKeys(McpGetImportedKeysArgs args)
    {
       try
       {
          // Citation from java.sql.DatabaseMetaData.getImportedKeys: "as it is stored in the database"
-         String catalogName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
-         String schemaName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
-         String tableName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveTableName(args.table());
+         String catalogName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
+         String schemaName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
+         String tableName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveTableName(args.table());
 
-         ForeignKeyInfo[] foreignKeyInfos = _mcpServerContext.session().getMetaData().getImportedKeysInfo(catalogName, schemaName, tableName);
+         ForeignKeyInfo[] foreignKeyInfos = _mcpServerContext.getSession().getMetaData().getImportedKeysInfo(catalogName, schemaName, tableName);
 
          List<McpResultMetaData> metaData = List.of(
                new McpResultMetaData(1, "PKTABLE_CAT", Types.VARCHAR, "VARCHAR"),
@@ -224,17 +466,16 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       }
    }
 
-   @Override
-   public McpResultSet getExportedKeys(McpGetExportedKeysArgs args)
+   private McpResultSet _getExportedKeys(McpGetExportedKeysArgs args)
    {
       try
       {
          // Citation from java.sql.DatabaseMetaData.getExportedKeys: "as it is stored in the database"
-         String catalogName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
-         String schemaName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
-         String tableName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveTableName(args.table());
+         String catalogName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
+         String schemaName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
+         String tableName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveTableName(args.table());
 
-         ForeignKeyInfo[] foreignKeyInfos = _mcpServerContext.session().getMetaData().getExportedKeysInfo(catalogName, schemaName, tableName);
+         ForeignKeyInfo[] foreignKeyInfos = _mcpServerContext.getSession().getMetaData().getExportedKeysInfo(catalogName, schemaName, tableName);
 
          List<McpResultMetaData> metaData = List.of(
                new McpResultMetaData(1, "PKTABLE_CAT", Types.VARCHAR, "VARCHAR"),
@@ -279,17 +520,16 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       }
    }
 
-   @Override
-   public McpResultSet getIndexInfo(McpGetIndexInfoArgs args)
+   private McpResultSet _getIndexInfo(McpGetIndexInfoArgs args)
    {
       try
       {
          // Citation from java.sql.DatabaseMetaData.getImportedKeys: "as it is stored in the database"
-         String catalogName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
-         String schemaName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
-         String tableName = _mcpServerContext.session().getSchemaInfo().getCaseSensitiveTableName(args.table());
+         String catalogName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
+         String schemaName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
+         String tableName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveTableName(args.table());
 
-         List<IndexInfo> indexInfo = _mcpServerContext.session().getMetaData().getIndexInfo(catalogName, schemaName, tableName);
+         List<IndexInfo> indexInfo = _mcpServerContext.getSession().getMetaData().getIndexInfo(catalogName, schemaName, tableName);
 
          List<McpResultMetaData> metaData = List.of(
                new McpResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),

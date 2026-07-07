@@ -9,6 +9,13 @@ public class McpCallApproveCtrl
 
    public boolean isApproved()
    {
-      return false;
+      if(McpUiProps.isApproveAllAiCalls())
+      {
+         return false;
+      }
+      else
+      {
+         return true;
+      }
    }
 }

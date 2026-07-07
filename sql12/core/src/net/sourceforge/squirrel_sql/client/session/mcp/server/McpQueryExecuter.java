@@ -4,6 +4,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.SqlPanelExecutionFuture;
 import net.sourceforge.squirrel_sql.client.session.SqlPanelExecutionResult;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck.SQLTypeCheck;
@@ -12,7 +13,6 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpRes
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultRow;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultSet;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
-import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpCallApproveCtrl;
 import net.sourceforge.squirrel_sql.client.session.mcp.ui.McpServerContext;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
@@ -22,7 +22,7 @@ public class McpQueryExecuter
 {
    static McpResultSet executeQuery(McpSimpleString sql, McpServerContext mcpServerContext)
    {
-      if(mcpServerContext.session().getAlias().isReadOnly())
+      if(mcpServerContext.getSession().getAlias().isReadOnly())
       {
          return McpResultSet.ofError("The Session's Alias allows to execute SELECT-Statements only.");
       }
@@ -30,20 +30,11 @@ public class McpQueryExecuter
       {
          return McpResultSet.ofError("AIs are allowed to execute SELECT-Statements only.");
       }
-      else if(McpServerContext.isApproveAllAiCalls())
-      {
-         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(sql.stringContent());
-
-         if(false == mcpCallApproveCtrl.isApproved())
-         {
-            return McpResultSet.ofError("AI call was not approved by the SQuirreL user.");
-         }
-      }
 
 
       final SqlPanelExecutionFuture sqlPanelExecutionFuture = new SqlPanelExecutionFuture();
 
-      GUIUtils.processOnSwingEventThread(() -> mcpServerContext.mcpSqlTab().getSQLPanelAPI().executeSQL(sql.stringContent(), sqlPanelExecutionFuture), false);
+      GUIUtils.processOnSwingEventThread(() -> mcpServerContext.getMcpSqlTab().getSQLPanelAPI().executeSQL(sql.stringContent(), sqlPanelExecutionFuture), false);
       SqlPanelExecutionResult executionResult = sqlPanelExecutionFuture.waitForSqlResult();
 
       if(executionResult.hasError())

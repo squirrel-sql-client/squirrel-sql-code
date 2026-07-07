@@ -1,5 +1,16 @@
 package net.sourceforge.squirrel_sql.fw.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,9 +18,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 public class JsonMarshalUtil
 {
@@ -20,7 +28,7 @@ public class JsonMarshalUtil
       try
       {
          FileOutputStream fos = new FileOutputStream(file);
-         writeObjectToBuffer(jsonBean, fos);
+         writeObjectToBuffer(jsonBean, fos, true);
       }
       catch (Exception e)
       {
@@ -30,8 +38,13 @@ public class JsonMarshalUtil
 
    public static String toJsonString(Object obj)
    {
+      return toJsonString(obj, true);
+   }
+
+   public static String toJsonString(Object obj, boolean prettyPrinted)
+   {
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      writeObjectToBuffer(obj, bos);
+      writeObjectToBuffer(obj, bos, prettyPrinted);
       return bos.toString(StandardCharsets.UTF_8);
    }
 
@@ -40,12 +53,21 @@ public class JsonMarshalUtil
       return readObjectFromStream(new ByteArrayInputStream(jsonString.getBytes()), clazz);
    }
 
-   private static void writeObjectToBuffer(Object jsonBean, OutputStream os)
+   private static void writeObjectToBuffer(Object jsonBean, OutputStream os, boolean prettyPrinted)
    {
       try
       {
          ObjectMapper mapper = new ObjectMapper();
-         ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
+         ObjectWriter objectWriter;
+         if(prettyPrinted)
+         {
+            objectWriter = mapper.writerWithDefaultPrettyPrinter();
+         }
+         else
+         {
+            // supposed to be single lined.
+            objectWriter = mapper.writer();
+         }
 
          // This version of objectWriter.writeValue() ensures,
          // that objects are written in JsonEncoding.UTF8
