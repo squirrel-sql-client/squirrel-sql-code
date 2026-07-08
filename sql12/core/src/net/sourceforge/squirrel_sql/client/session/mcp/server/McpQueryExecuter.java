@@ -26,7 +26,7 @@ public class McpQueryExecuter
       {
          return McpResultSet.ofError("The Session's Alias allows to execute SELECT-Statements only.");
       }
-      else if(McpServerContext.isApplyAliasesReadOnlyRules() && false == SQLTypeCheck.isSelectStatement(sql.stringContent()))
+      else if(mcpServerContext.getMcpUiProps().isApplyAliasesReadOnlyRules() && false == SQLTypeCheck.isSelectStatement(sql.stringContent()))
       {
          return McpResultSet.ofError("AIs are allowed to execute SELECT-Statements only.");
       }

@@ -8,45 +8,40 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public final class McpServerContext
 {
-   private final ISession session;
-   private final AdditionalSQLTab mcpSqlTab;
+   private final ISession _session;
+   private final AdditionalSQLTab _mcpSqlTab;
+   private final McpUiProps _mcpUiProps;
 
    private final CallProtocolAndApproveHandler _protocolAndApproveHandler;
 
-   public McpServerContext(ISession session, AdditionalSQLTab mcpSqlTab)
+   public McpServerContext(ISession session, AdditionalSQLTab mcpSqlTab, McpUiProps mcpUiProps)
    {
-      this.session = session;
-      this.mcpSqlTab = mcpSqlTab;
-      _protocolAndApproveHandler = new CallProtocolAndApproveHandler(session, mcpSqlTab);
+      this._session = session;
+      this._mcpSqlTab = mcpSqlTab;
+      this._mcpUiProps = mcpUiProps;
+      _protocolAndApproveHandler = new CallProtocolAndApproveHandler(session, mcpSqlTab, mcpUiProps);
    }
 
    public ISession getSession()
    {
-      return session;
+      return _session;
    }
 
    public AdditionalSQLTab getMcpSqlTab()
    {
-      return mcpSqlTab;
+      return _mcpSqlTab;
    }
 
-   //
-   // Just delegates to methods of McpUiProps
-   public static boolean isApproveAllAiCalls()
+   public McpUiProps getMcpUiProps()
    {
-      return McpUiProps.isApproveAllAiCalls();
-   }
-
-   public static boolean isApplyAliasesReadOnlyRules()
-   {
-      return McpUiProps.isApplyAliasesReadOnlyRules();
+      return _mcpUiProps;
    }
 
    public String getDriverName()
    {
       try
       {
-         return session.getSQLConnection().getSQLMetaData().getDriverName();
+         return _session.getSQLConnection().getSQLMetaData().getDriverName();
       }
       catch(SQLException e)
       {
@@ -58,7 +53,7 @@ public final class McpServerContext
    {
       try
       {
-         return session.getSQLConnection().getSQLMetaData().getDriverVersion();
+         return _session.getSQLConnection().getSQLMetaData().getDriverVersion();
       }
       catch(SQLException e)
       {
@@ -70,7 +65,7 @@ public final class McpServerContext
    {
       try
       {
-         return session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
+         return _session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
       }
       catch(SQLException e)
       {
@@ -82,7 +77,7 @@ public final class McpServerContext
    {
       try
       {
-         return session.getSQLConnection().getSQLMetaData().getDatabaseProductVersion();
+         return _session.getSQLConnection().getSQLMetaData().getDatabaseProductVersion();
       }
       catch(SQLException e)
       {

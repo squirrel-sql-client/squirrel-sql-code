@@ -2,14 +2,16 @@ package net.sourceforge.squirrel_sql.client.session.mcp.ui;
 
 public class McpCallApproveCtrl
 {
-   public McpCallApproveCtrl(String call)
-   {
+   private final McpUiProps _mcpUiProps;
 
+   public McpCallApproveCtrl(String call, McpUiProps mcpUiProps)
+   {
+      _mcpUiProps = mcpUiProps;
    }
 
    public boolean isApproved()
    {
-      if(McpUiProps.isApproveAllAiCalls())
+      if( _mcpUiProps.isApproveAllAiCalls())
       {
          return false;
       }

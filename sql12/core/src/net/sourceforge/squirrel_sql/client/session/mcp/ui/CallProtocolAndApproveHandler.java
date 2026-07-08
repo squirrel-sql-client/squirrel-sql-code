@@ -13,11 +13,13 @@ public class CallProtocolAndApproveHandler
 
    private final ISession _session;
    private final AdditionalSQLTab _mcpSqlTab;
+   private final McpUiProps _mcpUiProps;
 
-   public CallProtocolAndApproveHandler(ISession session, AdditionalSQLTab mcpSqlTab)
+   public CallProtocolAndApproveHandler(ISession session, AdditionalSQLTab mcpSqlTab, McpUiProps mcpUiProps)
    {
       _session = session;
       _mcpSqlTab = mcpSqlTab;
+      _mcpUiProps = mcpUiProps;
    }
 
    public boolean callStart(McpCall call, Object callArgs)
@@ -29,9 +31,9 @@ public class CallProtocolAndApproveHandler
    {
       String callString = call.createCallString(callArgs);
 
-      if(McpServerContext.isApproveAllAiCalls())
+      if(_mcpUiProps.isApproveAllAiCalls())
       {
-         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(callString);
+         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(callString, _mcpUiProps);
 
          if(false == mcpCallApproveCtrl.isApproved())
          {

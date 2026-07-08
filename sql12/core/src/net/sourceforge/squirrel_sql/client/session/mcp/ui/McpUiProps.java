@@ -1,41 +1,45 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.ui;
 
-import net.sourceforge.squirrel_sql.fw.props.Props;
-
+/**
+ * Allows each MCP-Tab, see {@link McpBarCtrl} and {@link McpServerContext}, its own set of MCP-properties.
+ * See also {@link McpUiPropsUtil#createMcpUiPropsInstance()}.
+ */
 public class McpUiProps
 {
-   private static final String PREF_APPLY_ALIASES_READ_ONLY_RULES = "McpBarCtrl.applyAliasesReadOnlyRules";
-   private static final String PREF_APPROVE_ALL_AI_CALLS = "McpBarCtrl.approveAllAiCalls";
-   private static final String PREF_ALLOW_ACCESS_FORM_LOCALHOST_ONLY = "McpBarCtrl.allowAccessFormLocalhostOnly";
+   private boolean approveAllAiCalls;
+   private boolean applyAliasesReadOnlyRules;
+   private boolean allowAccessFormLocalhostOnly;
 
-   public static boolean isApproveAllAiCalls()
+   public McpUiProps setApproveAllAiCalls(boolean approveAllAiCalls)
    {
-      return Props.getBoolean(PREF_APPROVE_ALL_AI_CALLS, true);
+      this.approveAllAiCalls = approveAllAiCalls;
+      return this;
    }
 
-   public static boolean isApplyAliasesReadOnlyRules()
+   public boolean isApproveAllAiCalls()
    {
-      return Props.getBoolean(PREF_APPLY_ALIASES_READ_ONLY_RULES, true);
+      return approveAllAiCalls;
    }
 
-   public static boolean isAllowAccessFormLocalhostOnly()
+   public McpUiProps setApplyAliasesReadOnlyRules(boolean applyAliasesReadOnlyRules)
    {
-      return Props.getBoolean(PREF_ALLOW_ACCESS_FORM_LOCALHOST_ONLY, true);
+      this.applyAliasesReadOnlyRules = applyAliasesReadOnlyRules;
+      return this;
    }
 
-   public static void setApplyAliasesReadOnlyRules(boolean b)
+   public boolean isApplyAliasesReadOnlyRules()
    {
-      Props.putBoolean(PREF_APPLY_ALIASES_READ_ONLY_RULES, b);
+      return applyAliasesReadOnlyRules;
    }
 
-   public static void setApproveAllAiCalls(boolean b)
+   public McpUiProps setAllowAccessFormLocalhostOnly(boolean allowAccessFormLocalhostOnly)
    {
-      Props.putBoolean(PREF_APPROVE_ALL_AI_CALLS, b);
+      this.allowAccessFormLocalhostOnly = allowAccessFormLocalhostOnly;
+      return this;
    }
 
-   public static void setAllowAccessFormLocalhostOnly(boolean b)
+   public boolean isAllowAccessFormLocalhostOnly()
    {
-      Props.putBoolean(PREF_ALLOW_ACCESS_FORM_LOCALHOST_ONLY, b);
+      return allowAccessFormLocalhostOnly;
    }
-
 }

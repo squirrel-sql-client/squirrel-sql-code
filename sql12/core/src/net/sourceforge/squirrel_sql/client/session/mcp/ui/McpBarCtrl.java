@@ -20,6 +20,7 @@ public class McpBarCtrl
 
    private final ISession _session;
    private AdditionalSQLTab _mcpSqlTab;
+   private final McpUiProps _mcpUiProps;
 
    private final McpBarPanel _panel;
    private ISQLPanelAdapter _mcpSqlTabListener;
@@ -31,10 +32,12 @@ public class McpBarCtrl
       _session = session;
       _panel = new McpBarPanel();
 
-      _panel.chkApplyAliasesReadOnlyRules.setSelected(McpUiProps.isApplyAliasesReadOnlyRules());
+      _mcpUiProps = McpUiPropsUtil.createMcpUiPropsInstance();
 
-      _panel.chkApproveAllAiCalls.setSelected(McpUiProps.isApproveAllAiCalls());
-      _panel.chkAllowAccessFormLocalhostOnly.setSelected(McpUiProps.isAllowAccessFormLocalhostOnly());
+      _panel.chkApplyAliasesReadOnlyRules.setSelected(_mcpUiProps.isApplyAliasesReadOnlyRules());
+
+      _panel.chkApproveAllAiCalls.setSelected(_mcpUiProps.isApproveAllAiCalls());
+      _panel.chkAllowAccessFormLocalhostOnly.setSelected(_mcpUiProps.isAllowAccessFormLocalhostOnly());
 
       _panel.chkApplyAliasesReadOnlyRules.addActionListener(e -> onConfigChanged());
       _panel.chkApproveAllAiCalls.addActionListener(e -> onConfigChanged());
@@ -76,7 +79,7 @@ public class McpBarCtrl
 
                _squirrelMcpHttpServer = new SquirrelMcpHttpServer();
 
-               _squirrelMcpHttpServer.start(port, new McpServerContext(_session, _mcpSqlTab));
+               _squirrelMcpHttpServer.start(port, new McpServerContext(_session, _mcpSqlTab, _mcpUiProps));
 
                _panel.txtMcpPort.setText("" + port);
                _panel.btnStartStopMcpServer.setText(_panel.getMcpServerToggleTextStop());
@@ -146,9 +149,14 @@ public class McpBarCtrl
 
    private void onConfigChanged()
    {
-      McpUiProps.setApplyAliasesReadOnlyRules(_panel.chkApplyAliasesReadOnlyRules.isSelected());
-      McpUiProps.setApproveAllAiCalls(_panel.chkApproveAllAiCalls.isSelected());
-      McpUiProps.setAllowAccessFormLocalhostOnly(_panel.chkAllowAccessFormLocalhostOnly.isSelected());
+      _mcpUiProps.setApplyAliasesReadOnlyRules(_panel.chkApplyAliasesReadOnlyRules.isSelected());
+      McpUiPropsUtil.setApplyAliasesReadOnlyRules(_panel.chkApplyAliasesReadOnlyRules.isSelected());
+
+      _mcpUiProps.setApproveAllAiCalls(_panel.chkApproveAllAiCalls.isSelected());
+      McpUiPropsUtil.setApproveAllAiCalls(_panel.chkApproveAllAiCalls.isSelected());
+
+      _mcpUiProps.setAllowAccessFormLocalhostOnly(_panel.chkAllowAccessFormLocalhostOnly.isSelected());
+      McpUiPropsUtil.setAllowAccessFormLocalhostOnly(_panel.chkAllowAccessFormLocalhostOnly.isSelected());
 
       updateEnabled();
    }
