@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.server.testclient;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,8 +9,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpConstants;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetColumnsArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetExportedKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetImportedKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetIndexInfoArgs;
@@ -56,13 +58,12 @@ public final class SquirrelMcpTestClient
       // table name, restricted to base tables and views.
       //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "PUBLIC", "%", new String[]{"TABLE", "VIEW"});
       //client.print("tools/call getTables", client.getTables(getTablesArgs));
-      System.out.println("##############################################");
       //client.print("tools/call getDriverClassName", client.getDriverClassName());
       //client.print("tools/call getSessionName", client.getSessionName());
       //client.print("tools/call getDriverName", client.getDriverName());
       //client.print("tools/call getDriverVersion", client.getDriverVersion());
       //client.print("tools/call getDatabaseProductName", client.getDatabaseProductName());
-      client.print("tools/call getDatabaseProductVersion", client.getDatabaseProductVersion());
+      //client.print("tools/call getDatabaseProductVersion", client.getDatabaseProductVersion());
 
       //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
       //client.print("tools/call getTables", client.getTables(getTablesArgs));
@@ -79,11 +80,13 @@ public final class SquirrelMcpTestClient
       //client.print("tools/call getTables", client.getIndexInfo(indexInfoArgs));
 
       //McpGetImportedKeysArgs importedKeysArgs = new McpGetImportedKeysArgs(null, "public", "articles");
-      //client.print("tools/call McpGetImportedKeysArgs", client.getImportedKeys(importedKeysArgs));
+      //client.print("tools/call getImportedKeys", client.getImportedKeys(importedKeysArgs));
 
       //McpGetExportedKeysArgs exportedKeysArgs = new McpGetExportedKeysArgs(null, "public", "articles");
       //client.print("tools/call getExportedKeys", client.getExportedKeys(exportedKeysArgs));
 
+      McpGetColumnsArgs columnsArgs = new McpGetColumnsArgs(null, "SQLUser", "WArt");
+      client.print("tools/call getColumns", client.getColumns(columnsArgs));
    }
 
    private static void callMcpAdministrationMethods(SquirrelMcpTestClient client) throws IOException, InterruptedException
@@ -148,6 +151,14 @@ public final class SquirrelMcpTestClient
    {
       Map<String, Object> params = Map.of(
             "name", "getExportedKeys",
+            "arguments", args);
+      return rpc("tools/call", params);
+   }
+
+   public JsonNode getColumns(McpGetColumnsArgs args) throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getColumns",
             "arguments", args);
       return rpc("tools/call", params);
    }

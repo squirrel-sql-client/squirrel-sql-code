@@ -23,7 +23,8 @@ public enum McpCall
    getPrimaryKeys,
    getImportedKeys,
    getExportedKeys,
-   getIndexInfo;
+   getIndexInfo,
+   getColumns;
 
    public static final String DISAPPROVED = "Call was not approved by SQuirreL user";
    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");

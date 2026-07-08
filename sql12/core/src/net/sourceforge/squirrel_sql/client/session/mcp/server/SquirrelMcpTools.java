@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mcp.server;
 
 import net.sourceforge.squirrel_sql.client.session.mcp.server.annotations.McpProp;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.annotations.McpTool;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetColumnsArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetExportedKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetImportedKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetIndexInfoArgs;
@@ -59,6 +60,9 @@ public interface SquirrelMcpTools
 
    @McpTool(description = "Lists indexes (JDBC DatabaseMetaData.getIndexInfo).")
    McpResultSet getIndexInfo(McpGetIndexInfoArgs args);
+
+   @McpTool(description = "Lists indexes (JDBC DatabaseMetaData.getIndexInfo).")
+   McpResultSet getColumns(McpGetColumnsArgs args);
 
 }
 

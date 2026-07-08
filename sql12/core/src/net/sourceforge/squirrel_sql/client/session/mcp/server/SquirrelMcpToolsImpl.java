@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetColumnsArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetExportedKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetImportedKeysArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetIndexInfoArgs;
@@ -22,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
@@ -330,6 +333,29 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       }
    }
 
+   @Override
+   public McpResultSet getColumns(McpGetColumnsArgs args)
+   {
+      McpCall call = McpCall.getIndexInfo;
+      try
+      {
+         if( false == _mcpServerContext.callStart(call, args))
+         {
+            return McpResultSet.ofError(McpCall.DISAPPROVED);
+         }
+
+         McpResultSet ret = _getColumns(args);
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, args, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
    private McpResultSet _getTables(McpGetTablesArgs args)
    {
       try
@@ -384,7 +410,7 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
                new McpResultMetaData(2, "TABLE_SCHEM", Types.VARCHAR, "VARCHAR"),
                new McpResultMetaData(3, "TABLE_NAME", Types.VARCHAR, "VARCHAR"),
                new McpResultMetaData(4, "COLUMN_NAME", Types.VARCHAR, "VARCHAR"),
-               new McpResultMetaData(5, "KEY_SEQ", Types.VARCHAR, "INTEGER"),
+               new McpResultMetaData(5, "KEY_SEQ", Types.INTEGER, "INTEGER"),
                new McpResultMetaData(6, "PK_NAME", Types.VARCHAR, "VARCHAR"));
 
          PrimaryKeyInfo[] primaryKeyInfos = _mcpServerContext.getSession().getMetaData().getPrimaryKey(catalogName, schemaName, tableName);
@@ -535,9 +561,9 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
                new McpResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
                new McpResultMetaData(2, "TABLE_SCHEM", Types.VARCHAR, "VARCHAR"),
                new McpResultMetaData(3, "TABLE_NAME", Types.VARCHAR, "VARCHAR"),
-               new McpResultMetaData(4, "NON_UNIQUE", Types.VARCHAR, "BOOLEAN"),
+               new McpResultMetaData(4, "NON_UNIQUE", Types.BOOLEAN, "BOOLEAN"),
                new McpResultMetaData(5, "INDEX_NAME", Types.VARCHAR, "VARCHAR"),
-               new McpResultMetaData(6, "ORDINAL_POSITION", Types.VARCHAR, "INTEGER"),
+               new McpResultMetaData(6, "ORDINAL_POSITION", Types.INTEGER, "INTEGER"),
                new McpResultMetaData(7, "COLUMN_NAME", Types.VARCHAR, "VARCHAR"));
 
          List<McpResultRow> indexInfoRes = new ArrayList<>();
@@ -562,4 +588,61 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
          throw Utilities.wrapRuntime(e);
       }
    }
+
+   private McpResultSet _getColumns(McpGetColumnsArgs args)
+   {
+      try
+      {
+         // Citation from java.sql.DatabaseMetaData.getImportedKeys: "as it is stored in the database"
+         String catalogName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveCatalogName(args.catalog());
+         String schemaName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveSchemaName(args.schema());
+         String tableName = _mcpServerContext.getSession().getSchemaInfo().getCaseSensitiveTableName(args.table());
+
+         TableColumnInfo[] columnInfo = _mcpServerContext.getSession().getMetaData().getColumnInfo(catalogName, schemaName, tableName);
+
+         List<McpResultMetaData> metaData = List.of(
+               new McpResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(2, "TABLE_SCHEM", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(3, "TABLE_NAME", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(4, "COLUMN_NAME", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(5, "REMARKS", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(6, "DATA_TYPE", Types.INTEGER, "INTEGER"),
+               new McpResultMetaData(7, "TYPE_NAME", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(8, "DECIMAL_DIGITS", Types.INTEGER, "INTEGER"),
+               new McpResultMetaData(9, "COLUMN_SIZE", Types.INTEGER, "INTEGER"),
+               new McpResultMetaData(10, "ORDINAL_POSITION", Types.INTEGER, "INTEGER"),
+               new McpResultMetaData(11, "NULLABLE", Types.INTEGER, "INTEGER"),
+               new McpResultMetaData(12, "IS_AUTOINCREMENT", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(13, "COLUMN_DEF", Types.VARCHAR, "VARCHAR")
+         );
+
+         List<McpResultRow> columnsRes = new ArrayList<>();
+         for( TableColumnInfo ci : columnInfo )
+         {
+            McpResultRow columnRow = new McpResultRow(List.of(
+                  McpResultCell.ofString(ci.getCatalogName()),
+                  McpResultCell.ofString(ci.getSchemaName()),
+                  McpResultCell.ofString(ci.getTableName()),
+                  McpResultCell.ofString(ci.getColumnName()),
+                  McpResultCell.ofString(ci.getRemarks()),
+                  McpResultCell.ofInt(ci.getDataType()),
+                  McpResultCell.ofString(ci.getTypeName()),
+                  McpResultCell.ofInt(ci.getDecimalDigits()),
+                  McpResultCell.ofInt(ci.getColumnSize()),
+                  McpResultCell.ofInt(ci.getOrdinalPosition()),
+                  McpResultCell.ofInt(ci.isNullAllowed()),
+                  McpResultCell.ofString(ci.isAutoIncrement()),
+                  McpResultCell.ofString(ci.getDefaultValue())
+            ));
+            columnsRes.add(columnRow);
+         }
+
+         return McpResultSet.ofResult(metaData, columnsRes);
+      }
+      catch(SQLException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
 }
