@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.server.testclient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,9 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpConstants;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetColumnsArgs;
@@ -37,7 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSim
  */
 public final class SquirrelMcpTestClient
 {
-   public static final int PORT = 23368;
+   private static final int PORT = 23367;
    private final ObjectMapper mapper = new ObjectMapper();
    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
    private final URI endpoint;
@@ -85,7 +84,7 @@ public final class SquirrelMcpTestClient
       //McpGetExportedKeysArgs exportedKeysArgs = new McpGetExportedKeysArgs(null, "public", "articles");
       //client.print("tools/call getExportedKeys", client.getExportedKeys(exportedKeysArgs));
 
-      McpGetColumnsArgs columnsArgs = new McpGetColumnsArgs(null, "SQLUser", "WArt");
+      McpGetColumnsArgs columnsArgs = new McpGetColumnsArgs(null, null, "articles");
       client.print("tools/call getColumns", client.getColumns(columnsArgs));
    }
 

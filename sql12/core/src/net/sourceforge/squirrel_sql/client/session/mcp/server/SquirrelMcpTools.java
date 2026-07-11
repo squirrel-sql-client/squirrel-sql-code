@@ -61,7 +61,7 @@ public interface SquirrelMcpTools
    @McpTool(description = "Lists indexes (JDBC DatabaseMetaData.getIndexInfo).")
    McpResultSet getIndexInfo(McpGetIndexInfoArgs args);
 
-   @McpTool(description = "Lists indexes (JDBC DatabaseMetaData.getIndexInfo).")
+   @McpTool(description = "Lists columns (JDBC DatabaseMetaData.getColumns).")
    McpResultSet getColumns(McpGetColumnsArgs args);
 
 }

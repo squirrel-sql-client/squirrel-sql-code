@@ -33,7 +33,7 @@ public class CallProtocolAndApproveHandler
 
       if(_mcpUiProps.isApproveAllAiCalls())
       {
-         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(callString, _mcpUiProps);
+         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(callString, _mcpUiProps, _session, GUIUtils.getOwningFrame(_mcpSqlTab.getTabComponent()));
 
          if(false == mcpCallApproveCtrl.isApproved())
          {

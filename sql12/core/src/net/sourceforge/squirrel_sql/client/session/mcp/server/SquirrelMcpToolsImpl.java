@@ -336,7 +336,7 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
    @Override
    public McpResultSet getColumns(McpGetColumnsArgs args)
    {
-      McpCall call = McpCall.getIndexInfo;
+      McpCall call = McpCall.getColumns;
       try
       {
          if( false == _mcpServerContext.callStart(call, args))
