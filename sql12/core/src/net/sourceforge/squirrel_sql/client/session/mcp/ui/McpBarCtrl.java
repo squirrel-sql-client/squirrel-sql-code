@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -44,6 +45,7 @@ public class McpBarCtrl
       _panel.chkAllowAccessFormLocalhostOnly.addActionListener(e -> onConfigChanged());
 
       _panel.btnStartStopMcpServer.addActionListener(e -> onStartStopMcpServer());
+      _panel.btnCopyAiInfoPrompt.addActionListener(e -> onCopyAiInfoPrompt());
 
       _panel.btnCopyAiInfoPrompt.addActionListener(e -> onCopyAiInfoPrompt());
       _panel.btnSaveAiConfigMd.addActionListener(e -> onSaveAiConfigMd());
@@ -189,14 +191,18 @@ public class McpBarCtrl
 
    private void onCopyAiInfoPrompt()
    {
-      System.out.println("McpBarCtrl.onCopyAiInfoPrompt");
-      // TODO AI: Implement
+      int sessionMcpPort = Main.getApplication().getSessionMcpStateManager().getSessionMcpState(_session).getSessionsMcpPort();
+
+      // TODO AI: Edit I18n entry named McpBarCtrl.CopyAiInfoPrompt
+      String aiMsg = s_stringMgr.getString("McpBarCtrl.copyAiInfoPrompt", sessionMcpPort);
+      ClipboardUtil.copyToClip(aiMsg);
+
+      Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("McpBarCtrl.copyAiInfoPrompt.msg", aiMsg));
    }
 
    private void onSaveAiConfigMd()
    {
-      System.out.println("McpBarCtrl.onSaveAiConfigMd");
-      // TODO AI: In own dialog: Write file and offer to copy the prompt that makes AI read the file.
+      AiConfigMdWriter.saveAiConfigMd(_panel);
    }
 
 }

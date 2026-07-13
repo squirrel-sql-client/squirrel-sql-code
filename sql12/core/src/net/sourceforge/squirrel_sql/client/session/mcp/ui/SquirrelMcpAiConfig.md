@@ -1,0 +1,1 @@
+TODO AI write documentation for AIs to enable them accessing SQuirreL's MCP.

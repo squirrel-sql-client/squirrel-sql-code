@@ -1,10 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,6 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executors;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.CallToolResult;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.Content;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.boiler.InitializeResult;
@@ -67,7 +68,7 @@ public final class SquirrelMcpHttpServer
 
    public void start(int port, McpServerContext mcpServerContext) throws IOException
    {
-      // TODO implement McpBarPanel.chkAllowAccessFormLocalhostOnly
+      // TODO AI: implement McpBarPanel.chkAllowAccessFormLocalhostOnly
 
       // Bind to the wildcard address (0.0.0.0): reachable from other hosts on
       // the network, not just localhost. SECURITY: there is no authentication,
