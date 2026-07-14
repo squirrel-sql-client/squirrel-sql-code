@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mcp.server;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
@@ -68,13 +69,18 @@ public final class SquirrelMcpHttpServer
 
    public void start(int port, McpServerContext mcpServerContext) throws IOException
    {
-      // TODO AI: implement McpBarPanel.chkAllowAccessFormLocalhostOnly
+      // When "localhost only" (McpBarPanel.chkAllowAccessFormLocalhostOnly) is
+      // checked, bind the loopback address (127.0.0.1) so the server is reachable
+      // only from this machine. Otherwise bind the wildcard address (0.0.0.0),
+      // reachable from other hosts on the network. There is no authentication,
+      // so the wildcard case relies on firewall / network segmentation.
+      boolean localhostOnly = mcpServerContext.getMcpUiProps().isAllowAccessFormLocalhostOnly();
+      InetSocketAddress bindAddress =
+            localhostOnly
+                  ? new InetSocketAddress(InetAddress.getLoopbackAddress(), port)
+                  : new InetSocketAddress(port);
 
-      // Bind to the wildcard address (0.0.0.0): reachable from other hosts on
-      // the network, not just localhost. SECURITY: there is no authentication,
-      // so anyone who can reach this port can invoke the tools — restrict via
-      // firewall / network segmentation if the tools are not meant to be public.
-      _server = HttpServer.create(new InetSocketAddress(port), 0);
+      _server = HttpServer.create(bindAddress, 0);
       _port = port;
       _mcpServerContext = mcpServerContext;
 

@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.ui;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Map;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -33,14 +35,44 @@ public class SessionMcpStateManager
 
    public int getNextPort()
    {
-      if(_nextPort == 65535)
+      int rangeSize = 65535 - PORT_OFFSET;
+
+      for(int attempt = 0; attempt < rangeSize; attempt++)
       {
-         // Will run into for now accepted trouble a Session is still open and (65535 - PORT_OFFSET) Sessions were created
-         // between.
-         _nextPort = PORT_OFFSET;
+         if(_nextPort >= 65535)
+         {
+            // Wrap around. Accepted trouble: a Session is still open and (65535 - PORT_OFFSET)
+            // Sessions were created between, so a port in use may be handed out again.
+            _nextPort = PORT_OFFSET;
+         }
+
+         int candidatePort = _nextPort++;
+
+         if(isPortAvailable(candidatePort))
+         {
+            return candidatePort;
+         }
       }
 
-      // TODO AI: Implement check if port is available.
-      return _nextPort++;
+      throw new IllegalStateException(
+            "No free MCP port available in the range " + PORT_OFFSET + " .. " + (65535 - 1) + ".");
+   }
+
+   /**
+    * Probes whether a TCP port is free by briefly binding a {@link ServerSocket}
+    * to it. There is an inherent race: the port may be taken again between this
+    * check and the MCP server actually binding it — accepted for this use.
+    */
+   private static boolean isPortAvailable(int port)
+   {
+      try(ServerSocket serverSocket = new ServerSocket(port))
+      {
+         // Bound successfully (and closed on exit of the try) => the port is free.
+         return true;
+      }
+      catch(IOException e)
+      {
+         return false;
+      }
    }
 }

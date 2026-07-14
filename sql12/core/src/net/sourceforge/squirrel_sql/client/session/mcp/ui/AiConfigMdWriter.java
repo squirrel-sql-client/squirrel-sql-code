@@ -64,7 +64,6 @@ public class AiConfigMdWriter
             }
          }
 
-         // TODO AI: Write the contents of SquirrelMcpAiConfig.md
          try (InputStream in = AiConfigMdWriter.class.getResourceAsStream("SquirrelMcpAiConfig.md"))
          {
             Files.copy(in, selectedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

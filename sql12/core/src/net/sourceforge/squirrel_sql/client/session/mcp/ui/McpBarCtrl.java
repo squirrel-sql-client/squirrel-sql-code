@@ -201,7 +201,6 @@ public class McpBarCtrl
    {
       int sessionMcpPort = Main.getApplication().getSessionMcpStateManager().getSessionMcpState(_session).getSessionsMcpPort();
 
-      // TODO AI: Edit I18n entry named McpBarCtrl.CopyAiInfoPrompt
       String aiMsg = s_stringMgr.getString("McpBarCtrl.copyAiInfoPrompt", sessionMcpPort);
       ClipboardUtil.copyToClip(aiMsg);
 
