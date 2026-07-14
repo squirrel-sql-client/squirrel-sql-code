@@ -9,6 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -28,6 +31,7 @@ public class McpBarPanel extends JPanel
    final JTextField txtMcpPort;
    final JButton btnCopyAiInfoPrompt;
    final JButton btnSaveAiConfigMd;
+   final JButton btnMcpInfo;
 
    public McpBarPanel()
    {
@@ -74,11 +78,13 @@ public class McpBarPanel extends JPanel
       btnSaveAiConfigMd.setToolTipText(s_stringMgr.getString("McpBarPanel.save.ai.config.md.tooltip"));
       add(btnSaveAiConfigMd, gbc);
 
+      gbc = new GridBagConstraints(8,0,1,2,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,15,5,0), 0,0);
+      btnMcpInfo = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.INFO));
+      btnMcpInfo.setToolTipText(s_stringMgr.getString("McpBarPanel.show.info.tooltip"));
+      add(GUIUtils.styleAsToolbarButton(btnMcpInfo), gbc);
 
-      gbc = new GridBagConstraints(8,0,2,2,1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,0), 0,0);
+      gbc = new GridBagConstraints(9,0,2,2,1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,0), 0,0);
       add(new JPanel(), gbc);
-
-
 
    }
 

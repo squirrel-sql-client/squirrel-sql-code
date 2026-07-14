@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.RSyntaxSQLEntryAreaFactory;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 public class McpCallApproveCtrl
@@ -31,6 +33,8 @@ public class McpCallApproveCtrl
       _mcpCallApproveDlg.sqlEntryPanel.setText(call);
       _mcpCallApproveDlg.sqlEntryPanel.setCaretPosition(0);
 
+      _mcpCallApproveDlg.btnFormat.addActionListener(e -> onFormat(session));
+
       _mcpCallApproveDlg.btnApprove.addActionListener(e -> onApprove(true));
       _mcpCallApproveDlg.btnDisapprove.addActionListener(e -> onApprove(false));
 
@@ -39,6 +43,13 @@ public class McpCallApproveCtrl
 
       _mcpCallApproveDlg.setVisible(true);
 
+   }
+
+   private void onFormat(ISession session)
+   {
+      CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(session));
+      _mcpCallApproveDlg.sqlEntryPanel.setText(cr.reformat(_mcpCallApproveDlg.sqlEntryPanel.getText()));
+      _mcpCallApproveDlg.sqlEntryPanel.setCaretPosition(0);
    }
 
    private void onApprove(boolean b)

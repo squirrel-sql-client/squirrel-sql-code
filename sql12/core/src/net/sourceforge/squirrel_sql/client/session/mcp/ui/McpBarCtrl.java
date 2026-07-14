@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -50,7 +51,13 @@ public class McpBarCtrl
       _panel.btnCopyAiInfoPrompt.addActionListener(e -> onCopyAiInfoPrompt());
       _panel.btnSaveAiConfigMd.addActionListener(e -> onSaveAiConfigMd());
 
+      _panel.btnMcpInfo.addActionListener(e -> onShowInfoDialog());
       updateEnabled();
+   }
+
+   private void onShowInfoDialog()
+   {
+      new McpAiInfoDlg(GUIUtils.getOwningFrame(_panel));
    }
 
    private void onMcpSqlTabClosed(SQLPanelEvent evt)
@@ -85,7 +92,7 @@ public class McpBarCtrl
 
                _panel.txtMcpPort.setText("" + port);
                _panel.btnStartStopMcpServer.setText(_panel.getMcpServerToggleTextStop());
-               _panel.btnCopyAiInfoPrompt.setEnabled(true);
+               updateEnabled();
 
                String msg = s_stringMgr.getString("McpBarCtrl.message.mcp.started.for.session", _panel.txtMcpPort.getText(), _session.getTitle());
                Main.getApplication().getMessageHandler().showMessage(msg);
@@ -102,7 +109,7 @@ public class McpBarCtrl
                _panel.btnStartStopMcpServer.setSelected(false);
                _panel.btnStartStopMcpServer.setText(_panel.getMcpServerToggleTextStart());
                _panel.txtMcpPort.setText(null);
-               _panel.btnCopyAiInfoPrompt.setEnabled(false);
+               updateEnabled();
                throw Utilities.wrapRuntime(e);
             }
          }
@@ -120,7 +127,7 @@ public class McpBarCtrl
                _panel.btnStartStopMcpServer.setSelected(false);
                _panel.btnStartStopMcpServer.setText(_panel.getMcpServerToggleTextStart());
                _panel.txtMcpPort.setText(null);
-               _panel.btnCopyAiInfoPrompt.setEnabled(false);
+               updateEnabled();
             }
          }
       }
@@ -166,6 +173,7 @@ public class McpBarCtrl
    private void updateEnabled()
    {
       _panel.btnCopyAiInfoPrompt.setEnabled(_panel.btnStartStopMcpServer.isSelected());
+      _panel.chkAllowAccessFormLocalhostOnly.setEnabled(!_panel.btnStartStopMcpServer.isSelected());
    }
 
    public McpBarPanel getMcpBarPanel()
