@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.McpCall;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public final class McpServerContext
@@ -78,6 +79,18 @@ public final class McpServerContext
       try
       {
          return _session.getSQLConnection().getSQLMetaData().getDatabaseProductVersion();
+      }
+      catch(SQLException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   public McpSimpleString getCurrentSchema()
+   {
+      try
+      {
+         return new McpSimpleString(_session.getSQLConnection().getSchema());
       }
       catch(SQLException e)
       {

@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLSchema;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
@@ -212,6 +213,78 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       }
    }
 
+   @Override
+   public McpResultSet getCatalogs(McpNoArgs none)
+   {
+      McpCall call = McpCall.getCatalogs;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return McpResultSet.ofError(McpCall.DISAPPROVED);
+         }
+
+         McpResultSet ret = _getCatalogs();
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   @Override
+   public McpResultSet getSchemas(McpNoArgs none)
+   {
+      McpCall call = McpCall.getSchemas;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return McpResultSet.ofError(McpCall.DISAPPROVED);
+         }
+
+         McpResultSet ret = _getSchemas();
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   @Override
+   public McpSimpleString getCurrentSchema(McpNoArgs none)
+   {
+      McpCall call = McpCall.getCurrentSchema;
+      try
+      {
+
+         if( false == _mcpServerContext.callStart(call, none))
+         {
+            return new McpSimpleString(McpCall.DISAPPROVED);
+         }
+
+         McpSimpleString ret = _mcpServerContext.getCurrentSchema();
+         _mcpServerContext.callFinished(call);
+
+         return ret;
+      }
+      catch(Exception e)
+      {
+         _mcpServerContext.callFailed(call, none, e);
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
 
    @Override
    public McpResultSet getTables(McpGetTablesArgs args)
@@ -355,6 +428,59 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
          throw Utilities.wrapRuntime(e);
       }
    }
+
+   public McpResultSet _getCatalogs()
+   {
+      try
+      {
+         String[] catalogs = _mcpServerContext.getSession().getSQLConnection().getSQLMetaData().getCatalogs();
+
+         List<McpResultMetaData> metaData = List.of(
+               new McpResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"));
+
+         List<McpResultRow> catalogRes = new ArrayList<>();
+         for( String catalog : catalogs )
+         {
+            McpResultRow tableRow = new McpResultRow(List.of(McpResultCell.ofString(catalog)));
+            catalogRes.add(tableRow);
+         }
+
+         return McpResultSet.ofResult(metaData, catalogRes);
+      }
+      catch(SQLException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   public McpResultSet _getSchemas()
+   {
+      try
+      {
+         List<SQLSchema> schemas = _mcpServerContext.getSession().getSQLConnection().getSQLMetaData().getSchemas();
+
+         List<McpResultMetaData> metaData = List.of(
+               new McpResultMetaData(1, "TABLE_CAT", Types.VARCHAR, "VARCHAR"),
+               new McpResultMetaData(2, "TABLE_SCHEM", Types.VARCHAR, "VARCHAR"));
+
+         List<McpResultRow> schemaRes = new ArrayList<>();
+
+         for( SQLSchema schema : schemas )
+         {
+            McpResultRow tableRow = new McpResultRow(List.of(
+                  McpResultCell.ofString(schema.getCatalog()),
+                  McpResultCell.ofString(schema.getSchema())));
+            schemaRes.add(tableRow);
+         }
+
+         return McpResultSet.ofResult(metaData, schemaRes);
+      }
+      catch(SQLException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
 
    private McpResultSet _getTables(McpGetTablesArgs args)
    {

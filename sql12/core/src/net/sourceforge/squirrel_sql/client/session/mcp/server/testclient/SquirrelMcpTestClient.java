@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mcp.server.testclient;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,6 +9,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpConstants;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.SquirrelMcpHttpServer;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpGetColumnsArgs;
@@ -84,8 +85,12 @@ public final class SquirrelMcpTestClient
       //McpGetExportedKeysArgs exportedKeysArgs = new McpGetExportedKeysArgs(null, "public", "articles");
       //client.print("tools/call getExportedKeys", client.getExportedKeys(exportedKeysArgs));
 
-      McpGetColumnsArgs columnsArgs = new McpGetColumnsArgs(null, null, "articles");
-      client.print("tools/call getColumns", client.getColumns(columnsArgs));
+      //McpGetColumnsArgs columnsArgs = new McpGetColumnsArgs(null, null, "articles");
+      //client.print("tools/call getColumns", client.getColumns(columnsArgs));
+
+      // client.print("tools/call getCurrentSchema", client.getCurrentSchema());
+      //client.print("tools/call getSchemas", client.getSchemas());
+      client.print("tools/call getCatalogs", client.getCatalogs());
    }
 
    private static void callMcpAdministrationMethods(SquirrelMcpTestClient client) throws IOException, InterruptedException
@@ -179,6 +184,34 @@ public final class SquirrelMcpTestClient
 
       return rpc("tools/call", params);
    }
+
+   private JsonNode getCurrentSchema()  throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getCurrentSchema",
+            "arguments", new McpNoArgs());
+
+      return rpc("tools/call", params);
+   }
+
+   private JsonNode getCatalogs() throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getCatalogs",
+            "arguments", new McpNoArgs());
+
+      return rpc("tools/call", params);
+   }
+
+   private JsonNode getSchemas() throws IOException, InterruptedException
+   {
+      Map<String, Object> params = Map.of(
+            "name", "getSchemas",
+            "arguments", new McpNoArgs());
+
+      return rpc("tools/call", params);
+   }
+
 
    public JsonNode getDriverClassName() throws IOException, InterruptedException
    {

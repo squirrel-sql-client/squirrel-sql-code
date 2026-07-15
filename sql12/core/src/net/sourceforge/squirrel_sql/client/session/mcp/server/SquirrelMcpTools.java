@@ -46,6 +46,15 @@ public interface SquirrelMcpTools
    McpResultSet executeQuery(@McpProp(description = "SQL to execute") McpSimpleString sql);
 
 
+   @McpTool(description = "Retrieves schemas (JDBC DatabaseMetaData.getSchemas).")
+   McpResultSet getCatalogs(McpNoArgs none);
+
+   @McpTool(description = "Retrieves schemas (JDBC DatabaseMetaData.getSchemas).")
+   McpResultSet getSchemas(McpNoArgs none);
+
+   @McpTool(description = "Retrieves the current schema (JDBC Connection.getSchema).")
+   McpSimpleString getCurrentSchema(McpNoArgs none);
+
    @McpTool(description = "Lists database tables (JDBC DatabaseMetaData.getTables).")
    McpResultSet getTables(McpGetTablesArgs args);
 
