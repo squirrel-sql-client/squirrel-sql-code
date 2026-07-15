@@ -72,6 +72,35 @@ Run `tools/list` for the authoritative list and schemas. At the time of writing:
 | `getExportedKeys` | `catalog?, schema?, table` | exported keys |
 | `getIndexInfo` | `catalog?, schema?, table, unique, approximate` | indexes |
 
+## Keep result sets small — especially `getColumns`
+
+It is **sincerely recommended** to always give `getColumns` a **table name**, or
+at least a result-restricting **`tableNamePattern`**. Called with all parameters
+empty, `getColumns` returns *every column of every table* in the database — the
+result is typically massive and hard for an AI to work with. Add `schemaPattern`
+as well whenever you know the schema.
+
+The same advice applies to the other broad metadata tools (`getTables`,
+`getPrimaryKeys`, `getImportedKeys`, `getExportedKeys`, `getIndexInfo`): narrow
+the request rather than fetching the whole catalog and filtering afterwards.
+
+If you do not yet know the table name, call `getTables` (also narrowed) first to
+find it, then call `getColumns` for that specific table.
+
+Recommended — columns of one table:
+```bash
+curl -sS -X POST http://127.0.0.1:<PORT>/squirrel-sql-mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"getColumns","arguments":{"schemaPattern":"PUBLIC","tableNamePattern":"CUSTOMERS"}}}'
+```
+
+Avoid — unrestricted, returns all columns of all tables:
+```bash
+curl -sS -X POST http://127.0.0.1:<PORT>/squirrel-sql-mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"getColumns","arguments":{}}}'
+```
+
 ## Examples
 
 Confirm the connection (prints the session name):
