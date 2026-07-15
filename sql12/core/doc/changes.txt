@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+MCP to allow AI-access to SQuirreL Sessions,
+  see menu Session --> "Configure and run MCP ..." or the MCP toolbar button.
+  This function creates a new Session tab named "MCP-Server".
+  At the top of the Session tab a MCP-configuration and run panel is displayed.
+  Click the panel's info button to open a dialog with a short description of the panel's functionality.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/89
   The SQLAliases23.xml file in SQuirreL's home directory could be unecessarily big (bloated)
   because it contained unnecessary, i.e. unspecified, JDBC driver properties.
