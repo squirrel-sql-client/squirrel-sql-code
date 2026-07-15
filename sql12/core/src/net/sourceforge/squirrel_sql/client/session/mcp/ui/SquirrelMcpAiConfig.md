@@ -54,31 +54,46 @@ rows. Simple string tools return `{ "stringContent": "..." }`.
 
 ## Available tools
 
-Run `tools/list` for the authoritative list and schemas. At the time of writing:
+> **Always verify signatures with `tools/list` before calling.** The table below
+> is a convenience snapshot and may be out of date; the `inputSchema` returned by
+> `tools/list` is the single source of truth for each tool's exact argument
+> **field names** and types. Do **not** copy field names from one tool to another
+> — they differ (see the note under the table).
 
-| Tool | Arguments | Returns |
-|------|-----------|---------|
-| `getSessionName` | none (`{}`) | session name |
-| `getDriverClassName` | none | JDBC driver class |
-| `getDriverName` | none | JDBC driver name |
-| `getDriverVersion` | none | driver version |
-| `getDatabaseProductName` | none | database product name |
-| `getDatabaseProductVersion` | none | database product version |
-| `executeQuery` | `{ "stringContent": "<SQL>" }` | result set / update message |
-| `getTables` | `catalog?, schemaPattern?, tableNamePattern?, types?[]` | tables |
-| `getColumns` | `catalog?, schemaPattern?, tableNamePattern?` | columns |
-| `getPrimaryKeys` | `catalog?, schema?, table` | primary keys |
-| `getImportedKeys` | `catalog?, schema?, table` | imported (foreign) keys |
-| `getExportedKeys` | `catalog?, schema?, table` | exported keys |
-| `getIndexInfo` | `catalog?, schema?, table, unique, approximate` | indexes |
+| Tool | Arguments (verify via `tools/list`) | Returns |
+|------|-------------------------------------|---------|
+| `getSessionName` | none (`{}`) | `McpSimpleString` (session name) |
+| `getDriverClassName` | none | `McpSimpleString` |
+| `getDriverName` | none | `McpSimpleString` |
+| `getDriverVersion` | none | `McpSimpleString` |
+| `getDatabaseProductName` | none | `McpSimpleString` |
+| `getDatabaseProductVersion` | none | `McpSimpleString` |
+| `executeQuery` | `stringContent` (the SQL) | `McpResultSet` |
+| `getTables` | `catalog?, schemaPattern?, tableNamePattern?, types?[]` | `McpResultSet` |
+| `getColumns` | `catalog?, schema?, table?` | `McpResultSet` |
+| `getPrimaryKeys` | `catalog?, schema?, table?` | `McpResultSet` |
+| `getImportedKeys` | `catalog?, schema?, table?` | `McpResultSet` |
+| `getExportedKeys` | `catalog?, schema?, table?` | `McpResultSet` |
+| `getIndexInfo` | `catalog?, schema?, table?, unique, approximate` | `McpResultSet` |
+
+**Note the naming difference — a common trap:** only `getTables` uses
+`schemaPattern` / `tableNamePattern`. `getColumns`, `getPrimaryKeys`,
+`getImportedKeys`, `getExportedKeys` and `getIndexInfo` instead use `schema` and
+`table`. For `getIndexInfo`, `unique` and `approximate` are **required** booleans.
+A `?` above marks an optional field, but field *names* must always be taken from
+`tools/list`.
 
 ## Keep result sets small — especially `getColumns`
 
-It is **sincerely recommended** to always give `getColumns` a **table name**, or
-at least a result-restricting **`tableNamePattern`**. Called with all parameters
-empty, `getColumns` returns *every column of every table* in the database — the
-result is typically massive and hard for an AI to work with. Add `schemaPattern`
-as well whenever you know the schema.
+It is **sincerely recommended** to always give `getColumns` a **table name** in
+its **`table`** parameter (or at least a result-restricting pattern there).
+Called with all parameters empty, `getColumns` returns *every column of every
+table* in the database — the result is typically massive and hard for an AI to
+work with. Add `schema` as well whenever you know the schema.
+
+(Field names: `getColumns` uses `schema` and `table` — **not** `schemaPattern` /
+`tableNamePattern`, which belong to `getTables`. When in doubt, confirm with
+`tools/list`.)
 
 The same advice applies to the other broad metadata tools (`getTables`,
 `getPrimaryKeys`, `getImportedKeys`, `getExportedKeys`, `getIndexInfo`): narrow
@@ -91,7 +106,7 @@ Recommended — columns of one table:
 ```bash
 curl -sS -X POST http://127.0.0.1:<PORT>/squirrel-sql-mcp \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"getColumns","arguments":{"schemaPattern":"PUBLIC","tableNamePattern":"CUSTOMERS"}}}'
+  -d '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"getColumns","arguments":{"schema":"PUBLIC","table":"CUSTOMERS"}}}'
 ```
 
 Avoid — unrestricted, returns all columns of all tables:
