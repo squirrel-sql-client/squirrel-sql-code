@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Alias's and MCP's read only checks now allow to execute statements starting with EXPLAIN.
+
 MCP to allow AI-access to SQuirreL Sessions,
   see menu Session --> "Configure and run MCP ..." or the MCP toolbar button.
   This function creates a new Session tab named "MCP-Server".

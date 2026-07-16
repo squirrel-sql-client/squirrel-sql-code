@@ -22,13 +22,13 @@ public class McpQueryExecuter
 {
    static McpResultSet executeQuery(McpSimpleString sql, McpServerContext mcpServerContext)
    {
-      if(mcpServerContext.getSession().getAlias().isReadOnly())
+      if(mcpServerContext.getSession().getAlias().isReadOnly() && false == SQLTypeCheck.isSelectOrExplainStatement(sql.stringContent()))
       {
-         return McpResultSet.ofError("The Session's Alias allows to execute SELECT-Statements only.");
+         return McpResultSet.ofError("The Session's Alias allows to execute SELECT and EXPLAIN-Statements only.");
       }
-      else if(mcpServerContext.getMcpUiProps().isApplyAliasesReadOnlyRules() && false == SQLTypeCheck.isSelectStatement(sql.stringContent()))
+      else if(mcpServerContext.getMcpUiProps().isApplyAliasesReadOnlyRules() && false == SQLTypeCheck.isSelectOrExplainStatement(sql.stringContent()))
       {
-         return McpResultSet.ofError("AIs are allowed to execute SELECT-Statements only.");
+         return McpResultSet.ofError("AIs are allowed to execute SELECT and EXPLAIN-Statements only.");
       }
 
 

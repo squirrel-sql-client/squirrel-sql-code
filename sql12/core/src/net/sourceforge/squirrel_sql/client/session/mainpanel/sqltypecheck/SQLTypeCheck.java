@@ -20,6 +20,10 @@ public class SQLTypeCheck
       {
          result = SQLType.SELECT;
       }
+      if(StringUtils.startsWithIgnoreCase(sql.trim(),"EXPLAIN"))
+      {
+         result = SQLType.EXPLAIN;
+      }
       if(StringUtils.startsWithIgnoreCase(sql.trim(),"DELETE"))
       {
          result = SQLType.DELETE;
@@ -37,5 +41,11 @@ public class SQLTypeCheck
    public static boolean isSelectStatement(String querySql)
    {
       return SQLType.SELECT == getSQLType(querySql);
+   }
+
+   public static boolean isSelectOrExplainStatement(String querySql)
+   {
+      SQLType sqlType = getSQLType(querySql);
+      return SQLType.SELECT == sqlType || SQLType.EXPLAIN == sqlType;
    }
 }

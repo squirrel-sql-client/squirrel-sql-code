@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.sqltypecheck;
 
+import javax.swing.JLabel;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -7,8 +9,6 @@ import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JLabel;
 
 public class ReadOnlySessionCheck
 {
@@ -21,7 +21,7 @@ public class ReadOnlySessionCheck
          return true;
       }
 
-      boolean selectStatement = SQLTypeCheck.isSelectStatement(querySql.getQuery());
+      boolean selectStatement = SQLTypeCheck.isSelectOrExplainStatement(querySql.getQuery());
 
       if(false == selectStatement)
       {
