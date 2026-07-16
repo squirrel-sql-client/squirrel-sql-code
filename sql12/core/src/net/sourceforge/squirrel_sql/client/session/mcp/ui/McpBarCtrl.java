@@ -48,7 +48,6 @@ public class McpBarCtrl
       _panel.btnStartStopMcpServer.addActionListener(e -> onStartStopMcpServer());
       _panel.btnCopyAiInfoPrompt.addActionListener(e -> onCopyAiInfoPrompt());
 
-      _panel.btnCopyAiInfoPrompt.addActionListener(e -> onCopyAiInfoPrompt());
       _panel.btnSaveAiConfigMd.addActionListener(e -> onSaveAiConfigMd());
 
       _panel.btnMcpInfo.addActionListener(e -> onShowInfoDialog());
