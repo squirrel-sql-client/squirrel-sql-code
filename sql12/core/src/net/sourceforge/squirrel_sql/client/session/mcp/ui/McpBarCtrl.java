@@ -13,6 +13,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 public class McpBarCtrl
 {
@@ -200,8 +201,16 @@ public class McpBarCtrl
    {
       int sessionMcpPort = Main.getApplication().getSessionMcpStateManager().getSessionMcpState(_session).getSessionsMcpPort();
 
-      String aiMsg = s_stringMgr.getString("McpBarCtrl.copyAiInfoPrompt", sessionMcpPort);
-      ClipboardUtil.copyToClip(aiMsg);
+      // No I18n, AIs speak English.
+      String aiMsg =
+            """
+            A SQuirreL SQL MCP server is now running on port %d. \
+            Its endpoint is http://127.0.0.1:%d/squirrel-sql-mcp and it speaks JSON-RPC 2.0 over HTTP POST, \
+            as described in the SQuirreL AI configuration you imported earlier. To confirm the connection works, \
+            call the MCP tool getSessionName (it takes no arguments) and tell me the SQuirreL session name it returns.
+            """.formatted(sessionMcpPort, sessionMcpPort);
+
+      ClipboardUtil.copyToClip(StringUtils.trim(aiMsg));
 
       Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("McpBarCtrl.copyAiInfoPrompt.msg", aiMsg));
    }

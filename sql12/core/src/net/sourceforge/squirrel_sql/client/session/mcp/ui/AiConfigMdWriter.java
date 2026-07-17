@@ -76,8 +76,14 @@ public class AiConfigMdWriter
 
          if( opt == JOptionPane.YES_OPTION )
          {
-            String prompt = s_stringMgr.getString("McpBarCtrl.savedAiConfigMd.file.prompt.to.import", selectedFile.getCanonicalPath());
-            ClipboardUtil.copyToClip(prompt);
+            // No I18n, AIs speak English.
+            String prompt =
+                  """
+                  Please read the SQuirreL SQL MCP configuration file at %s. \
+                  It explains how to connect to and use SQuirreL's MCP server so you can access my database session directly. \
+                  After reading it, briefly confirm that you understood how to reach the server and which tools it offers.
+                  """.formatted(selectedFile.getAbsolutePath());
+            ClipboardUtil.copyToClip(StringUtils.trim(prompt));
 
             Main.getApplication().getMessageHandler().showMessage(
                   s_stringMgr.getString("McpBarCtrl.savedAiConfigMd.file.prompt.to.import.copied", prompt));

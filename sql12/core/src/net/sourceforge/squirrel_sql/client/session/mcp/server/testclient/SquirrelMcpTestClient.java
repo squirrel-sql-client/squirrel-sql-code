@@ -89,8 +89,8 @@ public final class SquirrelMcpTestClient
       //client.print("tools/call getColumns", client.getColumns(columnsArgs));
 
       // client.print("tools/call getCurrentSchema", client.getCurrentSchema());
-      //client.print("tools/call getSchemas", client.getSchemas());
-      client.print("tools/call getCatalogs", client.getCatalogs());
+      client.print("tools/call getSchemas", client.getSchemas());
+      //client.print("tools/call getCatalogs", client.getCatalogs());
    }
 
    private static void callMcpAdministrationMethods(SquirrelMcpTestClient client) throws IOException, InterruptedException
