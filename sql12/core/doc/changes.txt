@@ -54,7 +54,8 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
 
 Bug fixes:
 
-MCP: Fixed formatting issue conrening the port number in MCP's port-prompt.
+MCP: Fixed formatting issue concerning the port number in MCP's port-prompt,
+  i.e. the port number was rendered with grouping separator.
 
 ClassCastException occurred when a Session was saved or committed to GIT while an SQL-Error result tab was displayed.
   On saving Sessions see menu Session --> submenu Saved Sessions.
