@@ -10,15 +10,16 @@ public class StatementBoundsPrediction
    {
       ArrayList<StatementBounds> ret = new ArrayList<>();
 
-      int beg = StatementBeginPrediction.predictNextStatementBegin(text, 0, check);
-      int end = StatementBeginPrediction.predictNextStatementBegin(text, beg + 1, check);
+      StatementBeginPrediction statementBeginPrediction = new StatementBeginPrediction();
+      int beg = statementBeginPrediction.predictNextStatementBegin(text, 0, check);
+      int end = statementBeginPrediction.predictNextStatementBegin(text, beg + 1, check);
 
       while (beg < end && end-1 < text.length())
       {
          ret.add(new StatementBounds(text.substring(beg, end), beg, end));
 
-         beg = StatementBeginPrediction.predictNextStatementBegin(text, end, check);
-         end = StatementBeginPrediction.predictNextStatementBegin(text, beg + 1, check);
+         beg = statementBeginPrediction.predictNextStatementBegin(text, end, check);
+         end = statementBeginPrediction.predictNextStatementBegin(text, beg + 1, check);
       }
 
       return ret;

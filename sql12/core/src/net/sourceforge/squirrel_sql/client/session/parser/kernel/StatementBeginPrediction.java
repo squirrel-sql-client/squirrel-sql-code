@@ -3,7 +3,9 @@ package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 public class StatementBeginPrediction
 {
-   static int predictNextStatementBegin(String sqlEditorText, int startPos, ParseTerminateRequestCheck check)
+   private boolean _statementBeganByWithClause;
+
+   int predictNextStatementBegin(String sqlEditorText, int startPos, ParseTerminateRequestCheck check)
    {
       SqlCommentHelper sqlCommentHelper = new SqlCommentHelper(sqlEditorText, check);
 
@@ -57,14 +59,25 @@ public class StatementBeginPrediction
       return ret;
    }
 
-   private static boolean isInBrackets(int openBracketsCount)
+   private boolean isInBrackets(int openBracketsCount)
    {
       return 0 < openBracketsCount;
    }
 
 
-   private static boolean startsWithBeginKeyWord(String sqlEditorText, int beginPos, UnionKeyWordCheck unionKeyWordCheck)
+   private boolean startsWithBeginKeyWord(String sqlEditorText, int beginPos, UnionKeyWordCheck unionKeyWordCheck)
    {
+      if(StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "WITH"))
+      {
+         //if(_statementBeganByWithClause)
+         //{
+         //   // We have the second or more WITHs
+         //   return false;
+         //}
+
+         _statementBeganByWithClause = true;
+         return true;
+      }
 
       boolean ret = isSelectBegin(sqlEditorText, beginPos, unionKeyWordCheck)
             || StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "UPDATE")
@@ -76,13 +89,18 @@ public class StatementBeginPrediction
 
       if(ret)
       {
+         if(_statementBeganByWithClause)
+         {
+            _statementBeganByWithClause = false;
+            return false;
+         }
          unionKeyWordCheck.reset();
       }
 
       return ret;
    }
 
-   private static boolean isSelectBegin(String sqlEditorText, int beginPos, UnionKeyWordCheck unionKeyWordCheck)
+   private boolean isSelectBegin(String sqlEditorText, int beginPos, UnionKeyWordCheck unionKeyWordCheck)
    {
       unionKeyWordCheck.check(sqlEditorText, beginPos);
       boolean isSelectStart = StatementBeginPredictionUtil.startsWithIgnoreCase(sqlEditorText, beginPos, "SELECT");
