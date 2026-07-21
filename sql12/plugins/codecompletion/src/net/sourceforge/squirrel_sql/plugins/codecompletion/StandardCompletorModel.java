@@ -19,9 +19,13 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParenthesedSelectParseResult;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
@@ -31,9 +35,6 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class StandardCompletorModel
@@ -70,7 +71,13 @@ public class StandardCompletorModel
             {
                onTableAndAliasParseResultFound(tableAndAliasParseResult);
             }
-			});
+
+            @Override
+            public void parenthesedSelectParseResultFound(ParenthesedSelectParseResult parenthesedSelectParseResult)
+            {
+               onParenthesedSelectParseResultFound(parenthesedSelectParseResult);
+            }
+         });
       }
       catch(Exception e)
       {
@@ -78,7 +85,12 @@ public class StandardCompletorModel
       }
    }
 
-	private void onTableAndAliasParseResultFound(TableAndAliasParseResult tableAndAliasParseResult)
+   private void onParenthesedSelectParseResultFound(ParenthesedSelectParseResult parenthesedSelectParseResult)
+   {
+      _codeCompletionInfos.replaceLastParenthesedSelectInfos(parenthesedSelectParseResult.getParenthesedSelectInfos());
+   }
+
+   private void onTableAndAliasParseResultFound(TableAndAliasParseResult tableAndAliasParseResult)
 	{
 		_codeCompletionInfos.replaceLastAliasInfos(tableAndAliasParseResult.getTableAliasParseInfosReadOnly());
       _joinOnClauseCompletion.replaceLastTableAndAliasParseResult(tableAndAliasParseResult);

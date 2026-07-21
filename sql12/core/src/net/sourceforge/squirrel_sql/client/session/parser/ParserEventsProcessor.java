@@ -1,19 +1,20 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParenthesedSelectParseResult;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAndAliasParseResult;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class ParserEventsProcessor implements IParserEventsProcessor
 {
@@ -123,11 +124,13 @@ public class ParserEventsProcessor implements IParserEventsProcessor
       }
 
 		TableAndAliasParseResult tableAndAliasParseResult = _parserThread.getTableAndAliasParseResult();
+		ParenthesedSelectParseResult parenthesedSelectParseResult = _parserThread.getParenthesedSelectParseResult();
 		List<ErrorInfo> errorInfos = _parserThread.getErrorInfos();
 
 		for(ParserEventsListener parserEventsListener : _listeners.toArray(new ParserEventsListener[0]))
 		{
 			parserEventsListener.tableAndAliasParseResultFound(tableAndAliasParseResult);
+			parserEventsListener.parenthesedSelectParseResultFound(parenthesedSelectParseResult);
 			parserEventsListener.errorsFound(errorInfos);
 		}
 	}

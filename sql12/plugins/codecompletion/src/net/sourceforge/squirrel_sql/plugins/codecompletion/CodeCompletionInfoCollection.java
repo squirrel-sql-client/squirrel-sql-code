@@ -17,8 +17,17 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParenthesedSelectInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasParseInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -27,20 +36,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
-import javax.swing.JOptionPane;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-
 public class CodeCompletionInfoCollection
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CodeCompletionInfoCollection.class);
 
    private Hashtable<String, Vector<CodeCompletionInfo>> _completionInfosByCataLogAndSchema = new Hashtable<>();
    private Vector<CodeCompletionTableAliasInfo> _aliasCompletionInfos = new Vector<>();
+   private Vector<CodeCompletionParenthesedSelectInfo> _parenthesedSelectInfos = new Vector<>();
 
    private Vector<CodeCompletionSchemaInfo> _schemas = new Vector<>();
    private Vector<CodeCompletionCatalogInfo> _catalogs = new Vector<>();
@@ -227,6 +229,7 @@ public class CodeCompletionInfoCollection
       {
 			Vector<CodeCompletionInfo> buf = new Vector<>();
 			buf.addAll(_aliasCompletionInfos);
+			buf.addAll(_parenthesedSelectInfos);
 
          if(MAX_COMPLETION_INFOS < completionInfos.size())
          {
@@ -238,20 +241,26 @@ public class CodeCompletionInfoCollection
             buf.addAll(completionInfos);
          }
 
-
          return buf.toArray(new CodeCompletionInfo[0]);
       }
 
       Vector<CodeCompletionInfo> ret = new Vector<>();
 
-		for(int i=0; i < _aliasCompletionInfos.size(); ++i)
-		{
-         CodeCompletionTableAliasInfo buf = _aliasCompletionInfos.get(i);
-         if (buf.isInStatementOfAlias(pos) && buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchTypeUtil.matchTypeOf(_useCompletionPrefs, _prefs)))
+      for(CodeCompletionTableAliasInfo buf : _aliasCompletionInfos)
+      {
+         if(buf.isInStatementOfAlias(pos) && buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchTypeUtil.matchTypeOf(_useCompletionPrefs, _prefs)))
          {
             ret.add(buf);
          }
-		}
+      }
+
+      for(CodeCompletionParenthesedSelectInfo buf : _parenthesedSelectInfos)
+      {
+         if(buf.isInStatementOfParenthesedSelect(pos) && buf.matchesCompletionStringStart(trimmedPrefix, CompletionMatchTypeUtil.matchTypeOf(_useCompletionPrefs, _prefs)))
+         {
+            ret.add(buf);
+         }
+      }
 
 
       for(int i=0; i < completionInfos.size(); ++i)
@@ -295,6 +304,18 @@ public class CodeCompletionInfoCollection
 		}
       _aliasCompletionInfos = buf;
 	}
+
+   public void replaceLastParenthesedSelectInfos(List<ParenthesedSelectInfo> parenthesedSelectInfos)
+   {
+      Vector<CodeCompletionParenthesedSelectInfo> buf = new Vector<>();
+
+      for(ParenthesedSelectInfo parenthesedSelectInfo : parenthesedSelectInfos)
+      {
+         buf.add(new CodeCompletionParenthesedSelectInfo(parenthesedSelectInfo, _session, _useCompletionPrefs, _prefs));
+      }
+      _parenthesedSelectInfos = buf;
+   }
+
 
    public boolean isCatalog(String name)
    {
