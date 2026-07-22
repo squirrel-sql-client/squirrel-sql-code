@@ -18,68 +18,77 @@ public class MappedClassInfoLoader
 
       for (ReflectionCaller entityType : entityTypes)
       {
-         if(null == entityType.callMethod("getJavaType").getCallee())
+         String entityClassName = "<Yet unknown>";
+
+         try
          {
-            System.out.println("Entity " + entityType.getCallee() + " has no Java type and won't be loaded.");
-            continue;
-         }
-
-         ReflectionCaller getIdTypeCaller = entityType.callMethod("getIdType");
-
-         if(null == getIdTypeCaller.getCallee())
-         {
-            System.out.println("Entity type " + entityType.callMethod("getJavaType").callMethod("getName").getCallee() + " has no unique ID and won't be loaded.");
-            continue;
-         }
-
-         ReflectionCaller pkJavaType = getIdTypeCaller.callMethod("getJavaType");
-         ReflectionCaller pkSingularAttribute = entityType.callMethod("getId", pkJavaType.getCallee()).setTreatClassCalleeAsType(false);
-
-         String identifierPropertyName = (String) pkSingularAttribute.callMethod("getJavaMember").callMethod("getName").getCallee();
-         String identifierPropertyClassName = (String) pkSingularAttribute.callMethod("getJavaType").callMethod("getName").getCallee();
-
-
-         String tableName = getTableName(cl, jpaRootPackage, entityType);
-
-
-         String identifierColumnName = getMappedColumnName(cl, jpaRootPackage, entityType, identifierPropertyName);
-
-         HibernatePropertyInfo identifierPropInfo =
-               new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, tableName, new String[]{identifierColumnName});
-
-         identifierPropInfo.setIdentifier(true);
-
-         ArrayList<HibernatePropertyInfo> infos = new ArrayList<>();
-
-         for (ReflectionCaller attr: entityType.callCollectionMethod("getAttributes"))
-         {
-            String propertyName = (String) attr.callMethod("getJavaMember").callMethod("getName").getCallee();
-            Class propertyClass = (Class) attr.callMethod("getJavaType").getCallee();
-            String[] propertyColumnNames = new String[]{getMappedColumnName(cl, jpaRootPackage, entityType, propertyName)};
-
-            HibernatePropertyInfo hibernatePropertyInfo = null;
-
-            if (ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.metamodel.PluralAttribute", cl).isAssignableFrom(attr.getCalleeClass()))
+            if(null == entityType.callMethod("getJavaType").getCallee())
             {
-               propertyClass = (Class) attr.callMethod("getElementType").callMethod("getJavaType").getCallee();
-
-               hibernatePropertyInfo = new HibernatePropertyInfo(propertyName, propertyClass.getName(), tableName, propertyColumnNames);
-               hibernatePropertyInfo.setCollectionClassName((String) attr.callMethod("getJavaType").callMethod("getName").getCallee());
-            }
-            else if(Boolean.FALSE.equals(attr.callMethod("isId").getCallee()))
-            {
-               hibernatePropertyInfo = new HibernatePropertyInfo(propertyName, propertyClass.getName(), tableName, propertyColumnNames);
+               System.out.println("Entity " + entityType.getCallee() + " has no Java type and won't be loaded.");
+               continue;
             }
 
-            if (null != hibernatePropertyInfo)
+            ReflectionCaller getIdTypeCaller = entityType.callMethod("getIdType");
+
+            entityClassName = (String) entityType.callMethod("getJavaType").callMethod("getName").getCallee();
+
+            if(null == getIdTypeCaller.getCallee())
             {
-               infos.add(hibernatePropertyInfo);
+               System.out.println("Entity type " + entityClassName + " has no unique ID and won't be loaded.");
+               continue;
             }
+
+            ReflectionCaller pkJavaType = getIdTypeCaller.callMethod("getJavaType");
+            ReflectionCaller pkSingularAttribute = entityType.callMethod("getId", pkJavaType.getCallee()).setTreatClassCalleeAsType(false);
+
+            String identifierPropertyName = (String) pkSingularAttribute.callMethod("getJavaMember").callMethod("getName").getCallee();
+            String identifierPropertyClassName = (String) pkSingularAttribute.callMethod("getJavaType").callMethod("getName").getCallee();
+
+
+            String tableName = getTableName(cl, jpaRootPackage, entityType);
+
+
+            String identifierColumnName = getMappedColumnName(cl, jpaRootPackage, entityType, identifierPropertyName);
+
+            HibernatePropertyInfo identifierPropInfo =
+                  new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, tableName, new String[]{identifierColumnName});
+
+            identifierPropInfo.setIdentifier(true);
+
+            ArrayList<HibernatePropertyInfo> infos = new ArrayList<>();
+
+            for (ReflectionCaller attr: entityType.callCollectionMethod("getAttributes"))
+            {
+               String propertyName = (String) attr.callMethod("getJavaMember").callMethod("getName").getCallee();
+               Class propertyClass = (Class) attr.callMethod("getJavaType").getCallee();
+               String[] propertyColumnNames = new String[]{getMappedColumnName(cl, jpaRootPackage, entityType, propertyName)};
+
+               HibernatePropertyInfo hibernatePropertyInfo = null;
+
+               if (ReflectionCaller.getClassPlain(jpaRootPackage + ".persistence.metamodel.PluralAttribute", cl).isAssignableFrom(attr.getCalleeClass()))
+               {
+                  propertyClass = (Class) attr.callMethod("getElementType").callMethod("getJavaType").getCallee();
+
+                  hibernatePropertyInfo = new HibernatePropertyInfo(propertyName, propertyClass.getName(), tableName, propertyColumnNames);
+                  hibernatePropertyInfo.setCollectionClassName((String) attr.callMethod("getJavaType").callMethod("getName").getCallee());
+               }
+               else if(Boolean.FALSE.equals(attr.callMethod("isId").getCallee()))
+               {
+                  hibernatePropertyInfo = new HibernatePropertyInfo(propertyName, propertyClass.getName(), tableName, propertyColumnNames);
+               }
+
+               if (null != hibernatePropertyInfo)
+               {
+                  infos.add(hibernatePropertyInfo);
+               }
+            }
+
+            infoDataByClassName.put(entityClassName, new MappedClassInfoData(entityClassName, tableName, identifierPropInfo, infos.toArray(new HibernatePropertyInfo[infos.size()])));
          }
-
-         String entityClassName = (String) entityType.callMethod("getJavaType").callMethod("getName").getCallee();
-         infoDataByClassName.put(entityClassName, new MappedClassInfoData(entityClassName, tableName, identifierPropInfo, infos.toArray(new HibernatePropertyInfo[infos.size()])));
-
+         catch(Exception e)
+         {
+            System.out.println("Failed to load Entity class " + entityClassName + ": " + HibernateServerUtil.getDeepestThrowable(e));
+         }
       }
 
       return infoDataByClassName;

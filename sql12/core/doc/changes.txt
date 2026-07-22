@@ -54,6 +54,9 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
 
 Bug fixes:
 
+Hibernate Plugin: Connecting a Hibernate configuration failed whenever an Entity class could not be loaded.
+  Now an error message is issued to the Hibernate console but connecting continues.
+
 MCP: Fixed formatting issue concerning the port number in MCP's port-prompt,
   i.e. the port number was rendered with grouping separator.
 
