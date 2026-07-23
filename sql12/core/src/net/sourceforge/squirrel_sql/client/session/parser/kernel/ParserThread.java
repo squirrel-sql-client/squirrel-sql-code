@@ -7,18 +7,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import net.sf.jsqlparser.parser.ParseException;
-import net.sf.jsqlparser.schema.Table;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class ParserThread
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ParserThread.class);
-
    private final ExecutorService _executorService;
    private ISession _session;
    private ParsingFinishedListener _parsingFinishedListener;
@@ -101,10 +93,11 @@ public class ParserThread
 
          ParsingResult parsingResult = JSqlParserAdapter.executeParsing(statementBounds);
 
-         allStatementsTableAndAliasParseResultBuffer.addParseResult(createTableAndAliasParseResultForStatement(statementBounds, parsingResult, errorInfosBuffer));
+         allStatementsTableAndAliasParseResultBuffer.addParseResult(
+               TableAndAliasParseResultCreator.createTableAndAliasParseResultForStatement(_session, statementBounds, parsingResult, errorInfosBuffer, _parseTerminateRequestCheck));
 
-         allStatementsParenthesedSelectParseResultBuffer.addParseResult(_session, statementBounds, parsingResult, errorInfosBuffer);
-
+         allStatementsParenthesedSelectParseResultBuffer.addParenthesedSelectInfos(
+               ParenthesedSelectInfoCreator.createParenthesedSelectInfosForSingleStatement(_session, statementBounds, parsingResult, errorInfosBuffer, _parseTerminateRequestCheck));
 
          for (ParseException parseError : parsingResult.getParseErrors())
          {
@@ -119,53 +112,6 @@ public class ParserThread
       _errorInfos = errorInfosBuffer;
       _tableAndAliasParseResult = allStatementsTableAndAliasParseResultBuffer;
       _parenthesedSelectParseResult = allStatementsParenthesedSelectParseResultBuffer;
-   }
-
-   private TableAndAliasParseResult createTableAndAliasParseResultForStatement(StatementBounds statementBounds, ParsingResult parsingResult, ArrayList<ErrorInfo> errorInfosBuffer)
-   {
-      TableAndAliasParseResult singleStatementTableAndAliasParseResultBuffer;
-      singleStatementTableAndAliasParseResultBuffer = new TableAndAliasParseResult();
-
-      _parseTerminateRequestCheck.check();
-
-      for (Table table : parsingResult.getTables())
-      {
-         _parseTerminateRequestCheck.check();
-
-         TableQualifier tableQualifier = new TableQualifier(table.getFullyQualifiedName());
-
-         ITableInfo[] tableInfos = _session.getSchemaInfo().getITableInfos(StringUtilities.stripDoubleQuotes(tableQualifier.getCatalog()),
-                                                                           StringUtilities.stripDoubleQuotes(tableQualifier.getSchema()),
-                                                                           StringUtilities.stripDoubleQuotes(tableQualifier.getTableName()));
-
-         _parseTerminateRequestCheck.check();
-
-         if(0 == tableInfos.length)
-         {
-            int beginPos = statementBounds.getBeginPos() + table.getASTNode().jjtGetFirstToken().absoluteBegin;
-            int endPos = statementBounds.getBeginPos() + table.getASTNode().jjtGetFirstToken().absoluteEnd;
-            errorInfosBuffer.add(new ErrorInfo(s_stringMgr.getString("parserthread.undefinedTable"), beginPos, endPos));
-         }
-         else if(null != table.getAlias())
-         {
-            singleStatementTableAndAliasParseResultBuffer.addTableAliasInfo(new TableAliasParseInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
-         }
-         else
-         {
-            singleStatementTableAndAliasParseResultBuffer.addTableParseInfo(new TableParseInfo(table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
-         }
-      }
-
-      if(aliasesOrTablesMayGotLostByParserErrors(singleStatementTableAndAliasParseResultBuffer, parsingResult))
-      {
-         singleStatementTableAndAliasParseResultBuffer = new HeuristicSQLTableAndAliasParser().parse(statementBounds, _session.getSchemaInfo());
-      }
-      return singleStatementTableAndAliasParseResultBuffer;
-   }
-
-   private boolean aliasesOrTablesMayGotLostByParserErrors(TableAndAliasParseResult tableAndAliasParseResult, ParsingResult parsingResult)
-   {
-      return tableAndAliasParseResult.isEmpty() && false == parsingResult.getParseErrors().isEmpty();
    }
 
 

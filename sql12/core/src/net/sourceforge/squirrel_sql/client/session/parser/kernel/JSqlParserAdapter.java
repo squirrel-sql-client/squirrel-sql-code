@@ -110,11 +110,14 @@ public class JSqlParserAdapter
       {
          List<Join> joins = plainSelect.getJoins();
 
-         for(Join join : joins)
+         if(null != joins)
          {
-            if(join.getFromItem() instanceof ParenthesedSelect parenthesedSelect)
+            for(Join join : joins)
             {
-               ret.add(parenthesedSelect);
+               if(join.getFromItem() instanceof ParenthesedSelect parenthesedSelect)
+               {
+                  ret.add(parenthesedSelect);
+               }
             }
          }
       }

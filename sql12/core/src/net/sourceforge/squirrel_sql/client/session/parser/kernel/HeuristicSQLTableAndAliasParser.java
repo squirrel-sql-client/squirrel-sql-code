@@ -10,14 +10,9 @@ import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
  */
 public class HeuristicSQLTableAndAliasParser
 {
-   private StringBuilder _token = new StringBuilder();
-
-   private SqlCommentHelper _sqlCommentHelper;
-   private int literalDelimsCount = 0;
-
-   public TableAndAliasParseResult parse(StatementBounds statementBounds, SchemaInfo schemaInfo)
+   public static TableAndAliasParseResult parse(StatementBounds statementBounds, SchemaInfo schemaInfo)
    {
-      _sqlCommentHelper = new SqlCommentHelper(statementBounds.getStatement());
+      HeuristicTokenParser tokenParser = new HeuristicTokenParser(statementBounds);
 
       TableAndAliasParseResult ret = new TableAndAliasParseResult();
 
@@ -28,7 +23,7 @@ public class HeuristicSQLTableAndAliasParser
 
       while(i[0] < statementBounds.getStatement().length())
       {
-         String token = nextToken(i, statementBounds.getStatement());
+         String token = tokenParser.nextToken(i, statementBounds.getStatement());
 
          if(0 == token.length())
          {
@@ -81,76 +76,4 @@ public class HeuristicSQLTableAndAliasParser
 
       return ret;
    }
-
-   private String nextToken(int[] i, String sql)
-   {
-      _token.setLength(0);
-      for (int j = i[0]; j < sql.length(); j++)
-      {
-         char c = sql.charAt(j);
-
-         if (isLiteralDelimiter(c))
-         {
-            if (false == _sqlCommentHelper.isInComment(j))
-            {
-               ++literalDelimsCount;
-            }
-         }
-
-         if (_sqlCommentHelper.isInComment(j) || SqlLiteralHelper.isInLiteral(literalDelimsCount))
-         {
-            if (0 < _token.length())
-            {
-               i[0] = j+1;
-               return _token.toString();
-            }
-
-            // When we arrive here _token is empty
-            continue;
-         }
-
-         if(Character.isWhitespace(c))
-         {
-            if(0 == _token.length())
-            {
-               continue;
-            }
-            else
-            {
-               i[0] = j+1;
-               return _token.toString();
-            }
-         }
-
-         if(isSepartor(c))
-         {
-            if(0 == _token.length())
-            {
-               i[0] = j+1;
-               return _token.append(c).toString();
-            }
-            else
-            {
-               i[0] = j;
-               return _token.toString();
-            }
-         }
-
-         _token.append(c);
-      }
-
-      i[0] = sql.length();
-      return _token.toString();
-   }
-
-   private boolean isLiteralDelimiter(char c)
-   {
-      return '\'' == c;
-   }
-
-   private boolean isSepartor(char c)
-   {
-      return ',' == c || '(' == c || ')' == c;
-   }
-
 }
