@@ -37,7 +37,7 @@ public class ParenthesedSelectInfoCreator
 
       if(parsingResult.getParenthesedSelects().isEmpty() && false == parsingResult.getParseErrors().isEmpty())
       {
-         ret = HeuristicParenthesedSelectsParser.parse(statementBounds, session.getSchemaInfo());
+         ret = HeuristicParenthesedSelectsParser.parse(statementBounds, session, errorInfosBuffer);
       }
 
       return ret;
@@ -55,9 +55,7 @@ public class ParenthesedSelectInfoCreator
          SelectItem<?> selectItem = selectItems.get(i);
          if( null != selectItem.getAlias() && StringUtils.isNotBlank(selectItem.getAlias().getName()) )
          {
-
-            col = new TableColumnInfo(null, null, null, selectItem.getAlias().getName(), Types.OTHER, "OTHER", 10, 0, 0, 1, null,
-                                      null, 0, i, null, null, session.getMetaData());
+            col = ParserUtil.createTableColumnInfoFromName(session, selectItem.getAlias().getName(), i);
          }
          else if( selectItem.getExpression() instanceof Column pc && StringUtils.isNotBlank(pc.getColumnName()) )
          {
