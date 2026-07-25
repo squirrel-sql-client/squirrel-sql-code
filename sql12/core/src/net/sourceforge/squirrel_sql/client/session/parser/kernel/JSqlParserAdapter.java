@@ -23,6 +23,11 @@ public class JSqlParserAdapter
       CCJSqlParser parser = new CCJSqlParser(new StringProvider(statementBounds.getStatement()));
       parser.setErrorRecovery(true);
 
+      // Just makes parser.getParseErrors() return an empty list.
+      // BTW net.sf.jsqlparser.statement.UnsupportedStatement instances don't seem to be of help, either.
+      //parser.withErrorRecovery(true);
+      //parser.withUnsupportedStatements(true);
+
       Statement statement = null ;
 
       try
