@@ -129,9 +129,9 @@ public class HeuristicParenthesedSelectsParser
 
       int[] i = new int[]{0};
 
-      boolean waitingForAliasOfParanthesedSelect = false;
-      boolean inParanthesedSelectClause = false;
-      int paranthesedSelectBracketCount = 0;
+      boolean waitingForAliasOfParanthesedSubSelect = false;
+      boolean inParanthesedSubSelectClause = false;
+      int paranthesedSubSelectBracketCount = 0;
 
       String token = null;
 
@@ -140,41 +140,41 @@ public class HeuristicParenthesedSelectsParser
          tokenHistory.addPrevious(token);
          token = tokenParser.nextToken(i, statementBounds.getStatement());
 
-         if(StringUtils.equalsIgnoreCase(token, "(") && isPreviousTokenAllowedSubSelect(tokenHistory))
+         if(StringUtils.equalsIgnoreCase(token, "(") && doesPreviousTokenAllowSubSelect(tokenHistory))
          {
-            paranthesedSelectBracketCount = 1;
+            paranthesedSubSelectBracketCount = 1;
          }
-         else if(0 < paranthesedSelectBracketCount)
+         else if(0 < paranthesedSubSelectBracketCount)
          {
             if(StringUtils.equalsIgnoreCase("(", token))
             {
-               ++paranthesedSelectBracketCount;
+               ++paranthesedSubSelectBracketCount;
             }
             else if(StringUtils.equalsIgnoreCase(")", token))
             {
-               --paranthesedSelectBracketCount;
+               --paranthesedSubSelectBracketCount;
 
-               if(0 == paranthesedSelectBracketCount)
+               if(0 == paranthesedSubSelectBracketCount)
                {
-                  waitingForAliasOfParanthesedSelect = true;
+                  waitingForAliasOfParanthesedSubSelect = true;
                }
             }
-            else if(1 == paranthesedSelectBracketCount)
+            else if(1 == paranthesedSubSelectBracketCount)
             {
                // We do not support nested inner SELECTs
                if(StringUtils.equalsIgnoreCase("SELECT", token))
                {
-                  inParanthesedSelectClause = true;
+                  inParanthesedSubSelectClause = true;
                }
                else if(StringUtils.equalsIgnoreCase("FROM", token))
                {
-                  if(inParanthesedSelectClause)
+                  if(inParanthesedSubSelectClause)
                   {
                      maybeAddColumn(session, tokenHistory, columns);
                   }
-                  inParanthesedSelectClause = false;
+                  inParanthesedSubSelectClause = false;
                }
-               else if(inParanthesedSelectClause && StringUtils.equalsIgnoreCase(",", token))
+               else if(inParanthesedSubSelectClause && StringUtils.equalsIgnoreCase(",", token))
                {
                   maybeAddColumn(session, tokenHistory, columns);
                }
@@ -182,10 +182,10 @@ public class HeuristicParenthesedSelectsParser
             else
             {
                // Fallback for FROM above
-               inParanthesedSelectClause = false;
+               inParanthesedSubSelectClause = false;
             }
          }
-         else if(waitingForAliasOfParanthesedSelect)
+         else if(waitingForAliasOfParanthesedSubSelect)
          {
             if(StringUtils.equalsIgnoreCase(token, "AS"))
             {
@@ -197,10 +197,10 @@ public class HeuristicParenthesedSelectsParser
                    && false == session.getSchemaInfo().isKeyword(token)
                    && false == columns.isEmpty())
                {
-                  ret.add(new ParenthesedSelectInfo(statementBounds, errorInfosBuffer, token, new ArrayList<>(columns)));
-                  columns.clear();
+                  ret.add(new ParenthesedSelectInfo(statementBounds, errorInfosBuffer, token, columns));
+                  columns = new ArrayList<>();
                }
-               waitingForAliasOfParanthesedSelect = false;
+               waitingForAliasOfParanthesedSubSelect = false;
             }
          }
       }
@@ -208,7 +208,7 @@ public class HeuristicParenthesedSelectsParser
       return ret;
    }
 
-   private static boolean isPreviousTokenAllowedSubSelect(TokenHistory tokenHistory)
+   private static boolean doesPreviousTokenAllowSubSelect(TokenHistory tokenHistory)
    {
       return StringUtils.equalsIgnoreCase(tokenHistory.previous(0), "JOIN") || StringUtils.equalsIgnoreCase(tokenHistory.previous(0), "FROM");
    }
