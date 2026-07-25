@@ -26,4 +26,9 @@ public class TokenHistory
 
       return _previousTokens.get(index);
    }
+
+   public boolean isEmpty()
+   {
+      return _previousTokens.isEmpty();
+   }
 }

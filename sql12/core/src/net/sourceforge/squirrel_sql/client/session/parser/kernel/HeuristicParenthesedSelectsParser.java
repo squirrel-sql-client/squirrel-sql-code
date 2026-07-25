@@ -19,8 +19,103 @@ public class HeuristicParenthesedSelectsParser
 
    private static List<ParenthesedSelectInfo> findForWithSelects(StatementBounds statementBounds, ISession session, ArrayList<ErrorInfo> errorInfosBuffer)
    {
-      // TODO
-      return new ArrayList<>();
+      List<ParenthesedSelectInfo> ret = new ArrayList<>();
+      List<TableColumnInfo> columns = new ArrayList<>();
+
+      TokenHistory tokenHistory = new TokenHistory();
+      HeuristicTokenParser tokenParser = new HeuristicTokenParser(statementBounds);
+
+      int[] i = new int[]{0};
+      String token = null;
+
+      boolean inWithClause = false;
+      int parenthesedWithSelectBracketCount = 0;
+      boolean inParanthesedWithSelectClause = false;
+      String currentWithAlias = null;
+
+
+      while(i[0] < statementBounds.getStatement().length())
+      {
+         tokenHistory.addPrevious(token);
+         token = tokenParser.nextToken(i, statementBounds.getStatement());
+
+         if(tokenHistory.isEmpty() && StringUtils.equalsIgnoreCase(token, "WITH"))
+         {
+            // First token is WITH --> WITH clause is started
+            inWithClause = true;
+         }
+         else if(inWithClause)
+         {
+            boolean parenthesedWithSelectBracketCountJustChangedFromZeroToOne = false;
+
+            if(StringUtils.equalsIgnoreCase(token, "("))
+            {
+               ++parenthesedWithSelectBracketCount;
+               parenthesedWithSelectBracketCountJustChangedFromZeroToOne = (1 == parenthesedWithSelectBracketCount);
+            }
+            else if(StringUtils.equalsIgnoreCase(token, ")"))
+            {
+               --parenthesedWithSelectBracketCount;
+            }
+
+            if(0 == parenthesedWithSelectBracketCount && StringUtils.equalsIgnoreCase(token, "SELECT"))
+            {
+               inWithClause = false;
+               inParanthesedWithSelectClause = false;
+            }
+
+            if(parenthesedWithSelectBracketCountJustChangedFromZeroToOne)
+            {
+               String withAliasCandidate;
+               if(StringUtils.equalsIgnoreCase(tokenHistory.previous(0), "AS"))
+               {
+                  withAliasCandidate = tokenHistory.previous(1);
+               }
+               else
+               {
+                  withAliasCandidate = tokenHistory.previous(0);
+               }
+
+               if(      StringUtils.isNotBlank(withAliasCandidate)
+                     && Character.isJavaIdentifierStart(withAliasCandidate.charAt(0))
+                     && Character.isJavaIdentifierStart(withAliasCandidate.charAt(withAliasCandidate.length() - 1))
+                     && false == session.getSchemaInfo().isKeyword(token)
+                     && columns.isEmpty())
+               {
+                  currentWithAlias = withAliasCandidate;
+               }
+            }
+         }
+
+         if(inWithClause && 1 == parenthesedWithSelectBracketCount)
+         {
+            // We do not support nested inner SELECTs
+            if(StringUtils.equalsIgnoreCase("SELECT", token))
+            {
+               inParanthesedWithSelectClause = true;
+            }
+            else if(StringUtils.equalsIgnoreCase("FROM", token))
+            {
+               if(inParanthesedWithSelectClause)
+               {
+                  maybeAddColumn(session, tokenHistory, columns);
+               }
+               inParanthesedWithSelectClause = false;
+
+               if(false == StringUtils.isBlank(currentWithAlias))
+               {
+                  ret.add(new ParenthesedSelectInfo(statementBounds, errorInfosBuffer, currentWithAlias, columns));
+                  columns = new ArrayList<>();
+               }
+            }
+            else if(inParanthesedWithSelectClause && StringUtils.equalsIgnoreCase(",", token))
+            {
+               maybeAddColumn(session, tokenHistory, columns);
+            }
+         }
+      }
+
+      return ret;
    }
 
    private static List<ParenthesedSelectInfo> findForSubSelects(StatementBounds statementBounds, ISession session, ArrayList<ErrorInfo> errorInfosBuffer)
