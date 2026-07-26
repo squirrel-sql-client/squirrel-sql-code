@@ -93,11 +93,15 @@ public class ParserThread
 
          ParsingResult parsingResult = JSqlParserAdapter.executeParsing(statementBounds);
 
-         allStatementsTableAndAliasParseResultBuffer.addParseResult(
-               TableAndAliasParseResultCreator.createTableAndAliasParseResultForStatement(_session, statementBounds, parsingResult, errorInfosBuffer, _parseTerminateRequestCheck));
+         List<ParenthesedSelectInfo> parenthesedSelectInfosForStatement =
+               ParenthesedSelectInfoCreator.createParenthesedSelectInfosForSingleStatement(_session, statementBounds, parsingResult, errorInfosBuffer, _parseTerminateRequestCheck);
 
-         allStatementsParenthesedSelectParseResultBuffer.addParenthesedSelectInfos(
-               ParenthesedSelectInfoCreator.createParenthesedSelectInfosForSingleStatement(_session, statementBounds, parsingResult, errorInfosBuffer, _parseTerminateRequestCheck));
+         TableAndAliasParseResult tableAndAliasParseResultForStatement =
+               TableAndAliasParseResultCreator.createTableAndAliasParseResultForStatement(_session, statementBounds, parsingResult, errorInfosBuffer, parenthesedSelectInfosForStatement, _parseTerminateRequestCheck);
+
+         allStatementsParenthesedSelectParseResultBuffer.addParenthesedSelectInfos(parenthesedSelectInfosForStatement);
+         allStatementsTableAndAliasParseResultBuffer.addParseResult(tableAndAliasParseResultForStatement);
+
 
          for (ParseException parseError : parsingResult.getParseErrors())
          {

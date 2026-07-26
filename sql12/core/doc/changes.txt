@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Code completion for WITH clauses and sub-selects:
+  Alias names and columns are now available via code completion for aliases of WITH clauses and sub-selects.
+
 Alias's and MCP's read only checks now allow to execute statements starting with EXPLAIN.
 
 MCP to allow AI-access to SQuirreL Sessions,
@@ -53,6 +56,8 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
 
 
 Bug fixes:
+
+Aliases of WITH clauses are no longer reported as "undefined table" errors.
 
 Hibernate Plugin: Connecting a Hibernate configuration failed whenever an Entity class could not be loaded.
   Now an error message is issued to the Hibernate console but connecting continues.

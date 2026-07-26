@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 import java.util.ArrayList;
+import java.util.List;
 import net.sf.jsqlparser.schema.Table;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -8,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 public class TableAndAliasParseResultCreator
 {
@@ -18,6 +20,7 @@ public class TableAndAliasParseResultCreator
                                                                                      StatementBounds statementBounds,
                                                                                      ParsingResult parsingResult,
                                                                                      ArrayList<ErrorInfo> errorInfosBuffer,
+                                                                                     List<ParenthesedSelectInfo> parenthesedSelectInfosForStatement,
                                                                                      ParseTerminateRequestCheck parseTerminateRequestCheck)
    {
       TableAndAliasParseResult singleStatementTableAndAliasParseResultBuffer;
@@ -31,13 +34,18 @@ public class TableAndAliasParseResultCreator
 
          TableQualifier tableQualifier = new TableQualifier(table.getFullyQualifiedName());
 
-         ITableInfo[] tableInfos = session.getSchemaInfo().getITableInfos(StringUtilities.stripDoubleQuotes(tableQualifier.getCatalog()),
+         ITableInfo[] matchingTableInfos = session.getSchemaInfo().getITableInfos(StringUtilities.stripDoubleQuotes(tableQualifier.getCatalog()),
                                                                           StringUtilities.stripDoubleQuotes(tableQualifier.getSchema()),
                                                                           StringUtilities.stripDoubleQuotes(tableQualifier.getTableName()));
 
+         List<String> matchingPsiAliases = parenthesedSelectInfosForStatement.stream()
+                                                                     .filter(psi -> StringUtils.equalsIgnoreCase(psi.getAlias(), table.getName()))
+                                                                     .map(psi -> psi.getAlias())
+                                                                     .toList();
+
          parseTerminateRequestCheck.check();
 
-         if(0 == tableInfos.length)
+         if(0 == matchingTableInfos.length && matchingPsiAliases.isEmpty())
          {
             int beginPos = statementBounds.getBeginPos() + table.getASTNode().jjtGetFirstToken().absoluteBegin;
             int endPos = statementBounds.getBeginPos() + table.getASTNode().jjtGetFirstToken().absoluteEnd;
