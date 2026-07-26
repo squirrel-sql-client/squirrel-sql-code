@@ -220,7 +220,7 @@ public class HeuristicParenthesedSelectsParser
          && Character.isJavaIdentifierStart(previousToken.charAt(previousToken.length() - 1))
          && false == session.getSchemaInfo().isKeyword(previousToken))
       {
-         columns.add(ParserUtil.createTableColumnInfoFromName(session, previousToken, 1 + columns.size()));
+         columns.add(ParserUtil.createSubSelectTableColumnInfoFromName(session, previousToken, 1 + columns.size()));
       }
    }
 }

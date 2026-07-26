@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.jsqlparser.schema.Column;
@@ -12,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ParenthesedSelectInfoCreator
 {
+
    public static List<ParenthesedSelectInfo> createParenthesedSelectInfosForSingleStatement(ISession session,
                                                                                             StatementBounds statementBounds,
                                                                                             ParsingResult parsingResult,
@@ -55,15 +55,11 @@ public class ParenthesedSelectInfoCreator
          SelectItem<?> selectItem = selectItems.get(i);
          if( null != selectItem.getAlias() && StringUtils.isNotBlank(selectItem.getAlias().getName()) )
          {
-            col = ParserUtil.createTableColumnInfoFromName(session, selectItem.getAlias().getName(), i);
+            col = ParserUtil.createSubSelectTableColumnInfoFromName(session, selectItem.getAlias().getName(), i);
          }
          else if( selectItem.getExpression() instanceof Column pc && StringUtils.isNotBlank(pc.getColumnName()) )
          {
-            String catalogName = null != pc.getTable() ? pc.getTable().getCatalogName() : null;
-            String schemaName = null != pc.getTable() ? pc.getTable().getSchemaName() : null;
-            String tableName = null != pc.getTable() ? pc.getTable().getName() : null;
-            col = new TableColumnInfo(catalogName, schemaName, tableName, pc.getColumnName(), Types.OTHER, "OTHER", 10, 0, 0, 1, null,
-                                      null, 0, i, null, null, session.getMetaData());
+            col = ParserUtil.createSubSelectTableColumnInfoFromName(session, pc, i);
          }
 
          if( null != col )
