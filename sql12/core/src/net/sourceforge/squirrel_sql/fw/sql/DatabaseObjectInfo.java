@@ -18,11 +18,11 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import org.apache.commons.lang3.StringUtils;
-
-import java.sql.SQLException;
 
 public class DatabaseObjectInfo implements IDatabaseObjectInfo
 {
@@ -382,21 +382,21 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
          DatabaseObjectInfo info = (DatabaseObjectInfo) obj;
          if ((info._catalog == null && _catalog == null)
             || ((info._catalog != null && _catalog != null)
-               && info._catalog.equals(_catalog)))
+               && info._catalog.equalsIgnoreCase(_catalog)))
          {
             if ((info._qualifiedName == null && _qualifiedName == null)
                || ((info._qualifiedName != null && _qualifiedName != null)
-                  && info._qualifiedName.equals(_qualifiedName)))
+                  && info._qualifiedName.equalsIgnoreCase(_qualifiedName)))
             {
                if ((info._schema == null && _schema == null)
                   || ((info._schema != null && _schema != null)
-                     && info._schema.equals(_schema)))
+                     && info._schema.equalsIgnoreCase(_schema)))
                {
                   return (
                      (info._simpleName == null && _simpleName == null)
                         || ((info._simpleName != null
                            && _simpleName != null)
-                           && info._simpleName.equals(_simpleName)));
+                           && info._simpleName.equalsIgnoreCase(_simpleName)));
                }
 
             }

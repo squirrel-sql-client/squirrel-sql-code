@@ -2,9 +2,13 @@ package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.ParenthesedSelect;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
+import net.sf.jsqlparser.statement.select.SetOperationList;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -28,9 +32,27 @@ public class ParenthesedSelectInfoCreator
          }
 
          parseTerminateRequestCheck.check();
-         List<TableColumnInfo> parenthesedSelectColumns = createParenthesedSelectColumns(parenthesedSelect, session);
 
-         ret.add(new ParenthesedSelectInfo(statementBounds, errorInfosBuffer, parenthesedSelectsAliasName, parenthesedSelectColumns));
+         if(parenthesedSelect.getSelect() instanceof PlainSelect)
+         {
+            List<TableColumnInfo> parenthesedSelectColumns = createParenthesedSelectColumns(parenthesedSelect.getPlainSelect(), session);
+            ret.add(new ParenthesedSelectInfo(statementBounds, errorInfosBuffer, parenthesedSelectsAliasName, parenthesedSelectColumns));
+         }
+         else if(parenthesedSelect.getSelect() instanceof SetOperationList setOperationList) // UNION
+         {
+            for( Select select : setOperationList.getSelects() )
+            {
+               if(select instanceof PlainSelect plainSelect)
+               {
+                  List<TableColumnInfo> parenthesedSelectColumns = createParenthesedSelectColumns(plainSelect, session);
+                  ret.add(new ParenthesedSelectInfo(statementBounds, errorInfosBuffer, parenthesedSelectsAliasName, parenthesedSelectColumns));
+
+                  // First only because we only need the columns of one of the unions
+                  break;
+               }
+            }
+         }
+
 
          parseTerminateRequestCheck.check();
       }
@@ -43,9 +65,9 @@ public class ParenthesedSelectInfoCreator
       return ret;
    }
 
-   private static List<TableColumnInfo> createParenthesedSelectColumns(ParenthesedSelect parenthesedSelect, ISession session)
+   private static List<TableColumnInfo> createParenthesedSelectColumns(PlainSelect plainSelect, ISession session)
    {
-      List<SelectItem<?>> selectItems = parenthesedSelect.getSelect().getPlainSelect().getSelectItems();
+      List<SelectItem<?>> selectItems = plainSelect.getSelectItems();
 
       List<TableColumnInfo> columns = new ArrayList<>();
       for( int i = 0; i < selectItems.size(); i++ )

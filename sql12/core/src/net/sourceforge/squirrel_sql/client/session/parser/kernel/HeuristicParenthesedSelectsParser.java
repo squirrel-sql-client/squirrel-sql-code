@@ -159,14 +159,14 @@ public class HeuristicParenthesedSelectsParser
                   waitingForAliasOfParanthesedSubSelect = true;
                }
             }
-            else if(1 == paranthesedSubSelectBracketCount)
+            else if(1 == paranthesedSubSelectBracketCount || inParanthesedSubSelectClause) // This the "|| inParanthesedSubSelectClause" allows brackets in SELECT items.
             {
                // We do not support nested inner SELECTs
-               if(StringUtils.equalsIgnoreCase("SELECT", token))
+               if(1 == paranthesedSubSelectBracketCount && StringUtils.equalsIgnoreCase("SELECT", token))
                {
                   inParanthesedSubSelectClause = true;
                }
-               else if(StringUtils.equalsIgnoreCase("FROM", token))
+               else if(1 == paranthesedSubSelectBracketCount && StringUtils.equalsIgnoreCase("FROM", token))
                {
                   if(inParanthesedSubSelectClause)
                   {
@@ -220,7 +220,12 @@ public class HeuristicParenthesedSelectsParser
          && Character.isJavaIdentifierStart(previousToken.charAt(previousToken.length() - 1))
          && false == session.getSchemaInfo().isKeyword(previousToken))
       {
-         columns.add(ParserUtil.createSubSelectTableColumnInfoFromName(session, previousToken, 1 + columns.size()));
+         TableColumnInfo columnInfo = ParserUtil.createSubSelectTableColumnInfoFromName(session, previousToken,1 + columns.size());
+
+         if(false == columns.contains(columnInfo)) // Calls DatabaseObjectInfo.equals and removes duplicate columns that may come from UNIONS
+         {
+            columns.add(columnInfo);
+         }
       }
    }
 }
