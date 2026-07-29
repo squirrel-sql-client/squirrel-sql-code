@@ -104,7 +104,10 @@ public class HeuristicParenthesedSelectsParser
 
                if(false == StringUtils.isBlank(currentWithAlias))
                {
-                  ret.add(new ParenthesedSelectInfo(statementBounds, errorInfosBuffer, currentWithAlias, columns));
+                  if(false == isDuplicateAlias(ret, currentWithAlias))
+                  {
+                     ret.add(new ParenthesedSelectInfo(statementBounds, errorInfosBuffer, currentWithAlias, columns));
+                  }
                   columns = new ArrayList<>();
                }
             }
@@ -116,6 +119,11 @@ public class HeuristicParenthesedSelectsParser
       }
 
       return ret;
+   }
+
+   private static boolean isDuplicateAlias(List<ParenthesedSelectInfo> exitingParenthesedSelectInfos, String currentWithAlias)
+   {
+      return exitingParenthesedSelectInfos.stream().anyMatch(psi -> StringUtils.equalsIgnoreCase(psi.getAlias(), currentWithAlias));
    }
 
    private static List<ParenthesedSelectInfo> findForSubSelects(StatementBounds statementBounds, ISession session, ArrayList<ErrorInfo> errorInfosBuffer)
