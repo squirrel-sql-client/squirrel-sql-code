@@ -16,6 +16,7 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSess
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionWrapper;
+import net.sourceforge.squirrel_sql.fw.gui.texteditdlg.TextEditController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -260,7 +261,12 @@ public class GitHandler
 
             if(Main.getApplication().getSquirrelPreferences().isGitCommitMsgManually())
             {
-               msg = new GitCommitMessageController(fileEditorAPI.getOwningFrame(), file.getName(), filePathRelativeToRepoRoot, repository).getMessage();
+               msg = new TextEditController(fileEditorAPI.getOwningFrame(),
+                                            s_stringMgr.getString("GitHandler.gitCommitMessageDialog.title", file.getName()),
+                                            buildDescription(filePathRelativeToRepoRoot, repository),
+                                            s_stringMgr.getString("GitHandler.empty.title"),
+                                            s_stringMgr.getString("GitHandler.empty.message"),
+                                            new PreviousTextsProviderGitMessage()).getMessage();
 
                if(null == msg)
                {
@@ -314,6 +320,23 @@ public class GitHandler
          }
       }
    }
+
+   private static String buildDescription(String filePathRelativeToRepoRoot, Repository repository)
+   {
+      try
+      {
+         return s_stringMgr.getString("GitHandler.description",
+                                      filePathRelativeToRepoRoot,
+                                      repository.getBranch(),
+                                      repository.getWorkTree().getPath()
+         );
+      }
+      catch (IOException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
 
    private static boolean isModifiedOrAdded(String filePathRelativeToRepoRoot, Git git)
    {

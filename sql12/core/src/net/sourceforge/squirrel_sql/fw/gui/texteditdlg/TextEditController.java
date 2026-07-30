@@ -1,47 +1,45 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
+package net.sourceforge.squirrel_sql.fw.gui.texteditdlg;
 
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.*;
-import org.eclipse.jgit.lib.Repository;
-
-import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
-public class GitCommitMessageController
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+public class TextEditController
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GitCommitMessageController.class);
-
-
-   private final GitCommitMessageDialog _dlg;
+   private final TextEditDialog _dlg;
    private boolean _ok;
 
-   private GitCommitMessageJsonBean _gitCommitMessageJsonBean = new GitCommitMessageJsonBean();
+   private PreviousTextsProvider _previousTextsProvider;
 
-   public GitCommitMessageController(Frame parentFrame, String fileName, String filePathRelativeToRepoRoot, Repository repository)
+   public TextEditController(Frame parentFrame,
+                             String frameTitle,
+                             String description,
+                             String emptyMessageDlgTitle,
+                             String emptyMessageDlgText,
+                             PreviousTextsProvider previousTextsProvider)
    {
-      _dlg = new GitCommitMessageDialog(parentFrame, fileName, buildDescription(filePathRelativeToRepoRoot, repository));
+      _dlg = new TextEditDialog(parentFrame, frameTitle, description);
 
-      _dlg.btnOk.addActionListener(e -> onOk());
+      _dlg.btnOk.addActionListener(e -> onOk(emptyMessageDlgTitle, emptyMessageDlgText));
       _dlg.btnCancel.addActionListener(e -> onCancel());
 
       _dlg.btnMessageHistory.addActionListener(e -> onShowMessageHistory());
 
-      File jsonBeanFile = new ApplicationFiles().getGitCommitMessageJsonBeanFile();
+      _previousTextsProvider = previousTextsProvider;
 
-      if(jsonBeanFile.exists())
-      {
-         _gitCommitMessageJsonBean = JsonMarshalUtil.readObjectFromFileSave(jsonBeanFile, GitCommitMessageJsonBean.class, new GitCommitMessageJsonBean());
-      }
 
-      setMessage(_gitCommitMessageJsonBean.getLastEditorContent());
+      setMessage(_previousTextsProvider.getLastEditorContent());
 
       _dlg.addWindowListener(new WindowAdapter() {
          @Override
@@ -59,7 +57,7 @@ public class GitCommitMessageController
       boolean[] messageClickedRef = new boolean[1];
       String currentMessage = _dlg.txtMessage.getText();
 
-      for (String previousCommitMessage : _gitCommitMessageJsonBean.getPreviousCommitMessages())
+      for (String previousCommitMessage : _previousTextsProvider.getPreviousTexts())
       {
          JMenuItem menuItem = new JMenuItem(createMenuItemText(previousCommitMessage));
          menuItem.addChangeListener(e -> setMessage(previousCommitMessage));
@@ -125,17 +123,15 @@ public class GitCommitMessageController
       close();
    }
 
-   private void onOk()
+   private void onOk(String emptyMessageDlgTitle, String emptyMessageDlgText)
    {
       if(StringUtilities.isEmpty(_dlg.txtMessage.getText(), true))
       {
-         String title = s_stringMgr.getString("GitCommitMessageController.empty.title");
-         String msg = s_stringMgr.getString("GitCommitMessageController.empty.message");
-         JOptionPane.showMessageDialog(_dlg, msg, title, JOptionPane.ERROR_MESSAGE);
+         JOptionPane.showMessageDialog(_dlg, emptyMessageDlgText, emptyMessageDlgTitle, JOptionPane.ERROR_MESSAGE);
          return;
       }
 
-      List<String> msgs = _gitCommitMessageJsonBean.getPreviousCommitMessages();
+      List<String> msgs = _previousTextsProvider.getPreviousTexts();
 
       msgs.remove(_dlg.txtMessage.getText());
       msgs.add(0, _dlg.txtMessage.getText());
@@ -161,27 +157,10 @@ public class GitCommitMessageController
    {
       if (false == StringUtilities.isEmpty(_dlg.txtMessage.getText(), true))
       {
-         _gitCommitMessageJsonBean.setLastEditorContent(_dlg.txtMessage.getText());
+         _previousTextsProvider.setLastEditorContent(_dlg.txtMessage.getText());
       }
 
-      JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getGitCommitMessageJsonBeanFile(), _gitCommitMessageJsonBean);
-   }
-
-
-   private String buildDescription(String filePathRelativeToRepoRoot, Repository repository)
-   {
-      try
-      {
-         return s_stringMgr.getString("GitCommitMessageController.description",
-               filePathRelativeToRepoRoot,
-               repository.getBranch(),
-               repository.getWorkTree().getPath()
-         );
-      }
-      catch (IOException e)
-      {
-         throw Utilities.wrapRuntime(e);
-      }
+      _previousTextsProvider.save();
    }
 
    public String getMessage()
