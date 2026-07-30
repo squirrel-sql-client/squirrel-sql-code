@@ -3,10 +3,13 @@ package net.sourceforge.squirrel_sql.client.session.mcp.server;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpNoArgs;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpResultSet;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.StringUtils;
 
 @SuppressWarnings("unchecked")
@@ -28,6 +31,8 @@ public enum McpCall
    getExportedKeys,
    getIndexInfo,
    getColumns;
+
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(McpCall.class);
 
    public static final String DISAPPROVED = "Call was not approved by SQuirreL user";
    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
@@ -61,21 +66,27 @@ public enum McpCall
    {
       return (T) switch(this)
       {
-         case executeQuery, getTables, getPrimaryKeys, getImportedKeys, getExportedKeys, getIndexInfo -> McpResultSet.ofError(buildDisapprovedMessage(userToAiDisapproveResponse));
+         case executeQuery, getTables, getPrimaryKeys, getImportedKeys, getExportedKeys, getIndexInfo, getSchemas, getCatalogs -> McpResultSet.ofError(buildDisapprovedMessage(userToAiDisapproveResponse));
          default -> new McpSimpleString(buildDisapprovedMessage(userToAiDisapproveResponse));
       };
    }
 
    private static String buildDisapprovedMessage(String userToAiDisapproveResponse)
    {
+      String ret;
       if(StringUtils.isBlank(userToAiDisapproveResponse))
       {
-         return DISAPPROVED;
+         ret = DISAPPROVED;
       }
       else
       {
-         return "%s\nUser edited disapproval message to be respected by AI:\n%s".formatted(DISAPPROVED, userToAiDisapproveResponse);
+         ret = "%s\nUser edited disapproval message to be respected by AI:\n%s".formatted(DISAPPROVED, userToAiDisapproveResponse);
       }
+
+      Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("McpCall.ai.disapprove.message", ret));
+
+      return ret;
+
    }
 
    private String renderNowTime()

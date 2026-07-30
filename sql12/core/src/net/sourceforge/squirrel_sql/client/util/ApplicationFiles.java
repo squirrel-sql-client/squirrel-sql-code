@@ -544,4 +544,10 @@ public class ApplicationFiles
    {
       return new File(new ApplicationFiles().getUserSettingsDirectory(), "autocorrectdata.xml");
    }
+
+   public File getAiDisapprovalMessagesJsonBeanFile()
+   {
+      return new File(_userSettingsDir + File.separator + "aiDisapprovalMessagesJsonBean.json");
+   }
+
 }

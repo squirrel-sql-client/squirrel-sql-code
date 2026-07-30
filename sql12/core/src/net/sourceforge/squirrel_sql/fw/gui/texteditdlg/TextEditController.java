@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.texteditdlg;
 
-import java.awt.Frame;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -22,7 +22,7 @@ public class TextEditController
 
    private PreviousTextsProvider _previousTextsProvider;
 
-   public TextEditController(Frame parentFrame,
+   public TextEditController(Window parentFrame,
                              String frameTitle,
                              String description,
                              String emptyMessageDlgTitle,
@@ -38,6 +38,7 @@ public class TextEditController
 
       _previousTextsProvider = previousTextsProvider;
 
+      
 
       setMessage(_previousTextsProvider.getLastEditorContent());
 
@@ -166,7 +167,7 @@ public class TextEditController
    public String getMessage()
    {
       GUIUtils.enableCloseByEscape(_dlg);
-      GUIUtils.initLocation(_dlg, 400, 400);
+      GUIUtils.initLocation(_dlg, 400, 400, _previousTextsProvider.getClass().getName());
 
       SwingUtilities.invokeLater(() -> _dlg.txtMessage.requestFocus());
       _dlg.setVisible(true); // Stops here

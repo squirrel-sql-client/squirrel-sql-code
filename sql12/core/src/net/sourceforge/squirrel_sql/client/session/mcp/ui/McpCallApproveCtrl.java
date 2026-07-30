@@ -9,10 +9,15 @@ import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.texteditdlg.TextEditController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.StringUtils;
 
 public class McpCallApproveCtrl
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(McpCallApproveCtrl.class);
+
    private McpCallApproveDlg _mcpCallApproveDlg;
 
    private final McpUiProps _mcpUiProps;
@@ -52,7 +57,16 @@ public class McpCallApproveCtrl
 
    private void onEditAIResponseMessage()
    {
-      _userToAiDisapproveResponse = new McpCallApproveResponseMessageCtrl().getAiResponseMessage();
+      TextEditController textEditController =
+            new TextEditController(_mcpCallApproveDlg,
+                                   s_stringMgr.getString("McpCallApproveCtrl.edit.ai.disapproval.message.title"),
+                                   s_stringMgr.getString("McpCallApproveCtrl.edit.ai.disapproval.message.description"),
+                                   s_stringMgr.getString("McpCallApproveCtrl.edit.ai.disapproval.message.empty.title"),
+                                   s_stringMgr.getString("McpCallApproveCtrl.edit.ai.disapproval.message.empty.text"),
+                                   new PreviousTextsAiDisapprovalMessages()
+                                   );
+
+      _userToAiDisapproveResponse = textEditController.getMessage();
    }
 
    private void onFormat(ISession session)

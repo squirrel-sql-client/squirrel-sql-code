@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui.texteditdlg;
 
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -26,9 +26,9 @@ public class TextEditDialog extends JDialog
    JButton btnOk;
    JButton btnCancel;
 
-   public TextEditDialog(Frame parentFrame, String frameTitle, String description)
+   public TextEditDialog(Window parentFrame, String frameTitle, String description)
    {
-      super(parentFrame, frameTitle, true);
+      super(parentFrame, frameTitle, ModalityType.APPLICATION_MODAL);
 
       getContentPane().setLayout(new GridBagLayout());
 
