@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class McpCallApproveCtrl
 {
@@ -16,6 +17,7 @@ public class McpCallApproveCtrl
 
    private final McpUiProps _mcpUiProps;
    private boolean _approved;
+   private String _userToAiDisapproveResponse;
 
    public McpCallApproveCtrl(String call, McpUiProps mcpUiProps, ISession session, Frame owningFrame)
    {
@@ -35,6 +37,9 @@ public class McpCallApproveCtrl
 
       _mcpCallApproveDlg.btnFormat.addActionListener(e -> onFormat(session));
 
+      _mcpCallApproveDlg.btnEditAIResponseMessage.addActionListener(e -> onEditAIResponseMessage());
+      _mcpCallApproveDlg.btnRun.addActionListener(e -> onFormat(session));
+
       _mcpCallApproveDlg.btnApprove.addActionListener(e -> onApprove(true));
       _mcpCallApproveDlg.btnDisapprove.addActionListener(e -> onApprove(false));
 
@@ -43,6 +48,11 @@ public class McpCallApproveCtrl
 
       _mcpCallApproveDlg.setVisible(true);
 
+   }
+
+   private void onEditAIResponseMessage()
+   {
+      _userToAiDisapproveResponse = new McpCallApproveResponseMessageCtrl().getAiResponseMessage();
    }
 
    private void onFormat(ISession session)
@@ -63,5 +73,10 @@ public class McpCallApproveCtrl
    public boolean isApproved()
    {
       return _approved;
+   }
+
+   public String getUserToAiDisapproveResponse()
+   {
+      return StringUtils.isBlank(_userToAiDisapproveResponse) ? null : _userToAiDisapproveResponse;
    }
 }

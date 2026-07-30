@@ -237,6 +237,8 @@ public class SquirrelResources extends Resources
 
 		String MCP = "mcp";
 		String INFO = "info";
+		String RUN = "run";
+		String EDIT_NOTE = "edit_note";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

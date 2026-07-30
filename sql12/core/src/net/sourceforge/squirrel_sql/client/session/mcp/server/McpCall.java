@@ -57,13 +57,25 @@ public enum McpCall
       return "--" + renderNowTime() + " call: " + this.name();
    }
 
-   public <T> T createDisapprovedMsg()
+   public <T> T createDisapprovedMsg(String userToAiDisapproveResponse)
    {
       return (T) switch(this)
       {
-         case executeQuery, getTables, getPrimaryKeys, getImportedKeys, getExportedKeys, getIndexInfo -> McpResultSet.ofError(DISAPPROVED);
-         default -> new McpSimpleString(DISAPPROVED);
+         case executeQuery, getTables, getPrimaryKeys, getImportedKeys, getExportedKeys, getIndexInfo -> McpResultSet.ofError(buildDisapprovedMessage(userToAiDisapproveResponse));
+         default -> new McpSimpleString(buildDisapprovedMessage(userToAiDisapproveResponse));
       };
+   }
+
+   private static String buildDisapprovedMessage(String userToAiDisapproveResponse)
+   {
+      if(StringUtils.isBlank(userToAiDisapproveResponse))
+      {
+         return DISAPPROVED;
+      }
+      else
+      {
+         return "%s\nUser edited disapproval message to be respected by AI:\n%s".formatted(DISAPPROVED, userToAiDisapproveResponse);
+      }
    }
 
    private String renderNowTime()

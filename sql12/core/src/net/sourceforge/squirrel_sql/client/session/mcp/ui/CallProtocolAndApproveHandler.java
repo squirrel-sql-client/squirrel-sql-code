@@ -22,12 +22,12 @@ public class CallProtocolAndApproveHandler
       _mcpUiProps = mcpUiProps;
    }
 
-   public boolean callStart(McpCall call, Object callArgs)
+   public CallApproval callStart(McpCall call, Object callArgs)
    {
       return GUIUtils.callOnSwingEventThread(() -> _callStart(call, callArgs), true);
    }
 
-   private boolean _callStart(McpCall call, Object callArgs)
+   private CallApproval _callStart(McpCall call, Object callArgs)
    {
       String callString = call.createCallString(callArgs);
 
@@ -37,13 +37,13 @@ public class CallProtocolAndApproveHandler
 
          if(false == mcpCallApproveCtrl.isApproved())
          {
-            return false;
+            return CallApproval.disapprove(mcpCallApproveCtrl.getUserToAiDisapproveResponse());
          }
       }
 
       _mcpSqlTab.getSQLPanelAPI().appendSQLScript("\n\n" + callString);
 
-      return true;
+      return CallApproval.approve();
    }
 
    public void callFinished(McpCall call)

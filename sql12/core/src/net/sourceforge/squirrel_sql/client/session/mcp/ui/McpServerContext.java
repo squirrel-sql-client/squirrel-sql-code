@@ -99,7 +99,7 @@ public final class McpServerContext
    }
 
 
-   public boolean callStart(McpCall call, Object callArgs)
+   public CallApproval callStart(McpCall call, Object callArgs)
    {
       return _protocolAndApproveHandler.callStart(call, callArgs);
    }

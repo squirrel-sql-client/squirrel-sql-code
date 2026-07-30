@@ -9,7 +9,11 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -19,6 +23,8 @@ public class McpCallApproveDlg extends JDialog
 
    final ISQLEntryPanel sqlEntryPanel;
    final JButton btnFormat = new JButton(s_stringMgr.getString("McpCallApproveDlg.format"));
+   JButton btnEditAIResponseMessage;
+   JButton btnRun;
    final JButton btnDisapprove = new JButton(s_stringMgr.getString("McpCallApproveDlg.disapprove"));
    final JButton btnApprove = new JButton(s_stringMgr.getString("McpCallApproveDlg.approve"));
 
@@ -49,16 +55,26 @@ public class McpCallApproveDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
       ret.add(btnFormat, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0);
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,20,0,0),0,0);
+      btnEditAIResponseMessage = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.EDIT_NOTE));
+      btnEditAIResponseMessage.setToolTipText(s_stringMgr.getString("McpCallApproveDlg.edit.user.disapprove.info.for.ai"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnEditAIResponseMessage, true, true, btnFormat.getPreferredSize().height), gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0),0,0);
+      btnRun = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RUN));
+      btnRun.setToolTipText(s_stringMgr.getString("McpCallApproveDlg.runCall"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnRun, true, true, btnFormat.getPreferredSize().height), gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0);
       ret.add(new JPanel(), gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
       ret.add(btnDisapprove, gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0),0,0);
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0),0,0);
       ret.add(btnApprove, gbc);
 
       return ret;
