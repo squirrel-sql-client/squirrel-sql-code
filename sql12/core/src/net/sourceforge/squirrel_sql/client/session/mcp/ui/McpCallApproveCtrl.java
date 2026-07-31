@@ -2,6 +2,9 @@ package net.sourceforge.squirrel_sql.client.session.mcp.ui;
 
 import java.awt.Frame;
 import java.util.HashMap;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.RSyntaxSQLEntryAreaFactory;
@@ -23,6 +26,7 @@ public class McpCallApproveCtrl
    private final McpUiProps _mcpUiProps;
    private boolean _approved;
    private String _userToAiDisapproveResponse;
+   private PreviousTextsAiDisapprovalMessages _previousTextsProvider = new PreviousTextsAiDisapprovalMessages();
 
    public McpCallApproveCtrl(String call, McpUiProps mcpUiProps, ISession session, Frame owningFrame)
    {
@@ -63,10 +67,28 @@ public class McpCallApproveCtrl
                                    s_stringMgr.getString("McpCallApproveCtrl.edit.ai.disapproval.message.description"),
                                    s_stringMgr.getString("McpCallApproveCtrl.edit.ai.disapproval.message.empty.title"),
                                    s_stringMgr.getString("McpCallApproveCtrl.edit.ai.disapproval.message.empty.text"),
-                                   new PreviousTextsAiDisapprovalMessages()
+                                   _previousTextsProvider
                                    );
 
-      _userToAiDisapproveResponse = textEditController.getMessage();
+      textEditController.setAllowEmptyText(true);
+
+      String responseBuf = textEditController.getText();
+
+      if( textEditController.isOk() )
+      {
+         _userToAiDisapproveResponse = responseBuf;
+      }
+
+      if(StringUtils.isNotBlank(_userToAiDisapproveResponse))
+      {
+         _mcpCallApproveDlg.btnEditAIResponseMessage.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.EDIT_NOTE_CHECKED));
+      }
+      else
+      {
+         _mcpCallApproveDlg.btnEditAIResponseMessage.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.EDIT_NOTE));
+      }
+
+      _previousTextsProvider.setCurrentApproveResponse(_userToAiDisapproveResponse);
    }
 
    private void onFormat(ISession session)

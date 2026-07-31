@@ -22,7 +22,7 @@ public class PreviousTextsProviderGitMessage implements PreviousTextsProvider
    }
 
    @Override
-   public String getLastEditorContent()
+   public String getInitialEditorContent()
    {
       return _gitCommitMessageJsonBean.getLastEditorContent();
    }

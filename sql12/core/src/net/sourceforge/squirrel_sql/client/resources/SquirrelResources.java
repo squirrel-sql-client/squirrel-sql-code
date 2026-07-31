@@ -239,6 +239,7 @@ public class SquirrelResources extends Resources
 		String INFO = "info";
 		String RUN = "run";
 		String EDIT_NOTE = "edit_note";
+		String EDIT_NOTE_CHECKED = "edit_note_checked";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

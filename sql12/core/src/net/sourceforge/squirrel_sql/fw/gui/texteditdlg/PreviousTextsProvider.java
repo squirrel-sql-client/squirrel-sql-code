@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface PreviousTextsProvider
 {
-   String getLastEditorContent();
+   String getInitialEditorContent();
 
    List<String> getPreviousTexts();
 

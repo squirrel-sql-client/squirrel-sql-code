@@ -10,6 +10,7 @@ import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 public class PreviousTextsAiDisapprovalMessages implements PreviousTextsProvider
 {
    private AiDisapprovalMessagesJsonBean _aiDisapprovalMessagesJsonBean;
+   private String _userToAiDisapproveResponse;
 
    public PreviousTextsAiDisapprovalMessages()
    {
@@ -19,9 +20,9 @@ public class PreviousTextsAiDisapprovalMessages implements PreviousTextsProvider
    }
 
    @Override
-   public String getLastEditorContent()
+   public String getInitialEditorContent()
    {
-      return _aiDisapprovalMessagesJsonBean.getLastEditorContent();
+      return _userToAiDisapproveResponse;
    }
 
    @Override
@@ -42,4 +43,8 @@ public class PreviousTextsAiDisapprovalMessages implements PreviousTextsProvider
       JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getAiDisapprovalMessagesJsonBeanFile(), _aiDisapprovalMessagesJsonBean);
    }
 
+   public void setCurrentApproveResponse(String userToAiDisapproveResponse)
+   {
+      this._userToAiDisapproveResponse = userToAiDisapproveResponse;
+   }
 }

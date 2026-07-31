@@ -266,7 +266,7 @@ public class GitHandler
                                             buildDescription(filePathRelativeToRepoRoot, repository),
                                             s_stringMgr.getString("GitHandler.empty.title"),
                                             s_stringMgr.getString("GitHandler.empty.message"),
-                                            new PreviousTextsProviderGitMessage()).getMessage();
+                                            new PreviousTextsProviderGitMessage()).getText();
 
                if(null == msg)
                {

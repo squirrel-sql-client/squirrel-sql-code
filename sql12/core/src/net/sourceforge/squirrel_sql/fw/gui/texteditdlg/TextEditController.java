@@ -14,6 +14,7 @@ import javax.swing.event.PopupMenuListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 public class TextEditController
 {
@@ -21,6 +22,7 @@ public class TextEditController
    private boolean _ok;
 
    private PreviousTextsProvider _previousTextsProvider;
+   private boolean _allowEmptyText = false;
 
    public TextEditController(Window parentFrame,
                              String frameTitle,
@@ -40,7 +42,7 @@ public class TextEditController
 
       
 
-      setMessage(_previousTextsProvider.getLastEditorContent());
+      setText(_previousTextsProvider.getInitialEditorContent());
 
       _dlg.addWindowListener(new WindowAdapter() {
          @Override
@@ -61,7 +63,7 @@ public class TextEditController
       for (String previousCommitMessage : _previousTextsProvider.getPreviousTexts())
       {
          JMenuItem menuItem = new JMenuItem(createMenuItemText(previousCommitMessage));
-         menuItem.addChangeListener(e -> setMessage(previousCommitMessage));
+         menuItem.addChangeListener(e -> setText(previousCommitMessage));
          menuItem.addActionListener(e -> messageClickedRef[0] = true);
          popupMenu.add(menuItem);
       }
@@ -91,17 +93,17 @@ public class TextEditController
    {
       if(false == messageClickedRef[0])
       {
-         setMessage(formerMessage);
+         setText(formerMessage);
       }
    }
 
    private void onPreviousMessageClicked(String previousCommitMessage, boolean[] messageClickedRef)
    {
-      setMessage(previousCommitMessage);
+      setText(previousCommitMessage);
       messageClickedRef[0] = true;
    }
 
-   private void setMessage(String previousCommitMessage)
+   private void setText(String previousCommitMessage)
    {
       _dlg.txtMessage.setText(previousCommitMessage);
       SwingUtilities.invokeLater(() -> _dlg.txtMessage.scrollRectToVisible(new Rectangle(0,0,1,1)));
@@ -126,22 +128,25 @@ public class TextEditController
 
    private void onOk(String emptyMessageDlgTitle, String emptyMessageDlgText)
    {
-      if(StringUtilities.isEmpty(_dlg.txtMessage.getText(), true))
+      if(false == _allowEmptyText && StringUtils.isBlank(_dlg.txtMessage.getText()))
       {
          JOptionPane.showMessageDialog(_dlg, emptyMessageDlgText, emptyMessageDlgTitle, JOptionPane.ERROR_MESSAGE);
          return;
       }
 
-      List<String> msgs = _previousTextsProvider.getPreviousTexts();
-
-      msgs.remove(_dlg.txtMessage.getText());
-      msgs.add(0, _dlg.txtMessage.getText());
-
-      while(10 < msgs.size())
+      List<String> msgs = null;
+      if( false == StringUtils.isBlank(_dlg.txtMessage.getText()) )
       {
-         msgs.remove(msgs.size() - 1);
-      }
+         msgs = _previousTextsProvider.getPreviousTexts();
+         msgs.remove(_dlg.txtMessage.getText());
+         msgs.add(0, _dlg.txtMessage.getText());
 
+         while(10 < msgs.size())
+         {
+            msgs.remove(msgs.size() - 1);
+         }
+
+      }
       _ok = true;
       close();
    }
@@ -164,7 +169,7 @@ public class TextEditController
       _previousTextsProvider.save();
    }
 
-   public String getMessage()
+   public String getText()
    {
       GUIUtils.enableCloseByEscape(_dlg);
       GUIUtils.initLocation(_dlg, 400, 400, _previousTextsProvider.getClass().getName());
@@ -172,11 +177,21 @@ public class TextEditController
       SwingUtilities.invokeLater(() -> _dlg.txtMessage.requestFocus());
       _dlg.setVisible(true); // Stops here
 
-      if (_ok)
+      if (_ok && false == StringUtils.isBlank(_dlg.txtMessage.getText()))
       {
          return _dlg.txtMessage.getText();
       }
 
       return null;
+   }
+
+   public void setAllowEmptyText(boolean b)
+   {
+      _allowEmptyText = b;
+   }
+
+   public boolean isOk()
+   {
+      return _ok;
    }
 }
