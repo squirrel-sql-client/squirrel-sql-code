@@ -57,6 +57,11 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
 
 Bug fixes:
 
+Auto-correct / abbreviations dialog: Entries in which the abbreviation and the correction are the same
+  were applicable via the dialog’s “Apply” button, but they were not saved.
+  Info: Such entries may make sense because they participate in code completion.
+  See menu Session --> Syntax --> Configure auto correct / abreviations
+
 Aliases of WITH clauses are no longer reported as "undefined table" errors.
 
 Hibernate Plugin: Connecting a Hibernate configuration failed whenever an Entity class could not be loaded.

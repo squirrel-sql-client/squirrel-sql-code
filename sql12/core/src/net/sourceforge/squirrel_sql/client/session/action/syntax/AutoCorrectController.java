@@ -1,13 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.syntax;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -16,6 +8,14 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 
 public class AutoCorrectController
@@ -223,7 +223,7 @@ public class AutoCorrectController
          String error = row.get(0);
          String corr = row.get(1);
 
-         if(null != error && null != corr && 0 != error.trim().length() && 0 != corr.trim().length() && false == error.equals(corr))
+         if(null != error && null != corr && 0 != error.trim().length() && 0 != corr.trim().length())
          {
             newAutoCorrects.put(error.trim().toUpperCase(), corr);
          }
