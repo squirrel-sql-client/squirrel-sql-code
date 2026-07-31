@@ -1,5 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session.action.dbdiff.gui;
 
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldConfigCtrl;
 import net.sourceforge.squirrel_sql.client.gui.jmeld.JMeldUtil;
@@ -13,11 +22,6 @@ import org.jmeld.ui.AbstractContentPanel;
 import org.jmeld.ui.BufferDiffPanel;
 import org.jmeld.ui.FilePanel;
 import org.jmeld.ui.JMeldPanel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class JMeldCore
 {
@@ -143,12 +147,31 @@ public class JMeldCore
 
    private ConfigurableMeldPanel createPanel(JDialog diffDialog)
    {
+      fixJideLookAndFeelFactoryIllegalAccessError();
+
       _meldPanel = new NonExitingJMeldPanel(() -> close(diffDialog));
       _meldPanel.SHOW_TABBEDPANE_OPTION.disable();
       _meldPanel.SHOW_TOOLBAR_OPTION.disable();
       _meldPanel.SHOW_FILE_LABEL_OPTION.disable();
 
       return new ConfigurableMeldPanel(_meldPanel, new JMeldConfigCtrl(_meldPanel));
+   }
+
+   /**
+    * Fixes the following exception at least on Windows:
+    * java.lang.IllegalAccessError: class com.jidesoft.plaf.LookAndFeelFactory (in unnamed module @0x69f77c76) cannot access class com.sun.java.swing.plaf.windows.WindowsLookAndFeel (in module java.desktop)
+    *        because module java.desktop does not export com.sun.java.swing.plaf.windows to unnamed module @0x69f77c76
+    * 	at com.jidesoft.plaf.LookAndFeelFactory.getDefaultStyle(LookAndFeelFactory.java:539)
+    * 	at com.jidesoft.plaf.LookAndFeelFactory.installJideExtension(LookAndFeelFactory.java:598)
+    * 	at com.jidesoft.swing.JideTabbedPane.updateUI(JideTabbedPane.java:329)
+    * 	at java.desktop/javax.swing.JTabbedPane.<init>(JTabbedPane.java:227)
+    * 	at com.jidesoft.swing.JideTabbedPane.<init>(JideTabbedPane.java:292)
+    * 	at com.jidesoft.swing.JideTabbedPane.<init>(JideTabbedPane.java:264)
+    * 	at org.jmeld.ui.JMeldPanel.<init>(JMeldPanel.java:81)
+    */
+   private static void fixJideLookAndFeelFactoryIllegalAccessError()
+   {
+      System.setProperty("jide.defaultStyle", "2"); // 2 = com.jidesoft.plaf.LookAndFeelFactory.ECLIPSE_STYLE
    }
 
    public ConfigurableMeldPanel getConfigurableMeldPanel()
