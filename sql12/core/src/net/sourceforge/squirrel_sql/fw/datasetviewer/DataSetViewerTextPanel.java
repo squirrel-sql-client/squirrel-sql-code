@@ -18,11 +18,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import javax.swing.JComponent;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.DataSetTextAreaController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.awt.*;
 
 public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 {
@@ -99,7 +99,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 	 *
 	 * @return	The component for this viewer.
 	 */
-	public Component getComponent()
+	public JComponent getComponent()
 	{
 		return _dataSetTextAreaController.getComponent();
 	}

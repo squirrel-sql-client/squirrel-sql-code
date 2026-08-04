@@ -1,16 +1,16 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import java.awt.BorderLayout;
+import java.awt.Window;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
-
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Window;
 
 public class DataSetViewerFindHandler
 {
@@ -86,7 +86,7 @@ public class DataSetViewerFindHandler
 
    }
 
-   public Component getComponent()
+   public JComponent getComponent()
    {
       return _pnlFindResultCompound;
    }

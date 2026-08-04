@@ -24,6 +24,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.swing.JComponent;
+
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -53,7 +55,7 @@ public class DataSetViewerTextFileDestination
 		_outFile = outFile;
 	}
 
-	public java.awt.Component getComponent()
+	public JComponent getComponent()
 	{
 		throw new UnsupportedOperationException("DataSetViewerTextFileDestination.getComponent()");
 	}

@@ -2,15 +2,20 @@ package net.sourceforge.squirrel_sql.client.session.mcp.ui;
 
 import java.awt.Frame;
 import java.util.HashMap;
+import javax.swing.JFrame;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.syntax.rsyntax.RSyntaxSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.McpCallExecutor;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultTableType;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.texteditdlg.TextEditController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -28,7 +33,7 @@ public class McpCallApproveCtrl
    private String _userToAiDisapproveResponse;
    private PreviousTextsAiDisapprovalMessages _previousTextsProvider = new PreviousTextsAiDisapprovalMessages();
 
-   public McpCallApproveCtrl(String call, McpUiProps mcpUiProps, ISession session, Frame owningFrame)
+   public McpCallApproveCtrl(McpCallExecutor callExecutor, String call, McpUiProps mcpUiProps, ISession session, Frame owningFrame)
    {
       _mcpUiProps = mcpUiProps;
 
@@ -47,7 +52,7 @@ public class McpCallApproveCtrl
       _mcpCallApproveDlg.btnFormat.addActionListener(e -> onFormat(session));
 
       _mcpCallApproveDlg.btnEditAIResponseMessage.addActionListener(e -> onEditAIResponseMessage());
-      _mcpCallApproveDlg.btnRun.addActionListener(e -> onFormat(session));
+      _mcpCallApproveDlg.btnRun.addActionListener(e -> onExecuteCall(callExecutor));
 
       _mcpCallApproveDlg.btnApprove.addActionListener(e -> onApprove(true));
       _mcpCallApproveDlg.btnDisapprove.addActionListener(e -> onApprove(false));
@@ -57,6 +62,18 @@ public class McpCallApproveCtrl
 
       _mcpCallApproveDlg.setVisible(true);
 
+   }
+
+   private void onExecuteCall(McpCallExecutor callExecutor)
+   {
+      DataSetViewerTablePanel table = callExecutor.getMcpCall().buildResultTableComponentForApproval(callExecutor);
+
+      DataSetViewerFindHandler dataSetViewerFindHandler = new DataSetViewerFindHandler(table, ResultTableType.ROWS_WINDOW, new JFrame());
+
+      _mcpCallApproveDlg.btnFindInResult.setEnabled(true);
+      _mcpCallApproveDlg.btnFindInResult.addActionListener(e -> dataSetViewerFindHandler.toggleShowFindPanel());
+
+      _mcpCallApproveDlg.displayResult(dataSetViewerFindHandler.getComponent());
    }
 
    private void onEditAIResponseMessage()

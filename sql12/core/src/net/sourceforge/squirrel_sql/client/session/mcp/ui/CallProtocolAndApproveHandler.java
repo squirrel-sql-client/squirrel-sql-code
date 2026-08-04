@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mcp.ui;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.McpCall;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.McpCallExecutor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -22,18 +23,18 @@ public class CallProtocolAndApproveHandler
       _mcpUiProps = mcpUiProps;
    }
 
-   public CallApproval callStart(McpCall call, Object callArgs)
+   public CallApproval callStart(McpCallExecutor callExecutor, Object callArgs)
    {
-      return GUIUtils.callOnSwingEventThread(() -> _callStart(call, callArgs), true);
+      return GUIUtils.callOnSwingEventThread(() -> _callStart(callExecutor, callArgs), true);
    }
 
-   private CallApproval _callStart(McpCall call, Object callArgs)
+   private CallApproval _callStart(McpCallExecutor callExecutor, Object callArgs)
    {
-      String callString = call.createCallString(callArgs);
+      String callString = callExecutor.getMcpCall().createCallString(callArgs);
 
       if(_mcpUiProps.isApproveAllAiCalls())
       {
-         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(callString, _mcpUiProps, _session, GUIUtils.getOwningFrame(_mcpSqlTab.getTabComponent()));
+         McpCallApproveCtrl mcpCallApproveCtrl = new McpCallApproveCtrl(callExecutor, callString, _mcpUiProps, _session, GUIUtils.getOwningFrame(_mcpSqlTab.getTabComponent()));
 
          if(false == mcpCallApproveCtrl.isApproved())
          {

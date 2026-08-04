@@ -18,11 +18,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import javax.swing.JComponent;
+
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
-import java.awt.Component;
 
 public interface IDataSetViewer
 {
@@ -78,7 +78,7 @@ public interface IDataSetViewer
 	 *
 	 * @return	The component for this viewer.
 	 */
-	Component getComponent();
+	JComponent getComponent();
 
 	/**
 	 * Get the reference to the updateable model object that represents the

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.McpCall;
+import net.sourceforge.squirrel_sql.client.session.mcp.server.McpCallExecutor;
 import net.sourceforge.squirrel_sql.client.session.mcp.server.jsonobjects.McpSimpleString;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -99,9 +100,9 @@ public final class McpServerContext
    }
 
 
-   public CallApproval callStart(McpCall call, Object callArgs)
+   public CallApproval callStart(McpCallExecutor callExecutor, Object callArgs)
    {
-      return _protocolAndApproveHandler.callStart(call, callArgs);
+      return _protocolAndApproveHandler.callStart(callExecutor, callArgs);
    }
 
    public void callFinished(McpCall call)

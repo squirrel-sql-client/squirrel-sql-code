@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.event.EventListenerList;
 
 /**
@@ -38,8 +39,7 @@ public class DataSetListModel extends BaseDataSetViewerDestination
 		int MOVE_TO_TOP = 2;
 	}
 
-	//??GETRIDOFTHIS
-	public java.awt.Component getComponent()
+	public JComponent getComponent()
 	{
 		return null;
 	}

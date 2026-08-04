@@ -54,13 +54,14 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getSessionName;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getSession().getTitle()), true));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
-         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getSession().getTitle()), true);
+         McpSimpleString ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -78,14 +79,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getDriverClassName;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getSession().getJdbcData().getDriverClassName()), true));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getSession().getJdbcData().getDriverClassName()), true);
+         McpSimpleString ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -103,14 +105,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getDriverName;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverName()), true));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverName()), true);
+         McpSimpleString ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -128,14 +131,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getDriverVersion;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverVersion()), true));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDriverVersion()), true);
+         McpSimpleString ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -153,14 +157,16 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getDatabaseProductName;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductName()), true));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductName()), true);
+         McpSimpleString ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -178,13 +184,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getDatabaseProductVersion;
       try
       {
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductVersion()), true));
+
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpSimpleString ret = GUIUtils.callOnSwingEventThread(() -> new McpSimpleString(_mcpServerContext.getDatabaseProductVersion()), true);
+         McpSimpleString ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -202,14 +210,16 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.executeQuery;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> McpQueryExecuter.executeQuery(sql, _mcpServerContext));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, sql);
+
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, sql);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = McpQueryExecuter.executeQuery(sql, _mcpServerContext);
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -227,14 +237,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getCatalogs;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _getCatalogs());
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = _getCatalogs();
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -252,14 +263,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getSchemas;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _getSchemas());
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = _getSchemas();
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -277,14 +289,16 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getCurrentSchema;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _mcpServerContext.getCurrentSchema());
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, none);
+
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, none);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpSimpleString ret = _mcpServerContext.getCurrentSchema();
+         McpSimpleString ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -303,14 +317,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getTables;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _getTables(args));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, args);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, args);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = _getTables(args);
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -328,14 +343,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getPrimaryKeys;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _getPrimaryKeys(args));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, args);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, args);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = _getPrimaryKeys(args);
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -353,14 +369,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getImportedKeys;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _getImportedKeys(args));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, args);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, args);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = _getImportedKeys(args);
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -378,14 +395,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getExportedKeys;
       try
       {
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _getExportedKeys(args));
 
-         CallApproval callApproval = _mcpServerContext.callStart(call, args);
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, args);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = _getExportedKeys(args);
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -404,13 +422,16 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getIndexInfo;
       try
       {
-         CallApproval callApproval = _mcpServerContext.callStart(call, args);
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _getIndexInfo(args));
+
+
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, args);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = _getIndexInfo(args);
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;
@@ -428,13 +449,15 @@ public final class SquirrelMcpToolsImpl implements SquirrelMcpTools
       McpCall call = McpCall.getColumns;
       try
       {
-         CallApproval callApproval = _mcpServerContext.callStart(call, args);
+         McpCallExecutor mcpCallExecutor = new McpCallExecutor(call, () -> _getColumns(args));
+
+         CallApproval callApproval = _mcpServerContext.callStart(mcpCallExecutor, args);
          if( false == callApproval.approved() )
          {
             return call.createDisapprovedMsg(callApproval.userToAiDisapproveResponse());
          }
 
-         McpResultSet ret = _getColumns(args);
+         McpResultSet ret = mcpCallExecutor.executeCall();
          _mcpServerContext.callFinished(call);
 
          return ret;

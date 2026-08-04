@@ -17,11 +17,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+
 //TODO: RENAME to DataSetViewerPropertyDestination
 public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination
 {
@@ -51,7 +52,8 @@ public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination
 		*/
 	}
 
-	public Component getComponent() {
+	public JComponent getComponent()
+	{
 		return _comp;
 	}
 

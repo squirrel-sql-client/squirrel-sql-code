@@ -20,21 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
-
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumnModel;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -44,6 +30,20 @@ import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import javax.swing.JComponent;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implements IDataSetViewAccess, Printable
 {
@@ -157,7 +157,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 	 *
 	 * @return	The component for this viewer.
 	 */
-	public Component getComponent()
+	public JComponent getComponent()
 	{
 		return _table;
 	}

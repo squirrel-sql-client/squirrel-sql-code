@@ -65,8 +65,8 @@ public final class SquirrelMcpTestClient
       //client.print("tools/call getDatabaseProductName", client.getDatabaseProductName());
       //client.print("tools/call getDatabaseProductVersion", client.getDatabaseProductVersion());
 
-      //GetTablesArgs getTablesArgs = new GetTablesArgs(null, "public", "%", new String[]{"TABLE"});
-      //client.print("tools/call getTables", client.getTables(getTablesArgs));
+      McpGetTablesArgs getTablesArgs = new McpGetTablesArgs(null, "SQLUser", "%", new String[]{"TABLE"});
+      client.print("tools/call getTables", client.getTables(getTablesArgs));
       //McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
       //McpSimpleString sql = new McpSimpleString("select * from articles ORDER BY id");
       //McpSimpleString sql = new McpSimpleString("SELECT * FROM SaraErsteTabelle");
@@ -89,7 +89,7 @@ public final class SquirrelMcpTestClient
       //client.print("tools/call getColumns", client.getColumns(columnsArgs));
 
       // client.print("tools/call getCurrentSchema", client.getCurrentSchema());
-      client.print("tools/call getSchemas", client.getSchemas());
+      //client.print("tools/call getSchemas", client.getSchemas());
       //client.print("tools/call getCatalogs", client.getCatalogs());
    }
 
