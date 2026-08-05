@@ -59,4 +59,34 @@ public record McpResultCell(boolean primitive, String stringValue, Integer intVa
    {
       return new McpResultCell(false, null, null, null, null, null, value);
    }
+
+   public Object value()
+   {
+      if(null != stringValue)
+      {
+         return stringValue;
+      }
+      else if(null != intValue)
+      {
+         return intValue;
+      }
+      else if(null != longValue)
+      {
+         return longValue;
+      }
+      else if(null != boolValue)
+      {
+         return boolValue;
+      }
+      else if(null != dateValue)
+      {
+         return dateValue;
+      }
+      else if(null != doubleValue)
+      {
+         return doubleValue;
+      }
+
+      return null;
+   }
 }

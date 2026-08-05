@@ -63,10 +63,10 @@ public final class SquirrelMcpTestClient
       //client.print("tools/call getDriverName", client.getDriverName());
       //client.print("tools/call getDriverVersion", client.getDriverVersion());
       //client.print("tools/call getDatabaseProductName", client.getDatabaseProductName());
-      //client.print("tools/call getDatabaseProductVersion", client.getDatabaseProductVersion());
+      client.print("tools/call getDatabaseProductVersion", client.getDatabaseProductVersion());
 
-      McpGetTablesArgs getTablesArgs = new McpGetTablesArgs(null, "SQLUser", "%", new String[]{"TABLE"});
-      client.print("tools/call getTables", client.getTables(getTablesArgs));
+      //McpGetTablesArgs getTablesArgs = new McpGetTablesArgs(null, "SQLUser", "%", new String[]{"TABLE"});
+      //client.print("tools/call getTables", client.getTables(getTablesArgs));
       //McpSimpleString sql = new McpSimpleString("select * from suppliers order by id");
       //McpSimpleString sql = new McpSimpleString("select * from articles ORDER BY id");
       //McpSimpleString sql = new McpSimpleString("SELECT * FROM SaraErsteTabelle");

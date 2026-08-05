@@ -28,6 +28,7 @@ public class McpCallApproveDlg extends JDialog
 
    final ISQLEntryPanel sqlEntryPanel;
    final JButton btnFormat = new JButton(s_stringMgr.getString("McpCallApproveDlg.format"));
+   private final ComponentAdapter _disabledDividerLocationAdjustor;
    JButton btnEditAIResponseMessage;
    JButton btnRun;
    JButton btnFindInResult;
@@ -47,17 +48,20 @@ public class McpCallApproveDlg extends JDialog
       getContentPane().add(splitPane);
       splitPane.setDividerSize(0);
       splitPane.setDividerLocation(getContentPane().getHeight());
-      getContentPane().addComponentListener(new ComponentAdapter()
+
+      _disabledDividerLocationAdjustor = new ComponentAdapter()
       {
          @Override
          public void componentResized(ComponentEvent e)
          {
-            if(0 == splitPane.getDividerSize())
+            if( 0 == splitPane.getDividerSize() )
             {
                splitPane.setDividerLocation(getContentPane().getHeight());
             }
          }
-      });
+      };
+
+      getContentPane().addComponentListener(_disabledDividerLocationAdjustor);
 
 
       JPanel upperSplitPanel = new JPanel(new GridBagLayout());
@@ -119,6 +123,7 @@ public class McpCallApproveDlg extends JDialog
 
    public void displayResult(JComponent comp)
    {
+      getContentPane().removeComponentListener(_disabledDividerLocationAdjustor);
       lowerSplitPanel.removeAll();
       lowerSplitPanel.add(comp);
       splitPane.setDividerSize(new JSplitPane().getDividerSize());

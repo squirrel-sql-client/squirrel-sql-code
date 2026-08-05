@@ -72,7 +72,7 @@ public enum McpCall
    {
       return (T) switch(this)
       {
-         case executeQuery, getTables, getPrimaryKeys, getImportedKeys, getExportedKeys, getIndexInfo, getSchemas, getCatalogs -> McpResultSet.ofError(buildDisapprovedMessage(userToAiDisapproveResponse));
+         case executeQuery, getTables, getPrimaryKeys, getImportedKeys, getExportedKeys, getIndexInfo, getSchemas, getCatalogs, getColumns -> McpResultSet.ofError(buildDisapprovedMessage(userToAiDisapproveResponse));
          default -> new McpSimpleString(buildDisapprovedMessage(userToAiDisapproveResponse));
       };
    }
@@ -104,23 +104,18 @@ public enum McpCall
    {
       try
       {
+
          switch(this)
          {
-            case getSessionName ->
+            case getSessionName, getDriverClassName, getDriverName, getDriverVersion, getDatabaseProductName, getDatabaseProductVersion, getCurrentSchema ->
             {
-               String stringContent = ((McpSimpleString) callExecutor.executeCall()).stringContent();
-               ColumnDisplayDefinition[] columnDisplayDefinitions = {new ColumnDisplayDefinition(200, this.name())};
-               ArrayList<Object[]> list = new ArrayList<>();
-               list.add(new Object[]{stringContent});
-
-               SimpleDataSet simpleDataSet = new SimpleDataSet(list, columnDisplayDefinitions);
-               DataSetViewerTablePanel table = new DataSetViewerTablePanel();
-               table.init(null, null);
-               table.show(simpleDataSet);
-
-               return table;
+               return McpApprovalCallPreviewBuilder.createSingleMcpStringSetViewerTablePanel(callExecutor, this);
             }
-            default ->
+            case getCatalogs, getSchemas, getTables, getPrimaryKeys, getImportedKeys, getExportedKeys, getIndexInfo, getColumns ->
+            {
+               return McpApprovalCallPreviewBuilder.createMcpResultSetDataSetViewerTablePanel(callExecutor, this);
+            }
+            case executeQuery ->
             {
                ColumnDisplayDefinition
                      [] columnDisplayDefinitions = {new ColumnDisplayDefinition(200, this.name())};
@@ -133,6 +128,7 @@ public enum McpCall
                table.show(simpleDataSet);
                return table;
             }
+            default -> throw new IllegalStateException("Unknown McpCall " + this.name());
          }
       }
       catch(DataSetException e)
