@@ -21,4 +21,6 @@ With the restructuring of the build system came a new directory structure:
   * In case you want to work with the Look & Feel Plugin put the files contained in `<squirrel-git-root>/sql12/pluins/laf/` and `<squirrel-git-root>/sql12/pluins/skinlf-theme-packs/` in your classpath
   * SQuirreL's source code is in `<squirrel-git-root>/sql12/core/src/` and `<squirrel-git-root>/sql12/plugins/<plugin>/src/`
 
+### Deployment
 
+You might need to add something like `export J2D_UISCALE=3.0` as the first command in `$HOME/squirrel-sql-$VERSION/squirrel-sql.sh` after installation if your display is small, otherwise the GUI will be microscopic!
