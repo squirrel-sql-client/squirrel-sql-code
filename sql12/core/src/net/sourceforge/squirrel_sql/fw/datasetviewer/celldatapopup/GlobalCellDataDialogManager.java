@@ -7,11 +7,11 @@ import java.util.List;
 
 public class GlobalCellDataDialogManager
 {
-   private CellDataDialog _pinnedCellDataDialog;
+   private CellDataWindow _pinnedCellDataWindow;
    private WindowAdapter _pinnedCellDataDialogWindowAdapter;
 
    private WindowAdapter _cellDataDialogWindowAdapter;
-   private List<CellDataDialog> _openCellDataDialogs = new ArrayList<>();
+   private List<CellDataWindow> _openCellDataWindows = new ArrayList<>();
 
    public GlobalCellDataDialogManager()
    {
@@ -49,44 +49,44 @@ public class GlobalCellDataDialogManager
    private void unregisterCellDataDialog(WindowEvent e)
    {
       e.getWindow().removeWindowListener(_cellDataDialogWindowAdapter);
-      _openCellDataDialogs.remove(e.getWindow());
+      _openCellDataWindows.remove(e.getWindow());
    }
 
-   void setPinnedCellDataDialog(CellDataDialog pinnedCellDataDialog)
+   void setPinnedCellDataDialog(CellDataWindow pinnedCellDataWindow)
    {
       clearPinnedCellDataDialog();
-      _pinnedCellDataDialog = pinnedCellDataDialog;
-      _pinnedCellDataDialog.addWindowListener(_pinnedCellDataDialogWindowAdapter);
+      _pinnedCellDataWindow = pinnedCellDataWindow;
+      _pinnedCellDataWindow.getCellDataWindowAdapter().addWindowListener(_pinnedCellDataDialogWindowAdapter);
    }
 
    void clearPinnedCellDataDialog()
    {
-      if(null != _pinnedCellDataDialog)
+      if(null != _pinnedCellDataWindow)
       {
-         _pinnedCellDataDialog.switchOffPinned();
-         _pinnedCellDataDialog.removeWindowListener(_pinnedCellDataDialogWindowAdapter);
-         _pinnedCellDataDialog = null;
+         _pinnedCellDataWindow.switchOffPinned();
+         _pinnedCellDataWindow.getCellDataWindowAdapter().removeWindowListener(_pinnedCellDataDialogWindowAdapter);
+         _pinnedCellDataWindow = null;
       }
    }
 
-   public CellDataDialog getPinnedCellDataDialog()
+   public CellDataWindow getPinnedCellDataDialog()
    {
-      return _pinnedCellDataDialog;
+      return _pinnedCellDataWindow;
    }
 
-   public void registerOpenCellDataDialog(CellDataDialog cellDataDialog)
+   public void registerOpenCellDataDialog(CellDataWindow cellDataWindow)
    {
-      cellDataDialog.addWindowListener(_cellDataDialogWindowAdapter);
-      _openCellDataDialogs.add(cellDataDialog);
+      cellDataWindow.getCellDataWindowAdapter().addWindowListener(_cellDataDialogWindowAdapter);
+      _openCellDataWindows.add(cellDataWindow);
    }
 
-   public List<CellDataDialog> getOpenCellDataDialogs()
+   public List<CellDataWindow> getOpenCellDataDialogs()
    {
-      return _openCellDataDialogs;
+      return _openCellDataWindows;
    }
 
-   public boolean isPinned(CellDataDialog cellDataDialog)
+   public boolean isPinned(CellDataWindow cellDataWindow)
    {
-      return null != _pinnedCellDataDialog && _pinnedCellDataDialog == cellDataDialog;
+      return null != _pinnedCellDataWindow && _pinnedCellDataWindow == cellDataWindow;
    }
 }

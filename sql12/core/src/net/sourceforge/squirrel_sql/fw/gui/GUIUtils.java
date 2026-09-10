@@ -135,6 +135,18 @@ public class GUIUtils
       }
    }
 
+   public static void centerWithin(Window childWindow, Window parentWindow)
+   {
+      if (parentWindow != null && parentWindow.isVisible())
+      {
+         center(childWindow, new Rectangle(parentWindow.getLocationOnScreen(), parentWindow.getSize()));
+      }
+      else
+      {
+         centerWithinScreen(childWindow);
+      }
+   }
+
 	/**
 	 * Centers passed internal frame within its desktop area. If centering
 	 * would cause the title bar to go off the top of the screen then move the
@@ -514,7 +526,7 @@ public class GUIUtils
 		enableCloseByEscape(dialog, null);
 	}
 
-   public static void enableCloseByEscape(final JDialog dialog, final CloseByEscapeListener closeByEscapeListener)
+   public static void enableCloseByEscape(final JDialog dialog, final CloseByEscapeListener<JDialog> closeByEscapeListener)
    {
       AbstractAction closeAction = new AbstractAction()
       {
@@ -535,6 +547,30 @@ public class GUIUtils
       dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
       dialog.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
       dialog.getRootPane().getActionMap().put("CloseAction", closeAction);
+   }
+
+   public static void enableCloseByEscape(final JFrame frame, final CloseByEscapeListener<JFrame> closeByEscapeListener)
+   {
+      AbstractAction closeAction = new AbstractAction()
+      {
+
+         public void actionPerformed(ActionEvent actionEvent)
+         {
+				if(null != closeByEscapeListener)
+				{
+					closeByEscapeListener.willCloseByEscape(frame);
+				}
+
+
+				frame.setVisible(false);
+            frame.dispose();
+         }
+      };
+      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+      frame.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+      frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+      frame.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+      frame.getRootPane().getActionMap().put("CloseAction", closeAction);
    }
 
 	public static void enableCloseByEscape(DialogWidget dialogWidget)

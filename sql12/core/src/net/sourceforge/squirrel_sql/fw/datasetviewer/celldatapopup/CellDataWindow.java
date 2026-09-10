@@ -4,7 +4,6 @@ import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JDialog;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.CellDisplayPanelContent;
@@ -12,26 +11,29 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.Display
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.DisplayPanelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultImageDisplayPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class CellDataDialog extends JDialog
+public class CellDataWindow
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataDialog.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataWindow.class);
+   private final CellDataWindowAdapter _cellDataWindowAdapter;
+   private final CellDataDialogState _cellDataDialogState;
 
    private CellDisplayPanel _cellDisplayPanel;
 
-   public CellDataDialog(CellDataDialogState cellDataDialogState, Window parentWindow)
+   public CellDataWindow(CellWindowType cellWindowType, CellDataDialogState cellDataDialogState, Window parentWindow)
    {
-      super(parentWindow);
-      getContentPane().setLayout(new GridLayout(1,1));
+      _cellDataWindowAdapter = new CellDataWindowAdapter(cellWindowType);
+      _cellDataDialogState = cellDataDialogState;
+      _cellDataWindowAdapter.initWindow(parentWindow);
+      _cellDataWindowAdapter.getContentPane().setLayout(new GridLayout(1,1));
 
       initCellDisplayPanel(cellDataDialogState);
 
-      GUIUtils.enableCloseByEscape(this, dialog -> cleanUp());
+      _cellDataWindowAdapter.enableCloseByEscape(window -> cleanUp());
 
-      addWindowListener(new WindowAdapter()
+      _cellDataWindowAdapter.addWindowListener(new WindowAdapter()
       {
          @Override
          public void windowClosing(WindowEvent e)
@@ -58,12 +60,12 @@ public class CellDataDialog extends JDialog
 
       if(null != _cellDisplayPanel)
       {
-         getContentPane().remove(_cellDisplayPanel);
+         _cellDataWindowAdapter.getContentPane().remove(_cellDisplayPanel);
          _cellDisplayPanel.dispose();
          _cellDisplayPanel = null;
       }
 
-      setTitle(s_stringMgr.getString("cellDataPopup.valueofColumn", cellDataDialogState.getCellName()));
+      _cellDataWindowAdapter.setTitle(s_stringMgr.getString("cellDataPopup.valueofColumn", cellDataDialogState.getCellName()));
 
       DisplayPanelListener displayPanelListener = new DisplayPanelListener()
       {
@@ -80,10 +82,10 @@ public class CellDataDialog extends JDialog
          }
       };
 
-      _cellDisplayPanel =new CellDisplayPanel(displayPanelListener,sticky -> onToggleSticky(sticky), cellDataDialogState.isPinned());
+      _cellDisplayPanel = new CellDisplayPanel(displayPanelListener,sticky -> onToggleSticky(sticky), cellDataDialogState.isPinned(), new CellWindowTypeChooser(this));
 
       _cellDisplayPanel.setCurrentColumnDisplayDefinition(cellDataDialogState.getColDispDef());
-      getContentPane().add(_cellDisplayPanel);
+      _cellDataWindowAdapter.getContentPane().add(_cellDisplayPanel);
 
       onDisplayModeChanged(cellDataDialogState);
    }
@@ -156,5 +158,15 @@ public class CellDataDialog extends JDialog
       }
 
       return null;
+   }
+
+   public CellDataWindowAdapter getCellDataWindowAdapter()
+   {
+      return _cellDataWindowAdapter;
+   }
+
+   public CellDataDialogState getCellDataDialogState()
+   {
+      return _cellDataDialogState;
    }
 }

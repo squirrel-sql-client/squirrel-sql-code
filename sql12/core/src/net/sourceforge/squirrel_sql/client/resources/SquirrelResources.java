@@ -240,6 +240,9 @@ public class SquirrelResources extends Resources
 		String RUN = "run";
 		String EDIT_NOTE = "edit_note";
 		String EDIT_NOTE_CHECKED = "edit_note_checked";
+
+		String FRAME_WITH_RED_DIALOG = "frame_with_red_dialog";
+		String RED_FRAME_WITH_DIALOG = "red_frame_with_dialog";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

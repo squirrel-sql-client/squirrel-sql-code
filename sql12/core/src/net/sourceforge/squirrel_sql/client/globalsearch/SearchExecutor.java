@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.globalsearch;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.ResultTabProvider;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialog;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataWindow;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FirstSearchResult;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.GlobalFindRemoteControl;
@@ -33,9 +33,9 @@ public class SearchExecutor
       return remoteControl.executeFindTillFirstResult(textToSearch, globalSearchType);
    }
 
-   public static FirstSearchResult searchInCellDataDialog(CellDataDialog cellDataDialog, String textToSearch, GlobalSearchType globalSearchType)
+   public static FirstSearchResult searchInCellDataDialog(CellDataWindow cellDataWindow, String textToSearch, GlobalSearchType globalSearchType)
    {
-      GlobalFindRemoteControl globalFindRemoteControl = cellDataDialog.getCellDetailFindRemoteControlOrNull();
+      GlobalFindRemoteControl globalFindRemoteControl = cellDataWindow.getCellDetailFindRemoteControlOrNull();
       if(null == globalFindRemoteControl)
       {
          return FirstSearchResult.EMPTY;

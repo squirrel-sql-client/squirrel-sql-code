@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/94
+  The cell data dialog allows to switch between dialog and frame/window display.
+  See the button on the upper right of the dialog.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/95
   Cell data dialog supports hyperlinks.
   To open a hyperlink in the standard web browser press control and then click the hyperlink.

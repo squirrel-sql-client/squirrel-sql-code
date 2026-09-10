@@ -62,8 +62,8 @@ public class CellDataDialogHandler
                                  MouseEvent evt,
                                  boolean isModelEditable)
    {
-      CellDataDialog pinnedCellDataDialog = Main.getApplication().getGlobalCellDataDialogManager().getPinnedCellDataDialog();
-      if(null != pinnedCellDataDialog)
+      CellDataWindow pinnedCellDataWindow = Main.getApplication().getGlobalCellDataDialogManager().getPinnedCellDataDialog();
+      if(null != pinnedCellDataWindow)
       {
          return;
       }
@@ -91,8 +91,8 @@ public class CellDataDialogHandler
     */
    public static void showSelectedValueInPinnedCellDataDialog(JTable table, boolean isModelEditable)
    {
-      CellDataDialog pinnedCellDataDialog = Main.getApplication().getGlobalCellDataDialogManager().getPinnedCellDataDialog();
-      if(null == pinnedCellDataDialog)
+      CellDataWindow pinnedCellDataWindow = Main.getApplication().getGlobalCellDataDialogManager().getPinnedCellDataDialog();
+      if(null == pinnedCellDataWindow)
       {
          return;
       }
@@ -118,7 +118,7 @@ public class CellDataDialogHandler
       CellDataDialogState cellDataDialogState =
             new CellDataDialogState(table.getColumnName(selectedColumn), colDef, obj, true, isModelEditable, table, selectedRow, selectedColumn);
 
-      pinnedCellDataDialog.initCellDisplayPanel(cellDataDialogState);
+      pinnedCellDataWindow.initCellDisplayPanel(cellDataDialogState);
    }
 
 
@@ -146,9 +146,9 @@ public class CellDataDialogHandler
 
    public static void createAndShowCellDataDialog(CellDataDialogState cellDataDialogState, Window parentWindow, MouseEvent mouseEvent)
    {
-      CellDataDialog cellDataDialog = new CellDataDialog(cellDataDialogState, parentWindow);
+      CellDataWindow cellDataWindow = new CellDataWindow(CellWindowType.getSelected(), cellDataDialogState, parentWindow);
 
-      cellDataDialog.pack();
+      cellDataWindow.getCellDataWindowAdapter().pack();
 
       Dimension dim;
       if (Main.getApplication().getSquirrelPreferences().isRememberValueOfPopup())
@@ -159,7 +159,7 @@ public class CellDataDialogHandler
       }
       else
       {
-         dim = cellDataDialog.getSize();
+         dim = cellDataWindow.getCellDataWindowAdapter().getSize();
          if (dim.width < 300)
          {
             dim.width = 300;
@@ -186,25 +186,39 @@ public class CellDataDialogHandler
 
          Rectangle dialogRect = GUIUtils.ensureBoundsOnOneScreen(new Rectangle(dialogPos.x, dialogPos.y, dim.width, dim.height));
 
-         cellDataDialog.setBounds(dialogRect);
+         cellDataWindow.getCellDataWindowAdapter().setBounds(dialogRect);
       }
       else
       {
-         cellDataDialog.setSize(dim);
-         GUIUtils.centerWithinParent(cellDataDialog);
+         cellDataWindow.getCellDataWindowAdapter().setSize(dim);
+         cellDataWindow.getCellDataWindowAdapter().centerWithinParent();
       }
 
-      cellDataDialog.addWindowListener(new WindowAdapter()
+      cellDataWindow.getCellDataWindowAdapter().addWindowListener(new WindowAdapter()
       {
          @Override
          public void windowClosing(WindowEvent e)
          {
-            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, cellDataDialog.getSize().width);
-            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, cellDataDialog.getSize().height);
+            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, cellDataWindow.getCellDataWindowAdapter().getSize().width);
+            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, cellDataWindow.getCellDataWindowAdapter().getSize().height);
          }
       });
 
-      cellDataDialog.setVisible(true);
-      Main.getApplication().getGlobalCellDataDialogManager().registerOpenCellDataDialog(cellDataDialog);
+      cellDataWindow.getCellDataWindowAdapter().setVisible(true);
+      Main.getApplication().getGlobalCellDataDialogManager().registerOpenCellDataDialog(cellDataWindow);
+   }
+
+   public static void reopenAsType(CellDataWindow oldCellDataWindow, CellWindowType newType)
+   {
+      CellDataWindow newCellDataWindow = new CellDataWindow(newType,
+                                                            oldCellDataWindow.getCellDataDialogState(),
+                                                            oldCellDataWindow.getCellDataWindowAdapter().getParent());
+
+      newCellDataWindow.getCellDataWindowAdapter().setBounds(oldCellDataWindow.getCellDataWindowAdapter().getBounds());
+
+      oldCellDataWindow.getCellDataWindowAdapter().setVisible(false);
+      oldCellDataWindow.getCellDataWindowAdapter().dispose();
+
+      newCellDataWindow.getCellDataWindowAdapter().setVisible(true);
    }
 }

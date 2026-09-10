@@ -18,6 +18,7 @@ import javax.swing.JToggleButton;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellWindowTypeChooser;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -39,23 +40,24 @@ public class CellDisplayPanel extends JPanel
 
    public CellDisplayPanel(DisplayPanelListener displayPanelListener,
                            ToggleCellDataDialogPinnedListener toggleCellDataDialogPinnedListener,
-                           boolean pinned)
+                           boolean pinned,
+                           CellWindowTypeChooser cellWindowTypeChooser)
    {
       _toggleCellDataDialogPinnedListener = toggleCellDataDialogPinnedListener;
-      initPanel(displayPanelListener, pinned);
+      initPanel(displayPanelListener, pinned, cellWindowTypeChooser);
    }
 
    public CellDisplayPanel(DisplayPanelListener displayPanelListener, CellDetailCloseListener cellDetailCloseListener)
    {
       _cellDetailCloseListener = cellDetailCloseListener;
-      initPanel(displayPanelListener, false);
+      initPanel(displayPanelListener, false, null);
    }
 
-   private void initPanel(DisplayPanelListener displayPanelListener, boolean pinned)
+   private void initPanel(DisplayPanelListener displayPanelListener, boolean pinned, CellWindowTypeChooser cellWindowTypeChooser)
    {
       _displayPanelListener = displayPanelListener;
       setLayout(new BorderLayout(3, 3));
-      add(createDisplaySelectionPanel(pinned), BorderLayout.NORTH);
+      add(createDisplaySelectionPanel(pinned, cellWindowTypeChooser), BorderLayout.NORTH);
       add(_pnlContent, BorderLayout.CENTER);
 
       _cboDisplayMode.setSelectedItem(DisplayMode.DEFAULT);
@@ -79,7 +81,7 @@ public class CellDisplayPanel extends JPanel
       _displayPanelListener.displayModeChanged();
    }
 
-   private JPanel createDisplaySelectionPanel(boolean pinned)
+   private JPanel createDisplaySelectionPanel(boolean pinned, CellWindowTypeChooser cellWindowTypeChooser)
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -114,6 +116,12 @@ public class CellDisplayPanel extends JPanel
 
       gbc = new GridBagConstraints(4,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(3,3,3,0), 0,0);
       ret.add(new JPanel(), gbc);
+
+      if(null != cellWindowTypeChooser)
+      {
+         gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(3,3,3,5), 0,0);
+         ret.add(cellWindowTypeChooser.getPanel(), gbc);
+      }
 
       if(null != _cellDetailCloseListener)
       {

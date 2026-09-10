@@ -5,12 +5,12 @@ import javax.swing.JTable;
 public class CellDataUpdateInfo
 {
    private CellDataDialogState _cellDataDialogState;
-   private CellDataDialog _parentCellDataDialog;
+   private CellDataWindow _parentCellDataWindow;
 
-   public CellDataUpdateInfo(CellDataDialogState cellDataDialogState, CellDataDialog parentCellDataDialog)
+   public CellDataUpdateInfo(CellDataDialogState cellDataDialogState, CellDataWindow parentCellDataWindow)
    {
       _cellDataDialogState = cellDataDialogState;
-      _parentCellDataDialog = parentCellDataDialog;
+      _parentCellDataWindow = parentCellDataWindow;
    }
 
    public int getRow()
@@ -30,18 +30,18 @@ public class CellDataUpdateInfo
 
    public void closeParentDialog()
    {
-      if(null == _parentCellDataDialog)
+      if(null == _parentCellDataWindow)
       {
          return;
       }
 
-      _parentCellDataDialog.setVisible(false);
-      _parentCellDataDialog.dispose();
+      _parentCellDataWindow.getCellDataWindowAdapter().setVisible(false);
+      _parentCellDataWindow.getCellDataWindowAdapter().dispose();
    }
 
    public void cleanUp()
    {
-      _parentCellDataDialog = null;
+      _parentCellDataWindow = null;
       _cellDataDialogState = null;
    }
 }

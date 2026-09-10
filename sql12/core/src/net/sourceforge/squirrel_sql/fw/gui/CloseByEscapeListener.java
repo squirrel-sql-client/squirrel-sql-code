@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import javax.swing.*;
+import java.awt.Window;
 
 @FunctionalInterface
-public interface CloseByEscapeListener
+public interface CloseByEscapeListener <WIN_TYPE extends Window>
 {
-   void willCloseByEscape(JDialog dialog);
+   void willCloseByEscape(WIN_TYPE win);
 }

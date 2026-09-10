@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import javax.swing.Timer;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.globalsearch.GlobalSearchType;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialog;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataWindow;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.columndisplaychoice.ResultDataSetAndCellDetailDisplayHandler;
-
-import javax.swing.Timer;
 
 public class DetailsTextFindExecutor
 {
@@ -36,14 +35,14 @@ public class DetailsTextFindExecutor
          cellDetalRemoteControl.executeFindTillFirstResult(currentSearchString, globalSearchType, true);
       }
 
-      CellDataDialog pinnedCellDataDialog = Main.getApplication().getGlobalCellDataDialogManager().getPinnedCellDataDialog();
+      CellDataWindow pinnedCellDataWindow = Main.getApplication().getGlobalCellDataDialogManager().getPinnedCellDataDialog();
 
-      if(null == pinnedCellDataDialog)
+      if(null == pinnedCellDataWindow)
       {
          return;
       }
 
-      GlobalFindRemoteControl pinnedCellRemoteControl = pinnedCellDataDialog.getCellDetailFindRemoteControlOrNull();
+      GlobalFindRemoteControl pinnedCellRemoteControl = pinnedCellDataWindow.getCellDetailFindRemoteControlOrNull();
 
       if(null != pinnedCellRemoteControl)
       {
