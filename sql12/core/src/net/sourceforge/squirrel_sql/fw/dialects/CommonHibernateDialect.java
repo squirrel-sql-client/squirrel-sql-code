@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A base class for dialects where the most frequently implemented behavior can located, to avoid code
@@ -582,7 +583,46 @@ public abstract class CommonHibernateDialect implements HibernateDialect, String
 			dataType = getJavaTypeForNativeType(tcInfo.getTypeName());
 		}
 
-		return getTypeName(dataType, columnSize, precision, tcInfo.getDecimalDigits(), tcInfo.getTypeName());
+		String typeName = getTypeName(dataType, columnSize, precision, tcInfo.getDecimalDigits(), tcInfo.getTypeName());
+		return appendTimeZoneQualifierIfNeeded(dataType, tcInfo.getTypeName(), typeName);
+	}
+
+	/**
+	 * java.sql.Types.TIMESTAMP/TIME don't distinguish the plain and "with time zone" variants, so a
+	 * dialect's registered type name (e.g. "timestamp") silently drops the qualifier even though the
+	 * driver's real TYPE_NAME (e.g. Postgres "timestamptz") indicates it. Restore the qualifier here,
+	 * once, for every dialect, instead of duplicating this check in each *DialectExt subclass.
+	 */
+	private String appendTimeZoneQualifierIfNeeded(int dataType, String driverTypeNameOrNull, String resolvedTypeName)
+	{
+		if (driverTypeNameOrNull == null || resolvedTypeName == null)
+		{
+			return resolvedTypeName;
+		}
+
+		boolean isTimestampFamily = dataType == Types.TIMESTAMP || dataType == Types.TIMESTAMP_WITH_TIMEZONE;
+		boolean isTimeFamily = dataType == Types.TIME || dataType == Types.TIME_WITH_TIMEZONE;
+		if (!isTimestampFamily && !isTimeFamily)
+		{
+			return resolvedTypeName;
+		}
+
+		if (StringUtils.containsIgnoreCase(resolvedTypeName, "with time zone"))
+		{
+			// Some dialects (e.g. Oracle's raw TYPE_NAME fallback) already include the qualifier.
+			return resolvedTypeName;
+		}
+
+		boolean driverIndicatesTimeZone = StringUtils.equalsIgnoreCase(driverTypeNameOrNull, "timestamptz")
+			|| StringUtils.equalsIgnoreCase(driverTypeNameOrNull, "timetz")
+			|| StringUtils.containsIgnoreCase(driverTypeNameOrNull, "with time zone");
+
+		if (driverIndicatesTimeZone)
+		{
+			return resolvedTypeName + " with time zone";
+		}
+
+		return resolvedTypeName;
 	}
 
 	/**
