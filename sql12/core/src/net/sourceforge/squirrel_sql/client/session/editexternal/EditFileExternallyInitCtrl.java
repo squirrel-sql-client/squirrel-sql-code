@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.editexternal;
 import java.awt.Frame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -16,9 +17,13 @@ public class EditFileExternallyInitCtrl
    public static final String PREF_KEY_COMMAND = "EditFileExternallyInitCtrl.command";
    public static final String PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO = "EditFileExternallyInitCtrl.line.numbering.starts.at.zero";
 
+   private static final String EXTERNAL_EDITOR_COMMAND_STRINGS_PREFIX = "EditFileExternallyInitCtrl.externalEditor.strings_";
+
+
    private static StringManager s_stringMgr = StringManagerFactory.getStringManager(EditFileExternallyInitCtrl.class);
 
    private final EditFileExternallyInitDlg _dlg;
+   private final EditableComboBoxHandler _externalEditorCommandCboHandler;
    private boolean _ok;
 
 
@@ -30,7 +35,18 @@ public class EditFileExternallyInitCtrl
       GUIUtils.enableCloseByEscape(_dlg);
 
       _dlg.txtMillis.setInt(Props.getInt(PREF_KEY_MILLIS, 500));
-      _dlg.txtCommand.setText(Props.getString(PREF_KEY_COMMAND, "emacs +@line:@col @file"));
+
+      _externalEditorCommandCboHandler = new EditableComboBoxHandler(_dlg.cboCommand,
+                                                                     "EditFileExternallyInitCtrl.externalEditor.strings_",
+                                                                     10,
+                                                                     null,
+                                                                     true);
+
+      if(_externalEditorCommandCboHandler.isEmpty())
+      {
+         _externalEditorCommandCboHandler.addOrReplaceCurrentItem(Props.getString(PREF_KEY_COMMAND, "emacs +@line:@col @file"));
+      }
+
 
       boolean zeroOrOne = Props.getBoolean(PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO, true);
       _dlg.radStartsAtZero.setSelected(zeroOrOne);
@@ -47,14 +63,14 @@ public class EditFileExternallyInitCtrl
 
    private void onOk()
    {
-      if(StringUtils.isBlank(_dlg.txtCommand.getText()))
+      if(StringUtils.isBlank(_externalEditorCommandCboHandler.getItem()))
       {
          JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("EditFileExternallyInitCtrl.command.empty"));
          return;
       }
 
       Props.putInt(PREF_KEY_MILLIS, _dlg.txtMillis.getInt());
-      Props.putString(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
+      _externalEditorCommandCboHandler.saveCurrentItem();
       Props.putBoolean(PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO, _dlg.radStartsAtZero.isSelected());
 
       _ok = true;
@@ -75,7 +91,7 @@ public class EditFileExternallyInitCtrl
 
    public String getCliCommand()
    {
-      return _dlg.txtCommand.getText();
+      return _externalEditorCommandCboHandler.getItem();
    }
 
    public int getDelay()

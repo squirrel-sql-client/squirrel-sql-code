@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/96
+  "Edit file in external editor"-Dialog:
+  Replaced the command text field by an editable combo box
+  which offers to choose from a history of previous command strings.
+  See menu Session --> File --> "Edit externally ..." or Session toolbar or keyboard shortcut ctrl shift E.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/94
   The cell data dialog allows to switch between dialog and frame/window display.
   See the button on the upper right of the dialog.

@@ -1,14 +1,13 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.apache.commons.lang3.StringUtils;
-
+import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
-import java.util.ArrayList;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 public class EditableComboBoxHandler
 {
@@ -21,11 +20,13 @@ public class EditableComboBoxHandler
    {
       this(cbo, prefKeyPrefix, 10, null);
    }
-   public EditableComboBoxHandler(JComboBox cbo, String prefKeyPrefix, int maxItemCount)
-   {
-      this(cbo, prefKeyPrefix, maxItemCount, null);
-   }
+
    public EditableComboBoxHandler(JComboBox cbo, String prefKeyPrefix, int maxItemCount, String defaultString)
+   {
+      this(cbo, prefKeyPrefix, maxItemCount, defaultString, false);
+   }
+
+   public EditableComboBoxHandler(JComboBox cbo, String prefKeyPrefix, int maxItemCount, String defaultString, boolean preSelectFirstItem)
    {
       _cbo = cbo;
       _cbo.setEditable(true);
@@ -34,10 +35,10 @@ public class EditableComboBoxHandler
       _maxItemCount = maxItemCount;
       _defaultString = defaultString;
 
-      loadComboBox();
+      loadComboBox(preSelectFirstItem);
    }
 
-   private void loadComboBox()
+   private void loadComboBox(boolean preSelectFirstItem)
    {
       for (int i = 0; ; i++)
       {
@@ -56,7 +57,14 @@ public class EditableComboBoxHandler
       }
       else
       {
-         _cbo.getEditor().setItem(null);
+         if(preSelectFirstItem && false == isEmpty())
+         {
+            _cbo.setSelectedIndex(0);
+         }
+         else
+         {
+            _cbo.getEditor().setItem(null);
+         }
       }
    }
 
@@ -136,5 +144,10 @@ public class EditableComboBoxHandler
    public void saveCurrentItem()
    {
       addOrReplaceCurrentItem(getItem());
+   }
+
+   public boolean isEmpty()
+   {
+      return 0 == _cbo.getItemCount();
    }
 }

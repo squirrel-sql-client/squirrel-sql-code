@@ -7,11 +7,11 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -22,7 +22,7 @@ public class EditFileExternallyInitDlg extends JDialog
    private static StringManager s_stringMgr = StringManagerFactory.getStringManager(EditFileExternallyInitDlg.class);
 
    final IntegerField txtMillis = new IntegerField(6, 0);
-   final JTextField txtCommand = new JTextField();
+   final JComboBox cboCommand = new JComboBox();
    final JButton btnOk = new JButton(s_stringMgr.getString("EditFileExternallyInitDlg.ok"));
    final JButton btnCancel = new JButton(s_stringMgr.getString("EditFileExternallyInitDlg.cancel"));
    final JRadioButton radStartsAtZero = new JRadioButton(s_stringMgr.getString("EditFileExternallyInitDlg.line_col.numbering.starts.at.zero"));
@@ -51,7 +51,7 @@ public class EditFileExternallyInitDlg extends JDialog
       getContentPane().add(new MultipleLineLabel(s_stringMgr.getString("EditFileExternallyInitDlg.command")), gbc);
 
       gbc = new GridBagConstraints(0,3,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
-      getContentPane().add(txtCommand, gbc);
+      getContentPane().add(cboCommand, gbc);
 
       gbc = new GridBagConstraints(0,4,2,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(20,0,5,0), 0,0);
       getContentPane().add(createOkCancelPanel(), gbc);
