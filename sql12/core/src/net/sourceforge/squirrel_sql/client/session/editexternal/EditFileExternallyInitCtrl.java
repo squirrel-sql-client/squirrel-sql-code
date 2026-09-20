@@ -17,8 +17,6 @@ public class EditFileExternallyInitCtrl
    public static final String PREF_KEY_COMMAND = "EditFileExternallyInitCtrl.command";
    public static final String PREF_KEY_LINE_COL_NUMBERING_STARTS_AT_ZERO = "EditFileExternallyInitCtrl.line.numbering.starts.at.zero";
 
-   private static final String EXTERNAL_EDITOR_COMMAND_STRINGS_PREFIX = "EditFileExternallyInitCtrl.externalEditor.strings_";
-
 
    private static StringManager s_stringMgr = StringManagerFactory.getStringManager(EditFileExternallyInitCtrl.class);
 

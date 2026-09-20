@@ -243,6 +243,8 @@ public class SquirrelResources extends Resources
 
 		String FRAME_WITH_RED_DIALOG = "frame_with_red_dialog";
 		String RED_FRAME_WITH_DIALOG = "red_frame_with_dialog";
+
+		String FILE_EDIT_EXTERNAL = "action.net.sourceforge.squirrel_sql.client.session.editexternal.FileEditExternalAction";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

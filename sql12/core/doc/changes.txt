@@ -6,6 +6,14 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/97
+  The cell data dialog now offers
+   - to edit its contents externally
+   - to execute external commands on the content
+   - to import a file into the dialog (e.g. after external editing or command execution).
+  This is in part a restructuring of functionality that was formerly offered only when
+  the cell data dialog was opened on an editable SQL result.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/96
   "Edit file in external editor"-Dialog:
   Replaced the command text field by an editable combo box
