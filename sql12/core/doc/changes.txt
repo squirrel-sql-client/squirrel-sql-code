@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Introduced Java 27 compatibility.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/97
   The cell data dialog now offers
    - to edit its contents externally
