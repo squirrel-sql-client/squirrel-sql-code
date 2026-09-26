@@ -90,7 +90,6 @@ Bug fixes:
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/74#issuecomment-5114419434
   The Aliases tree allowed only contiguous tree selection instead of discontiguous tree selection.
 
-
 https://github.com/squirrel-sql-client/squirrel-sql-code/pull/98
   "CREATE TABLE" script generation dropped "with time zone" from TIMESTAMP/TIME column
   Thanks to Nikhil Raj for the pull request.
