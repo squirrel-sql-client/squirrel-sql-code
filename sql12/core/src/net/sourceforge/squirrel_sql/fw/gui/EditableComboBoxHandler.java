@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
+import java.awt.event.KeyAdapter;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -149,5 +150,19 @@ public class EditableComboBoxHandler
    public boolean isEmpty()
    {
       return 0 == _cbo.getItemCount();
+   }
+
+   /**
+    * When used to support KeyEvent.VK_UP/KeyEvent.VK_DOWN,
+    * one must use a modifier (Shift or Ctrl) to bypass the
+    * {@link #_cbo} consuming the KeyEvent.VK_UP/KeyEvent.VK_DOWN
+    * to traverse its list popup.
+    */
+   public void addKeyListener(KeyAdapter keyAdapter)
+   {
+      if(_cbo.getEditor().getEditorComponent() instanceof JTextComponent)
+      {
+         _cbo.getEditor().getEditorComponent().addKeyListener(keyAdapter);
+      }
    }
 }

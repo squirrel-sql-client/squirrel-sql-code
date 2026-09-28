@@ -144,7 +144,7 @@ public class FindAliasesCtrl
          @Override
          public void keyPressed(KeyEvent e)
          {
-            onKeyPressed(e);
+            GUIUtils.traverseListOnUpDownKeys(_dlg.lstResult, e);
          }
       });
 
@@ -167,30 +167,6 @@ public class FindAliasesCtrl
 
       _dlg.setVisible(false);
       _dlg.dispose();
-   }
-
-   private void onKeyPressed(KeyEvent e)
-   {
-      if(e.getKeyCode() == KeyEvent.VK_UP)
-      {
-         int selIx = _dlg.lstResult.getSelectedIndex();
-
-         if(0 < selIx)
-         {
-            _dlg.lstResult.setSelectedIndex(selIx - 1);
-            _dlg.lstResult.ensureIndexIsVisible(selIx - 1);
-         }
-      }
-      else if(e.getKeyCode() == KeyEvent.VK_DOWN)
-      {
-         int selIx = _dlg.lstResult.getSelectedIndex();
-
-         if(_dlg.lstResult.getModel().getSize() - 1 > selIx)
-         {
-            _dlg.lstResult.setSelectedIndex(selIx + 1);
-            _dlg.lstResult.ensureIndexIsVisible(selIx + 1);
-         }
-      }
    }
 
    private void onConnect()

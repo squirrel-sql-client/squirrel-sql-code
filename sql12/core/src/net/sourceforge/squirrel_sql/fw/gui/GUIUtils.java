@@ -71,6 +71,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -1460,5 +1461,29 @@ public class GUIUtils
 		to.putValue(Action.ACCELERATOR_KEY, from.getValue(Action.ACCELERATOR_KEY));
 		to.putValue(Action.SHORT_DESCRIPTION, from.getValue(Action.SHORT_DESCRIPTION));
 		to.putValue(Action.LONG_DESCRIPTION, from.getValue(Action.LONG_DESCRIPTION));
+   }
+
+   public static void traverseListOnUpDownKeys(JList<?> lstCharSets, KeyEvent e)
+   {
+      if(e.getKeyCode() == KeyEvent.VK_UP)
+      {
+         int selIx = lstCharSets.getSelectedIndex();
+
+         if(0 < selIx)
+         {
+            lstCharSets.setSelectedIndex(selIx - 1);
+            lstCharSets.ensureIndexIsVisible(selIx - 1);
+         }
+      }
+      else if(e.getKeyCode() == KeyEvent.VK_DOWN)
+      {
+         int selIx = lstCharSets.getSelectedIndex();
+
+         if(lstCharSets.getModel().getSize() - 1 > selIx)
+         {
+            lstCharSets.setSelectedIndex(selIx + 1);
+            lstCharSets.ensureIndexIsVisible(selIx + 1);
+         }
+      }
    }
 }

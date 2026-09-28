@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/76
+  The cell data dialog's right mouse menu "Decode selection" offers
+  a new submenu named "Choose output character set" that allows to
+  choose with which character set (e.g. UTF-8, windows-1250, ...) the
+  decoded string should be equipped.
+
 Introduced Java 27 compatibility.
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/97
