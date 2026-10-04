@@ -7,8 +7,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 Enhancements:
 
 TIMESTAMP/TIME columns "with time zone" are now rendered in ISO format.
-  E.g. "2026-09-26T20:57:16-04:00" for a TIMESTAMP column in time zone "America/New_York"
-  and "21:03:19+02:00" for a TIME column in time zone "Africa/Johannesburg"="Europe/Berlin"
+  E.g. "2026-09-26T20:57:16-04:00" for a TIMESTAMP instance in time zone "America/New_York"
+  and "21:03:19+02:00" for a TIME instance in time zone "Africa/Johannesburg"="Europe/Berlin".
 
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/76
   The cell data dialog's right mouse menu "Decode selection" offers
