@@ -18,33 +18,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
-import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.JTextComponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -61,7 +34,35 @@ import java.sql.ResultSet;
 import java.sql.Time;
 import java.sql.Types;
 import java.text.DateFormat;
+import java.time.OffsetTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataDialogHandler;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
+import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author gwg
@@ -145,8 +146,9 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
 
    // The DateFormat object to use for all locale-dependent formatting.
     // This is reset each time the user changes the previous settings.
-    private static ThreadSafeDateFormat dateFormat = new ThreadSafeDateFormat(localeFormat, true);
-    private boolean _renderExceptionHasBeenLogged;
+   private static ThreadSafeDateFormat dateFormat = new ThreadSafeDateFormat(localeFormat, true);
+   private boolean _renderExceptionHasBeenLogged;
+   private boolean _readingOffsetTimeExceptionHasBeenLogged;
 
    /**
     * Constructor - save the data needed by this data type.
@@ -250,16 +252,25 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
     */
    public String renderObject(Object value, DataTypeRenderingHint renderingHint)
    {
-      // use the Java default date-to-string
-      if(useJavaDefaultFormat == true || value == null)
-      {
-         return (String) DefaultColumnRenderer.renderObject(value);
-      }
-
-      // use a date formatter
       try
       {
-         return (String) DefaultColumnRenderer.renderObject(dateFormat.format(value));
+         if(    value instanceof OffsetTime offsetTime
+             && TimeZoneDetector.isTimeWithTimeZone(_colDef.getSqlType(), _colDef.getSqlTypeName()))
+         {
+            return DefaultColumnRenderer.renderObject(offsetTime.format(DateTimeFormatter.ISO_OFFSET_TIME));
+         }
+         else
+         {
+            if(useJavaDefaultFormat == true || value == null)
+            {
+               return DefaultColumnRenderer.renderObject(value);
+            }
+            else
+            {
+               return DefaultColumnRenderer.renderObject(dateFormat.format(value));
+            }
+         }
+
       }
       catch (Exception e)
       {
@@ -268,7 +279,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
             _renderExceptionHasBeenLogged = true;
             s_log.error("Could not format \"" + value + "\" as date type", e);
          }
-         return (String) DefaultColumnRenderer.renderObject(value);
+         return DefaultColumnRenderer.renderObject(value);
       }
    }
 
@@ -507,14 +518,40 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
      * On input from the DB, read the data from the ResultSet into the appropriate
      * type of object to be stored in the table cell.
      */
-   public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
-      throws java.sql.SQLException {
+    public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
+          throws java.sql.SQLException
+    {
+       Object data;
+       if(TimeZoneDetector.isTimeWithTimeZone(_colDef.getSqlType(), _colDef.getSqlTypeName()))
+       {
+          try
+          {
+             data = rs.getObject(index, OffsetTime.class);
+          }
+          catch(Exception e)
+          {
+             if(false == _readingOffsetTimeExceptionHasBeenLogged)
+             {
+                _readingOffsetTimeExceptionHasBeenLogged = true;
+                s_log.error("Failed reading OffsetTime:", e);
+             }
+             data = rs.getTime(index);
+          }
+       }
+       else
+       {
+          data = rs.getTime(index);
+       }
 
-      Time data = rs.getTime(index);
-      if (rs.wasNull())
-         return null;
-      else return data;
-   }
+       if(rs.wasNull())
+       {
+          return null;
+       }
+       else
+       {
+          return data;
+       }
+    }
 
    /**
     * When updating the database, generate a string form of this object value

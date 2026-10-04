@@ -18,6 +18,25 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.text.DateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
@@ -33,24 +52,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.text.DateFormat;
 
 /**
  * @author gwg
@@ -104,6 +105,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
    private static DataTypeTimestampStatics _dataTypeTimestampStatics = new DataTypeTimestampStatics();
 
    private boolean _renderExceptionHasBeenLogged;
+   private boolean _readingOffsetDateTimeExceptionHasBeenLogged;
 
 
    /**
@@ -209,16 +211,27 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
     */
    public String renderObject(Object value, DataTypeRenderingHint renderingHint)
    {
-      if (value == null || null == _dataTypeTimestampStatics.getDateFormat() )
-      {
-         // use the Java default date-to-string
-         return (String) DefaultColumnRenderer.renderObject(value);
-      }
 
       // use a date formatter
       try
       {
-         return (String) DefaultColumnRenderer.renderObject(_dataTypeTimestampStatics.getDateFormat().format(value));
+         if(    value instanceof OffsetDateTime offsetDateTime
+             && TimeZoneDetector.isTimestampWithTimeZone(_colDef.getSqlType(), _colDef.getSqlTypeName()))
+         {
+            return DefaultColumnRenderer.renderObject(offsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+         }
+         else
+         {
+            if (value == null || null == _dataTypeTimestampStatics.getDateFormat() )
+            {
+               // use the Java default date-to-string
+               return DefaultColumnRenderer.renderObject(value);
+            }
+            else
+            {
+               return DefaultColumnRenderer.renderObject(_dataTypeTimestampStatics.getDateFormat().format(value));
+            }
+         }
       }
       catch (Exception e)
       {
@@ -227,7 +240,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
             _renderExceptionHasBeenLogged = true;
             s_log.error("Could not format \"" + value + "\" as date type", e);
          }
-         return (String) DefaultColumnRenderer.renderObject(value);
+         return DefaultColumnRenderer.renderObject(value);
       }
    }
 
@@ -486,8 +499,29 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
    public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
          throws java.sql.SQLException
    {
+      Object data;
 
-      Timestamp data = rs.getTimestamp(index);
+      if(TimeZoneDetector.isTimestampWithTimeZone(_colDef.getSqlType(), _colDef.getSqlTypeName()))
+      {
+         try
+         {
+            data = rs.getObject(index, OffsetDateTime.class);
+         }
+         catch(Exception e)
+         {
+            if(false == _readingOffsetDateTimeExceptionHasBeenLogged)
+            {
+               _readingOffsetDateTimeExceptionHasBeenLogged = true;
+               s_log.error("Failed reading OffsetDateTime:", e);
+            }
+            data = rs.getTimestamp(index);
+         }
+      }
+      else
+      {
+         data = rs.getTimestamp(index);
+      }
+
       if (rs.wasNull())
       {
          return null;
