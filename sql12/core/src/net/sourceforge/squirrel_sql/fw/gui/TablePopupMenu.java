@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableClickPosition;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.gui.action.CopyWhereStatementMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowRowNumbersCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyAlignedCommand;
@@ -92,6 +93,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
 	private CopyWhereStatementAction _copyWhereStatement = new CopyWhereStatementAction();
+	private CopyWhereStatementMenu _copyWhereStatementMenu = new CopyWhereStatementMenu(() -> _copyWhereStatement.actionPerformed(null));
 	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
@@ -168,7 +170,11 @@ public class TablePopupMenu extends BasePopupMenu
 		add(copyWikiTableActionFactory.createMenueItem(() -> _dataSetViewerTablePanel.getTable()));
 
 		addAction(_copyInStatement);
-		addAction(_copyWhereStatement);
+
+		// This is a JMenu with sub menu items that's why we can't use addAction(...).
+		add(_copyWhereStatementMenu.getMenu());
+		registerShortcut(_copyWhereStatement);
+
 		addAction(_copyUpdateStatement);
       addAction(_copyInsertStatement);
       addAction(_copyColumnHeader);
@@ -291,6 +297,24 @@ public class TablePopupMenu extends BasePopupMenu
 	}
 
 	/**
+	 * For actions that are not added as menu item but may still be invoked by a user defined shortcut.
+	 */
+	private void registerShortcut(Action action)
+	{
+		String actionName = (String) action.getValue(Action.NAME);
+		KeyStroke validKeyStroke = KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(actionName, null, ShortCutDescriptionReader.of(action)));
+
+		if (null != validKeyStroke)
+		{
+			DataSetViewerTable table = _dataSetViewerTablePanel.getTable();
+			table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(validKeyStroke, action.getClass().getName());
+			table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(validKeyStroke, action.getClass().getName());
+			table.getInputMap(JComponent.WHEN_FOCUSED).put(validKeyStroke, action.getClass().getName());
+			table.getActionMap().put(action.getClass().getName(), action);
+		}
+	}
+
+	/**
 	 * Constructor used when creating menu for use in cell editor.
 	 */
 	public TablePopupMenu(IDataSetUpdateableModel updateableModel, DataSetViewerTablePanel dataSetViewerTablePanel, DataSetViewerTable table)
@@ -323,6 +347,7 @@ public class TablePopupMenu extends BasePopupMenu
 	public void showPopupMenu(Component invoker, int x, int y, TableClickPosition tableClickPosition)
 	{
 		_gotoColorMenuController.createSubMenus(_dataSetViewerTablePanel.getTable());
+		_copyWhereStatementMenu.updateFromPreferences();
 		_copyColumnHeader.setCurrentTableClickPosition(tableClickPosition);
 		_showColumnDetails.setCurrentTableClickPosition(tableClickPosition);
 
@@ -438,7 +463,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			new TableCopyWhereStatementCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
+			new TableCopyWhereStatementCommand(_dataSetViewerTablePanel.getTable(), _session, CopyWhereStatementMenu.getLeadingKeyword()).execute();
 		}
 	}
 

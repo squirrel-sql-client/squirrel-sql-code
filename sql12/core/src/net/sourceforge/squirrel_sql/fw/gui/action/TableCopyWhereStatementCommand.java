@@ -43,6 +43,11 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
    private JTable _table;
 
    /**
+    * The keyword the copied condition starts with: WHERE, AND or OR.
+    */
+   private String _leadingKeyword;
+
+   /**
     * Ctor specifying the <TT>JTable</TT> to get the data from.
     *
     * @param   table   The <TT>JTable</TT> to get data from.
@@ -51,12 +56,21 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
     */
    public TableCopyWhereStatementCommand(JTable table, ISession session)
    {
+      this(table, session, "WHERE");
+   }
+
+   /**
+    * @param leadingKeyword The keyword the copied condition starts with, e.g. WHERE, AND or OR.
+    */
+   public TableCopyWhereStatementCommand(JTable table, ISession session, String leadingKeyword)
+   {
       super(session);
       if (table == null)
       {
          throw new IllegalArgumentException("JTable == null");
       }
       _table = table;
+      _leadingKeyword = leadingKeyword;
    }
 
    /**
@@ -70,7 +84,15 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
       int[] selCols = _table.getSelectedColumns();
       if (selRows.length != 0 && selCols.length != 0)
       {
-         StringBuffer buf = new StringBuffer("WHERE ");
+         StringBuffer buf = new StringBuffer(_leadingKeyword + " ");
+
+         // When appended to an existing WHERE clause by AND or OR the OR-chain of multiple rows must be bracketed.
+         boolean bracketRows = false == "WHERE".equals(_leadingKeyword) && 1 < nbrSelRows;
+         if(bracketRows)
+         {
+            buf.append("(");
+         }
+
          for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
          {
 
@@ -138,6 +160,15 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
                   buf.append(" ");
                }
             }
+         }
+
+         if(bracketRows)
+         {
+            while(0 < buf.length() && Character.isWhitespace(buf.charAt(buf.length() - 1)))
+            {
+               buf.setLength(buf.length() - 1);
+            }
+            buf.append(")");
          }
 
          ClipboardUtil.copyToClip(buf);
