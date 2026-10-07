@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -78,7 +79,10 @@ public class ShortcutManager
    {
       Shortcut shortcut = _registerAccelerator(actionName, defaultKeyStroke, descReader);
 
-      item.setAccelerator(shortcut.validKeyStroke());
+      if(false == item instanceof JMenu) // because of java.lang.Error: setAccelerator() is not defined for JMenu.  Use setMnemonic() instead.
+      {
+         item.setAccelerator(shortcut.validKeyStroke());
+      }
 
       return KeyStroke.getKeyStroke(shortcut.getValidKeyStroke());
    }

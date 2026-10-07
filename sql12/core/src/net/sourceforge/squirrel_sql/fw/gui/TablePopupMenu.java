@@ -22,18 +22,15 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterJob;
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.dbdiff.tableselectiondiff.TableSelectionDiff;
-import net.sourceforge.squirrel_sql.client.shortcut.ShortCutDescriptionReader;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
@@ -47,8 +44,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInStatementCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInsertStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopySwitchableWhereAndOrCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyUpdateStatementCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyWhereStatementCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
@@ -66,6 +63,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelecte
 import net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues.ShowDistinctValuesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
+import net.sourceforge.squirrel_sql.fw.gui.switchablemenu.SwitchableMenuCtrl;
+import net.sourceforge.squirrel_sql.fw.gui.switchablemenu.SwitchableMenuCtrlListener;
 import net.sourceforge.squirrel_sql.fw.gui.table.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.resources.ResourceUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -91,7 +90,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopySeparatedByAction _copySeparatedBy = new CopySeparatedByAction();
 
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
-	private CopyWhereStatementAction _copyWhereStatement = new CopyWhereStatementAction();
+	private CopySwitchableWhereOrAndStatementAction _copyWhereStatement = new CopySwitchableWhereOrAndStatementAction();
 	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
@@ -131,6 +130,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private DataSetViewerTablePanel _dataSetViewerTablePanel;
 	
 	private ICopyWikiTableActionFactory copyWikiTableActionFactory = CopyWikiTableActionFactory.getInstance();
+	private SwitchableMenuCtrl _copyAsWhereAndOrMenuCtrl;
 
 
 	/**
@@ -168,7 +168,13 @@ public class TablePopupMenu extends BasePopupMenu
 		add(copyWikiTableActionFactory.createMenueItem(() -> _dataSetViewerTablePanel.getTable()));
 
 		addAction(_copyInStatement);
-		addAction(_copyWhereStatement);
+
+		_copyAsWhereAndOrMenuCtrl = new SwitchableMenuCtrl(addParentMenu(_copyWhereStatement),
+																			WhereClauseKeyWord.values(),
+																			(SwitchableMenuCtrlListener<WhereClauseKeyWord>) option -> onWhereClauseKeyWordSelected(option));
+
+		_copyAsWhereAndOrMenuCtrl.setSelectedOption(WhereClauseKeyWord.getSelected());
+
 		addAction(_copyUpdateStatement);
       addAction(_copyInsertStatement);
       addAction(_copyColumnHeader);
@@ -246,49 +252,41 @@ public class TablePopupMenu extends BasePopupMenu
 		addAction(_print);
 	}
 
+	private void onWhereClauseKeyWordSelected(WhereClauseKeyWord option)
+   {
+		WhereClauseKeyWord.setSelected(option);
+		new TableCopySwitchableWhereAndOrCommand(_dataSetViewerTablePanel.getTable(), _session, option).execute();
+   }
+
 	private void addMenuItem(JMenuItem menuItem)
 	{
 		String actionName = menuItem.getText();
-		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(menuItem, null, actionName, ShortCutDescriptionReader.of(menuItem));
 		add(menuItem);
 
-		if (null != validKeyStroke)
-		{
-			DataSetViewerTable table = _dataSetViewerTablePanel.getTable();
-			table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(validKeyStroke, actionName);
-			table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(validKeyStroke, actionName);
-			table.getInputMap(JComponent.WHEN_FOCUSED).put(validKeyStroke, actionName);
-			table.getActionMap().put(actionName, new AbstractAction(){
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					menuItem.doClick();
-				}
-			});
-		}
+		TablePopupMenuKeyStrokeUtil.configureKeystrokeForMenuItem(menuItem, actionName, _dataSetViewerTablePanel);
 	}
 
-	private void addAction(Action action)
+
+	private JMenuItem addAction(Action action)
 	{
-		addAction(action, null);
+		return addAction(action, null);
 	}
 
-	private void addAction(Action action, KeyStroke defaultKeyStroke)
+	private JMenuItem addAction(Action action, KeyStroke defaultKeyStroke)
 	{
-		JMenuItem mnuAdded = add(action);
-		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(mnuAdded, defaultKeyStroke, action, ShortCutDescriptionReader.of(action));
-		ResourceUtil.trySetToolTip(mnuAdded, action);
-
-		if (null != validKeyStroke)
-		{
-			DataSetViewerTable table = _dataSetViewerTablePanel.getTable();
-			table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(validKeyStroke, action.getClass().getName());
-			table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(validKeyStroke, action.getClass().getName());
-			table.getInputMap(JComponent.WHEN_FOCUSED).put(validKeyStroke, action.getClass().getName());
-			table.getActionMap().put(action.getClass().getName(), action);
-		}
-
+		JMenuItem menuItem = add(action);
+		ResourceUtil.trySetToolTip(menuItem, action);
+		return TablePopupMenuKeyStrokeUtil.configureKeyStrokeForAction(action, defaultKeyStroke, menuItem, _dataSetViewerTablePanel);
 	}
+
+	private JMenu addParentMenu(Action action)
+	{
+		JMenu ret = new JMenu(action);
+		add(ret);
+		TablePopupMenuKeyStrokeUtil.configureKeystrokeForMenuItem(ret, "" + action.getValue(Action.NAME), _dataSetViewerTablePanel);
+		return ret;
+	}
+
 
 	/**
 	 * Constructor used when creating menu for use in cell editor.
@@ -325,6 +323,7 @@ public class TablePopupMenu extends BasePopupMenu
 		_gotoColorMenuController.createSubMenus(_dataSetViewerTablePanel.getTable());
 		_copyColumnHeader.setCurrentTableClickPosition(tableClickPosition);
 		_showColumnDetails.setCurrentTableClickPosition(tableClickPosition);
+		_copyAsWhereAndOrMenuCtrl.setSelectedOption(WhereClauseKeyWord.getSelected());
 
 		super.show(invoker, x, y);
 	}
@@ -429,16 +428,20 @@ public class TablePopupMenu extends BasePopupMenu
 		}
 	}
 
-	private class CopyWhereStatementAction extends BaseAction
+	private class CopySwitchableWhereOrAndStatementAction extends BaseAction
 	{
-		CopyWhereStatementAction()
+		CopySwitchableWhereOrAndStatementAction()
 		{
-			super(s_stringMgr.getString("TablePopupMenu.copyaswherestatement"));
+			super(s_stringMgr.getString("TablePopupMenu.copyaswherestatement.switchable.menu"));
 		}
 
+		/**
+		 * Empty as work is done by {@link #onWhereClauseKeyWordSelected(WhereClauseKeyWord)}.
+		 * I.e. this action exists for shortcut configuration only.
+		 */
 		public void actionPerformed(ActionEvent evt)
 		{
-			new TableCopyWhereStatementCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
+			//new TableCopySwitchableWhereAndOrCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
 		}
 	}
 

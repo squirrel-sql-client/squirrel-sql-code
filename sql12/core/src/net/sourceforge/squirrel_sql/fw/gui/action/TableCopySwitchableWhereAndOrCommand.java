@@ -19,15 +19,15 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.sqlscript.SQLScriptServices;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.WhereClauseKeyWord;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
-import javax.swing.*;
-import javax.swing.table.TableColumn;
 
 /**
  * This command gets the current selected text from a <TT>JTable</TT>
@@ -35,12 +35,13 @@ import javax.swing.table.TableColumn;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase implements ICommand
+public class TableCopySwitchableWhereAndOrCommand extends TableCopySqlPartCommandBase implements ICommand
 {
    /**
     * The table we are copying data from.
     */
    private JTable _table;
+   private final WhereClauseKeyWord _selectedWhereClauseKeyWord;
 
    /**
     * Ctor specifying the <TT>JTable</TT> to get the data from.
@@ -49,13 +50,10 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
     * @param session
     * @throws	IllegalArgumentException Thrown if <tt>null</tt> <tt>JTable</tt> passed.
     */
-   public TableCopyWhereStatementCommand(JTable table, ISession session)
+   public TableCopySwitchableWhereAndOrCommand(JTable table, ISession session, WhereClauseKeyWord selectedWhereClauseKeyWord)
    {
       super(session);
-      if (table == null)
-      {
-         throw new IllegalArgumentException("JTable == null");
-      }
+      _selectedWhereClauseKeyWord = selectedWhereClauseKeyWord;
       _table = table;
    }
 
@@ -70,7 +68,15 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
       int[] selCols = _table.getSelectedColumns();
       if (selRows.length != 0 && selCols.length != 0)
       {
-         StringBuffer buf = new StringBuffer("WHERE ");
+         StringBuffer buf = new StringBuffer(_selectedWhereClauseKeyWord.name() + " ");
+
+         // When appended to an existing WHERE clause by AND or OR the OR-chain of multiple rows must be bracketed.
+         boolean bracketRows = (WhereClauseKeyWord.WHERE != _selectedWhereClauseKeyWord) && 1 < nbrSelRows;
+         if(bracketRows)
+         {
+            buf.append("(");
+         }
+
          for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
          {
 
@@ -138,6 +144,15 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
                   buf.append(" ");
                }
             }
+         }
+
+         if(bracketRows)
+         {
+            while(0 < buf.length() && Character.isWhitespace(buf.charAt(buf.length() - 1)))
+            {
+               buf.setLength(buf.length() - 1);
+            }
+            buf.append(")");
          }
 
          ClipboardUtil.copyToClip(buf);
