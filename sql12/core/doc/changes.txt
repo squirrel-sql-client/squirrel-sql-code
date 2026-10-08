@@ -11,7 +11,7 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/101
   be switched between "Copy as SQL WHERE statement", "Copy as AND WHERE statement"
   and "Copy as SQL OR statement". Switching can be done by choosing from the
   right mouse menu's sub-menu.
-
+  Thanks to Jonathan Burns for the pull request.
 
 TIMESTAMP/TIME columns "with time zone" are now rendered in ISO format.
   E.g. "2026-09-26T20:57:16-04:00" for a TIMESTAMP instance in time zone "America/New_York"
