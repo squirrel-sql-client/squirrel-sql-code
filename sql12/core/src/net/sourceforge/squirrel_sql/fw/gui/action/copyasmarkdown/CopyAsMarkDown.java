@@ -12,6 +12,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.steppschuh.markdowngenerator.table.Table;
+import org.apache.commons.lang3.StringUtils;
 
 public class CopyAsMarkDown
 {
@@ -107,10 +108,17 @@ public class CopyAsMarkDown
 
             Object cellObj = table.getValueAt(selRows[rowIdx], selCols[colIdx]);
 
-            if(cellObj instanceof String && -1 < ((String)cellObj).indexOf('\n'))
+            if(cellObj instanceof String cellString)
             {
-               int lineBreakPos = ((String)cellObj).indexOf('\n');
-               row[curIx] = ((String)cellObj).substring(0, lineBreakPos);
+               if(-1 < cellString.indexOf('\n'))
+               {
+                  int lineBreakPos = cellString.indexOf('\n');
+                  row[curIx] = StringUtils.replace(cellString.substring(0, lineBreakPos), "\t", "\\t");
+               }
+               else
+               {
+                  row[curIx] = StringUtils.replace(cellString, "\t", "\\t");
+               }
             }
             else if(null == cellObj)
             {

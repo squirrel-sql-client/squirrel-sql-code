@@ -1,9 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 
+import java.sql.Types;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.CellStyle.AbbreviationStyle;
@@ -11,8 +13,6 @@ import org.nocrala.tools.texttablefmt.CellStyle.HorizontalAlign;
 import org.nocrala.tools.texttablefmt.CellStyle.NullStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
-
-import java.sql.Types;
 
 //drop table t;
 //
@@ -115,9 +115,16 @@ public class ResultAsText
 
       for (int i = 0; i < _colDefs.length; ++i)
       {
-         String cellValue = CellComponentFactory.renderObject(row[i], this._colDefs[i]);
+         String cellValue = getCellValue(row, i);
          _table.addCell(cellValue, _cellStyles[i]);
       }
+   }
+
+   private String getCellValue(Object[] row, int i)
+   {
+      String ret = CellComponentFactory.renderObject(row[i], this._colDefs[i]);
+      ret = StringUtils.replace(ret, "\t", "\\t");
+      return ret;
    }
 
    public void clear()

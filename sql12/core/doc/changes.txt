@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/104
+  In "Result as text" outputs and when result tables are copied as markdown tables
+  tab characters are now replaced by the string "\t".
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/101
   The right mouse menu "Copy as SQL WHERE statement" of UI tables can now
   be switched between "Copy as SQL WHERE statement", "Copy as AND WHERE statement"
