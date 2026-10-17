@@ -2,6 +2,18 @@
 
 <Beans>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>UCanAccess (MS Access)</name>
+		<driverClassName>net.ucanaccess.jdbc.UcanaccessDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-79</string>
+		</identifier>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<url>jdbc:ucanaccess://&lt;path_to_mdb_or_accdb_file&gt;</url>
+		<webSiteUrl>https://spannm.github.io/ucanaccess/</webSiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>InterSystems IRIS</name>
 		<driverClassName>com.intersystems.jdbc.IRISDriver</driverClassName>
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
