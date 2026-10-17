@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+New default driver definition for UCanAccess, a pure Java JDBC driver for MS Access databases.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/104
   In "Result as text" outputs and when result tables are copied as markdown tables
   tab characters are now replaced by the string "\t".
