@@ -4,6 +4,7 @@ import java.awt.Frame;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JFrame;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -65,11 +66,36 @@ public class McpCallApproveCtrl
       _mcpCallApproveDlg.btnApprove.addActionListener(e -> onApprove(true));
       _mcpCallApproveDlg.btnDisapprove.addActionListener(e -> onApprove(false));
 
-      GUIUtils.initLocation(_mcpCallApproveDlg, 500, 400);
       GUIUtils.enableCloseByEscape(_mcpCallApproveDlg);
 
-      _mcpCallApproveDlg.setVisible(true);
+      showDialog();
+   }
 
+   /**
+    * The code in this method fixes the following bug:
+    * SQuirreL-MCP: When SQuirreL's main frame was in background the AI-approve dialog
+    *   wasn't displayed and SQuirreL became inaccessible.
+    */
+   private void showDialog()
+   {
+      Runnable showDialogRunnable = () -> {
+         GUIUtils.initLocation(_mcpCallApproveDlg, 500, 400);
+         _mcpCallApproveDlg.setAlwaysOnTop(true); // Makes it stay on top
+         _mcpCallApproveDlg.setVisible(true);
+         _mcpCallApproveDlg.setAlwaysOnTop(false); // Revert after showing
+      };
+
+
+      boolean isMinimized = (Main.getApplication().getMainFrame().getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED;
+      if(isMinimized)
+      {
+         Main.getApplication().getMainFrame().setExtendedState(Frame.NORMAL);
+         GUIUtils.executeDelayed(showDialogRunnable, 300);
+      }
+      else
+      {
+         showDialogRunnable.run();
+      }
    }
 
    private void onExecuteCall(McpCallExecutor callExecutor)

@@ -40,7 +40,11 @@ public class McpCallApproveDlg extends JDialog
 
    public McpCallApproveDlg(Frame owner, ISQLEntryPanel sqlEntryPanel)
    {
-      super(owner, true);
+      // Calls a JDialog constructor that supports unowned dialogs,
+      // which JDialog(java.awt.Frame, boolean) does not.
+      // Since this dialog may be opened by AI-MCP-Calls while SQuirreL is in background,
+      // this options may be better to ensure the modal dialog becomes visible.
+      super(owner, ModalityType.APPLICATION_MODAL);
       this.sqlEntryPanel = sqlEntryPanel;
       setTitle(s_stringMgr.getString("McpCallApproveDlg.approve.ai.call.title"));
 
