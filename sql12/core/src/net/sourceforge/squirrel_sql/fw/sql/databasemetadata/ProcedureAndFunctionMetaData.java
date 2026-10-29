@@ -15,6 +15,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LogCountLimit;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class ProcedureAndFunctionMetaData
@@ -42,6 +43,7 @@ public class ProcedureAndFunctionMetaData
                      8  // PROCEDURE_TYPE
                };
 
+         LogCountLimit logCountLimit = new LogCountLimit(s_log, 5);
          DialectType dialectType = DialectFactory.getDialectType(md);
          final ResultSetReader rdr = new ResultSetReader(rs, columnsToReadFomMetaDataResult, dialectType);
          Object[] row;
@@ -54,7 +56,7 @@ public class ProcedureAndFunctionMetaData
             {
                if (row[4] != null)
                {
-                  s_log.warn("Error reading procedure meta data for column 8 (PROCEDURE_TYPE): " +
+                  logCountLimit.warn("Error reading procedure meta data for column 8 (PROCEDURE_TYPE): " +
                         "According to the API of java.sql.DatabaseMetaData.getProcedures(...) " +
                         "the type should be int but is " + row[4].getClass().getName() + " with value " + row[4]);
                }
@@ -123,6 +125,7 @@ public class ProcedureAndFunctionMetaData
                      5  // FUNCTION_TYPE
                };
 
+         LogCountLimit logCountLimit = new LogCountLimit(s_log, 5);
          DialectType dialectType = DialectFactory.getDialectType(md);
          final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
          Object[] row;
@@ -135,7 +138,7 @@ public class ProcedureAndFunctionMetaData
             {
                if (row[4] != null)
                {
-                  s_log.warn("Error reading procedure meta data for column 8 (PROCEDURE_TYPE): " +
+                  logCountLimit.warn("Error reading procedure meta data for column 8 (PROCEDURE_TYPE): " +
                         "According to the API of java.sql.DatabaseMetaData.getProcedures(...) " +
                         "the type should be int but is " + row[4].getClass().getName() + " with value " + row[4]);
                }

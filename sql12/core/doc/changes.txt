@@ -114,6 +114,9 @@ https://github.com/squirrel-sql-client/squirrel-sql-code/issues/88
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/107
+  Limited log count when loading stored procedures.
+
 SQuirreL-MCP: When SQuirreL's main frame was minimized or in the background, the AI-approve dialog
   wasn't displayed and SQuirreL became inaccessible.
 
